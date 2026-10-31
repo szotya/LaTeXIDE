@@ -58,6 +58,6 @@
     "U19",
     "U20"
   ],
-  "service_implementation_claim": "P00 coordinator and verification adapters only; current legacy runtime regressed, new product providers and native workflows belong to their packages",
+  "service_implementation_claim": "P00 coordinator and verification adapters only; current legacy runtime is covered by regression checks, new product providers and native workflows belong to their packages",
   "guide": "docs/development/contracts/v1.md"
 }
