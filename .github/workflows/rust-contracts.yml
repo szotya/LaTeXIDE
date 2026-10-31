@@ -1,35 +1,7 @@
 name: Rust and Mac checks
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'crates/**'
-      - 'apps/macos/**'
-      - 'shared/**'
-      - 'include/**'
-      - 'Cargo.*'
-      - 'rust-toolchain.toml'
-      - 'tests/ipc_contract.py'
-      - 'tests/mcp_contract.py'
-      - 'tests/fixtures/**'
-      - 'tests/contracts/**'
-      - 'integration/registry/**'
-      - '.github/workflows/rust-contracts.yml'
-  pull_request:
-    paths:
-      - 'crates/**'
-      - 'apps/macos/**'
-      - 'shared/**'
-      - 'include/**'
-      - 'Cargo.*'
-      - 'rust-toolchain.toml'
-      - 'tests/ipc_contract.py'
-      - 'tests/mcp_contract.py'
-      - 'tests/fixtures/**'
-      - 'tests/contracts/**'
-      - 'integration/registry/**'
-      - '.github/workflows/rust-contracts.yml'
+  workflow_call:
   workflow_dispatch:
 
 permissions:

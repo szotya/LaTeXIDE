@@ -14,6 +14,23 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  changes:
+    name: Select verification scope
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      runtime: ${{ steps.scope.outputs.runtime }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: scope
+        env:
+          P00_CI_BASE: ${{ github.event.pull_request.base.sha || github.event.before || '' }}
+          P00_CI_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: python3 integration/registry/ci_gate.py changes
+
   planning:
     name: Planning and Python contracts (${{ matrix.os }})
     strategy:
@@ -33,4 +50,25 @@ jobs:
       - if: runner.os == 'Linux'
         run: python -m unittest discover -s tests -p 'test_*.py'
       - run: python scripts/check_repository_content.py --tracked
+
+  runtime:
+    name: Runtime verification
+    needs: changes
+    if: needs.changes.outputs.runtime == 'true'
+    uses: ./.github/workflows/rust-contracts.yml
+
+  aggregate:
+    # Matches the active main-protection ruleset's required GitHub Actions check.
+    name: Planning and Python contracts
+    needs: [changes, planning, runtime]
+    if: ${{ always() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - env:
+          P00_CI_NEEDS: ${{ toJSON(needs) }}
+        run: python3 integration/registry/ci_gate.py aggregate
 
