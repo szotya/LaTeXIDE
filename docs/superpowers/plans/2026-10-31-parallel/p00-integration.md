@@ -49,6 +49,7 @@
 - `Cargo.lock`
 - `rust-toolchain.toml`
 - `.gitattributes`
+- `.gitignore`
 - `crates/*/Cargo.toml`
 - `crates/*/src/lib.rs`
 - `crates/latexide-core/src/{workspace,document,project_index,tex_scan,completion,definition}.rs`

@@ -5,15 +5,18 @@
   "requirement_ids": ["QA-08", "QA-14", "OS-10"],
   "source_paths": [
     "crates/latexide-contracts/src/lib.rs",
+    "crates/latexide-contracts/src/coordinator.rs",
+    "crates/latexide-contracts/src/bin/latexide-integration.rs",
     "integration/registry/generate_contracts.py",
     "integration/registry/verify.py",
     "tests/contracts/main.swift",
     "docs/development/contracts/v1.md"
   ],
-  "hook_targets": ["Cargo.toml", "Cargo.lock", "crates/latexide-core/src/lib.rs", "crates/latexide-protocol/src/lib.rs", "crates/latexide-build/src/lib.rs", "crates/latexide-ffi/src/lib.rs"],
+  "hook_targets": ["Cargo.toml", "Cargo.lock", ".gitignore", ".github/workflows/ci.yml", ".github/workflows/rust-contracts.yml", "crates/latexide-core/src/lib.rs", "crates/latexide-protocol/src/lib.rs", "crates/latexide-build/src/lib.rs", "crates/latexide-ffi/src/lib.rs"],
   "test_commands": [
     "cargo +1.99.1 test --workspace --locked",
+    "cargo +1.99.1 run -p latexide-contracts --bin latexide-integration --locked -- --root .",
     "python3 integration/registry/verify.py --profile shared --native-schema"
   ],
-  "compatibility": "Additive contract-v1 start gate. Legacy IPC v1, C ABI, agent direct edit/save/undo unchanged. Listed requirement IDs are partial work, not completed acceptance."
+  "compatibility": "Additive contract-v1 coordinator and verification tools. Legacy IPC v1, C ABI, agent direct edit/save/undo unchanged. Queue inspection is read-only; listed requirement IDs and provider dependencies remain unqualified until real acceptance."
 }

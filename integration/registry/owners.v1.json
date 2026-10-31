@@ -10,6 +10,10 @@
     },
     {
       "package_id": "P00",
+      "path": ".gitignore"
+    },
+    {
+      "package_id": "P00",
       "path": "Cargo.lock"
     },
     {

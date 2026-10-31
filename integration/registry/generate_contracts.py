@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate port DTOs and wire-shape vectors; no service is implemented."""
+"""Generate port DTOs and wire-shape vectors; no product provider is generated."""
 from __future__ import annotations
 
 import argparse
@@ -181,7 +181,7 @@ def render():
         descriptors.append({"package_id": identifier, "module": module, "port_trait": trait_name, "request_type": request_type,
             "response_type": response_type, "error_type": error_type, "fixture": path.relative_to(ROOT).as_posix(),
             "service_entry": p["entry_path"], "test_path": p["test_path"], "test_command": p["test_command"],
-            "contract_state": "defined-v1", "service_state": "not implemented by P00"})
+            "contract_state": "defined-v1", "service_state": "read-only P00 coordinator; provider acceptance unqualified" if identifier == "P00" else "not implemented by P00"})
     marker = "// BEGIN GENERATED PORTS"
     prefix = (SRC / "lib.rs").read_text(encoding="utf-8").split(marker)[0].rstrip() + "\n\n"
     outputs[SRC / "lib.rs"] = prefix + marker + "\n" + "".join(f"pub mod {m};\n" for m in modules) + "// END GENERATED PORTS\n"
@@ -214,7 +214,7 @@ def main():
         else:
             path.parent.mkdir(parents=True, exist_ok=True); path.write_text(content, encoding="utf-8", newline="")
     if changed: raise SystemExit("Stale contract artifacts: " + ", ".join(changed))
-    print(f"{'Checked' if args.check else 'Generated'} {len(outputs)} contract artifacts; 44 packages / 308 vectors; no service implementation.")
+    print(f"{'Checked' if args.check else 'Generated'} {len(outputs)} contract artifacts; 44 packages / 308 vectors; no product provider generated.")
 
 
 if __name__ == "__main__": main()

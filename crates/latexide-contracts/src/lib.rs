@@ -4,6 +4,7 @@ pub mod integration;
 pub mod version;
 pub mod common;
 pub mod envelope;
+pub mod coordinator;
 pub use integration::*;
 pub use version::*;
 pub use common::*;

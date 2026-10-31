@@ -136,7 +136,7 @@ fn covers(pattern: &str, path: &str) -> bool {
     if pattern.ends_with('/') { path.starts_with(pattern) } else { pattern == path }
 }
 
-fn registry_order(ownership: &OwnershipRegistry) -> Result<Vec<String>, ContractError> {
+pub(crate) fn registry_order(ownership: &OwnershipRegistry) -> Result<Vec<String>, ContractError> {
     if ownership.paths.is_empty() || ownership.paths.len() > 16384
         || ownership.requirements.is_empty() || ownership.requirements.len() > 4096
     { return Err(ContractError::InvalidRegistry); }

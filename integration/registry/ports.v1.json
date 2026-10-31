@@ -18,7 +18,7 @@
       "test_path": "crates/latexide-contracts/tests/compatibility.rs",
       "test_command": "cargo +1.99.1 test -p latexide-contracts --test compatibility --locked",
       "contract_state": "defined-v1",
-      "service_state": "not implemented by P00"
+      "service_state": "read-only P00 coordinator; provider acceptance unqualified"
     },
     {
       "package_id": "P01",

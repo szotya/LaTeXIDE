@@ -157,6 +157,7 @@ def main():
             {"name": "rust-contracts" if args.profile == "contracts" else "rust-workspace", "kind": "rust-unit",
              "argv": cargo + ["test"] + (["-p", "latexide-contracts"] if args.profile == "contracts" else ["--workspace"]) + ["--locked"] + offline},
             {"name": "isolated-module-seam", "kind": "rust-unit", "argv": cargo + ["test", "--manifest-path", "tests/contracts/seam/Cargo.toml", "--locked"] + offline},
+            {"name": "integration-queue", "kind": "manifest-validation", "argv": cargo + ["run", "-p", "latexide-contracts", "--bin", "latexide-integration", "--locked"] + offline + ["--", "--root", "."]},
         ]
     else: steps.append({"name": "rust-not-selected", "kind": "rust-unit", "argv": None, "required": False})
     if args.native_schema and sys.platform == "darwin":

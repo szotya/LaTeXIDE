@@ -1,5 +1,5 @@
 .local/
-target/
+target
 dist/
 .build/
 __pycache__/
@@ -26,6 +26,8 @@ apps/macos/Sources/LaTeXIDEKit/CoreBuildIdentity.generated.swift
 **/.vs/
 **/obj/
 **/bin/
+!crates/*/src/bin/
+!crates/*/src/bin/*.rs
 
 # Downloaded payloads and executable test products; provenance/logs stay versioned.
 *.nupkg
