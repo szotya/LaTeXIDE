@@ -111,6 +111,12 @@ class EvidenceContract(unittest.TestCase):
                 data = copy.deepcopy(report); data["checks"][0][key] = value
                 with self.subTest(key=key): self.assertNotEqual(self.check(root, data, steps)["status"], "current")
 
+    def test_check_platform_cannot_differ_from_the_selected_run_platform(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d); steps, report = self.fixture(root)
+            report["checks"][1]["platform"] = "win32/AMD64" if sys.platform == "darwin" else "darwin/arm64"
+            self.assertNotEqual(self.check(root, report, steps)["status"], "current")
+
     def test_resource_changed_during_summary_inspection_is_not_current(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d); steps, report = self.fixture(root); module = self.evidence(); original = module.read_json

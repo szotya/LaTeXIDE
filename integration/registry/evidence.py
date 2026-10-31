@@ -83,6 +83,8 @@ def revalidate_report(root, report, current_source, expected_steps, artifact_roo
             return result("stale_source", "Source set or bytes changed")
         identities["source"] = "current"
         records = report.get("checks")
+        selection = report["selection"]
+        selected_platform = selection["platform"] + "/" + selection["machine"]
         expected_names = [s["name"] for s in expected_steps]
         if not expected_names or not isinstance(records, list) or [r["name"] for r in records] != expected_names or len(set(expected_names)) != len(expected_names):
             return result("invalid_report", "Check selection is missing, duplicated or changed")
@@ -93,6 +95,8 @@ def revalidate_report(root, report, current_source, expected_steps, artifact_roo
                 return result("invalid_report", "Trusted check contract differs")
             if row.get("source_sha256") != source or row.get("report_status") != "passed":
                 return result("invalid_report", "Check is bound to a different run result")
+            if row.get("platform") != step.get("platform", selected_platform):
+                return result("invalid_report", "Check platform differs from the selected run")
             run_id = row.get("verification_run_id")
             if not isinstance(run_id, str) or not re.fullmatch(r"[0-9a-f]{32}", run_id):
                 return result("invalid_report", "Missing check run identity")

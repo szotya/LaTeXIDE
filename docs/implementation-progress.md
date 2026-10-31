@@ -401,3 +401,9 @@ A81d6928 [első távoli CI-je](https://github.com/szotya/LaTeXIDE/actions/runs/4
 Aktuális Python:69/69 PASS normál és kényszerített cp1252 kimenettel is. A teljes integrált futás és a valódi friss Windows CI a javítás utáni kapu, eredménye a [folytatási PR49-en](https://github.com/szotya/LaTeXIDE/pull/49) követhető. A korábbi81d6928 clean integrated/recheck sourcec3c45e3ecabbff16a49367b27f4eeb4c581cb1dd4e75bd9d8e20f30120e85e96 mellett mind6identity current volt, az inputreport SHA-ja a tényleges CLI-recheck után változatlan maradt; ez a korábbi checkpoint, nem a javított commit bizonyítéka.
 
 Elhalasztott Minor: a Python ignorált `__pycache__` bytecode-ot készíthet/frissíthet a recheck importjainál. A report és a verziózott adat/forrás nem íródik át, folyamat/builder nem indul. A szó szerinti nulla fájlírás nincs implementálva; a Python `-B` kapcsolója letilthatja ezt az interpreter-cache-t. Újabb review-agent nem indult.
+
+### Javítási kör további platformhatára és bizonyíték
+
+A69Pythonos javított53623f7 clean integrated kör sourceabe9129281c649b090ca5de7c686e7ce054a1880267b7edddc523dfae31a3f24 mellett PASS,16kötelező kör, current evidence/önállópassed/acceptancepartial. A távoli41248939028 Windows planning körben is sikeres; ez az aktuális következő commit előtti checkpoint.
+
+A check saját platformjelölését is a kiválasztott futás platformjához kötöttük. Egy másik OS-re átírt rekord korábbi hamis current állapota célzott RED→GREEN; teljes70Python PASS. A végső producer/report/source-metaadat, az outputkódlap és a közvetlen/transzitív feltétel egységes ellenőrzése ebben az egyetlen javítási körben történt. A legfrissebb teljes integrated/recheck és távoli végrehajtás pontos SHA-ja/eredménye a PR49 leírásában és az Issue1 aktuális állapotában kerül visszaellenőrzésre. A nyers helyi report és a CI-jobnapló az adott futás tényleges eredménye; korábbi forráskör nem nevezhető a későbbi commit PASS-ának.
