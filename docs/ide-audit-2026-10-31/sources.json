@@ -1,0 +1,461 @@
+[
+  {
+    "id": "JB00",
+    "title": "JetBrains termékjegyzék",
+    "url": "https://www.jetbrains.com/products/",
+    "scope": "Hivatalos termékkatalógus és terméktípusok.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB01",
+    "title": "IntelliJ IDEA overview",
+    "url": "https://www.jetbrains.com/help/idea/discover-intellij-idea.html",
+    "scope": "JVM IDE, nyelvi bővítmények, platformok; kiadásfüggő képességek.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB02",
+    "title": "PyCharm quick start",
+    "url": "https://www.jetbrains.com/help/pycharm/quick-start-guide.html",
+    "scope": "Python, web, notebook és adatelemzési munkafolyamat; egységes termék, eltérő jogosultságokkal.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB03",
+    "title": "WebStorm features",
+    "url": "https://www.jetbrains.com/webstorm/features/",
+    "scope": "JavaScript/TypeScript, szemantika, navigáció, refaktorálás és fejlesztői eszközök.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB04",
+    "title": "PhpStorm features",
+    "url": "https://www.jetbrains.com/phpstorm/features/",
+    "scope": "PHP/framework, Xdebug, tesztelés és adatbázis-eszközök.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB05",
+    "title": "Rider features",
+    "url": "https://www.jetbrains.com/rider/features/",
+    "scope": ".NET, elemzés, refaktorálás, futtatás/debug és nyelvi támogatás.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB06",
+    "title": "CLion features",
+    "url": "https://www.jetbrains.com/clion/features/",
+    "scope": "C/C++, buildrendszerek, debug, embedded, tesztelés és agentintegráció.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB07",
+    "title": "GoLand features",
+    "url": "https://www.jetbrains.com/go/features/",
+    "scope": "Go szemantika, refaktorálás, formatter, teszt/benchmark, coverage és debugger.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB08",
+    "title": "RubyMine features",
+    "url": "https://www.jetbrains.com/ruby/features/",
+    "scope": "Ruby/Rails, Bundler/Rake/RuboCop, tesztelés, remote és debug.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB09",
+    "title": "RustRover",
+    "url": "https://www.jetbrains.com/rust/",
+    "scope": "Rust/Cargo, makrók, cfg, teszt/debug és projektkezelés.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB10",
+    "title": "DataGrip features",
+    "url": "https://lp.jetbrains.com/datagrip/features-overview/",
+    "scope": "SQL, séma, adatnézet, lekérdezés és adatexport.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB11",
+    "title": "MPS",
+    "url": "https://www.jetbrains.com/mps/",
+    "scope": "DSL és projekciós szerkesztés; sajátos nyelvi platform.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB12",
+    "title": "JetBrains Air",
+    "url": "https://www.jetbrains.com/air/",
+    "scope": "Agentek, munkamenetek és a változások követése több környezetben; nem egyszerű IDE-pluginparitás.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB13",
+    "title": "DataSpell sunset",
+    "url": "https://blog.jetbrains.com/dataspell/2026/05/the-upcoming-sunset-of-dataspell/",
+    "scope": "Önálló termék kivezetése; a data science munkafolyamat PyCharmba kerül.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB14",
+    "title": "Aqua sunset",
+    "url": "https://blog.jetbrains.com/qa/2025/04/aqua-sunset/",
+    "scope": "Önálló QA IDE kivezetése; Test Automation plugin.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB15",
+    "title": "Fleet future",
+    "url": "https://blog.jetbrains.com/fleet/2025/12/the-future-of-fleet/",
+    "scope": "Fleet letöltésének megszűnése; 2026. májusi frissítés szerint Airré fejlődött.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB16",
+    "title": "AppCode sunset",
+    "url": "https://blog.jetbrains.com/appcode/2022/12/appcode-2022-3-release-and-end-of-sales-and-support/",
+    "scope": "Történeti iOS/macOS IDE; értékesítés és támogatás kivezetése.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB17",
+    "title": "Writerside",
+    "url": "https://www.jetbrains.com/writerside/",
+    "scope": "Jelenleg ingyenes JetBrains plugin; az önálló IDE már nem elérhető.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB18",
+    "title": "Local History",
+    "url": "https://www.jetbrains.com/help/idea/local-history.html",
+    "scope": "Git nélküli helyi előzmény, törölt fájlok és részletek visszaállítása; korlátozott megőrzés.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB19",
+    "title": "Code inspections",
+    "url": "https://www.jetbrains.com/help/idea/code-inspection.html",
+    "scope": "Projekt-/scopealapú elemzés, súlyosság, profilok és gyorsjavítások.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB20",
+    "title": "Code refactoring",
+    "url": "https://www.jetbrains.com/help/idea/refactoring-source-code.html",
+    "scope": "Refaktorálási konfliktusok, preview és visszavonás.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB21",
+    "title": "Editor basics",
+    "url": "https://www.jetbrains.com/help/idea/using-code-editor.html",
+    "scope": "Fülek, gutter, breadcrumb, navigáció, fókusz és megjelenítés.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB22",
+    "title": "Remote development",
+    "url": "https://www.jetbrains.com/help/idea/remote-development-overview.html",
+    "scope": "Backend/client, SSH, konténer és WSL; környezetfüggő elérhetőség.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB23",
+    "title": "MCP Server",
+    "url": "https://www.jetbrains.com/help/idea/mcp-server.html",
+    "scope": "IDE-eszközök külső agenteknek; beállítás és eszközszerződés.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB24",
+    "title": "HTTP Client",
+    "url": "https://www.jetbrains.com/help/idea/http-client-in-product-code-editor.html",
+    "scope": ".http/.rest kérések, kiegészítés és eredménykezelés.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "JB25",
+    "title": "Code With Me compatibility",
+    "url": "https://www.jetbrains.com/help/idea/code-with-me.html",
+    "scope": "Plugin, nem bundled funkció; a dokumentum legutolsó kompatibilis IDEA-verzióként 2026.1-et jelöl.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "V01",
+    "title": "VS Code basic editing",
+    "url": "https://code.visualstudio.com/docs/editing/codebasics",
+    "scope": "Több kurzor, keresés/csere, mentés/hot exit, formázás, folding és kódolás.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "V02",
+    "title": "VS Code source control",
+    "url": "https://code.visualstudio.com/docs/sourcecontrol/overview",
+    "scope": "Beépített Git: diff, stage, commit, branch, history és merge; PR külön bővítmény.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "V03",
+    "title": "VS Code debugging",
+    "url": "https://code.visualstudio.com/docs/debugtest/debugging",
+    "scope": "Debuggerfelület és nyelvfüggő debuggerbővítmények; Node/JS támogatás beépítve.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "V04",
+    "title": "VS Code testing",
+    "url": "https://code.visualstudio.com/docs/debugtest/testing",
+    "scope": "Tesztfelület, eredmények és coverage; tényleges keretrendszerek bővítményekből.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "V05",
+    "title": "VS Code tasks",
+    "url": "https://code.visualstudio.com/docs/debugtest/tasks",
+    "scope": "Konfigurált külső folyamatok, függőségek és problem matcherek.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "V06",
+    "title": "VS Code Extension API",
+    "url": "https://code.visualstudio.com/api",
+    "scope": "Bővítési felületek nyelvekhez, nézetekhez, SCM-hez, tesztekhez és debughoz.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "V07",
+    "title": "VS Code remote",
+    "url": "https://code.visualstudio.com/docs/remote/remote-overview",
+    "scope": "Remote Development bővítmények: SSH, konténer, WSL; saját backendmodell.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "V08",
+    "title": "VS Code settings",
+    "url": "https://code.visualstudio.com/docs/configure/settings",
+    "scope": "Felhasználói/projekt/nyelvi beállítások, precedencia és sync.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "V09",
+    "title": "VS Code profiles",
+    "url": "https://code.visualstudio.com/docs/configure/profiles",
+    "scope": "Beállítás-, bővítmény- és munkakörnyezetprofilok.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "V10",
+    "title": "VS Code layout",
+    "url": "https://code.visualstudio.com/docs/configure/custom-layout",
+    "scope": "Nézetek, panelek és szerkesztőcsoportok elrendezése.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "V11",
+    "title": "VS Code workspace trust",
+    "url": "https://code.visualstudio.com/docs/editing/workspaces/workspace-trust",
+    "scope": "Restricted Mode korlátozza az automatikus futtatást; nem teljes biztonsági sandbox.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "V12",
+    "title": "VS Code accessibility",
+    "url": "https://code.visualstudio.com/docs/configure/accessibility/accessibility",
+    "scope": "Billentyűzet, képernyőolvasó, nagyítás és high contrast.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "V13",
+    "title": "VS Code terminal",
+    "url": "https://code.visualstudio.com/docs/terminal/getting-started",
+    "scope": "Teljes shell a munkaterületen, fájl- és hibakapcsolatokkal.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "V14",
+    "title": "VS Code shell integration",
+    "url": "https://code.visualstudio.com/docs/terminal/shell-integration",
+    "scope": "Parancs-/mappatudatosság, navigáció és shellfüggő viselkedés.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "V15",
+    "title": "VS Code AI",
+    "url": "https://code.visualstudio.com/docs/agents/overview",
+    "scope": "Inline segítség, agentsáv, munkamenetek és agentmunka; provider-/funkciófüggő elérhetőség.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "V16",
+    "title": "VS Code multi-root",
+    "url": "https://code.visualstudio.com/docs/editing/workspaces/multi-root-workspaces",
+    "scope": "Több gyökér, keresési scope és beállítások egy workspace-ben.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "L01",
+    "title": "LaTeX Workshop wiki",
+    "url": "https://github.com/James-Yu/LaTeX-Workshop/wiki",
+    "scope": "Külön VS Code-bővítmény; a LaTeX-összevetés alapja.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "L02",
+    "title": "LaTeX Workshop compile",
+    "url": "https://github.com/James-Yu/LaTeX-Workshop/wiki/Compile",
+    "scope": "Receptek, főfájl, automatikus build és toolfolyamat.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "L03",
+    "title": "LaTeX Workshop view",
+    "url": "https://github.com/James-Yu/LaTeX-Workshop/wiki/View",
+    "scope": "PDF és belső SyncTeX; külső viewer útvonalaknál dokumentált korlátok.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "L04",
+    "title": "LaTeX Workshop intellisense",
+    "url": "https://github.com/James-Yu/LaTeX-Workshop/wiki/Intellisense",
+    "scope": "Csomag-, parancs-, környezet- és hivatkozáskiegészítés.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "L05",
+    "title": "LaTeX Workshop extra features",
+    "url": "https://github.com/James-Yu/LaTeX-Workshop/wiki/ExtraFeatures",
+    "scope": "Struktúra, folding, szószám és literate programming.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "L06",
+    "title": "TeXiFy-IDEA upstream",
+    "url": "https://github.com/Hannah-Sten/TeXiFy-IDEA",
+    "scope": "Külön plugin: BibTeX, formatter, inspections, struktúra, folding és PDF/SyncTeX.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "L07",
+    "title": "Texlab upstream",
+    "url": "https://github.com/latex-lsp/texlab",
+    "scope": "LaTeX LSP-szerver; lehetséges integráció, saját kvalifikáció szükséges.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "P01",
+    "title": "Language Server Protocol 3.17",
+    "url": "https://microsoft.github.io/language-server-protocol/specifications/lsp/3.17/specification/",
+    "scope": "Dokumentumszinkron és nyelvi/workspace műveletek; itt hivatkozott verziózott szerződés.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  },
+  {
+    "id": "P02",
+    "title": "Debug Adapter Protocol overview",
+    "url": "https://microsoft.github.io/debug-adapter-protocol/overview",
+    "scope": "Nyelvfüggetlen debuggeradapter és natív debuggerfelület szétválasztása.",
+    "accessed": "2026-10-31",
+    "kind": "primary",
+    "evidence": "web read/search/find during audit"
+  }
+]

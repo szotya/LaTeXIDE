@@ -1,0 +1,20 @@
+name: Csomagfeladat
+description: Egy fejlesztési csomag követelményének önálló szelete
+labels: [planned]
+body:
+  - type: input
+    id: package
+    attributes:
+      label: Csomag-ID, audit-ID és tervlink
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Tesztelhető eredmény és saját útvonalak
+    validations:
+      required: true
+  - type: textarea
+    id: integration
+    attributes:
+      label: Contract-verzió, providerfüggőségek és platformi ellenőrzés

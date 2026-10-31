@@ -1,0 +1,68 @@
+name: Rust and Mac checks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'crates/**'
+      - 'apps/macos/**'
+      - 'shared/**'
+      - 'include/**'
+      - 'Cargo.*'
+      - 'rust-toolchain.toml'
+      - 'tests/ipc_contract.py'
+      - 'tests/mcp_contract.py'
+      - '.github/workflows/rust-contracts.yml'
+  pull_request:
+    paths:
+      - 'crates/**'
+      - 'apps/macos/**'
+      - 'shared/**'
+      - 'include/**'
+      - 'Cargo.*'
+      - 'rust-toolchain.toml'
+      - 'tests/ipc_contract.py'
+      - 'tests/mcp_contract.py'
+      - '.github/workflows/rust-contracts.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: rust-mac-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  rust:
+    name: Rust contracts (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, macos-15, windows-2025]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - name: Install pinned Rust
+        run: rustup toolchain install 1.99.1 --profile minimal
+      - name: Test the existing shared workspace
+        run: cargo +1.99.1 test --workspace --locked
+      - name: Build Mac FFI and MCP test dependencies
+        if: runner.os == 'macOS'
+        run: cargo +1.99.1 build -p latexide-ffi -p latexide-mcp --locked
+      - name: Mac native control tests
+        if: runner.os == 'macOS'
+        run: |
+          test "$(uname -m)" = arm64
+          swift test --package-path apps/macos --disable-sandbox
+      - name: Mac IPC and MCP roundtrips
+        if: runner.os == 'macOS'
+        run: |
+          python3 tests/ipc_contract.py
+          python3 tests/mcp_contract.py
+
+
+  # Shared Rust tests are not Windows WinUI/Linux desktop qualification.

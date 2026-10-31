@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64"><Configuration>Debug</Configuration><Platform>x64</Platform></ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64"><Configuration>Release</Configuration><Platform>x64</Platform></ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{AB7B3B0C-8F0D-453A-81F6-7100C925668A}</ProjectGuid>
+    <RootNamespace>LaTeXIDE</RootNamespace><ProjectName>LaTeXIDE</ProjectName>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion><WindowsTargetPlatformMinVersion>10.0.22000.0</WindowsTargetPlatformMinVersion>
+    <AppContainerApplication>false</AppContainerApplication><AppxPackage>false</AppxPackage>
+    <WindowsPackageType>None</WindowsPackageType><WindowsAppSDKSelfContained>true</WindowsAppSDKSelfContained>
+    <ApplicationType>Windows Store</ApplicationType><ApplicationTypeRevision>10.0</ApplicationTypeRevision>
+    <UseWinUI>true</UseWinUI><CppWinRTOptimized>true</CppWinRTOptimized>
+    <CppWinRTRootNamespaceAutoMerge>true</CppWinRTRootNamespaceAutoMerge>
+    <RepoRoot>$(MSBuildThisFileDirectory)..\..\</RepoRoot>
+    <PackagesRoot>$(RepoRoot).local\windows-packages\</PackagesRoot>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType><PlatformToolset>v143</PlatformToolset><CharacterSet>Unicode</CharacterSet>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Debug'">true</UseDebugLibraries>
+    <UseDebugLibraries Condition="'$(Configuration)'=='Release'">false</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="NuGet.Native.props" />
+  </ImportGroup>
+  <PropertyGroup><OutDir>$(RepoRoot)dist\windows-x64\</OutDir><IntDir>$(RepoRoot).local\windows-build\$(Configuration)\</IntDir></PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile><LanguageStandard>stdcpp20</LanguageStandard><PrecompiledHeader>NotUsing</PrecompiledHeader>
+      <AdditionalIncludeDirectories>$(RepoRoot)include;$(GeneratedFilesDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32_LEAN_AND_MEAN;NOMINMAX;UNICODE;_UNICODE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <WarningLevel>Level4</WarningLevel><AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link><SubSystem>Windows</SubSystem><AdditionalDependencies>$(RepoRoot)target\x86_64-pc-windows-msvc\release\latexide_ffi.lib;windowsapp.lib;advapi32.lib;bcrypt.lib;crypt32.lib;iphlpapi.lib;ntdll.lib;ole32.lib;oleaut32.lib;secur32.lib;userenv.lib;ws2_32.lib;shlwapi.lib;shell32.lib;%(AdditionalDependencies)</AdditionalDependencies></Link>
+  </ItemDefinitionGroup>
+  <ItemGroup><ApplicationDefinition Include="App.xaml" /><Page Include="MainWindow.xaml" /></ItemGroup>
+  <ItemGroup><Midl Include="App.idl" /><Midl Include="MainWindow.idl" /></ItemGroup>
+  <ItemGroup><ClCompile Include="App.xaml.cpp" /><ClCompile Include="MainWindow.xaml.cpp" /><ClCompile Include="MainWindow.Presentation.cpp" /><ClCompile Include="MainWindow.Editor.cpp" /><ClCompile Include="ThemeCatalog.cpp" /><ClCompile Include="NativeCore.cpp" /></ItemGroup>
+  <ItemGroup><ClInclude Include="pch.h" /><ClInclude Include="App.xaml.h" /><ClInclude Include="MainWindow.xaml.h" /><ClInclude Include="NativeCore.h" /><ClInclude Include="TextAdapter.h" /><ClInclude Include="ProjectFiles.h" /><ClInclude Include="ThemeCatalog.h" /><ClInclude Include="WinUIHelpers.h" /></ItemGroup>
+  <ItemGroup><None Include="packages.config" /><Manifest Include="app.manifest" /></ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="NuGet.Native.targets" />
+  </ImportGroup>
+  <Target Name="StageEditorThemes" AfterTargets="Build">
+    <Error Condition="!Exists('$(RepoRoot)shared\ide-theme\Sources\IDEThemeAssets\Resources\editor-themes.json')" Text="The shared local editor palette asset is missing." />
+    <Copy SourceFiles="$(RepoRoot)shared\ide-theme\Sources\IDEThemeAssets\Resources\editor-themes.json" DestinationFiles="$(OutDir)editor-themes.json" SkipUnchangedFiles="true" />
+  </Target>
+</Project>

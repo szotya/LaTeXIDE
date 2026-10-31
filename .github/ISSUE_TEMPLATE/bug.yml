@@ -1,0 +1,21 @@
+name: Hibajelentés
+description: Reprodukálható hiba, platform és megőrzendő munka
+labels: [bug]
+body:
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reprodukció és elvárt viselkedés
+      description: Konkrét lépések, tényleges eredmény, elvárt eredmény. Credentialt ne adj meg.
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Forrás-SHA, OS, architektúra, toolverzió
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Redaktált bizonyíték és érintett audit-ID

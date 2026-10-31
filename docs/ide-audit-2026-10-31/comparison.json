@@ -1,0 +1,901 @@
+[
+  {
+    "id": "C01",
+    "capability": "Unicode, BOM, LF/CRLF",
+    "jetbrains": "IDE editor",
+    "vscode": "Beépített editor",
+    "latexide_mac": "Tesztelt UTF-8/BOM/LF/CRLF; más kódolás hiba",
+    "latexide_windows": "Adapterforrás, célfuttatás unrun",
+    "latexide_linux": "Nincs UI",
+    "backlog_ids": [
+      "DOC-11"
+    ],
+    "source_ids": [
+      "JB21",
+      "V01"
+    ]
+  },
+  {
+    "id": "C02",
+    "capability": "Közös undo/redo",
+    "jetbrains": "IDE előzmény",
+    "vscode": "Beépített editor; agentkapcsolat függő",
+    "latexide_mac": "Rust user/agent/save utáni undo tesztelt; 256 bejegyzés",
+    "latexide_windows": "Közös mag + adapterforrás",
+    "latexide_linux": "Csak hordozandó mag",
+    "backlog_ids": [
+      "DOC-04",
+      "MCP-09"
+    ],
+    "source_ids": [
+      "JB20",
+      "V01"
+    ]
+  },
+  {
+    "id": "C03",
+    "capability": "Crash recovery és hot exit",
+    "jetbrains": "Local History és helyreállítás",
+    "vscode": "Hot Exit",
+    "latexide_mac": "Nem mentett runtime állapot nem tartós",
+    "latexide_windows": "Nem igazolt",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "DOC-01",
+      "QA-01"
+    ],
+    "source_ids": [
+      "JB18",
+      "V01"
+    ]
+  },
+  {
+    "id": "C04",
+    "capability": "Tartós local history",
+    "jetbrains": "Beépített, korlátos megőrzéssel",
+    "vscode": "Timeline/local history",
+    "latexide_mac": "Hiányzik",
+    "latexide_windows": "Hiányzik",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "DOC-05"
+    ],
+    "source_ids": [
+      "JB18",
+      "V02"
+    ]
+  },
+  {
+    "id": "C05",
+    "capability": "Fájl create/rename/delete",
+    "jetbrains": "Projektműveletek",
+    "vscode": "Explorer",
+    "latexide_mac": "Open/save van; fájléletciklus API hiányzik",
+    "latexide_windows": "Hasonló forrásszintű korlát",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "DOC-06",
+      "DOC-09"
+    ],
+    "source_ids": [
+      "JB10",
+      "V01"
+    ]
+  },
+  {
+    "id": "C06",
+    "capability": "Nagy projekt és sok dokumentum",
+    "jetbrains": "Projektindex és szerkesztők",
+    "vscode": "Workspace/editor",
+    "latexide_mac": "10 retained doc; 1 MiB/file; agentolvasás is limitet fogyaszt",
+    "latexide_windows": "Azonos maglimit",
+    "latexide_linux": "Azonos maglimit, UI nincs",
+    "backlog_ids": [
+      "DOC-02",
+      "DOC-03",
+      "DOC-12"
+    ],
+    "source_ids": [
+      "JB01",
+      "V16"
+    ]
+  },
+  {
+    "id": "C07",
+    "capability": "Lexikális színezés és theme",
+    "jetbrains": "Beépített, nyelvfüggő",
+    "vscode": "Beépített/nyelvi extension",
+    "latexide_mac": "Tesztelt lexer, 4 család x light/dark",
+    "latexide_windows": "Közös token/paletta és natív forrás",
+    "latexide_linux": "UI nincs",
+    "backlog_ids": [
+      "WS-14",
+      "LANG-14"
+    ],
+    "source_ids": [
+      "JB21",
+      "V06"
+    ]
+  },
+  {
+    "id": "C08",
+    "capability": "LaTeX saját makró/ref/cite completion",
+    "jetbrains": "TeXiFy kompatibilis hostban",
+    "vscode": "LaTeX Workshop extension",
+    "latexide_mac": "Projektismerő, dirty-aware, 21 core kontraktussal",
+    "latexide_windows": "Közös API; natív popup hiányzik",
+    "latexide_linux": "Közös API; natív popup hiányzik",
+    "backlog_ids": [
+      "LANG-02",
+      "LANG-03",
+      "LANG-04",
+      "OS-02"
+    ],
+    "source_ids": [
+      "L04",
+      "L06"
+    ]
+  },
+  {
+    "id": "C09",
+    "capability": "Csomag- és környezetkatalógus",
+    "jetbrains": "TeXiFy plugin",
+    "vscode": "LaTeX Workshop extension",
+    "latexide_mac": "Builtin kis katalógus; csomagszemantika nincs",
+    "latexide_windows": "Popup nincs",
+    "latexide_linux": "UI nincs",
+    "backlog_ids": [
+      "LANG-03"
+    ],
+    "source_ids": [
+      "L04",
+      "L06"
+    ]
+  },
+  {
+    "id": "C10",
+    "capability": "Definíció és Find Usages",
+    "jetbrains": "Nyelvfüggő IDE szemantika",
+    "vscode": "Nyelvi extension/LSP",
+    "latexide_mac": "Új get_definition/Cmd+click forrás folyamatban; saját runtime-kvalifikáció unrun; usages nincs",
+    "latexide_windows": "Közös új query forrás; native unrun",
+    "latexide_linux": "Közös új query forrás; UI nincs",
+    "backlog_ids": [
+      "LANG-06",
+      "LANG-07"
+    ],
+    "source_ids": [
+      "JB03",
+      "JB20",
+      "V06"
+    ]
+  },
+  {
+    "id": "C11",
+    "capability": "Rename és refaktorálás",
+    "jetbrains": "Nyelvfüggő IDE motor",
+    "vscode": "Nyelvi extension/LSP",
+    "latexide_mac": "Hiányzik; single-document edit API",
+    "latexide_windows": "Hiányzik",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "DOC-08",
+      "LANG-08",
+      "LANG-15"
+    ],
+    "source_ids": [
+      "JB20",
+      "L06",
+      "V06"
+    ]
+  },
+  {
+    "id": "C12",
+    "capability": "Élő inspections és quick fix",
+    "jetbrains": "Nyelvi inspections",
+    "vscode": "Nyelvi extension/code action",
+    "latexide_mac": "Builddiagnosztika van; élő checker/code action nincs",
+    "latexide_windows": "Builddiagnosztika forrás",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "LANG-05",
+      "LANG-09"
+    ],
+    "source_ids": [
+      "JB19",
+      "L06",
+      "V06"
+    ]
+  },
+  {
+    "id": "C13",
+    "capability": "Formatter és spell/grammar",
+    "jetbrains": "IDE/plugin",
+    "vscode": "Provider/extension",
+    "latexide_mac": "Formatter nincs, spell/grammar kikapcsolt",
+    "latexide_windows": "Nem paritásigazolt",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "EDT-07",
+      "EDT-08"
+    ],
+    "source_ids": [
+      "JB03",
+      "L06",
+      "V01"
+    ]
+  },
+  {
+    "id": "C14",
+    "capability": "Több kurzor, box és snippets",
+    "jetbrains": "IDE editor/live templates",
+    "vscode": "Editor/snippets",
+    "latexide_mac": "Egy selection/pending edit, első snippet-argumentum",
+    "latexide_windows": "Egy diff adapter",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "EDT-01",
+      "EDT-04"
+    ],
+    "source_ids": [
+      "JB03",
+      "V01"
+    ]
+  },
+  {
+    "id": "C15",
+    "capability": "Wrap, fold, delimiter navigáció",
+    "jetbrains": "IDE editor/nyelvi szolgáltatás",
+    "vscode": "Editor/nyelvi extension",
+    "latexide_mac": "Wrap/fold/pair szolgáltatás hiányzik",
+    "latexide_windows": "Részleges natív editor",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "EDT-02",
+      "EDT-05",
+      "EDT-12"
+    ],
+    "source_ids": [
+      "JB21",
+      "L06",
+      "V01"
+    ]
+  },
+  {
+    "id": "C16",
+    "capability": "Outline és szemantikus breadcrumb",
+    "jetbrains": "Structure és navigation",
+    "vscode": "Outline/breadcrumb provider",
+    "latexide_mac": "Path breadcrumb van, outline nincs",
+    "latexide_windows": "Path/UI forrás; outline nincs",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "NAV-03",
+      "NAV-07"
+    ],
+    "source_ids": [
+      "JB21",
+      "L05",
+      "V06"
+    ]
+  },
+  {
+    "id": "C17",
+    "capability": "Quick Open és Search Everywhere",
+    "jetbrains": "Fájl/szimbólum/akció keresés",
+    "vscode": "Quick Open/Command Palette",
+    "latexide_mac": "Substring, max100 fájl; szűk hardcoded parancslista",
+    "latexide_windows": "Fájlszűrő/menü részleges",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "NAV-05",
+      "WS-06"
+    ],
+    "source_ids": [
+      "JB03",
+      "V01",
+      "V06"
+    ]
+  },
+  {
+    "id": "C18",
+    "capability": "Projektkeresés és regex replace",
+    "jetbrains": "Projekt scope keresés/csere",
+    "vscode": "Beépített keresés/csere",
+    "latexide_mac": "Fájlnévszűrő és natív Find; tartalomkeresés nincs",
+    "latexide_windows": "Natív Find forrás; projektsearch nincs",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "NAV-01",
+      "NAV-02",
+      "EDT-09"
+    ],
+    "source_ids": [
+      "JB03",
+      "V01"
+    ]
+  },
+  {
+    "id": "C19",
+    "capability": "Több editorcsoport és ablak",
+    "jetbrains": "Split/tool windows",
+    "vscode": "Custom layout/editor groups",
+    "latexide_mac": "Egy source editor; PDF/Assistant inspector",
+    "latexide_windows": "Egy source adapter",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "WS-03"
+    ],
+    "source_ids": [
+      "JB21",
+      "V10"
+    ]
+  },
+  {
+    "id": "C20",
+    "capability": "Settings, profiles, keymaps",
+    "jetbrains": "IDE beállítások/keymap",
+    "vscode": "User/workspace/profile/keybindings",
+    "latexide_mac": "Néhány tartós preferencia; schema/keymap/profil nincs",
+    "latexide_windows": "Külön preferences, részleges parity",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "WS-04",
+      "WS-05",
+      "WS-07"
+    ],
+    "source_ids": [
+      "JB21",
+      "V08",
+      "V09"
+    ]
+  },
+  {
+    "id": "C21",
+    "capability": "Workspace és multi-root",
+    "jetbrains": "Projektmodell, termékfüggő",
+    "vscode": "Multi-root workspace",
+    "latexide_mac": "Egy root és egy workspace",
+    "latexide_windows": "Egy root forrásban",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "WS-10"
+    ],
+    "source_ids": [
+      "JB22",
+      "V16"
+    ]
+  },
+  {
+    "id": "C22",
+    "capability": "Git status/diff/history",
+    "jetbrains": "VCS integráció",
+    "vscode": "Beépített Git",
+    "latexide_mac": "Hiányzik",
+    "latexide_windows": "Hiányzik",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "GIT-01",
+      "GIT-02",
+      "GIT-06"
+    ],
+    "source_ids": [
+      "JB03",
+      "V02"
+    ]
+  },
+  {
+    "id": "C23",
+    "capability": "Stage/commit/branch/remote",
+    "jetbrains": "VCS integráció",
+    "vscode": "Git; telepített Git kell",
+    "latexide_mac": "Hiányzik",
+    "latexide_windows": "Hiányzik",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "GIT-03",
+      "GIT-04",
+      "GIT-07"
+    ],
+    "source_ids": [
+      "JB07",
+      "V02"
+    ]
+  },
+  {
+    "id": "C24",
+    "capability": "Merge/rebase/PR",
+    "jetbrains": "VCS; review providerfüggő",
+    "vscode": "Merge/Git; PR extension",
+    "latexide_mac": "Hiányzik",
+    "latexide_windows": "Hiányzik",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "GIT-05",
+      "GIT-09",
+      "GIT-11"
+    ],
+    "source_ids": [
+      "JB03",
+      "V02"
+    ]
+  },
+  {
+    "id": "C25",
+    "capability": "Integrált terminál",
+    "jetbrains": "IDE terminal",
+    "vscode": "Beépített terminal",
+    "latexide_mac": "Compiler output van; shell nincs",
+    "latexide_windows": "Compiler output forrás; shell nincs",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "DEV-01",
+      "DEV-02"
+    ],
+    "source_ids": [
+      "JB21",
+      "V13",
+      "V14"
+    ]
+  },
+  {
+    "id": "C26",
+    "capability": "Task és run configuration",
+    "jetbrains": "IDE futtatási konfiguráció",
+    "vscode": "Tasks",
+    "latexide_mac": "Compiler-specifikus supervisor",
+    "latexide_windows": "Közös supervisor, runtime unrun",
+    "latexide_linux": "Közös mag, runtime unrun",
+    "backlog_ids": [
+      "DEV-03"
+    ],
+    "source_ids": [
+      "JB09",
+      "V05"
+    ]
+  },
+  {
+    "id": "C27",
+    "capability": "Debugger és profiling",
+    "jetbrains": "Termék/nyelvfüggő motorok",
+    "vscode": "Debugger UI + adapter/extension",
+    "latexide_mac": "Nincs termékbeli debugger",
+    "latexide_windows": "Hiányzik",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "DEV-04",
+      "DEV-06"
+    ],
+    "source_ids": [
+      "JB05",
+      "JB06",
+      "V03",
+      "P02"
+    ]
+  },
+  {
+    "id": "C28",
+    "capability": "Test explorer és coverage",
+    "jetbrains": "Termék/keretrendszerfüggő",
+    "vscode": "Testing API + nyelvi extension",
+    "latexide_mac": "Az IDE saját tesztjei léteznek; termékfunkció nincs",
+    "latexide_windows": "Hiányzik",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "DEV-05",
+      "DEV-06"
+    ],
+    "source_ids": [
+      "JB07",
+      "V04"
+    ]
+  },
+  {
+    "id": "C29",
+    "capability": "HTTP és adatbázis eszközök",
+    "jetbrains": "HTTP Client/DataGrip, termék/kiadásfüggő",
+    "vscode": "Extension",
+    "latexide_mac": "Hiányzik",
+    "latexide_windows": "Hiányzik",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "DEV-07",
+      "UNI-10"
+    ],
+    "source_ids": [
+      "JB10",
+      "JB24",
+      "V06"
+    ]
+  },
+  {
+    "id": "C30",
+    "capability": "LaTeX lokális build",
+    "jetbrains": "TeXiFy + külső TeX",
+    "vscode": "LaTeX Workshop + külső TeX",
+    "latexide_mac": "Bundled TeX Live/XeLaTeX; runtime3/3 PASS",
+    "latexide_windows": "Verified installer/profil; futtatás unrun",
+    "latexide_linux": "Compiler nincs",
+    "backlog_ids": [
+      "BLD-07",
+      "BLD-09"
+    ],
+    "source_ids": [
+      "L02",
+      "L06"
+    ]
+  },
+  {
+    "id": "C31",
+    "capability": "Több engine és recipe",
+    "jetbrains": "TeXiFy konfiguráció",
+    "vscode": "LaTeX Workshop recipes",
+    "latexide_mac": "Backend tud 3 engine-t; natív/projektprofil hiányos",
+    "latexide_windows": "Szűk konfigurációs forrás",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "BLD-04",
+      "BLD-14"
+    ],
+    "source_ids": [
+      "L02",
+      "L06"
+    ]
+  },
+  {
+    "id": "C32",
+    "capability": "Auto build, függőség és cancel",
+    "jetbrains": "Plugin és IDE processzkezelés",
+    "vscode": "LaTeX Workshop + editor task",
+    "latexide_mac": "Kézi build/cancel tesztelt; függőségi freshness hibás",
+    "latexide_windows": "Processztámogatás type-check",
+    "latexide_linux": "UI/runtime nincs",
+    "backlog_ids": [
+      "BLD-01",
+      "BLD-06",
+      "BLD-12"
+    ],
+    "source_ids": [
+      "L02",
+      "V05"
+    ]
+  },
+  {
+    "id": "C33",
+    "capability": "Compiler diagnostics",
+    "jetbrains": "Plugin/Problems",
+    "vscode": "Plugin/problem matcher/Problems",
+    "latexide_mac": "Valós output, egyszerű parser; pass/range hiány",
+    "latexide_windows": "Natív problémanézet forrás",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "BLD-05",
+      "EDT-10"
+    ],
+    "source_ids": [
+      "L02",
+      "L06",
+      "V05"
+    ]
+  },
+  {
+    "id": "C34",
+    "capability": "Beágyazott PDF",
+    "jetbrains": "TeXiFy PDF Viewer plugin",
+    "vscode": "LaTeX Workshop internal viewer",
+    "latexide_mac": "PDFKit, zoom és oldal; validáció szűk",
+    "latexide_windows": "Windows.Data.Pdf rasteroldal forrás",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "BLD-03",
+      "PDF-08"
+    ],
+    "source_ids": [
+      "L03",
+      "L06"
+    ]
+  },
+  {
+    "id": "C35",
+    "capability": "Forward/inverse SyncTeX",
+    "jetbrains": "TeXiFy PDF Viewer plugin",
+    "vscode": "LaTeX Workshop internal SyncTeX",
+    "latexide_mac": "Csak fordítóflag; UI/szolgáltatás nincs",
+    "latexide_windows": "Hiányzik",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "PDF-01",
+      "PDF-02"
+    ],
+    "source_ids": [
+      "L03",
+      "L06"
+    ]
+  },
+  {
+    "id": "C36",
+    "capability": "PDF keresés és olvasási állapot",
+    "jetbrains": "Viewer/plugin képességfüggő",
+    "vscode": "LaTeX Workshop internal viewer",
+    "latexide_mac": "Kereső nincs; zoom új buildnél resetel",
+    "latexide_windows": "Text layer/keresés nincs",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "PDF-04",
+      "PDF-05"
+    ],
+    "source_ids": [
+      "L03",
+      "L06"
+    ]
+  },
+  {
+    "id": "C37",
+    "capability": "Bibliográfia és kutatói eszközök",
+    "jetbrains": "TeXiFy/BibTeX, PyCharm research ",
+    "vscode": "LaTeX Workshop és research extension",
+    "latexide_mac": "Kulcskiegészítés van; részletes bib/wordcount/import nincs",
+    "latexide_windows": "Hiányzik",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "LANG-11",
+      "RES-01",
+      "RES-03"
+    ],
+    "source_ids": [
+      "L05",
+      "L06",
+      "JB02"
+    ]
+  },
+  {
+    "id": "C38",
+    "capability": "Sablon, beadás és reprodukció",
+    "jetbrains": "Plugin/tool/profil",
+    "vscode": "Plugin/tool/profil",
+    "latexide_mac": "Kis fixture és provenance; beadási workflow nincs",
+    "latexide_windows": "Runtime bizonyíték nincs",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "RES-02",
+      "RES-08",
+      "BLD-09"
+    ],
+    "source_ids": [
+      "L02",
+      "L06"
+    ]
+  },
+  {
+    "id": "C39",
+    "capability": "Natív AI chat és valós toolállapot",
+    "jetbrains": "Air/agent, termék/providerfüggő",
+    "vscode": "AI/agent, providerfüggő",
+    "latexide_mac": "Valós Codex stream/tools/Stop, szűk alfa kvalifikáció",
+    "latexide_windows": "Panel nincs",
+    "latexide_linux": "Panel nincs",
+    "backlog_ids": [
+      "AI-02",
+      "AI-10",
+      "OS-02"
+    ],
+    "source_ids": [
+      "JB12",
+      "V15"
+    ]
+  },
+  {
+    "id": "C40",
+    "capability": "Agent undo és változásáttekintés",
+    "jetbrains": "IDE refactor/diff/tool kapcsolat",
+    "vscode": "Agent review/revert, extensionfüggő",
+    "latexide_mac": "Közös Rust undo igazolt, tranzakciódiff nincs",
+    "latexide_windows": "Közös mag, natív modellpróba nincs",
+    "latexide_linux": "UI nincs",
+    "backlog_ids": [
+      "GIT-12",
+      "AI-04",
+      "MCP-09"
+    ],
+    "source_ids": [
+      "JB20",
+      "JB23",
+      "V15"
+    ]
+  },
+  {
+    "id": "C41",
+    "capability": "MCP szerver és IDE-eszközök",
+    "jetbrains": "Beépített MCP plugin, explicit beállítás",
+    "vscode": "MCP/agent támogatás; nem azonos toolkészlet",
+    "latexide_mac": "rmcp bridge, 9 tool; statikus schema/allowlist",
+    "latexide_windows": "Rust check, runtime unrun",
+    "latexide_linux": "Portolandó transport",
+    "backlog_ids": [
+      "MCP-04",
+      "MCP-10"
+    ],
+    "source_ids": [
+      "JB23",
+      "V15"
+    ]
+  },
+  {
+    "id": "C42",
+    "capability": "Chat history és több session",
+    "jetbrains": "Air session rendszer",
+    "vscode": "Session/history/agent támogatás",
+    "latexide_mac": "Memóriabeli egy ephemeral thread",
+    "latexide_windows": "Hiányzik",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "AI-01",
+      "AI-07",
+      "AI-14"
+    ],
+    "source_ids": [
+      "JB12",
+      "V15"
+    ]
+  },
+  {
+    "id": "C43",
+    "capability": "Pluginplatform és nyelvbővítés",
+    "jetbrains": "IntelliJ Platform/Marketplace",
+    "vscode": "Extension API/Marketplace",
+    "latexide_mac": "Általános plugin/LSP host nincs",
+    "latexide_windows": "Hiányzik",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "EXT-01",
+      "EXT-02"
+    ],
+    "source_ids": [
+      "JB01",
+      "V06"
+    ]
+  },
+  {
+    "id": "C44",
+    "capability": "Remote/SSH/WSL/devcontainer",
+    "jetbrains": "Remote backend/Gateway, támogatásfüggő",
+    "vscode": "Remote Development extensions",
+    "latexide_mac": "Local IPC-only",
+    "latexide_windows": "Local forrás",
+    "latexide_linux": "Nincs UI/backendfuttatás",
+    "backlog_ids": [
+      "UNI-17"
+    ],
+    "source_ids": [
+      "JB22",
+      "V07"
+    ]
+  },
+  {
+    "id": "C45",
+    "capability": "Együttszerkesztés",
+    "jetbrains": "Code With Me plugin; kompatibilitáskorlát",
+    "vscode": "Külön collaboration extension",
+    "latexide_mac": "Nincs CRDT/OT vagy többfelhasználós modell",
+    "latexide_windows": "Hiányzik",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "UNI-18"
+    ],
+    "source_ids": [
+      "JB25",
+      "L05"
+    ]
+  },
+  {
+    "id": "C46",
+    "capability": "Hozzáférhetőség",
+    "jetbrains": "IDE/editor/OS képességek",
+    "vscode": "Keyboard/screen reader/high contrast",
+    "latexide_mac": "Néhány label/kontraszt/fókuszteszt; teljes kvalifikáció unrun",
+    "latexide_windows": "Narrator runtime unrun",
+    "latexide_linux": "Orca/UI nincs",
+    "backlog_ids": [
+      "QA-06",
+      "QA-07"
+    ],
+    "source_ids": [
+      "JB21",
+      "V12"
+    ]
+  },
+  {
+    "id": "C47",
+    "capability": "Trusted workspace és izoláció",
+    "jetbrains": "IDE/MCP/plugin policy",
+    "vscode": "Restricted Mode, nem teljes sandbox",
+    "latexide_mac": "Agent szűkítve; compiler env_clear nem OS sandbox",
+    "latexide_windows": "Joghatár runtime unrun",
+    "latexide_linux": "Joghatár nincs kvalifikálva",
+    "backlog_ids": [
+      "SEC-01",
+      "SEC-02",
+      "SEC-03"
+    ],
+    "source_ids": [
+      "JB23",
+      "V11"
+    ]
+  },
+  {
+    "id": "C48",
+    "capability": "Telepítés, update és rollback",
+    "jetbrains": "Termékdisztribúció/toolbox",
+    "vscode": "Termékdisztribúció",
+    "latexide_mac": "Helyi debug/ad-hoc app; release/install/update hiány",
+    "latexide_windows": "Native build/installer unrun",
+    "latexide_linux": "Nincs termék",
+    "backlog_ids": [
+      "QA-10",
+      "QA-11",
+      "QA-12"
+    ],
+    "source_ids": [
+      "JB00",
+      "JB01"
+    ]
+  },
+  {
+    "id": "C49",
+    "capability": "Nyelvek teljes szakterületi támogatása",
+    "jetbrains": "Külön szakosított IDE-k",
+    "vscode": "Nyelvi/debugger/framework extensions",
+    "latexide_mac": "LaTeXre korlátos saját intelligencia",
+    "latexide_windows": "LaTeX mag, UI részleges",
+    "latexide_linux": "UI nincs",
+    "backlog_ids": [
+      "UNI-01",
+      "UNI-02",
+      "UNI-03",
+      "UNI-04",
+      "UNI-05",
+      "UNI-06",
+      "UNI-07",
+      "UNI-08",
+      "UNI-09"
+    ],
+    "source_ids": [
+      "JB01",
+      "JB02",
+      "JB03",
+      "JB04",
+      "JB05",
+      "JB06",
+      "JB07",
+      "JB08",
+      "JB09",
+      "V06"
+    ]
+  },
+  {
+    "id": "C50",
+    "capability": "SQL, DSL, embedded, game, docs",
+    "jetbrains": "DataGrip/MPS/CLion/Rider/Writerside",
+    "vscode": "Szakosított extensions/tools",
+    "latexide_mac": "Nincsenek ilyen termékvertikumok",
+    "latexide_windows": "Hiányzik",
+    "latexide_linux": "Hiányzik",
+    "backlog_ids": [
+      "UNI-10",
+      "UNI-11",
+      "UNI-12",
+      "UNI-14",
+      "UNI-15",
+      "UNI-16"
+    ],
+    "source_ids": [
+      "JB10",
+      "JB11",
+      "JB06",
+      "JB05",
+      "JB17",
+      "JB14",
+      "V06"
+    ]
+  }
+]

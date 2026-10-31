@@ -1,0 +1,8 @@
+{
+  "distribution": "TeX Live 2026",
+  "packages": ["latexmk", "xetex", "latex-bin", "fontspec", "lm", "amsmath", "amsfonts"],
+  "dependency_resolution": "Official TeX Live tlmgr with signed repository and per-container checksum verification",
+  "macos_platform": "universal-darwin",
+  "windows_platform": "windows",
+  "documentation_and_source_files": false
+}

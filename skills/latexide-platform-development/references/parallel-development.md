@@ -1,0 +1,13 @@
+# Parallel package execution and repository onboarding
+
+Read `docs/development/README.md`, `docs/development/BASELINE_DELTA.md` and `docs/superpowers/specs/2026-10-31-parallel-development-design.md`. The 44 plans live under `docs/superpowers/plans/2026-10-31-parallel/`; machine ownership is in `docs/development/packages.json`. All 226 requirements have exactly one primary package. This is a planning decomposition, not evidence that the services exist.
+
+P00 establishes the planned contracts crate and fixture gate. Other packages use separate branches and exclusive `owned_paths`; existing shared runtime, editor/store, registry, Cargo/lockfile, handoff and ledger changes are integrated by P00 from `integration/requests/<ID>.json`. Never modify another package's files concurrently. `integration_neighbors` are dependency owners, not a package DAG; acceptance follows the original acyclic requirement graph, using fake providers only for isolated development.
+
+Preserve the single authoritative Rust state, expected revisions, UTF-16 coordinates, direct agent edits, explicit save and undo after save. A port/DTO is not automatically a newly allowed MCP tool. Shared types must avoid the existing protocol→core dependency becoming a cycle; the planned contracts crate is independent of both.
+
+Before implementing a package, reconcile the current handoff with the dated audit. In particular, own macro/ref/cite Cmd-click is already implemented; P06 adds remaining scope/peek/history behavior. Do not reclassify the earlier audit's tests as current source verification.
+
+Use `python3 scripts/validate_development_packages.py` after plan changes. Edit `docs/development/package-specs.json`, regenerate with `python3 scripts/build_development_packages.py`; never hand-edit generated plans. This checks ownership/coverage/artifact identity, not product behavior. Results go in `docs/development/results/<ID>.md` with source SHA, commands, actual outcomes and platform scope; P00 updates shared documentation from those records.
+
+Repository is `szotya/LaTeXIDE`, private. Read `docs/development/REPOSITORY.md` for clean-clone/bootstrap and CI scope. Raw historical evidence and local `.codex` metadata stay local; `docs/development/LOCAL_EVIDENCE.md` records the exact source/public-provenance exceptions and artifact hashes. Runtime credentials, `.latexide`, local toolchains and build products are not versioned. Historical evidence is not a fresh clone test. Mac control tests/Rust checks do not qualify Windows WinUI or Linux desktop. U01–U20 are opt-in vertical programs with their own capability matrices, not student-release blockers.

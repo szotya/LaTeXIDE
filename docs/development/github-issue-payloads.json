@@ -1,0 +1,404 @@
+[
+  {
+    "package_id": "P00",
+    "title": "[P00] Szerződések és integrációgazda",
+    "body": "Terv: [P00 — Szerződések és integrációgazda](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p00-integration.md)\n\nVersionált DTO-kat, izolált tesztfixture-öket és egyetlen bekötési folyamatot ad minden párhuzamos csomagnak.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: QA-08, QA-14, OS-10\n\nIndulás: környezet-/tesztfeltárással most; bekötéshez contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "P01",
+    "title": "[P01] Recovery, bufferéletciklus és helyi előzmény",
+    "body": "Terv: [P01 — Recovery, bufferéletciklus és helyi előzmény](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p01-recovery.md)\n\nFolyamatkiesés után helyreállítja a nyugtázott, el nem mentett munkát, és biztonságosan kezeli a megnyitott puffereket.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: DOC-01, DOC-02, DOC-03, DOC-05, DOC-07, DOC-13, DOC-14, DOC-15, DOC-16, WS-02\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core",
+      "priority/P0"
+    ]
+  },
+  {
+    "package_id": "P02",
+    "title": "[P02] Atomi fájlműveletek és szerkesztési tranzakciók",
+    "body": "Terv: [P02 — Atomi fájlműveletek és szerkesztési tranzakciók](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p02-transactions.md)\n\nEgységes, visszavonható többfájlos szerkesztést, fájlműveleteket és tartós mentést ad.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: DOC-04, DOC-06, DOC-08, DOC-09, DOC-10, DOC-11, DOC-12\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "P03",
+    "title": "[P03] Aszinkron runtime, IPC, FFI és MCP",
+    "body": "Terv: [P03 — Aszinkron runtime, IPC, FFI és MCP](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p03-runtime.md)\n\nHatáridős, többklienses, típusos és megszakítható szolgáltatáshatárt épít a közös runtime köré.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: MCP-01, MCP-02, MCP-03, MCP-04, MCP-05, MCP-06, MCP-07, MCP-08, MCP-09, MCP-10\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "P04",
+    "title": "[P04] VFS, fájlfigyelés és projektmanifest",
+    "body": "Terv: [P04 — VFS, fájlfigyelés és projektmanifest](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p04-vfs.md)\n\nFriss, kanonikus projektképet és dirty-overlayt ad keresésnek, nyelvi szolgáltatásnak és buildnek.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: WS-01, WS-10, NAV-12, OS-07\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "P05",
+    "title": "[P05] Inkrementális LaTeX nyelvi motor és refaktorálás",
+    "body": "Terv: [P05 — Inkrementális LaTeX nyelvi motor és refaktorálás](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p05-language.md)\n\nA meglévő lexikális kiegészítést explicit lefedettségű szerkezeti/scope modellel és biztonságos refaktorálással egészíti ki.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: LANG-01, LANG-02, LANG-03, LANG-04, LANG-05, LANG-07, LANG-08, LANG-09, LANG-10, LANG-12, LANG-13, LANG-14, LANG-15, LANG-16, LANG-17, LANG-18\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "P06",
+    "title": "[P06] Projektkeresés és szemantikus navigáció",
+    "body": "Terv: [P06 — Projektkeresés és szemantikus navigáció](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p06-navigation.md)\n\nEgységes keresést, outline-t, vissza/előre történetet és a meglévő definícióugrás bővítését adja.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: NAV-01, NAV-02, NAV-03, NAV-04, NAV-05, NAV-06, NAV-07, NAV-08, NAV-09, NAV-10, NAV-11, LANG-06\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "P07",
+    "title": "[P07] Natív szerkesztői termelékenység",
+    "body": "Terv: [P07 — Natív szerkesztői termelékenység](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p07-editor.md)\n\nBillentyűzettel és IME-vel megbízható, testreszabható írási/szerkesztési workflow-kat épít.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: EDT-01, EDT-02, EDT-03, EDT-04, EDT-05, EDT-06, EDT-07, EDT-08, EDT-09, EDT-10, EDT-11, EDT-12, EDT-14, EDT-15, EDT-16\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "P08",
+    "title": "[P08] Beállítások, parancsok és munkaterület",
+    "body": "Terv: [P08 — Beállítások, parancsok és munkaterület](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p08-workspace.md)\n\nEgy koherens, tartósan személyre szabható natív munkaterületet épít egységes parancs- és fókuszmodellel.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: WS-03, WS-04, WS-05, WS-06, WS-07, WS-08, WS-09, WS-11, WS-12, WS-13, WS-14, OS-08\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "P09",
+    "title": "[P09] Konzisztens fordítás és diagnosztika",
+    "body": "Terv: [P09 — Konzisztens fordítás és diagnosztika](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p09-build.md)\n\nValódi, teljes függőségpillanatképhez kötött PDF-et és megbízható compilerfolyamatot ad.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: BLD-01, BLD-02, BLD-03, BLD-04, BLD-05, BLD-06, BLD-07, BLD-08, BLD-09, BLD-10, BLD-11, BLD-12, BLD-13, BLD-14, BLD-15, BLD-16\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core",
+      "priority/P0"
+    ]
+  },
+  {
+    "package_id": "P10",
+    "title": "[P10] PDF munkafolyamat és SyncTeX",
+    "body": "Terv: [P10 — PDF munkafolyamat és SyncTeX](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p10-pdf.md)\n\nRevízióhelyes kétirányú forrás–PDF navigációt és teljes natív PDF-munkafolyamatot ad.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: PDF-01, PDF-02, PDF-03, PDF-04, PDF-05, PDF-06, PDF-07, PDF-08, PDF-09, PDF-10, PDF-11, PDF-12\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "P11",
+    "title": "[P11] Írás, sablonok és publikációs export",
+    "body": "Terv: [P11 — Írás, sablonok és publikációs export](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p11-research.md)\n\nSablontól a beadásig reprodukálható kutatói/egyetemi dokumentumfolyamatot ad.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: RES-01, RES-02, RES-05, RES-06, RES-07, RES-08, RES-09, RES-10, RES-11, RES-12\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "P12",
+    "title": "[P12] BibTeX adatmodell és kutatói import",
+    "body": "Terv: [P12 — BibTeX adatmodell és kutatói import](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p12-bibliography.md)\n\nStrukturált, dirty bufferrel következetes bibliográfiát és ellenőrizhető külső importot ad.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: LANG-11, RES-03, RES-04\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "P13",
+    "title": "[P13] Git, diff, merge és agentváltozások",
+    "body": "Terv: [P13 — Git, diff, merge és agentváltozások](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p13-git.md)\n\nA munkakönyvtár, index, HEAD és agentváltozások átlátható, biztonságos verziókezelését adja.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: GIT-01, GIT-02, GIT-03, GIT-04, GIT-05, GIT-06, GIT-07, GIT-08, GIT-09, GIT-10, GIT-11, GIT-12, EDT-13\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "P14",
+    "title": "[P14] Asszisztens, sessiontörténet és provideradapter",
+    "body": "Terv: [P14 — Asszisztens, sessiontörténet és provideradapter](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p14-assistant.md)\n\nTartós, újracsatlakoztatható és tényleges eszközállapotú natív agentmunkafolyamatot ad.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: AI-01, AI-02, AI-03, AI-04, AI-05, AI-06, AI-07, AI-08, AI-09, AI-10, AI-11, AI-12, AI-13, AI-14\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "P15",
+    "title": "[P15] LSP, plugin SDK és mellékfájlok",
+    "body": "Terv: [P15 — LSP, plugin SDK és mellékfájlok](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p15-extensions.md)\n\nKorlátos, verziózott bővítési határt és külső nyelvi szolgáltatást ad.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: EXT-01, EXT-02, EXT-03, EXT-04, EXT-05, EXT-06, EXT-07, EXT-08, DEV-08, DEV-10\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "P16",
+    "title": "[P16] Integrált terminál és shellprofilok",
+    "body": "Terv: [P16 — Integrált terminál és shellprofilok](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p16-terminal.md)\n\nValódi PTY/ConPTY terminált ad korlátozott, átlátható profilokkal.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: DEV-01, DEV-02\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "P17",
+    "title": "[P17] Task, teszt, debugger és fejlesztői eszközök",
+    "body": "Terv: [P17 — Task, teszt, debugger és fejlesztői eszközök](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p17-developer-tools.md)\n\nBővíthető run/task/test/debug workflow-t épít a research mellékkód és a választható nyelvi vertikumok számára.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: DEV-03, DEV-04, DEV-05, DEV-06, DEV-07, DEV-09\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "P18",
+    "title": "[P18] Compilerizoláció, trust és adatvédelem",
+    "body": "Terv: [P18 — Compilerizoláció, trust és adatvédelem](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p18-security.md)\n\nTényleges, tesztelt fájlrendszer-/hálózathatárt és egységes titok-/sessionvédelmet ad.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: SEC-01, SEC-02, SEC-03, SEC-04, SEC-05, SEC-06, SEC-07, SEC-08, SEC-09, SEC-10\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core",
+      "priority/P0"
+    ]
+  },
+  {
+    "package_id": "P19",
+    "title": "[P19] Fault injection, korpusz és protokollminőség",
+    "body": "Terv: [P19 — Fault injection, korpusz és protokollminőség](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p19-quality-corpus.md)\n\nDeterminista hiba-/kiesési tesztekkel és reprezentatív LaTeX-korpusszal bizonyítja az adat- és protokollszerződéseket.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: QA-01, QA-02, QA-05, QA-09\n\nIndulás: környezet-/tesztfeltárással most; bekötéshez contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core",
+      "priority/P0"
+    ]
+  },
+  {
+    "package_id": "P20",
+    "title": "[P20] Kiadási minősítés, migráció és csomagolás",
+    "body": "Terv: [P20 — Kiadási minősítés, migráció és csomagolás](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p20-release.md)\n\nReprodukálható, aláírt és migrációval kipróbált kiadási folyamatot hoz létre.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: QA-10, QA-11, QA-12, QA-13, QA-16, OS-06\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core",
+      "priority/P0"
+    ]
+  },
+  {
+    "package_id": "P21",
+    "title": "[P21] Windows 11 x64 natív minősítés és paritás",
+    "body": "Terv: [P21 — Windows 11 x64 natív minősítés és paritás](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p21-windows.md)\n\nValódi Windows build/link/indítás és Intel/AMD workflow-eredményt ad, majd pótolja a natív paritást.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: OS-01, OS-02, OS-03, OS-09\n\nIndulás: környezet-/tesztfeltárással most; bekötéshez contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core",
+      "priority/P0"
+    ]
+  },
+  {
+    "package_id": "P22",
+    "title": "[P22] Linux platformdöntés és natív port",
+    "body": "Terv: [P22 — Linux platformdöntés és natív port](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p22-linux.md)\n\nBizonyíték alapján választ Linux UI-t és külön bootstrap/runtime/desktop workflow-t épít.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: OS-04, OS-05\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "P23",
+    "title": "[P23] Teljesítmény, hozzáférhetőség és használhatóság",
+    "body": "Terv: [P23 — Teljesítmény, hozzáférhetőség és használhatóság](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/p23-performance-accessibility.md)\n\nÖsszehasonlítható teljesítmény- és valós billentyűzetes/képernyőolvasós workflow-bizonyítékot ad.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: QA-03, QA-04, QA-06, QA-07, QA-15\n\nIndulás: környezet-/tesztfeltárással most; bekötéshez contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n",
+    "labels": [
+      "status/planned",
+      "package/core"
+    ]
+  },
+  {
+    "package_id": "U01",
+    "title": "[U01] JVM / IntelliJ",
+    "body": "Terv: [U01 — JVM / IntelliJ](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u01-jvm.md)\n\nKülön választható technológiai programot épít: Maven/Gradle multimodule, Java/Kotlin, dependency graph, JUnit és enterprise framework navigation.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-01\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U02",
+    "title": "[U02] Python / PyCharm / DataSpell",
+    "body": "Terv: [U02 — Python / PyCharm / DataSpell](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u02-python-data.md)\n\nKülön választható technológiai programot épít: venv/conda, Python typing/debug/pytest, notebook kernel és dataframe inspect.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-02\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U03",
+    "title": "[U03] JavaScript/TypeScript / WebStorm",
+    "body": "Terv: [U03 — JavaScript/TypeScript / WebStorm](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u03-web.md)\n\nKülön választható technológiai programot épít: tsconfig/workspace, JS/TS/Vue/React, browser/node debug, npm test.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-03\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U04",
+    "title": "[U04] PHP / PhpStorm",
+    "body": "Terv: [U04 — PHP / PhpStorm](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u04-php.md)\n\nKülön választható technológiai programot épít: Composer/autoload, PHP nyelvi motor, Xdebug, PHPUnit és framework routing.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-04\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U05",
+    "title": "[U05] .NET / Rider",
+    "body": "Terv: [U05 — .NET / Rider](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u05-dotnet.md)\n\nKülön választható technológiai programot épít: MSBuild solution, C#/F#, NuGet, debugger, tesztek és frameworkkorpusz.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-05\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U06",
+    "title": "[U06] C/C++ / CLion",
+    "body": "Terv: [U06 — C/C++ / CLion](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u06-cpp.md)\n\nKülön választható technológiai programot épít: CMake/compile_commands, Clang toolchain, GDB/LLDB, CTest, toolchain-választás.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-06\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U07",
+    "title": "[U07] Go / GoLand",
+    "body": "Terv: [U07 — Go / GoLand](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u07-go.md)\n\nKülön választható technológiai programot épít: Go modules/workspace, gopls, delve, go test és race eredmény.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-07\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U08",
+    "title": "[U08] Rust / RustRover",
+    "body": "Terv: [U08 — Rust / RustRover](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u08-rust.md)\n\nKülön választható technológiai programot épít: Cargo workspace/features, rust-analyzer, debugger, clippy, test/bench.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-08\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U09",
+    "title": "[U09] Ruby/Rails / RubyMine",
+    "body": "Terv: [U09 — Ruby/Rails / RubyMine](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u09-ruby.md)\n\nKülön választható technológiai programot épít: Ruby interpreter/Bundler, Rails route/model, debugger, RSpec/Minitest.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-09\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U10",
+    "title": "[U10] SQL / DataGrip",
+    "body": "Terv: [U10 — SQL / DataGrip](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u10-database.md)\n\nKülön választható technológiai programot épít: Read-only kapcsolatprofil, séma introspection, SQL dialektus, query/explain és migráció.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-10\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U11",
+    "title": "[U11] Embedded/automotive",
+    "body": "Terv: [U11 — Embedded/automotive](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u11-embedded.md)\n\nKülön választható technológiai programot épít: Cross-toolchain, probe/device mapping, flash/debug, SVD/RTOS és safety-korpusz.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-11\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U12",
+    "title": "[U12] Játékfejlesztés / Rider",
+    "body": "Terv: [U12 — Játékfejlesztés / Rider](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u12-games.md)\n\nKülön választható technológiai programot épít: Unity/Unreal solution, engine/version mapping, attach/debug és asset linkage.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-12\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U13",
+    "title": "[U13] Apple/mobil és AppCode-örökség",
+    "body": "Terv: [U13 — Apple/mobil és AppCode-örökség](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u13-mobile.md)\n\nKülön választható technológiai programot épít: Xcode/Swift/Kotlin/Android projektek, SDK/simulator/device, signing és debugger.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-13\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U14",
+    "title": "[U14] DSL / MPS",
+    "body": "Terv: [U14 — DSL / MPS](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u14-dsl.md)\n\nKülön választható technológiai programot épít: Projectional model, persistence/migration, generator, undo és language workbench.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-14\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U15",
+    "title": "[U15] Docs-as-code / Writerside",
+    "body": "Terv: [U15 — Docs-as-code / Writerside](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u15-docs-as-code.md)\n\nKülön választható technológiai programot épít: Topic/link/snippet modell, preview, broken-link és site build.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-15\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U16",
+    "title": "[U16] QA automatizálás / Aqua-örökség",
+    "body": "Terv: [U16 — QA automatizálás / Aqua-örökség](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u16-qa-automation.md)\n\nKülön választható technológiai programot épít: Playwright/Selenium/API runner, fixture/env, trace/report és flaky triage.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-16\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U17",
+    "title": "[U17] Remote / WSL / devcontainer / web",
+    "body": "Terv: [U17 — Remote / WSL / devcontainer / web](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u17-remote.md)\n\nKülön választható technológiai programot épít: Remote authority, reconnect/offline, filesystem/credential boundary és latency budget.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-17\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U18",
+    "title": "[U18] Valós idejű együttszerkesztés",
+    "body": "Terv: [U18 — Valós idejű együttszerkesztés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u18-collaboration.md)\n\nKülön választható technológiai programot épít: CRDT/OT választás, identity/presence, offline merge és direct-agent undo szemantika.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-18\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U19",
+    "title": "[U19] Enterprise és szervezeti szabályok",
+    "body": "Terv: [U19 — Enterprise és szervezeti szabályok](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u19-enterprise.md)\n\nKülön választható technológiai programot épít: Policy distribution, SSO/identity, audit/admin, plugin/update policy és retention.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-19\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  },
+  {
+    "package_id": "U20",
+    "title": "[U20] Cloud/deployment és teljes tool-ökoszisztéma",
+    "body": "Terv: [U20 — Cloud/deployment és teljes tool-ökoszisztéma](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/plans/2026-10-31-parallel/u20-cloud.md)\n\nKülön választható technológiai programot épít: Kubernetes/cloud resource model, secrets, deployment dry-run/rollback és provideradapterek.\n\nÁllapot: **planned**, termékimplementáció ebben a repóbehozatalban nem történt.\n\nKövetelmények: UNI-20\n\nIndulás: P00:contract-v1\n\n- [ ] Saját port/fixture és RED→GREEN első szelet\n- [ ] Követelményenkénti acceptance és valódi provideres bekötés\n- [ ] Eredménynapló, integration-manifest és platformonkénti unrun/PASS\n- [ ] P00 handoff/ledger/skill átvezetés\n\n[Fájltulajdon és integrációs szerződés](https://github.com/szotya/LaTeXIDE/blob/main/docs/superpowers/specs/2026-10-31-parallel-development-design.md). Csak saját owned_paths írhatók; közös fájlt P00 integrál. Az integration_neighbors nem csomag-DAG.\n\nVálasztható technológiai program; nem a hallgatói LaTeX-kiadás blokkolója. A teljes vertikumhoz capability-mátrix és tényleges korpusz szükséges.\n",
+    "labels": [
+      "status/planned",
+      "package/optional"
+    ]
+  }
+]

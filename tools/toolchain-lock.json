@@ -1,0 +1,63 @@
+{
+  "schema": 1,
+  "assets": [
+    {
+      "id": "rustc-aarch64-apple-darwin",
+      "kind": "rust-component",
+      "version": "1.99.1",
+      "url": "https://static.rust-lang.org/dist/2026-10-15/rustc-1.99.1-aarch64-apple-darwin.tar.xz",
+      "filename": "rustc-1.99.1-aarch64-apple-darwin.tar.xz",
+      "sha256": "23948a0a9c162fd2952defb3fb0462c44e8fcfd1a4ab8a274a1e1bdb2cf810a3"
+    },
+    {
+      "id": "cargo-aarch64-apple-darwin",
+      "kind": "rust-component",
+      "version": "1.99.1",
+      "url": "https://static.rust-lang.org/dist/2026-10-15/cargo-1.99.1-aarch64-apple-darwin.tar.xz",
+      "filename": "cargo-1.99.1-aarch64-apple-darwin.tar.xz",
+      "sha256": "685e563d94db1f003ffa5f5831439eec02569b9950b69867953c8213269c1eaf"
+    },
+    {
+      "id": "rust-std-aarch64-apple-darwin",
+      "kind": "rust-component",
+      "version": "1.99.1",
+      "url": "https://static.rust-lang.org/dist/2026-10-15/rust-std-1.99.1-aarch64-apple-darwin.tar.xz",
+      "filename": "rust-std-1.99.1-aarch64-apple-darwin.tar.xz",
+      "sha256": "fe79d6ab5a0321de26463999d8c112b8ad3eafbcbcf822d66a2300b45dde1031"
+    },
+    {
+      "id": "rustfmt-preview-aarch64-apple-darwin",
+      "kind": "rust-component",
+      "version": "1.99.1",
+      "url": "https://static.rust-lang.org/dist/2026-10-15/rustfmt-1.99.1-aarch64-apple-darwin.tar.xz",
+      "filename": "rustfmt-1.99.1-aarch64-apple-darwin.tar.xz",
+      "sha256": "8b80dda570f140ee9ced8799294e812bba847a025f185bae4cba85a2ba235570"
+    },
+    {
+      "id": "rust-std-x86_64-pc-windows-msvc",
+      "kind": "rust-component",
+      "version": "1.99.1",
+      "url": "https://static.rust-lang.org/dist/2026-10-15/rust-std-1.99.1-x86_64-pc-windows-msvc.tar.xz",
+      "filename": "rust-std-1.99.1-x86_64-pc-windows-msvc.tar.xz",
+      "sha256": "4fe09430ded40b8b3092b49f0a651178eb1f8154ef4d1f1a73f2a3595b2d956f"
+    },
+    {
+      "id": "tectonic-macos-arm64",
+      "kind": "compiler",
+      "version": "0.17.0",
+      "platform": "macos-arm64",
+      "url": "https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%400.17.0/tectonic-0.17.0-aarch64-apple-darwin.tar.gz",
+      "filename": "tectonic-0.17.0-aarch64-apple-darwin.tar.gz",
+      "sha256": "a3f1cac7c5678f01661a92212f58480ae3b0634115d880dbc59e2953ded45667"
+    },
+    {
+      "id": "tectonic-windows-x64",
+      "kind": "compiler",
+      "version": "0.17.0",
+      "platform": "windows-x64",
+      "url": "https://github.com/tectonic-typesetting/tectonic/releases/download/tectonic%400.17.0/tectonic-0.17.0-x86_64-pc-windows-msvc.zip",
+      "filename": "tectonic-0.17.0-x86_64-pc-windows-msvc.zip",
+      "sha256": "f61ce51f0b0ade1015b7de7ef368541c5424e9756ecbd0d7af97d6d48030845f"
+    }
+  ]
+}

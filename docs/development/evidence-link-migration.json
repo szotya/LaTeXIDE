@@ -1,0 +1,167 @@
+[
+  {
+    "file": "docs/DEVELOPER_HANDOFF.md",
+    "old_target": "../evidence/acquisition/compiler-review/texlive-runtime-manifest.json",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/DEVELOPER_HANDOFF.md",
+    "old_target": "../evidence/acquisition/compiler-review/final-verification.json",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/snapshot-delta.json",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/snapshot-candidate.json",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/completion-enter-2026-10-31/native-tests.log",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/visual-inspection.json",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/rust-tests.log",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/ffi-build.log",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/swift-tests-final.log",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/swift-tests-final-result.json",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/ffi-contract.log",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/ipc-tests.log",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/mcp-tests.log",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/compiler-runtime-tests.log",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/python-units.log",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/windows-rust-check.log",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/windows-source-check.log",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/portable-cpp-results.json",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/existing-app-signature.log",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/audit-probe-results.json",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/completion-timing.log",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/audit-probes.log",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ui-redesign/workspace-graphite-dark.png",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/project-completion-2026-10-31/project-reference-dark.png",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/source-manifest.json",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/native-verification-inputs.json",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/audit-probe-results.json",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/verification-results.json",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/ipc-enabled-verification-results.json",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/swift-tests-final-result.json",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/additional-check-results.json",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/artifact-validation.json",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  },
+  {
+    "file": "docs/IDE_AUDIT_2026-10-31.md",
+    "old_target": "../evidence/ide-audit-2026-10-31/skill-validation.log",
+    "new_target": "development/LOCAL_EVIDENCE.md#retained-locally"
+  }
+]

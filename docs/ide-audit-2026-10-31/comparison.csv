@@ -1,0 +1,51 @@
+﻿id,capability,jetbrains,vscode,latexide_mac,latexide_windows,latexide_linux,backlog_ids,source_ids
+C01,"Unicode, BOM, LF/CRLF",IDE editor,Beépített editor,Tesztelt UTF-8/BOM/LF/CRLF; más kódolás hiba,"Adapterforrás, célfuttatás unrun",Nincs UI,DOC-11,JB21; V01
+C02,Közös undo/redo,IDE előzmény,Beépített editor; agentkapcsolat függő,Rust user/agent/save utáni undo tesztelt; 256 bejegyzés,Közös mag + adapterforrás,Csak hordozandó mag,DOC-04; MCP-09,JB20; V01
+C03,Crash recovery és hot exit,Local History és helyreállítás,Hot Exit,Nem mentett runtime állapot nem tartós,Nem igazolt,Hiányzik,DOC-01; QA-01,JB18; V01
+C04,Tartós local history,"Beépített, korlátos megőrzéssel",Timeline/local history,Hiányzik,Hiányzik,Hiányzik,DOC-05,JB18; V02
+C05,Fájl create/rename/delete,Projektműveletek,Explorer,Open/save van; fájléletciklus API hiányzik,Hasonló forrásszintű korlát,Hiányzik,DOC-06; DOC-09,JB10; V01
+C06,Nagy projekt és sok dokumentum,Projektindex és szerkesztők,Workspace/editor,10 retained doc; 1 MiB/file; agentolvasás is limitet fogyaszt,Azonos maglimit,"Azonos maglimit, UI nincs",DOC-02; DOC-03; DOC-12,JB01; V16
+C07,Lexikális színezés és theme,"Beépített, nyelvfüggő",Beépített/nyelvi extension,"Tesztelt lexer, 4 család x light/dark",Közös token/paletta és natív forrás,UI nincs,WS-14; LANG-14,JB21; V06
+C08,LaTeX saját makró/ref/cite completion,TeXiFy kompatibilis hostban,LaTeX Workshop extension,"Projektismerő, dirty-aware, 21 core kontraktussal",Közös API; natív popup hiányzik,Közös API; natív popup hiányzik,LANG-02; LANG-03; LANG-04; OS-02,L04; L06
+C09,Csomag- és környezetkatalógus,TeXiFy plugin,LaTeX Workshop extension,Builtin kis katalógus; csomagszemantika nincs,Popup nincs,UI nincs,LANG-03,L04; L06
+C10,Definíció és Find Usages,Nyelvfüggő IDE szemantika,Nyelvi extension/LSP,Új get_definition/Cmd+click forrás folyamatban; saját runtime-kvalifikáció unrun; usages nincs,Közös új query forrás; native unrun,Közös új query forrás; UI nincs,LANG-06; LANG-07,JB03; JB20; V06
+C11,Rename és refaktorálás,Nyelvfüggő IDE motor,Nyelvi extension/LSP,Hiányzik; single-document edit API,Hiányzik,Hiányzik,DOC-08; LANG-08; LANG-15,JB20; L06; V06
+C12,Élő inspections és quick fix,Nyelvi inspections,Nyelvi extension/code action,Builddiagnosztika van; élő checker/code action nincs,Builddiagnosztika forrás,Hiányzik,LANG-05; LANG-09,JB19; L06; V06
+C13,Formatter és spell/grammar,IDE/plugin,Provider/extension,"Formatter nincs, spell/grammar kikapcsolt",Nem paritásigazolt,Hiányzik,EDT-07; EDT-08,JB03; L06; V01
+C14,"Több kurzor, box és snippets",IDE editor/live templates,Editor/snippets,"Egy selection/pending edit, első snippet-argumentum",Egy diff adapter,Hiányzik,EDT-01; EDT-04,JB03; V01
+C15,"Wrap, fold, delimiter navigáció",IDE editor/nyelvi szolgáltatás,Editor/nyelvi extension,Wrap/fold/pair szolgáltatás hiányzik,Részleges natív editor,Hiányzik,EDT-02; EDT-05; EDT-12,JB21; L06; V01
+C16,Outline és szemantikus breadcrumb,Structure és navigation,Outline/breadcrumb provider,"Path breadcrumb van, outline nincs",Path/UI forrás; outline nincs,Hiányzik,NAV-03; NAV-07,JB21; L05; V06
+C17,Quick Open és Search Everywhere,Fájl/szimbólum/akció keresés,Quick Open/Command Palette,"Substring, max100 fájl; szűk hardcoded parancslista",Fájlszűrő/menü részleges,Hiányzik,NAV-05; WS-06,JB03; V01; V06
+C18,Projektkeresés és regex replace,Projekt scope keresés/csere,Beépített keresés/csere,Fájlnévszűrő és natív Find; tartalomkeresés nincs,Natív Find forrás; projektsearch nincs,Hiányzik,NAV-01; NAV-02; EDT-09,JB03; V01
+C19,Több editorcsoport és ablak,Split/tool windows,Custom layout/editor groups,Egy source editor; PDF/Assistant inspector,Egy source adapter,Hiányzik,WS-03,JB21; V10
+C20,"Settings, profiles, keymaps",IDE beállítások/keymap,User/workspace/profile/keybindings,Néhány tartós preferencia; schema/keymap/profil nincs,"Külön preferences, részleges parity",Hiányzik,WS-04; WS-05; WS-07,JB21; V08; V09
+C21,Workspace és multi-root,"Projektmodell, termékfüggő",Multi-root workspace,Egy root és egy workspace,Egy root forrásban,Hiányzik,WS-10,JB22; V16
+C22,Git status/diff/history,VCS integráció,Beépített Git,Hiányzik,Hiányzik,Hiányzik,GIT-01; GIT-02; GIT-06,JB03; V02
+C23,Stage/commit/branch/remote,VCS integráció,Git; telepített Git kell,Hiányzik,Hiányzik,Hiányzik,GIT-03; GIT-04; GIT-07,JB07; V02
+C24,Merge/rebase/PR,VCS; review providerfüggő,Merge/Git; PR extension,Hiányzik,Hiányzik,Hiányzik,GIT-05; GIT-09; GIT-11,JB03; V02
+C25,Integrált terminál,IDE terminal,Beépített terminal,Compiler output van; shell nincs,Compiler output forrás; shell nincs,Hiányzik,DEV-01; DEV-02,JB21; V13; V14
+C26,Task és run configuration,IDE futtatási konfiguráció,Tasks,Compiler-specifikus supervisor,"Közös supervisor, runtime unrun","Közös mag, runtime unrun",DEV-03,JB09; V05
+C27,Debugger és profiling,Termék/nyelvfüggő motorok,Debugger UI + adapter/extension,Nincs termékbeli debugger,Hiányzik,Hiányzik,DEV-04; DEV-06,JB05; JB06; V03; P02
+C28,Test explorer és coverage,Termék/keretrendszerfüggő,Testing API + nyelvi extension,Az IDE saját tesztjei léteznek; termékfunkció nincs,Hiányzik,Hiányzik,DEV-05; DEV-06,JB07; V04
+C29,HTTP és adatbázis eszközök,"HTTP Client/DataGrip, termék/kiadásfüggő",Extension,Hiányzik,Hiányzik,Hiányzik,DEV-07; UNI-10,JB10; JB24; V06
+C30,LaTeX lokális build,TeXiFy + külső TeX,LaTeX Workshop + külső TeX,Bundled TeX Live/XeLaTeX; runtime3/3 PASS,Verified installer/profil; futtatás unrun,Compiler nincs,BLD-07; BLD-09,L02; L06
+C31,Több engine és recipe,TeXiFy konfiguráció,LaTeX Workshop recipes,Backend tud 3 engine-t; natív/projektprofil hiányos,Szűk konfigurációs forrás,Hiányzik,BLD-04; BLD-14,L02; L06
+C32,"Auto build, függőség és cancel",Plugin és IDE processzkezelés,LaTeX Workshop + editor task,Kézi build/cancel tesztelt; függőségi freshness hibás,Processztámogatás type-check,UI/runtime nincs,BLD-01; BLD-06; BLD-12,L02; V05
+C33,Compiler diagnostics,Plugin/Problems,Plugin/problem matcher/Problems,"Valós output, egyszerű parser; pass/range hiány",Natív problémanézet forrás,Hiányzik,BLD-05; EDT-10,L02; L06; V05
+C34,Beágyazott PDF,TeXiFy PDF Viewer plugin,LaTeX Workshop internal viewer,"PDFKit, zoom és oldal; validáció szűk",Windows.Data.Pdf rasteroldal forrás,Hiányzik,BLD-03; PDF-08,L03; L06
+C35,Forward/inverse SyncTeX,TeXiFy PDF Viewer plugin,LaTeX Workshop internal SyncTeX,Csak fordítóflag; UI/szolgáltatás nincs,Hiányzik,Hiányzik,PDF-01; PDF-02,L03; L06
+C36,PDF keresés és olvasási állapot,Viewer/plugin képességfüggő,LaTeX Workshop internal viewer,Kereső nincs; zoom új buildnél resetel,Text layer/keresés nincs,Hiányzik,PDF-04; PDF-05,L03; L06
+C37,Bibliográfia és kutatói eszközök,"TeXiFy/BibTeX, PyCharm research ",LaTeX Workshop és research extension,Kulcskiegészítés van; részletes bib/wordcount/import nincs,Hiányzik,Hiányzik,LANG-11; RES-01; RES-03,L05; L06; JB02
+C38,"Sablon, beadás és reprodukció",Plugin/tool/profil,Plugin/tool/profil,Kis fixture és provenance; beadási workflow nincs,Runtime bizonyíték nincs,Hiányzik,RES-02; RES-08; BLD-09,L02; L06
+C39,Natív AI chat és valós toolállapot,"Air/agent, termék/providerfüggő","AI/agent, providerfüggő","Valós Codex stream/tools/Stop, szűk alfa kvalifikáció",Panel nincs,Panel nincs,AI-02; AI-10; OS-02,JB12; V15
+C40,Agent undo és változásáttekintés,IDE refactor/diff/tool kapcsolat,"Agent review/revert, extensionfüggő","Közös Rust undo igazolt, tranzakciódiff nincs","Közös mag, natív modellpróba nincs",UI nincs,GIT-12; AI-04; MCP-09,JB20; JB23; V15
+C41,MCP szerver és IDE-eszközök,"Beépített MCP plugin, explicit beállítás",MCP/agent támogatás; nem azonos toolkészlet,"rmcp bridge, 9 tool; statikus schema/allowlist","Rust check, runtime unrun",Portolandó transport,MCP-04; MCP-10,JB23; V15
+C42,Chat history és több session,Air session rendszer,Session/history/agent támogatás,Memóriabeli egy ephemeral thread,Hiányzik,Hiányzik,AI-01; AI-07; AI-14,JB12; V15
+C43,Pluginplatform és nyelvbővítés,IntelliJ Platform/Marketplace,Extension API/Marketplace,Általános plugin/LSP host nincs,Hiányzik,Hiányzik,EXT-01; EXT-02,JB01; V06
+C44,Remote/SSH/WSL/devcontainer,"Remote backend/Gateway, támogatásfüggő",Remote Development extensions,Local IPC-only,Local forrás,Nincs UI/backendfuttatás,UNI-17,JB22; V07
+C45,Együttszerkesztés,Code With Me plugin; kompatibilitáskorlát,Külön collaboration extension,Nincs CRDT/OT vagy többfelhasználós modell,Hiányzik,Hiányzik,UNI-18,JB25; L05
+C46,Hozzáférhetőség,IDE/editor/OS képességek,Keyboard/screen reader/high contrast,Néhány label/kontraszt/fókuszteszt; teljes kvalifikáció unrun,Narrator runtime unrun,Orca/UI nincs,QA-06; QA-07,JB21; V12
+C47,Trusted workspace és izoláció,IDE/MCP/plugin policy,"Restricted Mode, nem teljes sandbox",Agent szűkítve; compiler env_clear nem OS sandbox,Joghatár runtime unrun,Joghatár nincs kvalifikálva,SEC-01; SEC-02; SEC-03,JB23; V11
+C48,"Telepítés, update és rollback",Termékdisztribúció/toolbox,Termékdisztribúció,Helyi debug/ad-hoc app; release/install/update hiány,Native build/installer unrun,Nincs termék,QA-10; QA-11; QA-12,JB00; JB01
+C49,Nyelvek teljes szakterületi támogatása,Külön szakosított IDE-k,Nyelvi/debugger/framework extensions,LaTeXre korlátos saját intelligencia,"LaTeX mag, UI részleges",UI nincs,UNI-01; UNI-02; UNI-03; UNI-04; UNI-05; UNI-06; UNI-07; UNI-08; UNI-09,JB01; JB02; JB03; JB04; JB05; JB06; JB07; JB08; JB09; V06
+C50,"SQL, DSL, embedded, game, docs",DataGrip/MPS/CLion/Rider/Writerside,Szakosított extensions/tools,Nincsenek ilyen termékvertikumok,Hiányzik,Hiányzik,UNI-10; UNI-11; UNI-12; UNI-14; UNI-15; UNI-16,JB10; JB11; JB06; JB05; JB17; JB14; V06

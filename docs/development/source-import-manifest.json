@@ -1,0 +1,1592 @@
+{
+  "schema": 1,
+  "repository": "szotya/LaTeXIDE",
+  "visibility": "private",
+  "scope": "263-file curated source import; excludes raw evidence, local metadata, secrets, binaries and runtime sessions",
+  "excluded": [
+    "raw logs",
+    "screenshots",
+    "generated compiler outputs",
+    "source snapshots",
+    "local .codex metadata",
+    "session descriptors",
+    "credentials",
+    "toolchains",
+    "build products"
+  ],
+  "initial_manifest_excludes_itself_and_later_verification_records": true,
+  "files": [
+    {
+      "path": ".editorconfig",
+      "bytes": 226,
+      "sha256": "533e37ef02271725a2249e7be984ce8677c4a12ab5b52753dc5c6dc286a715e8",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": ".gitattributes",
+      "bytes": 354,
+      "sha256": "8ac5f4515d2135bd5a0e65cf871c94a22194ac4658d2f00bd03ed0c435921548",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": ".github/CODEOWNERS",
+      "bytes": 76,
+      "sha256": "4ffecaa4aa13b03e7e1b27d18d6a42a24db836cd94430daba5b518633a9b7ddf",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/bug.yml",
+      "bytes": 609,
+      "sha256": "994e55a70a7524cb75ab29cb91b5cd486f7ff46fb8b42211d3ebae4fac84d068",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": ".github/ISSUE_TEMPLATE/package.yml",
+      "bytes": 535,
+      "sha256": "ba863d46c0d4f9efcb804ef5da7e10f8cbc6b3aaffe51de8f7dfff8f17420826",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": ".github/PULL_REQUEST_TEMPLATE.md",
+      "bytes": 542,
+      "sha256": "9997e90f450207d2f1f173c5112ecab92afdbf63551c38b055a8e49f0762c38b",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "bytes": 789,
+      "sha256": "58b2b479989e206320927c7a113be46acf8bc87e4360391878c61e416976841c",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": ".github/workflows/rust-contracts.yml",
+      "bytes": 1862,
+      "sha256": "7bb32f828b6531e7ed826940a598c87bb7439505206d3eda83a751c5d4fbb4cf",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": ".gitignore",
+      "bytes": 1988,
+      "sha256": "53e4a93ced691ad6d3856b540272ab8386e3fce04afd13fa6a0b69e01ad03037",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "AGENTS.md",
+      "bytes": 1336,
+      "sha256": "1724d8ae8cad43bb037639cd1202fa6870b76e36f0ec593c464af472a917d931",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "CONTRIBUTING.md",
+      "bytes": 2473,
+      "sha256": "2126a08f4cb1b2dfcec6c2721968918e334e8eee654e644946188d4dcc820d28",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "Cargo.lock",
+      "bytes": 22597,
+      "sha256": "488d9fff34dac1a3216272c451f8b5877d1ed5355b2205a21d9e68ade8b0f4ca",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "Cargo.toml",
+      "bytes": 730,
+      "sha256": "79316810f84988dee0b8cb627c9f1c9fd8dd5320a563909d913616fad08fd439",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "README.md",
+      "bytes": 6512,
+      "sha256": "5024cf11bb26db73ac39c7a4ef5154bea78cb7e5418f6075fe8dd801e2a4dcd6",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/CLatexCore/module.modulemap",
+      "bytes": 90,
+      "sha256": "0b5b82bc45d1ee152ee295e59ff674924677258f598f60e1dbace43acd748152",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Info.plist",
+      "bytes": 749,
+      "sha256": "f7c8e8563769949d5dd40b07f3e4e0c3d892c311637f38d309840693ed1832a9",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Package.swift",
+      "bytes": 902,
+      "sha256": "7b6ca11dd213e9093b1bd1367c7a79ed694953892eaf59498f8e43c745c0a24e",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDE/App.swift",
+      "bytes": 3154,
+      "sha256": "19639663b5262fb1ee81a5f82c0b9f20efb1b4720dce5315f955319fcc34a4d8",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Appearance/AppearancePicker.swift",
+      "bytes": 4068,
+      "sha256": "97d746cda5ab5b9d67401311567e8b9b0c01f8a7685932a50c7ff8c8b44c71e7",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Appearance/ThemeCatalog.swift",
+      "bytes": 5433,
+      "sha256": "db9d448f13e6f0cc406df986071721a92a337a947494e816c8f47fa6c88bde3e",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Assistant/AssistantModels.swift",
+      "bytes": 3070,
+      "sha256": "a40d5d7ca24f88ab7aa82a732a6a640a0f009b586ac9cb59bddee18b43c177ec",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Assistant/AssistantPanel.swift",
+      "bytes": 14181,
+      "sha256": "205408e302d9db7443a7c8f8fa16423ab030a2d9b8721a8cc47997c19dca7e17",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Assistant/AssistantSession.swift",
+      "bytes": 23950,
+      "sha256": "9ecc336badba88d1fa47d53550402bb63aa96322306457db1c556c8b38fd86b0",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Assistant/CodexProcessTransport.swift",
+      "bytes": 8989,
+      "sha256": "328aded42c23160d7f99605ce05d4321abfb47a533487df70edd7a8df48cf1b8",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Chrome/IDEControls.swift",
+      "bytes": 4011,
+      "sha256": "ee276d09a8bf382ea22419cf0fb54f7690d98c0213d7efc738f2a17c4dba01d3",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Chrome/IDEResizeHandle.swift",
+      "bytes": 1604,
+      "sha256": "fc8d36525ff5c1368a3eaff153054aeb7b5dd056e71143311f2f9d6f49708f2d",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Chrome/WorkspaceChrome.swift",
+      "bytes": 5495,
+      "sha256": "fd4d2fb40f28c4e58ce60e3aa162086bf7bb1876167d743f36fcb919407ef63d",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Chrome/WorkspaceStatusBar.swift",
+      "bytes": 3315,
+      "sha256": "e05d7177c6e68ccf0096515a7d9797f7d3a6d758fc24dbdfe4c08b0017adaf3b",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Editor/CompletionController.swift",
+      "bytes": 10126,
+      "sha256": "e7b82f4f285093b6b3bbdc37ad459910d25cf93f7b3c64d4c7772d151589e767",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Editor/LineNumberRuler.swift",
+      "bytes": 2579,
+      "sha256": "84280a61e32bd7b490c594f1bdc84c511f18205fce9f99ddf214bca992eeef04",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Editor/SourceLineMap.swift",
+      "bytes": 670,
+      "sha256": "5b9486b4216853f6d03fbed19829b5dc90ddd03e8f2a4102d81c0efa2d536f2d",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Editor/SourceTextView.swift",
+      "bytes": 4064,
+      "sha256": "58404c489d25f9effc939a52efee0d3016bd853398762d5a6a451cca6a0ab9da",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/NativeEditor.swift",
+      "bytes": 15046,
+      "sha256": "4a194fd78d23bc5d0ec16a180d2314d4bacfdf668fb495c61ecf205a2c9830cd",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/NativeRuntime.swift",
+      "bytes": 2280,
+      "sha256": "b9ba5b9965f78b1c3773691bfc2a7ded99fe169bae2cfec8e72549727f703d2b",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Panels/BuildPanel.swift",
+      "bytes": 4302,
+      "sha256": "1565c5326c356861f098631bba12b80876001bf8d8003f9b4421ca16fd0bc861",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Panels/InspectorPanel.swift",
+      "bytes": 2262,
+      "sha256": "5a06ff821ed61f6ba7044855bff792a254c18f1288fa02b6d04258f8660f90d5",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Panels/PDFPanel.swift",
+      "bytes": 5661,
+      "sha256": "873758aedf7d603b775acc2ff536a1f2600681d25855482dddcff120a7fbd01b",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Panels/ProjectPanel.swift",
+      "bytes": 7152,
+      "sha256": "ac927ceb5fdd4cd1381c368bcb8f4e1759de252cc15dc92f19cc969438c8e6e1",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/SourceEdit.swift",
+      "bytes": 2344,
+      "sha256": "bfad5ca7372a09d94381f7dbb91ef20780672344bb11b2622c245efbe32af780",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Workspace/DefinitionNavigation.swift",
+      "bytes": 2272,
+      "sha256": "40e649f64c7718f4d0972677bd5bf9bbc36d70a3b67e71df8e4a7ef060a8e644",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Workspace/EditorWorkspace.swift",
+      "bytes": 6153,
+      "sha256": "0949c006ce3e96abb4a895487938b9f4786b1f73eb156fff62f3a9788d6904c1",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Workspace/QuickOpen.swift",
+      "bytes": 7524,
+      "sha256": "64e3f8f6e35fe94bcc6a573a4fabf464481e5d3374ef31c2e84e4c8b1886fc5f",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/Workspace/WorkspacePresentation.swift",
+      "bytes": 4702,
+      "sha256": "eeb052111e9ad603b2f4f800a903aadcf461ebcbc03d682ebcfed7d1007d2057",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/WorkspaceStore.swift",
+      "bytes": 19097,
+      "sha256": "a338037235e966108955c651af18dff94b37420bcf2345b0d069cd3003911a3e",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Sources/LaTeXIDEKit/WorkspaceView.swift",
+      "bytes": 4924,
+      "sha256": "7b2a58c5e70fe8ab39e2c55499b4108ddb8dfc5e6ae7192d88d10f319fd3a3c3",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/AssistantDraftTests.swift",
+      "bytes": 2488,
+      "sha256": "dc707e3857bcc3dedf5fc6ce89d0b1dfd615a7f5917a690c510749bbb98cee78",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/AssistantSessionTests.swift",
+      "bytes": 13824,
+      "sha256": "f664effa03d0c50b956aa17e6730140c155bb1b3e4209d6af5b8e07bf1cc98c6",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/CompletionKeyboardTests.swift",
+      "bytes": 4981,
+      "sha256": "4e0063c70cce4f4d9920c8c9e2bfaa6bc0138ae0c5a4e08dff43c1bf6b2bda56",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/CompletionTests.swift",
+      "bytes": 6940,
+      "sha256": "dc589267c96bb409fc94b89ed74f935e10ebd6de9996a3f598d86200c0b61312",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/DefinitionNavigationTests.swift",
+      "bytes": 11783,
+      "sha256": "72d9851a4fc2edf637469459145f44261e7eb070c0615d6762b7022600d205ad",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/EditorViewportTests.swift",
+      "bytes": 3159,
+      "sha256": "0c0088a3309706a9a0db1477badb844f481e334faed5679844c6b0df0e6efb67",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/IntelligenceRenderTests.swift",
+      "bytes": 3984,
+      "sha256": "b1120ab486b210a6548b281e71626a8407c6f3ddca07aabaeea1e84d524d5f7f",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/KeyboardRoutingTests.swift",
+      "bytes": 5118,
+      "sha256": "5733564315e601a461917cca97c5f217010fb27f8f10234850d00c62c98129b5",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/NativeColoringTests.swift",
+      "bytes": 3402,
+      "sha256": "acf4b7e65ac9e17865ad2fcf455757b622a17678c94810126e2768fa0aee6923",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/NativeProjectTests.swift",
+      "bytes": 4914,
+      "sha256": "712ea22b2d6b28fb9bf8d734265742eb3139b3f79ec02ce4d66b22617b164ae3",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/ProjectCompletionRenderTests.swift",
+      "bytes": 4332,
+      "sha256": "78aba2a7bc3224b6a98db9cc39cffa369cfe8d9286343d71f63b4cd75b38fd47",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/ProjectCompletionTests.swift",
+      "bytes": 7319,
+      "sha256": "3d65c9d639209872c322ae479a011cf62627895af6c2555b6cd8ce0381dc17ee",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/TextEditTests.swift",
+      "bytes": 869,
+      "sha256": "6b9ff105a7f74c1e32740d860ebf6f31d0240a69b1421c6fdb48daf6710a7144",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/ThemeContractTests.swift",
+      "bytes": 2818,
+      "sha256": "e086d0dda14313004f0ee7712eecd63ccc7bfad2a6f2dab0180b74a8d447f0fe",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/WorkspaceRenderTests.swift",
+      "bytes": 5405,
+      "sha256": "5db316ddbc64c16631fc82296192cb58d895785d2e2165ebb947c2db91afb88a",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/WorkspaceTabsTests.swift",
+      "bytes": 2093,
+      "sha256": "4365c68ec78192aa3571082b7c4fac3e9f0f4518dff8321bf7a41a62b8468e45",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/App.idl",
+      "bytes": 103,
+      "sha256": "fa7a1f9d477ada84ecd957a54195e3bdfc94dbcee948871210d0967af70e49b5",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/App.xaml",
+      "bytes": 408,
+      "sha256": "414f780a2bc80e23499f8b63db322bf2c78ca58805e341428e1324ab69e0e139",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/App.xaml.cpp",
+      "bytes": 306,
+      "sha256": "7b4a5ad81083b5f3ca9ff5906b7ddf8d0cb6bfea82597cd171c6e14ea84f8a16",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/App.xaml.h",
+      "bytes": 343,
+      "sha256": "f3789597d6ddf99b119cb53566bf5472964d12f772c9b24205d4e49a46c48c3e",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/LaTeXIDE.sln",
+      "bytes": 840,
+      "sha256": "993bb1f244d562aa5f4aaba981fc857ee9fcffc77c8c146392c6badd2ba34fa4",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/LaTeXIDE.vcxproj",
+      "bytes": 4512,
+      "sha256": "7f4883e430c213920c3d65fc3d6b5f4b24ca5aae66df5ce6f55eb62528dc1fd6",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/MainWindow.Editor.cpp",
+      "bytes": 16675,
+      "sha256": "93c8e5df650fb4b7354755074755c1a5d2e9b84d87263246a03a316cd42378ca",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/MainWindow.Presentation.cpp",
+      "bytes": 16840,
+      "sha256": "32d7cf12e68584693201c23ff52eb7415c0a153cfaa296f732803913e795fa2a",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/MainWindow.idl",
+      "bytes": 112,
+      "sha256": "ea17169ad5b9423cd3d501d7580e9a96518d6e97b7a5b59e33a83393b138e3fa",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/MainWindow.xaml",
+      "bytes": 18193,
+      "sha256": "bebe992678b9bc8871eea8d23cd309de1efb325a398e0b8501c76d1f4b120b45",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/MainWindow.xaml.cpp",
+      "bytes": 18285,
+      "sha256": "3906c4931a7c79460a9abb8ce64af45a8a93a75fa8b76608d1a4cbe8d4cbb69f",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/MainWindow.xaml.h",
+      "bytes": 7487,
+      "sha256": "c2553d0a858edeb6b89e85a63305bb9a51061b5dfdc250e7fab74039f203595e",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/NativeCore.cpp",
+      "bytes": 2080,
+      "sha256": "81331387c1d59d0ecbc54771a3e6222296459a931e29bfef9332c277aff77942",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/NativeCore.h",
+      "bytes": 941,
+      "sha256": "5301b378891a09a89b468d92949df7286a649d75ec57e925954f519483adde06",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/NuGet.Native.props",
+      "bytes": 1695,
+      "sha256": "84fe1badc1c9a2a39e0133cd2f8b407741d2561d411c5c6e617127524b88c98a",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/NuGet.Native.targets",
+      "bytes": 1727,
+      "sha256": "0c1b1c16916ba3a67cf5689ac36a573b709c3b4a1215007d706f702e78d2cedc",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/ProjectFiles.h",
+      "bytes": 553,
+      "sha256": "20d76b07b192c0dae67d1adfdf9d1c419c6c4f064924eb2832ee690f294a50c1",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/TextAdapter.h",
+      "bytes": 3281,
+      "sha256": "f173337d583c3676fb1f9f327138364fd33c7a198b872d106a63eb829d82cc56",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/ThemeCatalog.cpp",
+      "bytes": 4316,
+      "sha256": "e4afcc36eecc6df65b3cfbff542a2c5a41a37627b2cb9b9233051c7841b4a8bb",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/ThemeCatalog.h",
+      "bytes": 672,
+      "sha256": "6c85298ac7b6c77a94386cd0320a065aa359589bbd291daff86e50ac6ff9978e",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/WinUIHelpers.h",
+      "bytes": 1909,
+      "sha256": "5126f931f70b73547590fadf10b089d2e40f0c85f5dbc4c3e095a1e8f648a30a",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/app.manifest",
+      "bytes": 672,
+      "sha256": "bdcb51d6af82c3f77f5cff5c96012cd82d1a46b7e978626c60e40910507d7448",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/packages.config",
+      "bytes": 1557,
+      "sha256": "1bc60743108c519666445934d497c84f02b40d6523049fac9946a1cf16784759",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/pch.h",
+      "bytes": 1134,
+      "sha256": "59328138b8613e55b25ed77c5bccbee6149dd2c3fc53b064bde48be9e77ebb19",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/tests/check_ui_source.py",
+      "bytes": 2294,
+      "sha256": "c44cbf728f29718bf51240952b55ddeb021dfddf6e1f2c50a8e4ee1bbb705674",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "apps/windows/tests/editor_helpers.cpp",
+      "bytes": 2104,
+      "sha256": "d77acbcbc10bc3b598b4a6b26f765e4d1175bc6f7f8c67c96668c4b3378d01d6",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-build/Cargo.toml",
+      "bytes": 376,
+      "sha256": "521833ac87c832a536ffd86eb66790db9bda407bfce65d97e288e26cb6ad1365",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-build/src/lib.rs",
+      "bytes": 12438,
+      "sha256": "a55f666d8241ea81ec2ea4a7c1d1e1a55e905d8aae1864c095b85fa72f985d7c",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-build/src/process.rs",
+      "bytes": 3726,
+      "sha256": "2de2cf1c7052c64e62a33731175cbce686ed218d9efb0afe1c7ba0e6b501832f",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-build/tests/supervisor_contract.rs",
+      "bytes": 6446,
+      "sha256": "b7ea94e552b4d01cb07ff4b38a9a8f7f5576b99a5552cca94e007bac67c8768d",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-core/Cargo.toml",
+      "bytes": 152,
+      "sha256": "479c452421195d832ee8abe00a013996ec39661bd4541afa58f8f3644d6ce784",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-core/src/completion.rs",
+      "bytes": 14543,
+      "sha256": "7a19ebc7c69b2ac2a229d6d59942f11c1ff9cbacd9432573bc7e3cbed27f5f17",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-core/src/definition.rs",
+      "bytes": 2802,
+      "sha256": "1e21c4f309f6e23e8b47fd1a80cbeede0bd199cb060257a68e60adf8796bfe40",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-core/src/document.rs",
+      "bytes": 6447,
+      "sha256": "b6db16774158938e42e814e92b5c11db303250bb023ca88a4a8a071b6b8f5337",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-core/src/lib.rs",
+      "bytes": 1119,
+      "sha256": "1593e04e2191d30dc1779ad1c3a397129c96e4f2a8934cd15b3ce5744c2935bc",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-core/src/project_index.rs",
+      "bytes": 15586,
+      "sha256": "a49c0e6d57bbd4bacbadf4e60391e996b55f1739ab5d2e439886ad4f57d8add1",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-core/src/syntax.rs",
+      "bytes": 9552,
+      "sha256": "ac075aecdd0e8eeb3e61d02f9fa466ad9df355d9ce68fbd669e7294553d426a9",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-core/src/tex_scan.rs",
+      "bytes": 5527,
+      "sha256": "bacc3d85484fb55f53520cdd86ea5d42d218db6fe2b5e41d4dd295ba07dd10a7",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-core/src/workspace.rs",
+      "bytes": 11589,
+      "sha256": "25501b381f7c25f5ea284a188dad3a9e67c26e57425ee750be9c3720490ed907",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-core/tests/completion_contract.rs",
+      "bytes": 2624,
+      "sha256": "4b06afa1ed5d643001e1bba3266b9d9fcc9cf042d12e024272e20f5630040fee",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-core/tests/definition_contract.rs",
+      "bytes": 8928,
+      "sha256": "bd4b4817dd65f53f9798e56c418e6e8dcdf403f9f04f3fcdcfd92d9640e4919f",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-core/tests/document_contract.rs",
+      "bytes": 8199,
+      "sha256": "53a76d240dc4b90ca708223339e1f949c91b7233b889555e1a0fe59c02e923a6",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-core/tests/project_completion_contract.rs",
+      "bytes": 17107,
+      "sha256": "4fc240604f9ec72f0acc7e7f3e0f3c4f1dc5498401f830ebe03d8fc154a6b10d",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-core/tests/syntax_contract.rs",
+      "bytes": 4458,
+      "sha256": "5722b958f20f530a119548bdbc10396bc5cb39bece84f01bbed13039958521ca",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-ffi/Cargo.toml",
+      "bytes": 482,
+      "sha256": "c04ee2514f5e62201c20d774c21026a5877396973f8c5ee215f337f96d068567",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-ffi/src/lib.rs",
+      "bytes": 3659,
+      "sha256": "dd1817620d84a9237d5769c2f51d531310642aa1a2e3f6bc33ffea50fc5ad04c",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-ffi/src/runtime.rs",
+      "bytes": 11791,
+      "sha256": "7de974eefe742b09e97eff8f2dec2c0d5aee97377d901dda5c805b5cbdff55f9",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-ffi/src/session.rs",
+      "bytes": 5403,
+      "sha256": "039cc618e3e35ac59de36379a84206fc1af14a3d0f6e3688415e0c3f69dcfd71",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-mcp/Cargo.toml",
+      "bytes": 313,
+      "sha256": "1ab35db6fb9baadb3a68695023079ed902e32d800f80c2c8571239994ea4ba00",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-mcp/src/main.rs",
+      "bytes": 5378,
+      "sha256": "8d3c7c43853c49add03ce7e17cd8d24e6a57e2ddad47bc739084261fd3c4156a",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-protocol/Cargo.toml",
+      "bytes": 323,
+      "sha256": "5057919d23ccb1608f0312ef2a0dd269bd6105ea9e53544ccb3bdd5c15ef0d24",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-protocol/src/ipc.rs",
+      "bytes": 3955,
+      "sha256": "a095e2fc95acc7c6fe19c280d4db5055e06318ff75724e21f170328908c13690",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "crates/latexide-protocol/src/lib.rs",
+      "bytes": 3129,
+      "sha256": "b2ce60b6288601dec2e0fc1cdeef5e3a555e094570fb6ed0550a30c525e966b5",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/DEVELOPER_HANDOFF.md",
+      "bytes": 35127,
+      "sha256": "d46a3323b7a4868b334a5f8753a19de04fc4712ea52ded47c51f37423cea00a1",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/IDE_AUDIT_2026-10-31.md",
+      "bytes": 64139,
+      "sha256": "7c8e62af1ce044321362e77d0fbc5dd55c8eb9c4d65889f5b94834e18153f01d",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/IDE_PRODUCT_DIRECTION.md",
+      "bytes": 5483,
+      "sha256": "e644f3b11af3e24e17e7d829ec96c6f4562a9c7b1859682946bb9f9012893e79",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/PAUSED-HANDOFF.md",
+      "bytes": 5160,
+      "sha256": "a7603cbea7cd57db7fca1b735493c6f546e311e633df29696e34584a00f82d97",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/compiler-assessment.md",
+      "bytes": 11084,
+      "sha256": "9d395afe9c91093e2bc29d241d34959bca523885907b4818e887427ab5853916",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/completion-enter-verification.md",
+      "bytes": 4897,
+      "sha256": "281aaa9ff485ae575f7c35c6e4c4f5e9ea706a9ac4ebbe69c9c2d1cb8a477023",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/definition-navigation-review.md",
+      "bytes": 4239,
+      "sha256": "a11f96aa52c4b6cf96e718d2bca7bad51baaecae24973f9facc0dc858897b329",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/definition-navigation-verification.md",
+      "bytes": 8666,
+      "sha256": "e3b63017c16e6cf6ba4c32cde13cdc37c25a79eb211a4b8e7947de55270f9cc1",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/developer-ui-review.md",
+      "bytes": 3795,
+      "sha256": "6f435eb9d7fc94a83479d69b0b7ea6936f2f4c99df6661d01f3050aba2f1ba24",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/development/BASELINE_DELTA.md",
+      "bytes": 2564,
+      "sha256": "03880ea930be73cadb76138deb6c19691a9feaa207cf21c89d7198a3f11088af",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/development/IMPORT_VERIFICATION.md",
+      "bytes": 2861,
+      "sha256": "d4782b232cd61a3176c6779a35a237f5ba1262bfc9e2bd83a271617afb9eef6a",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/development/LOCAL_EVIDENCE.md",
+      "bytes": 2062,
+      "sha256": "83e6ebdc31838bc08e8c620aff98680b2b8b0f550685dae5dcf62157d8f1226d",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/development/README.md",
+      "bytes": 11442,
+      "sha256": "18a422c2aae59266ec503da6c3b1aa9b658ccc7463766ad9d43f302a59cc8cc0",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/development/REPOSITORY.md",
+      "bytes": 5047,
+      "sha256": "60adc310bc29084bcb98566688775bfa94642da4983291fc70ee32d32c92f706",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/development/contracts/README.md",
+      "bytes": 558,
+      "sha256": "3c5fdad1bb4e4e7f4c59f00afb7e488240736ce334dd3cd32d7b137f15f15cfe",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/development/evidence-link-migration.json",
+      "bytes": 6536,
+      "sha256": "8e129a7f50d9884ae49faf69458b992be2187af5e15c197db15d3b2171a50858",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/development/github-issue-payloads.json",
+      "bytes": 54136,
+      "sha256": "e04f558778bf7cd2f06bbdcc58e4cb78c40d2d77c851163050d744aba17ac436",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/development/local-evidence.json",
+      "bytes": 167683,
+      "sha256": "ca93bdf7bb552c9328e64c8313192498c6f6a989e4b1abde0dde41032d17c2ba",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/development/package-specs.json",
+      "bytes": 108483,
+      "sha256": "2545b5ea6321074c090e24eee2f8eaa45489b22f9f3ffac2cf0764e9b0a98007",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/development/packages.json",
+      "bytes": 124640,
+      "sha256": "19a252929bb5af4b803153db9517de621425a477d32d01ad3e606b0d8c38501a",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/development/requirement-map.csv",
+      "bytes": 42776,
+      "sha256": "ebed2a54a61f48128040b6e8f8c2762bfc2f60c57d27b8b1fddaa71769d860bd",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/foundation-review-package.md",
+      "bytes": 3461,
+      "sha256": "9a10a033797e21051987824e22f17c31ab5255e2c885a6f05b9c94b4799a863a",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/foundation-review.md",
+      "bytes": 5216,
+      "sha256": "9210476e9e944d3de2e41a67a51848d3990f8a20c03cfad9deb7a636307c4ab4",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/ide-audit-2026-10-31/IMPLEMENTATION_BACKLOG.md",
+      "bytes": 133610,
+      "sha256": "3309ed6262323691e52c08af16f8f1f645f0b369c8d3e44caade5099661f8db9",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/ide-audit-2026-10-31/backlog.csv",
+      "bytes": 146701,
+      "sha256": "f9509249efadd0b52e64e01bfc146b1ba8566eae2e22b00396d0a65ff3bf9cce",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/ide-audit-2026-10-31/backlog.json",
+      "bytes": 258540,
+      "sha256": "c3c639229aeeae8388ee4e880c7a3500ea5ffc1dd2e7bb684fe7051a801560b3",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/ide-audit-2026-10-31/comparison.csv",
+      "bytes": 10070,
+      "sha256": "63435f9a9a8b98590f5c9dde595b3e113c043eaed513957727ad5a217d4aba6a",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/ide-audit-2026-10-31/comparison.json",
+      "bytes": 22286,
+      "sha256": "de4d37a2c32f8700a3499b1af10a625f273bb681da72a002a24fccd0d6af9795",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/ide-audit-2026-10-31/counts.json",
+      "bytes": 489,
+      "sha256": "f5c370b8ba021ea9f868700f261b9808d5735d52f1d0c711522b3f6de1bbc097",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/ide-audit-2026-10-31/sources.json",
+      "bytes": 16598,
+      "sha256": "ea67c576d5d976c6275b3421a9919dfa12d58efaf8ff6d6e9e07166c348c287c",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/implementation-progress.md",
+      "bytes": 56266,
+      "sha256": "6c696f674ab0db8733264a173aaf5d3bb7212d0770a0ac001c107e8fa1d370f2",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/intelligence-review.md",
+      "bytes": 6299,
+      "sha256": "5620063b82ab6b439f89c7ce7b8c7e2f5973265c2c3ee913b855cd00d5021ae2",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/intelligence-verification.md",
+      "bytes": 12095,
+      "sha256": "3662bf8a3c577aab5c666cdad1c69e24908a5da7b87e8278de3293b5a02c6d40",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/project-completion-review.md",
+      "bytes": 5391,
+      "sha256": "5f4caf2ec10383db6eaf19f4615fc55b828e49494dbb591fe366f5b77f6e843c",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/project-completion-verification.md",
+      "bytes": 11779,
+      "sha256": "1a9b0220984b2c295bef95f26e13a37cd2822dc4c5a55ab959a0ac158396fb62",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/skill-validation.md",
+      "bytes": 5270,
+      "sha256": "64be0564d847eb0d5169a16dd2785dd526cb4061e981ba921e49b065fcf9534b",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-30-developer-ui.md",
+      "bytes": 5663,
+      "sha256": "9ec820fc956fefe599a0ce59c3699643de02eb4552f2c1f5b92a8ce2c7428e3e",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-30-native-ide-foundation.md",
+      "bytes": 14815,
+      "sha256": "1b2631b695cac7c52a0b42623c0c2301c1b3ad5faa26375aa12bb032c50635b3",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-definition-navigation.md",
+      "bytes": 4352,
+      "sha256": "c929ec2933c9d313e2a29ecfcd7096b20d7ad62b30699359c1141866382a049d",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-ide-intelligence.md",
+      "bytes": 5919,
+      "sha256": "9c0134104fe37d16ed41fb51bef02e2f846667d848224353288bd5d44f9e2fb5",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p00-integration.md",
+      "bytes": 12040,
+      "sha256": "9bf05746f7f4275d74109d4b70dbb83c830f10d89eef8554f964eb6825cdda19",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p01-recovery.md",
+      "bytes": 18432,
+      "sha256": "e8b26d80ed167108e17919b7dd18dd2e60be0e8af077f881bd1ce24732a45163",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p02-transactions.md",
+      "bytes": 15102,
+      "sha256": "f4c6ee29f3a8f10f55c2ee4490afb12f9075a3ddc147e1cdb844f2eb79c2ba07",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p03-runtime.md",
+      "bytes": 17400,
+      "sha256": "91015f623735671fdf85d77fb4316c5a42aae904878525b12935ad9c54834ddf",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p04-vfs.md",
+      "bytes": 11545,
+      "sha256": "9b1fc0967baddadda9e584fac32aff4af842fe0f325046198765298bac44a420",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p05-language.md",
+      "bytes": 24778,
+      "sha256": "ca620dfc73375c6a8d5e432a3d98fe5b8e022fdc9e2ca0cf4e79d4d371d6cd18",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p06-navigation.md",
+      "bytes": 20333,
+      "sha256": "189e2efc305849f498844a3074ad6a65c016575ee5430ab771fa0e03830b2a56",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p07-editor.md",
+      "bytes": 23520,
+      "sha256": "3b0eb2029e176e7cdbd2f71089d022a347c51f8122e1d06486c084be4be1b5b5",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p08-workspace.md",
+      "bytes": 20322,
+      "sha256": "bdfb4495f0947352833256d61cfecd8dddd81975815178b7890236f6f4624cc5",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p09-build.md",
+      "bytes": 24439,
+      "sha256": "92e7d5515fbf3fdd543ebe712424930aefaa1b9da4db3ae3e60c6a17f248a9aa",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p10-pdf.md",
+      "bytes": 19906,
+      "sha256": "a3d9790555c18a687c812182a69e9ddc4cb6ae8366f41b7fab32082a92a05afe",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p11-research.md",
+      "bytes": 17744,
+      "sha256": "68ef0e79b5336d6192ee8d5d6eccca4e7d44e68582b859423a51c2f8c18aef4d",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p12-bibliography.md",
+      "bytes": 10528,
+      "sha256": "6293ab183a5dae1a6bf3d34b69d0833846c8b68a7ebc25504b82ec99a122c2fc",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p13-git.md",
+      "bytes": 20625,
+      "sha256": "6d72532687fa0f546ffd67ff10df7f413d4e1406a2c67226c3ddf8339f982064",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p14-assistant.md",
+      "bytes": 23049,
+      "sha256": "bdee86ddba43af5eb28f3004afa2166b4d9700af655f1a9735136aee9ea10fcd",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p15-extensions.md",
+      "bytes": 17993,
+      "sha256": "3a8b6c215d1f54634317081b3374ededf8254b06f305cb9205f779ddb5112abd",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p16-terminal.md",
+      "bytes": 9522,
+      "sha256": "35b6628f0168da05fa3931afc0ecd588b6c778ea4b229adc9310f40c45cffe61",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p17-developer-tools.md",
+      "bytes": 13630,
+      "sha256": "c5055e7d53519e307effb82d53785b28d1ed5041b07796e6296dbcc4a2e1c7dd",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p18-security.md",
+      "bytes": 18414,
+      "sha256": "cf23273a44aef66a4f5a1456f11ad1613817b235cabdf9f270d7b71dc4c73df9",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p19-quality-corpus.md",
+      "bytes": 11708,
+      "sha256": "d0c6ee611ec3364aa0a69e94f6f84d15eea12f78703c7a960d7c89d02a634f43",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p20-release.md",
+      "bytes": 13838,
+      "sha256": "410a3c8a284a8a4eb32f99654fc3778d3137f812e0f9483377677305c87fa670",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p21-windows.md",
+      "bytes": 11979,
+      "sha256": "9d89a8df300d1b10adfe11f8a079ecd8d7e0c6090d04f9155a3c472912b96fba",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p22-linux.md",
+      "bytes": 9602,
+      "sha256": "cdfcb3863a2e136c8a6d91da79a41dd7478ef06eae8c23922acd2cfce777de09",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/p23-performance-accessibility.md",
+      "bytes": 12701,
+      "sha256": "ee13313054e7b73ae2f14da60cd678a673b6f76bcaa018dd2a153a4f9609fea0",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u01-jvm.md",
+      "bytes": 10245,
+      "sha256": "667fc2c491bdf742c0e46481813bce6b99cfcd12cecceaf3b49ac97e9fc69c3a",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u02-python-data.md",
+      "bytes": 10381,
+      "sha256": "32377b88fcd2140a27fb5946ca1f1b6cf97796d159da118b8ff35b3eca8daf42",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u03-web.md",
+      "bytes": 10191,
+      "sha256": "298e857ac23ec2115032692f03957018ecb592c16f0affc974b53045fd8a82fb",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u04-php.md",
+      "bytes": 10153,
+      "sha256": "cc7228435852112eb1ed3bf2fc8baf02ee2fe8f1a288d44773bae4dc1c17ccc6",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u05-dotnet.md",
+      "bytes": 10198,
+      "sha256": "3c260dd622c9905fbe49a16849116cfc5edb2a2aaf6a8f7e19ea0f7db1a773c7",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u06-cpp.md",
+      "bytes": 10119,
+      "sha256": "5d9568aa7bfd99ee6a57f5da6f18ea15f6c78e9d3ae263bb035ddef1fd8ff529",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u07-go.md",
+      "bytes": 10053,
+      "sha256": "21475d1ae875f025d3d54c1abff2c6a258ddac193bc716836dfe0317fc8bd570",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u08-rust.md",
+      "bytes": 10167,
+      "sha256": "952afee8ca2280aa9482e8e0a0898ab53104888f4549a4df657b428aaba7140d",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u09-ruby.md",
+      "bytes": 10163,
+      "sha256": "a63bad4724d6f34824049a0ccaf1a020010de701715f48a40b232ba8216dea8c",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u10-database.md",
+      "bytes": 10287,
+      "sha256": "dfa6259f696283c262deacf6e8a97fde345b97edb7daa25a5109e76105792cd0",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u11-embedded.md",
+      "bytes": 10221,
+      "sha256": "19a157e731633904c38f7591d2f3f25574a7fd6c12b9a7dea3ab70bda222d7e0",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u12-games.md",
+      "bytes": 10179,
+      "sha256": "0d73c1dc05e46f80f19bc085597504c2c48eace7aa67c942a63f99bd62e2c744",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u13-mobile.md",
+      "bytes": 10280,
+      "sha256": "3d6ab0b26e6e909af974abe48e591e866afb7e4fe073ed985261c1cc0fd31682",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u14-dsl.md",
+      "bytes": 10173,
+      "sha256": "0c1a9824c6ae4813f1b855e97b1febb55f33c7653f9d4e7bd00c0c783ec7ad02",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u15-docs-as-code.md",
+      "bytes": 10327,
+      "sha256": "5d3bac37d85014560c4ce26ed22d1a063c4950ee5b089b699166aebbc391ed81",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u16-qa-automation.md",
+      "bytes": 10356,
+      "sha256": "2e2d47ff807f22bc5ced8db09bd3fdb870c94846b4cef68fdb172bb85b9d6ba8",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u17-remote.md",
+      "bytes": 10302,
+      "sha256": "0b2b2c5617ed24eff720f70735422fd58869d5e3e9e2515b6d5dea5938a5b000",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u18-collaboration.md",
+      "bytes": 10383,
+      "sha256": "c24e34fde92ff76abcf3193ae887cbeda2697e063af3dae06a6e2ddfe9907e6e",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u19-enterprise.md",
+      "bytes": 10412,
+      "sha256": "d511f4e1fba8273ba81219b40c09ba1122905ad7cf5b07e1a43b272cbe40ffb3",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-parallel/u20-cloud.md",
+      "bytes": 10350,
+      "sha256": "952ce136034d3130b1f4e0829e76148e4eac47f8f294f5fd8c6d35d97eb2c1ba",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/plans/2026-10-31-project-completion.md",
+      "bytes": 5028,
+      "sha256": "2add886c714d6a47581d03442aa95ec18106e5c1caef482893167dbdd8ee2eee",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-10-30-developer-ui-design.md",
+      "bytes": 7144,
+      "sha256": "59d250252bfee3c8c8a481c5783bc62598398b8b5944820099f05e40be9fad3e",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-10-30-native-latex-ide-design.md",
+      "bytes": 30330,
+      "sha256": "edf0eda25707de1d98e581336edcce33d6771512295a56f13ab12c1967861898",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-10-31-definition-navigation-design.md",
+      "bytes": 4132,
+      "sha256": "ad78b4c00f6caf074cf154c62d70cc088366cbb7b59e2b978e94da1ed061feb0",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-10-31-ide-intelligence-design.md",
+      "bytes": 6880,
+      "sha256": "85b42e041c8d2d14564f09fdf20216d8bf7a75438d2018b4c93681def3f07632",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-10-31-parallel-development-design.md",
+      "bytes": 10739,
+      "sha256": "71b5f421d8c0b0c6060ded312f5befc799a52b05a0ac239bbba672925a9bca7c",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/superpowers/specs/2026-10-31-project-completion-design.md",
+      "bytes": 5890,
+      "sha256": "c54783c671acf332e8c7b1533c2343a35a3724d1074b0e68b2f301ffd8e71787",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/ui-verification.md",
+      "bytes": 10969,
+      "sha256": "341682c287de5f10171a4d925f968293b34b48d02c909406115dab2b2c996750",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/verification.md",
+      "bytes": 5168,
+      "sha256": "e41020758b6e37c274d6232faa69e316a753fe9ff121610509a2911fffe06eb3",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/windows-ui-port.md",
+      "bytes": 9224,
+      "sha256": "d1211ccf94063574e0089935133fe38fde5ccdfc4915e926d1cd88638c9fb16e",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "docs/windows-validation.md",
+      "bytes": 2648,
+      "sha256": "185d3c34e59fc4872f2b97a3068ca49bede83282621a21b8cf918ebdcd29d106",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "evidence/README.md",
+      "bytes": 1164,
+      "sha256": "e484be98f686ecc96a5826a1449e32b5f8d297585ac948a7c2cf34c243d48575",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-installer-signatures/install-tl-unx.tar.gz.sha512",
+      "bytes": 152,
+      "sha256": "93c64c733e23cdd01280be67735bdca1ae8731e5d6c9e6c0b0cb25a4bc8c0c69",
+      "category": "public compiler verification metadata"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-installer-signatures/install-tl-unx.tar.gz.sha512.asc",
+      "bytes": 488,
+      "sha256": "a4b5c13e453a89b27d56f46b13f0194f7ce39e6b9e7bf06cac1dfe1e7e1c40a3",
+      "category": "public compiler verification metadata"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-installer-signatures/install-tl-windows.exe.sha512",
+      "bytes": 153,
+      "sha256": "08fee7b11f86b0c7c317c88215e84248822ca60bde6499cbf46907cd292542f1",
+      "category": "public compiler verification metadata"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-installer-signatures/install-tl-windows.exe.sha512.asc",
+      "bytes": 488,
+      "sha256": "7b5f30f84e368aba68711a29d5419392289cc75d63965476591d9c6a126519dc",
+      "category": "public compiler verification metadata"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-installer-signatures/texlive-keyring.gpg",
+      "bytes": 3803,
+      "sha256": "f84307dc3de61f4de46f4acc637d3f27b49e6adc6ab6593a74ab82e060babf4c",
+      "category": "public compiler verification metadata"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-installer-signatures/texlive.asc",
+      "bytes": 5231,
+      "sha256": "f9fd0e1a8fb8f06b260a256c88a86244cb1913348d962e63e0b238371be71c64",
+      "category": "public compiler verification metadata"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/audit_probes.py",
+      "bytes": 9758,
+      "sha256": "83cde1fb53bd9c76921c631cfff8654babaf8cc9197229426b6e3c68bb6b9477",
+      "category": "audit source"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/build_audit_artifacts.py",
+      "bytes": 100521,
+      "sha256": "ae44dd69c68a0f5c7a538faf4edbe110fbc710979a2206d390c737bb8ad72568",
+      "category": "audit source"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/validate_audit.py",
+      "bytes": 6664,
+      "sha256": "1a580e2834f035436882f7d85f2ea1d48a550767981a91e604a7e9dc63ca8ea0",
+      "category": "audit source"
+    },
+    {
+      "path": "include/latexide_core.h",
+      "bytes": 616,
+      "sha256": "22767aaacc02502e989d1db9ba3991febe97d99bd0da6cc4ca67e86a1f8d4715",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "rust-toolchain.toml",
+      "bytes": 112,
+      "sha256": "e1bf541655c4de445b477bc67a374ccda8b5d566a7280b200b690fbe5d61e0e6",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "script/build_and_run.sh",
+      "bytes": 837,
+      "sha256": "5f7f2bc23820b7adad88a21648556080239dca9fd5cf576f4e46f8858c5ff1a7",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "scripts/acquire_tools.py",
+      "bytes": 7174,
+      "sha256": "3a97a4814e00f997cf0fbf8651a93699b97c7c6e1e9680cc4ea0aa392f8207fa",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "scripts/build_development_packages.py",
+      "bytes": 17790,
+      "sha256": "2d6fdf339c777ed5009bde135e0f63523860994263c2ce3b29d8017101882f95",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "scripts/build_macos.sh",
+      "bytes": 3562,
+      "sha256": "f01f7cd455d623745e4592ae95a62500e263596d48bad5317d11957d50012239",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "scripts/build_windows.ps1",
+      "bytes": 2087,
+      "sha256": "1ff0b240897ad29a4590b3b79aeac626d6e8f4048b04ff417d21cbaad1ba94ae",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "scripts/cargo-local.sh",
+      "bytes": 340,
+      "sha256": "57c37607a1e3de33f8fe0637eadfb1095b8a91ba23c5aa92bfb2deac96f7ea08",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "scripts/check_repository_content.py",
+      "bytes": 3404,
+      "sha256": "3920ee1e55c525f80fa19edae7e4c964ac96cb165d364f0849cd86511ff39ba6",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "scripts/mcp_gui_probe.py",
+      "bytes": 2197,
+      "sha256": "19a11b31a79f62c9d11ae0be0e93b0da5490859e07ed672e32395eca47fa9696",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "scripts/validate_development_packages.py",
+      "bytes": 4380,
+      "sha256": "8130c4f581024092e67bc0f8c6e847ee010e89ea967ac8acd758399ea9497edf",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "shared/ide-theme/Package.swift",
+      "bytes": 278,
+      "sha256": "eb0975c500cb78dbde507208ec4d21872dfac2bbd6a1171441bdab93b1182d95",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "shared/ide-theme/Sources/IDEThemeAssets/Resources/editor-themes.json",
+      "bytes": 6698,
+      "sha256": "4af1e2ed84e93d8f68d6ee06ed0e6664445c81c4474c909c0a99f5c72a0b4cd3",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "shared/ide-theme/Sources/IDEThemeAssets/ThemeAssets.swift",
+      "bytes": 305,
+      "sha256": "a4319be2592809e871aef73d0cfe394a95da102b75ef30447a94a7f92446284a",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "skills/latexide-platform-development/SKILL.md",
+      "bytes": 4353,
+      "sha256": "4ff71f6fb5d069ab74e785a12521dde25ea987ed00b6aa2dbc5bb52b8c68a1b7",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "skills/latexide-platform-development/references/audit.md",
+      "bytes": 4168,
+      "sha256": "2af9c5a0ec11a7a8b42638f6d90f9f1fc333982712e1681b8f728d3acf5126bb",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "skills/latexide-platform-development/references/definition-navigation.md",
+      "bytes": 6085,
+      "sha256": "18bbfc345f1464ee33bb9eec4abfdbff5c5635f60071cb15784249e627dee178",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "skills/latexide-platform-development/references/intelligence.md",
+      "bytes": 5791,
+      "sha256": "4eea987dbfbf2d29711fcdf911d95ba2712cac59f7ce5b11a7f39584dc62a17d",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "skills/latexide-platform-development/references/linux.md",
+      "bytes": 4931,
+      "sha256": "5f29bbd251227424b65a8483c54b62075f512421fff8035dd0ac1b0ba8831c29",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "skills/latexide-platform-development/references/parallel-development.md",
+      "bytes": 2646,
+      "sha256": "59073fac6dffbc63443d19e2a6e099f00e677040692293e77bca3e69bc200ebc",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "skills/latexide-platform-development/references/project-completion.md",
+      "bytes": 6194,
+      "sha256": "2bfa48d91fd1faab05bdcb5773348a0ebddd82e1ef7d43ab80533f0e5c13c55a",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "skills/latexide-platform-development/references/ui.md",
+      "bytes": 4661,
+      "sha256": "933c377ebe04a0889558ad3e92f2a7a6e51b1d8b3d0312501833d0c79d7ec2af",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "skills/latexide-platform-development/references/windows.md",
+      "bytes": 7238,
+      "sha256": "2ef9572a97691315224d0f5ee5bc42a939b9074bb41004fabd810d065795b38f",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tests/compiler_runtime_contract.py",
+      "bytes": 4875,
+      "sha256": "50a7811e8b8cec1edf2ab57ee4a76ece446d5a3d0c982886a5e27270930b0552",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tests/ffi_contract.c",
+      "bytes": 1564,
+      "sha256": "346aee7c56aad6addfd53da4c5fbb9d90a3611a0bbae2f5896c25cf73ea832a6",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tests/fixtures/basic/main.tex",
+      "bytes": 488,
+      "sha256": "a39d2b524b993faab5e4dfb8ed8e29fb05d5428025ad3ad0120fe0f36d5e9998",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tests/fixtures/multifile/chapter.tex",
+      "bytes": 113,
+      "sha256": "8d491ba0da39793a51dd9873b9c544473bc741529a67461f7c604c486293b681",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tests/fixtures/multifile/main.tex",
+      "bytes": 129,
+      "sha256": "02fdf326bacb63a2eb4bf5365b93f27a6606857eaa2956b679884869f956f215",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tests/ipc_contract.py",
+      "bytes": 12311,
+      "sha256": "76d297219852a60657caea9a144c8fa7092b53971117e129a9a6f78dfb01a820",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tests/mcp_contract.py",
+      "bytes": 4860,
+      "sha256": "d5116ecaa9a4a0acc88bb775243ee1509010751538957e6f2cef5e3a50c82e5c",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tests/test_texlive_profile.py",
+      "bytes": 1041,
+      "sha256": "392acd97d019bb76b357cc1d803f9468041656c07003f2dc9c58b4ccfe1eae9b",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tests/test_tool_acquisition.py",
+      "bytes": 2911,
+      "sha256": "a31bff94451b91135035168edf37b6488f7675cfb84a277513d473d160ce157e",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tests/windows_text_adapter.cpp",
+      "bytes": 725,
+      "sha256": "7cf2ccc881e983794ea3eb06eacef885c79ac128be75ac358a386ec058e05b59",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tools/texlive/README.md",
+      "bytes": 6204,
+      "sha256": "e618a9786a3807ac66f62bd6143827f242ebd10da000511b07aabbdb1379cb01",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tools/texlive/acquire_installers.py",
+      "bytes": 4038,
+      "sha256": "e85a0d65d4689ba8e26468e828a3084b3c3ff58de3144efd8e4cde9d1b5f2e6d",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tools/texlive/install_local.py",
+      "bytes": 4637,
+      "sha256": "7e24a731a06ca6bcd51c69e26ce85fc0656812758de3dd6c2be9676cd202a1a3",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tools/texlive/install_packages.py",
+      "bytes": 3218,
+      "sha256": "f3ff9fe54c490818c817271b238c5cd4809b1fdaab6bfdde62a73c53c6f46fad",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tools/texlive/macos.profile",
+      "bytes": 742,
+      "sha256": "f2e95786d6cce38321a51c3c9700fdda3cc135196e2331b713aeb37065e39fc6",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tools/texlive/package-roots.json",
+      "bytes": 361,
+      "sha256": "05f4c2d049018a134c504bb4f8f8e4e638938606e86e29e335b65fd0e94eefb5",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tools/texlive/smoke_compile.py",
+      "bytes": 5715,
+      "sha256": "1f9fc78acf4ba97cbd12c1f9d875c1acb68a638d1688e0c9c69908d43c07cec5",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tools/texlive/windows-x64.profile",
+      "bytes": 979,
+      "sha256": "6f51cd6e8b83cb3c217b490548675d5667687af8c6ba31d77c7f224c2988ca88",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tools/toolchain-lock.json",
+      "bytes": 2733,
+      "sha256": "01c6fe4d52f6f2d239df79ed3fdaf778ce6ababc1f05a8d5ab926d75039eae91",
+      "category": "product source/test/build/docs/plans/config"
+    },
+    {
+      "path": "tools/windows-nuget-lock.json",
+      "bytes": 1687,
+      "sha256": "4af2841ef1735af27415cccf25185dc73f6a4caf13328b00b267e9662c5358cd",
+      "category": "product source/test/build/docs/plans/config"
+    }
+  ]
+}

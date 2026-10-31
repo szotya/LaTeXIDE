@@ -1,0 +1,11 @@
+[package]
+name = "latexide-mcp"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+latexide-protocol = { path = "../latexide-protocol" }
+rmcp.workspace = true
+serde_json.workspace = true
+tokio = { version = "1.54", features = ["rt-multi-thread", "macros", "io-std"] }

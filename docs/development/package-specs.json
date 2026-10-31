@@ -1,0 +1,1688 @@
+[
+  {
+    "id": "P00",
+    "slug": "integration",
+    "title": "Szerződések és integrációgazda",
+    "tier": "core",
+    "requirements": [
+      "QA-08",
+      "QA-14",
+      "OS-10"
+    ],
+    "goal": "Versionált DTO-kat, izolált tesztfixture-öket és egyetlen bekötési folyamatot ad minden párhuzamos csomagnak.",
+    "architecture": "Új, függőségi kört nem alkotó latexide-contracts crate; csak P00 módosít közös regisztrációt, lockfile-t, protokoll-dispatchot és handoffot. Minden más csomag saját mappából ad adaptert és integration-manifestet.",
+    "entry_path": "crates/latexide-contracts/src/lib.rs",
+    "test_path": "crates/latexide-contracts/tests/compatibility.rs",
+    "interface": "pub fn validate_manifest(manifest: IntegrationManifest, contract: ContractVersion, ownership: &OwnershipRegistry) -> Result<IntegrationOrder, ContractError>;\n// IntegrationManifest { schema:u32, package_id:String, contract_version:u32, requirement_ids:Vec<String>, source_paths:Vec<String>, hook_targets:Vec<String>, test_commands:Vec<String>, compatibility:String }\n// ContractVersion { major:u32, minor:u32 }; OwnershipRegistry { paths:Vec<OwnedPath>, requirements:Vec<OwnedRequirement> }; OwnedPath { package_id:String, path:String }; OwnedRequirement { package_id:String, requirement_id:String }; IntegrationOrder { requirement_ids:Vec<String> }; ContractError::{UnknownRequirement,ForeignPath,IncompatibleVersion,CyclicRequirement}",
+    "first_assertion": "Idegen csomag fájlútvonalát tartalmazó manifest ForeignPath hibával elutasított, a v1 fixture oda-vissza veszteségmentes.",
+    "read_paths": [
+      "Cargo.toml",
+      "crates/latexide-protocol/src/lib.rs",
+      "docs/DEVELOPER_HANDOFF.md"
+    ],
+    "review_focus": [
+      "Contract-változás közben nyitott régi kliens explicit verzióhibát kapjon, ne félreértelmezett választ.",
+      "Párhuzamos kérelmek ugyanazt a közös hookot kérik: determinisztikus egyesítés és regresszió kell.",
+      "Audit óta megvalósult képesség ne legyen ismét hiányzónak jelölve.",
+      "Hiányzó Windows/Linux futás maradjon unrun akkor is, ha a közös Rust ellenőrzés zöld.",
+      "A dokumentációgenerátor változatlan bemenetre byte-azonos fájlokat adjon."
+    ],
+    "owned_paths": [
+      "crates/latexide-contracts/",
+      "integration/registry/",
+      "tests/contracts/",
+      "docs/development/contracts/",
+      "integration/requests/P00.json",
+      "docs/development/results/P00.md"
+    ],
+    "test_command": "cargo +1.99.1 test -p latexide-contracts --test compatibility --locked",
+    "integration_only_paths": [
+      "Cargo.toml",
+      "Cargo.lock",
+      "rust-toolchain.toml",
+      "crates/*/Cargo.toml",
+      "crates/*/src/lib.rs",
+      "crates/latexide-core/src/{workspace,document,project_index,tex_scan,completion,definition}.rs",
+      "crates/latexide-protocol/src/ipc.rs",
+      "crates/latexide-ffi/src/{runtime,session}.rs",
+      "crates/latexide-mcp/src/main.rs",
+      "include/latexide_core.h",
+      "apps/macos/Package.swift",
+      "apps/macos/Sources/LaTeXIDEKit/{WorkspaceStore,WorkspaceView,NativeRuntime,NativeEditor}.swift",
+      "apps/macos/Sources/LaTeXIDEKit/Editor/SourceTextView.swift",
+      "apps/windows/{MainWindow*,NativeCore*,LaTeXIDE.vcxproj,packages.config,NuGet.Native.*}",
+      "scripts/{build_macos.sh,build_windows.ps1}",
+      ".github/workflows/",
+      "docs/{DEVELOPER_HANDOFF,implementation-progress}.md",
+      "skills/latexide-platform-development/"
+    ]
+  },
+  {
+    "id": "P01",
+    "slug": "recovery",
+    "title": "Recovery, bufferéletciklus és helyi előzmény",
+    "tier": "core",
+    "requirements": [
+      "DOC-01",
+      "DOC-02",
+      "DOC-03",
+      "DOC-05",
+      "DOC-07",
+      "DOC-13",
+      "DOC-14",
+      "DOC-15",
+      "DOC-16",
+      "WS-02"
+    ],
+    "goal": "Folyamatkiesés után helyreállítja a nyugtázott, el nem mentett munkát, és biztonságosan kezeli a megnyitott puffereket.",
+    "architecture": "A kanonikus Rust állapot változásai recovery-checkpointot és korlátos naplót kapnak. A tiszta puffer eldobható, a dirty állapot és undo nem; natív restore döntés a Rust-tartalom fölött jelenik meg.",
+    "entry_path": "crates/latexide-core/src/services/recovery/mod.rs",
+    "test_path": "crates/latexide-core/tests/recovery_contract.rs",
+    "interface": "pub fn recover(checkpoint: Checkpoint, journal: &[JournalEntry], disk: &[DiskIdentity]) -> Result<RecoverySet, RecoveryError>;\n// Checkpoint { schema:u32, sequence:u64, documents:Vec<RecoveredDocument> }; JournalEntry { sequence:u64, document_id:String, revision:u64, utf8:Vec<u8>, checksum:String }\n// DiskIdentity { path:String, content_sha256:String }; RecoveredDocument { document_id:String, revision:u64, utf8:Vec<u8>, dirty:bool }; RecoverySet { documents:Vec<RecoveredDocument>, last_sequence:u64 }; RecoveryError::{Corrupt,Quota,UnsupportedSchema}",
+    "first_assertion": "r7 nyugtázása utáni megszakításból r7 dirty tartalom visszajön; csonka r8 napló nem ír a lemezre.",
+    "read_paths": [
+      "crates/latexide-core/src/workspace.rs",
+      "crates/latexide-ffi/src/runtime.rs"
+    ],
+    "review_focus": [
+      "Sérült utolsó naplórekordnál az utolsó teljes nyugtázott revízió álljon helyre.",
+      "Recovery közben más tartalommal létező lemezfájl ne legyen automatikusan felülírva.",
+      "Száz tiszta fájl bejárása ne veszítsen dirty tartalmat vagy undo-előzményt.",
+      "Tele lemez vagy jogosultsághiba ne jelenjen meg sikeres checkpointként.",
+      "Több IDE-session ugyanarra a projektre ne írjon közös recovery-naplóba ellenőrizetlenül."
+    ],
+    "owned_paths": [
+      "crates/latexide-core/src/services/recovery/",
+      "crates/latexide-core/tests/recovery_contract.rs",
+      "integration/requests/P01.json",
+      "docs/development/results/P01.md"
+    ],
+    "test_command": "cargo +1.99.1 test -p latexide-core --test recovery_contract --locked"
+  },
+  {
+    "id": "P02",
+    "slug": "transactions",
+    "title": "Atomi fájlműveletek és szerkesztési tranzakciók",
+    "tier": "core",
+    "requirements": [
+      "DOC-04",
+      "DOC-06",
+      "DOC-08",
+      "DOC-09",
+      "DOC-10",
+      "DOC-11",
+      "DOC-12"
+    ],
+    "goal": "Egységes, visszavonható többfájlos szerkesztést, fájlműveleteket és tartós mentést ad.",
+    "architecture": "Tranzakciótervező előbb minden revíziót/útvonalat validál, majd egy egységben alkalmaz. A lemezmentés külön commitfázis; natív Save As és gépelési undo-csoport ugyanarra a Rust-magra támaszkodik.",
+    "entry_path": "crates/latexide-core/src/services/transactions/mod.rs",
+    "test_path": "crates/latexide-core/tests/transaction_contract.rs",
+    "interface": "pub fn prepare_transaction(snapshot: &WorkspaceSnapshot, edits: Vec<RevisionedEdit>) -> Result<PreparedTransaction, TransactionError>;\n// RevisionedEdit { document_id:String, expected_revision:u64, start_utf16:u32, length_utf16:u32, replacement:String }; PreparedTransaction { transaction_id:String, edits:Vec<RevisionedEdit>, base_snapshot:String }; TransactionError::{StaleRevision,InvalidRange,Overlap,OutsideRoot,Quota}",
+    "first_assertion": "Két fájlból a második stale revíziója az egész batch-et elutasítja; az első tartalma és undo-ja változatlan.",
+    "read_paths": [
+      "crates/latexide-core/src/document.rs",
+      "crates/latexide-core/src/workspace.rs",
+      "tests/ffi_contract.c"
+    ],
+    "review_focus": [
+      "Második fájl validálási hibája ne hagyja az elsőt részben módosítva.",
+      "Emoji közepére mutató UTF-16 range és átfedő edit legyen explicit hiba.",
+      "Mentés után az undo maradjon működő és újra menthető.",
+      "Szóközös, Unicode vagy symlinkkel kicserélt cél útvonala ne vezessen idegen fájl felülírásához.",
+      "Hosszú gépelés undo-csoportja ne törölje észrevétlenül az előző logikai szerkesztés visszavonhatóságát."
+    ],
+    "owned_paths": [
+      "crates/latexide-core/src/services/transactions/",
+      "crates/latexide-core/tests/transaction_contract.rs",
+      "integration/requests/P02.json",
+      "docs/development/results/P02.md"
+    ],
+    "test_command": "cargo +1.99.1 test -p latexide-core --test transaction_contract --locked"
+  },
+  {
+    "id": "P03",
+    "slug": "runtime",
+    "title": "Aszinkron runtime, IPC, FFI és MCP",
+    "tier": "core",
+    "requirements": [
+      "MCP-01",
+      "MCP-02",
+      "MCP-03",
+      "MCP-04",
+      "MCP-05",
+      "MCP-06",
+      "MCP-07",
+      "MCP-08",
+      "MCP-09",
+      "MCP-10"
+    ],
+    "goal": "Határidős, többklienses, típusos és megszakítható szolgáltatáshatárt épít a közös runtime köré.",
+    "architecture": "Korlátos kérdéssor és eseményfolyam választja szét a vezérlőhívást a hosszú index/build művelettől. A v1 klienskompatibilitás explicit adapter, a v2 request ID és idempotencia állapota sessionhöz kötött.",
+    "entry_path": "crates/latexide-ffi/src/dispatch/mod.rs",
+    "test_path": "tests/runtime_v2_contract.py",
+    "interface": "pub fn admit_frame(client_id: String, frame: &[u8], elapsed_ms:u64, limits: FrameLimits) -> Result<AcceptedFrame, TransportError>;\n// FrameLimits { max_bytes:usize, deadline_ms:u64 }; AcceptedFrame { request_id:String, operation:String }; TransportError::{FrameTooLarge,Deadline,Unauthorized,InvalidFrame,DuplicateConflict}",
+    "first_assertion": "Egy félkész kliens határidővel kiesik, közben a második hiteles kliens workspace_info válasza megérkezik.",
+    "read_paths": [
+      "crates/latexide-protocol/src/ipc.rs",
+      "crates/latexide-ffi/src/session.rs",
+      "crates/latexide-mcp/src/main.rs"
+    ],
+    "review_focus": [
+      "Első kliens soha nem zárja le a frame-et: a második továbbra is kapjon választ.",
+      "Újraküldött azonos request ID ne alkalmazza másodszor ugyanazt az editet.",
+      "Lassú eseményfogyasztó memóriakorláttal és látható gap/resync állapottal működjön.",
+      "Runtime free alatt függő FFI-hívás ne okozzon use-after-free-t vagy pánikát a C-határon.",
+      "Nagy olvasás snapshotazonossága chunkváltáskor se változzon csendben."
+    ],
+    "owned_paths": [
+      "crates/latexide-ffi/src/dispatch/",
+      "tests/runtime_v2_contract.py",
+      "integration/requests/P03.json",
+      "docs/development/results/P03.md"
+    ],
+    "test_command": "python3 tests/runtime_v2_contract.py"
+  },
+  {
+    "id": "P04",
+    "slug": "vfs",
+    "title": "VFS, fájlfigyelés és projektmanifest",
+    "tier": "core",
+    "requirements": [
+      "WS-01",
+      "WS-10",
+      "NAV-12",
+      "OS-07"
+    ],
+    "goal": "Friss, kanonikus projektképet és dirty-overlayt ad keresésnek, nyelvi szolgáltatásnak és buildnek.",
+    "architecture": "Egy Rust VFS a lemezmanifest és a kanonikus dirty dokumentumok rendezett metszete. OS-watcher csak invalidál; overflow után teljes reconcile, hash/identitás ellenőrzés szükséges.",
+    "entry_path": "crates/latexide-core/src/services/vfs/mod.rs",
+    "test_path": "crates/latexide-core/tests/vfs_contract.rs",
+    "interface": "pub fn reconcile(previous:&VfsSnapshot, disk:Vec<VfsEntry>, overlays:Vec<DirtyOverlay>) -> Result<VfsSnapshot,VfsError>;\n// VfsEntry { path:String, content_sha256:String, size:u64 }; DirtyOverlay { path:String, revision:u64, content_sha256:String }; VfsSnapshot { epoch:u64, entries:Vec<VfsEntry> }; VfsError::{OutsideRoot,IdentityConflict,Quota}",
+    "first_assertion": "Változatlan méret/mtime mellett módosult chapter.tex új hash-t és epochot ad, dirty overlayt nem ír felül.",
+    "read_paths": [
+      "crates/latexide-core/src/project_index.rs",
+      "crates/latexide-core/src/workspace.rs"
+    ],
+    "review_focus": [
+      "Watcher eseményvesztés után teljes reconcile állítsa helyre a projektképet.",
+      "Kis-/nagybetűben vagy Unicode-normalizációban eltérő fájlok ne legyenek néma aliasok.",
+      "Symlink és gyökérből kilépő út explicit hozzáférési döntést kapjon.",
+      "Dirty buffer tartalma legyen elsődleges a diszkhez képest.",
+      "Törölt majd azonos néven újra létrehozott fájl új identitása minden fogyasztóhoz jusson el."
+    ],
+    "owned_paths": [
+      "crates/latexide-core/src/services/vfs/",
+      "crates/latexide-core/tests/vfs_contract.rs",
+      "integration/requests/P04.json",
+      "docs/development/results/P04.md"
+    ],
+    "test_command": "cargo +1.99.1 test -p latexide-core --test vfs_contract --locked"
+  },
+  {
+    "id": "P05",
+    "slug": "language",
+    "title": "Inkrementális LaTeX nyelvi motor és refaktorálás",
+    "tier": "core",
+    "requirements": [
+      "LANG-01",
+      "LANG-02",
+      "LANG-03",
+      "LANG-04",
+      "LANG-05",
+      "LANG-07",
+      "LANG-08",
+      "LANG-09",
+      "LANG-10",
+      "LANG-12",
+      "LANG-13",
+      "LANG-14",
+      "LANG-15",
+      "LANG-16",
+      "LANG-17",
+      "LANG-18"
+    ],
+    "goal": "A meglévő lexikális kiegészítést explicit lefedettségű szerkezeti/scope modellel és biztonságos refaktorálással egészíti ki.",
+    "architecture": "Inkrementális parse és include-gráf a VFS-snapshotra épül; dinamikus TeX-konstrukció partial/unknown. Módosító művelet kizárólag P02 revíziózott tranzakcióját kérheti.",
+    "entry_path": "crates/latexide-core/src/services/language/mod.rs",
+    "test_path": "crates/latexide-core/tests/language_service_contract.rs",
+    "interface": "pub fn analyze(snapshot:&WorkspaceSnapshot, root:String, budget:AnalysisBudget) -> Result<AnalysisResult,LanguageError>;\n// AnalysisBudget { max_files:u32, max_bytes:u64, deadline_ms:u64 }; AnalysisResult { snapshot_id:String, symbols:Vec<ScopedSymbol>, diagnostics:Vec<SourceDiagnostic>, coverage:Coverage }; ScopedSymbol { name:String, definition:SourceAnchor, scope:String }; Coverage::{Complete,Partial,Unknown}; LanguageError::{Cancelled,StaleSnapshot,Quota}",
+    "first_assertion": "Include-scope fixture-ben az elérhető makró célhelye pontos, dinamikus include esetén coverage Partial és nincs kitalált teljes feloldás.",
+    "read_paths": [
+      "crates/latexide-core/src/tex_scan.rs",
+      "crates/latexide-core/src/project_index.rs",
+      "crates/latexide-core/src/completion.rs"
+    ],
+    "review_focus": [
+      "Dinamikus TeX/conditionals esetén a lefedettség legyen partial, ne hamis biztos állítás.",
+      "Ciklusos include és makrórekurzió álljon meg korlátosan.",
+      "Régi snapshotra indult elemzés ne írja felül az új revízió diagnosztikáját.",
+      "Komment/verbatim/BOM/CRLF/emoji tartományai maradjanak a kanonikus koordinátarendszerben.",
+      "Rename preview és alkalmazás között változó bármely fájl esetén a teljes edit legyen elutasított."
+    ],
+    "owned_paths": [
+      "crates/latexide-core/src/services/language/",
+      "crates/latexide-core/tests/language_service_contract.rs",
+      "integration/requests/P05.json",
+      "docs/development/results/P05.md"
+    ],
+    "test_command": "cargo +1.99.1 test -p latexide-core --test language_service_contract --locked"
+  },
+  {
+    "id": "P06",
+    "slug": "navigation",
+    "title": "Projektkeresés és szemantikus navigáció",
+    "tier": "core",
+    "requirements": [
+      "NAV-01",
+      "NAV-02",
+      "NAV-03",
+      "NAV-04",
+      "NAV-05",
+      "NAV-06",
+      "NAV-07",
+      "NAV-08",
+      "NAV-09",
+      "NAV-10",
+      "NAV-11",
+      "LANG-06"
+    ],
+    "goal": "Egységes keresést, outline-t, vissza/előre történetet és a meglévő definícióugrás bővítését adja.",
+    "architecture": "Snapshothoz kötött találatok forrásankort tartalmaznak; megnyitáskor revízió és célidentitás újraellenőrzött. A most kész Cmd-click adapter megmarad, a szolgáltatás ambiguity/peek/history irányba bővül.",
+    "entry_path": "crates/latexide-core/src/services/navigation/mod.rs",
+    "test_path": "crates/latexide-core/tests/navigation_service_contract.rs",
+    "interface": "pub fn search(snapshot:&WorkspaceSnapshot, query:SearchQuery) -> Result<SearchPage,SearchError>;\n// SearchQuery { text:String, regex:bool, case_sensitive:bool, cursor:Option<String>, max_results:u32 }; SearchPage { snapshot_id:String, hits:Vec<SearchHit>, next_cursor:Option<String> }; SearchHit { anchor:SourceAnchor, preview:String }; SearchError::{InvalidRegex,StaleCursor,Cancelled,Quota}",
+    "first_assertion": "Dirty chapter.tex találata revízióhoz kötött; új snapshot alatt régi lapozókurzor StaleCursor, nem kevert találatlista.",
+    "read_paths": [
+      "crates/latexide-core/src/definition.rs",
+      "apps/macos/Sources/LaTeXIDEKit/Workspace/DefinitionNavigation.swift",
+      "docs/definition-navigation-verification.md"
+    ],
+    "review_focus": [
+      "Megnyitás előtt megváltozó találat ne rossz szöveget jelöljön ki.",
+      "Két azonos nevű definíció esetén a felület mutassa az alternatívákat.",
+      "Back/forward ne módosítsa a forrást és ne veszítse el a korábbi viewportot.",
+      "Hibás vagy költséges regex explicit hiba/deadline legyen.",
+      "Keresés-csere preview után stale fájl esetén a teljes tranzakció álljon meg."
+    ],
+    "owned_paths": [
+      "crates/latexide-core/src/services/navigation/",
+      "crates/latexide-core/tests/navigation_service_contract.rs",
+      "integration/requests/P06.json",
+      "docs/development/results/P06.md"
+    ],
+    "test_command": "cargo +1.99.1 test -p latexide-core --test navigation_service_contract --locked"
+  },
+  {
+    "id": "P07",
+    "slug": "editor",
+    "title": "Natív szerkesztői termelékenység",
+    "tier": "core",
+    "requirements": [
+      "EDT-01",
+      "EDT-02",
+      "EDT-03",
+      "EDT-04",
+      "EDT-05",
+      "EDT-06",
+      "EDT-07",
+      "EDT-08",
+      "EDT-09",
+      "EDT-10",
+      "EDT-11",
+      "EDT-12",
+      "EDT-14",
+      "EDT-15",
+      "EDT-16"
+    ],
+    "goal": "Billentyűzettel és IME-vel megbízható, testreszabható írási/szerkesztési workflow-kat épít.",
+    "architecture": "A meglevő SourceTextView vékony adapter marad; külön feature-modul kezeli a kurzorokat, snippetállapotot, foldot és diagnosztikai nézetet. A szöveget továbbra Rust tranzakció módosítja.",
+    "entry_path": "apps/macos/Sources/LaTeXIDEKit/Features/Editor/EditorFeatureState.swift",
+    "test_path": "apps/macos/Tests/LaTeXIDEKitTests/EditorFeatureTests.swift",
+    "interface": "pub fn plan_editor_action(snapshot:&WorkspaceSnapshot, action:EditorAction) -> Result<EditorTransaction,EditorError>;\n// EditorAction { document_id:String, revision:u64, selections:Vec<Utf16Range>, command:String }; EditorTransaction { edits:Vec<RevisionedEdit>, selections:Vec<Utf16Range> }; EditorError::{CompositionActive,InvalidSelection,StaleRevision,UnsupportedCommand}",
+    "first_assertion": "Többkurzoros beszúrás egy undo-val visszaáll; aktív IME alatt ugyanaz CompositionActive, változatlan tartalommal.",
+    "read_paths": [
+      "apps/macos/Sources/LaTeXIDEKit/Editor/SourceTextView.swift",
+      "apps/macos/Sources/LaTeXIDEKit/NativeEditor.swift",
+      "docs/IDE_PRODUCT_DIRECTION.md"
+    ],
+    "review_focus": [
+      "Marked text mellett snippet/formatter ne sértse meg az IME-kompozíciót.",
+      "Több kurzor átfedő tartományai determinisztikus hibát kapjanak.",
+      "Popup/fold/diagnosztika ne vegye el a forrás billentyűzetfókuszát.",
+      "Soft wrap után a sor-/UTF-16-mapping és scroll-visszaállítás maradjon pontos.",
+      "Nagy fájlban minimap/fold kikapcsolható és mért kereten belül maradjon."
+    ],
+    "owned_paths": [
+      "apps/macos/Sources/LaTeXIDEKit/Features/Editor/",
+      "apps/macos/Tests/LaTeXIDEKitTests/EditorFeatureTests.swift",
+      "integration/requests/P07.json",
+      "docs/development/results/P07.md"
+    ],
+    "test_command": "swift test --package-path apps/macos --filter EditorFeatureTests",
+    "adapter_language": "swift",
+    "adapter_interface": "func planEditorAction(snapshot: WorkspaceSnapshot, action: EditorAction) throws -> EditorTransaction"
+  },
+  {
+    "id": "P08",
+    "slug": "workspace",
+    "title": "Beállítások, parancsok és munkaterület",
+    "tier": "core",
+    "requirements": [
+      "WS-03",
+      "WS-04",
+      "WS-05",
+      "WS-06",
+      "WS-07",
+      "WS-08",
+      "WS-09",
+      "WS-11",
+      "WS-12",
+      "WS-13",
+      "WS-14",
+      "OS-08"
+    ],
+    "goal": "Egy koherens, tartósan személyre szabható natív munkaterületet épít egységes parancs- és fókuszmodellel.",
+    "architecture": "Verziózott Rust settings és command-state adatokra épülő natív workspace. Profil és többablakos állapot dokumentumazonosítót hivatkozik, nem duplikált szövegtárolót.",
+    "entry_path": "crates/latexide-core/src/services/workspace_settings/mod.rs",
+    "test_path": "crates/latexide-core/tests/workspace_settings_contract.rs",
+    "interface": "pub fn resolve_settings(user:SettingsLayer, project:SettingsLayer, profile:SettingsLayer) -> Result<EffectiveSettings,SettingsError>;\n// SettingsLayer { schema:u32, values:Vec<SettingValue> }; SettingValue { key:String, value:String }; EffectiveSettings { schema:u32, values:Vec<SettingValue>, provenance:Vec<String> }; SettingsError::{UnsupportedSchema,InvalidValue,MigrationFailed}",
+    "first_assertion": "User→project→profile felülírás determinisztikus, ismeretlen séma hibája megőrzi az eredeti settingsfájlt.",
+    "read_paths": [
+      "apps/macos/Sources/LaTeXIDEKit/WorkspaceStore.swift",
+      "apps/macos/Sources/LaTeXIDEKit/WorkspaceView.swift",
+      "shared/ide-theme"
+    ],
+    "review_focus": [
+      "Sérült vagy újabb sémájú settings ne semmisítse meg a régi értékeket.",
+      "Asszisztens el nem küldött draftja panel-/profil-/ablakváltáskor maradjon meg.",
+      "Command shortcut csak a fókuszt birtokló célra hasson.",
+      "Több monitorról eltűnő ablak visszahozható legyen az elérhető képernyőre.",
+      "Projektbeállítás ne tudjon jóváhagyatlan tetszőleges parancsot futtatni."
+    ],
+    "owned_paths": [
+      "crates/latexide-core/src/services/workspace_settings/",
+      "crates/latexide-core/tests/workspace_settings_contract.rs",
+      "integration/requests/P08.json",
+      "docs/development/results/P08.md"
+    ],
+    "test_command": "cargo +1.99.1 test -p latexide-core --test workspace_settings_contract --locked"
+  },
+  {
+    "id": "P09",
+    "slug": "build",
+    "title": "Konzisztens fordítás és diagnosztika",
+    "tier": "core",
+    "requirements": [
+      "BLD-01",
+      "BLD-02",
+      "BLD-03",
+      "BLD-04",
+      "BLD-05",
+      "BLD-06",
+      "BLD-07",
+      "BLD-08",
+      "BLD-09",
+      "BLD-10",
+      "BLD-11",
+      "BLD-12",
+      "BLD-13",
+      "BLD-14",
+      "BLD-15",
+      "BLD-16"
+    ],
+    "goal": "Valódi, teljes függőségpillanatképhez kötött PDF-et és megbízható compilerfolyamatot ad.",
+    "architecture": "BuildManifest a dirty és unopened inputokat is azonosítja; immutable stagingből fordítás, PDF-validálás és generation-státusz külön lépés. A régi supervisor folyamatkezelési tapasztalatai megmaradnak.",
+    "entry_path": "crates/latexide-build/src/pipeline/mod.rs",
+    "test_path": "crates/latexide-build/tests/pipeline_contract.rs",
+    "interface": "pub fn evaluate_artifact(manifest:&BuildManifest, current:&WorkspaceSnapshot, pdf:&[u8]) -> Result<ArtifactState,ArtifactError>;\n// BuildManifest { generation:String, snapshot_id:String, inputs:Vec<BuildInput>, compiler_sha256:String }; BuildInput { path:String, content_sha256:String }; ArtifactState::{Current,Stale}; ArtifactError::{InvalidPdf,MissingInput,InconsistentSnapshot}",
+    "first_assertion": "Exit0 és öt nem-PDF byte InvalidPdf; unopened chapter.tex változása mellett a korábbi valódi PDF Stale.",
+    "read_paths": [
+      "crates/latexide-build/src/lib.rs",
+      "crates/latexide-ffi/src/runtime.rs",
+      "tests/compiler_runtime_contract.py"
+    ],
+    "review_focus": [
+      "Exit0 nem-PDF output ne váljon sikeres builddé.",
+      "Unopened függőség, bib, kép vagy font változása stale állapotot adjon.",
+      "Fordítás alatti szerkesztés ne keveredjen az adott generation forrásai közé.",
+      "Timeout/cancel az egész folyamatfát lezárja és nem tünteti el a régi megtekinthető PDF-et.",
+      "Hiányzó csomag vagy bibliográfiai második pass ne látszódjon kész kiadványnak."
+    ],
+    "owned_paths": [
+      "crates/latexide-build/src/pipeline/",
+      "crates/latexide-build/tests/pipeline_contract.rs",
+      "integration/requests/P09.json",
+      "docs/development/results/P09.md"
+    ],
+    "test_command": "cargo +1.99.1 test -p latexide-build --test pipeline_contract --locked"
+  },
+  {
+    "id": "P10",
+    "slug": "pdf",
+    "title": "PDF munkafolyamat és SyncTeX",
+    "tier": "core",
+    "requirements": [
+      "PDF-01",
+      "PDF-02",
+      "PDF-03",
+      "PDF-04",
+      "PDF-05",
+      "PDF-06",
+      "PDF-07",
+      "PDF-08",
+      "PDF-09",
+      "PDF-10",
+      "PDF-11",
+      "PDF-12"
+    ],
+    "goal": "Revízióhelyes kétirányú forrás–PDF navigációt és teljes natív PDF-munkafolyamatot ad.",
+    "architecture": "A PDF, SyncTeX és BuildManifest egy generation-lease alatt él. Közös koordinátaszerződés fölött Mac PDFKit és külön Windows adapter; nincs rossz generationre való csendes navigáció.",
+    "entry_path": "crates/latexide-core/src/services/pdf/mod.rs",
+    "test_path": "crates/latexide-core/tests/pdf_service_contract.rs",
+    "interface": "pub fn forward_sync(bundle:&PdfBundle, source:SourceAnchor) -> Result<PdfLocation,PdfError>;\n// PdfBundle { generation:String, snapshot_id:String, pdf_path:String, synctex_path:String }; PdfLocation { page:u32, x:f64, y:f64, width:f64, height:f64, generation:String }; PdfError::{StaleGeneration,MissingSync,InvalidPage,InvalidPdf}",
+    "first_assertion": "Régi generationhöz tartozó SyncTeX cél StaleGeneration; helyes bundle pontos oldalt és forgatott koordinátát ad.",
+    "read_paths": [
+      "apps/macos/Sources/LaTeXIDEKit/Panels/PDFPanel.swift",
+      "crates/latexide-build/src/lib.rs"
+    ],
+    "review_focus": [
+      "Új buildre cserélt PDF mellett régi SyncTeX-t ne használjon az adapter.",
+      "Forgatott/eltérő méretű oldal koordinátája mindkét irányban pontos legyen.",
+      "Hibás vagy több ezer oldalas PDF ne blokkolja korlátlanul a felületet.",
+      "Preview-csere megőrizze az érvényes zoomot/viewportot és ne dobjon fókuszt.",
+      "Windows szövegkeresés/kijelölés saját futtatási bizonyíték nélkül ne kapjon Mac eredményt."
+    ],
+    "owned_paths": [
+      "crates/latexide-core/src/services/pdf/",
+      "crates/latexide-core/tests/pdf_service_contract.rs",
+      "integration/requests/P10.json",
+      "docs/development/results/P10.md"
+    ],
+    "test_command": "cargo +1.99.1 test -p latexide-core --test pdf_service_contract --locked"
+  },
+  {
+    "id": "P11",
+    "slug": "research",
+    "title": "Írás, sablonok és publikációs export",
+    "tier": "core",
+    "requirements": [
+      "RES-01",
+      "RES-02",
+      "RES-05",
+      "RES-06",
+      "RES-07",
+      "RES-08",
+      "RES-09",
+      "RES-10",
+      "RES-11",
+      "RES-12"
+    ],
+    "goal": "Sablontól a beadásig reprodukálható kutatói/egyetemi dokumentumfolyamatot ad.",
+    "architecture": "A sablon és preflight compiler-/forrásmanifesthez kötött; export allowlist alapján új könyvtárba történik. Research pipeline a taskportot használja, a fókuszprofil a settingsportot.",
+    "entry_path": "crates/latexide-core/src/services/research/mod.rs",
+    "test_path": "crates/latexide-core/tests/research_contract.rs",
+    "interface": "pub fn plan_export(snapshot:&WorkspaceSnapshot, policy:ExportPolicy) -> Result<ExportManifest,ExportError>;\n// ExportPolicy { include_sources:bool, include_pdf:bool, allow_paths:Vec<String> }; ExportManifest { snapshot_id:String, files:Vec<String>, warnings:Vec<String> }; ExportError::{SecretCandidate,MissingArtifact,OutsideRoot,StaleBuild}",
+    "first_assertion": "Beadási csomag tartalmazza a szükséges tex/bib/kép/PDF fájlokat, .env és IDE-sessionadat nélkül; stale PDF blokkol.",
+    "read_paths": [
+      "tests/fixtures",
+      "tools/texlive/package-roots.json",
+      "docs/IDE_PRODUCT_DIRECTION.md"
+    ],
+    "review_focus": [
+      "Sablon megnyitása ne írja felül a létező felhasználói projektet.",
+      "Titkot vagy sessiondescriptort tartalmazó export ne készüljön el csendben.",
+      "Beadáshoz szükséges ábra/bib/custom class hiánya konkrét preflight hibát adjon.",
+      "Magyar ékezet, szóközös útvonal és főfájlnév pontjai maradjanak működők.",
+      "Notebook/Quarto/latexdiff pipeline csak megfelelő trust és toolverzió mellett induljon."
+    ],
+    "owned_paths": [
+      "crates/latexide-core/src/services/research/",
+      "crates/latexide-core/tests/research_contract.rs",
+      "integration/requests/P11.json",
+      "docs/development/results/P11.md"
+    ],
+    "test_command": "cargo +1.99.1 test -p latexide-core --test research_contract --locked"
+  },
+  {
+    "id": "P12",
+    "slug": "bibliography",
+    "title": "BibTeX adatmodell és kutatói import",
+    "tier": "core",
+    "requirements": [
+      "LANG-11",
+      "RES-03",
+      "RES-04"
+    ],
+    "goal": "Strukturált, dirty bufferrel következetes bibliográfiát és ellenőrizhető külső importot ad.",
+    "architecture": "Lossless BibTeX/BibLaTeX parse és hibaállapot; import előbb szerkeszthető rekordot ad, az alkalmazás P02 tranzakciója. Hálózat és titokhatár P18 policyhoz kötött.",
+    "entry_path": "crates/latexide-core/src/services/bibliography/mod.rs",
+    "test_path": "crates/latexide-core/tests/bibliography_contract.rs",
+    "interface": "pub fn inspect_bibliography(source:&str) -> BibliographyReport;\n// BibliographyReport { entries:Vec<BibEntry>, diagnostics:Vec<SourceDiagnostic>, duplicate_keys:Vec<String> }; BibEntry { key:String, entry_type:String, fields:Vec<BibField>, range:Utf16Range }; BibField { name:String, raw_value:String }",
+    "first_assertion": "Két azonos BibTeX-kulcs explicit duplikáció; megjegyzés és brace-nested mező lossless újraszerializálható.",
+    "read_paths": [
+      "crates/latexide-core/src/project_index.rs",
+      "crates/latexide-core/src/tex_scan.rs"
+    ],
+    "review_focus": [
+      "Hibás vagy félbegépelt BibTeX megőrizze az eredeti szöveget és hibapozíciót adjon.",
+      "Duplikált kulcs feloldása egyezzen a completion/definition jelenlegi szerződésével.",
+      "DOI/arXiv/Zotero válasz ne váljon automatikusan mentett vagy futtatott tartalommá.",
+      "LaTeX escape és nested brace ne vesszen el normalizáláskor.",
+      "Hálózati timeout/offline mód és provider rate limit ne blokkolja a helyi szerkesztést."
+    ],
+    "owned_paths": [
+      "crates/latexide-core/src/services/bibliography/",
+      "crates/latexide-core/tests/bibliography_contract.rs",
+      "integration/requests/P12.json",
+      "docs/development/results/P12.md"
+    ],
+    "test_command": "cargo +1.99.1 test -p latexide-core --test bibliography_contract --locked"
+  },
+  {
+    "id": "P13",
+    "slug": "git",
+    "title": "Git, diff, merge és agentváltozások",
+    "tier": "core",
+    "requirements": [
+      "GIT-01",
+      "GIT-02",
+      "GIT-03",
+      "GIT-04",
+      "GIT-05",
+      "GIT-06",
+      "GIT-07",
+      "GIT-08",
+      "GIT-09",
+      "GIT-10",
+      "GIT-11",
+      "GIT-12",
+      "EDT-13"
+    ],
+    "goal": "A munkakönyvtár, index, HEAD és agentváltozások átlátható, biztonságos verziókezelését adja.",
+    "architecture": "Argumentumtömbös Git-adapter és immutable diffmodellek, háromutas merge a közös tranzakcióporton. A hálózati és destruktív műveletek külön felhasználói parancsok.",
+    "entry_path": "crates/latexide-core/src/services/git/mod.rs",
+    "test_path": "crates/latexide-core/tests/git_service_contract.rs",
+    "interface": "pub fn parse_status_v2(bytes:&[u8]) -> Result<GitStatus,GitError>;\n// GitStatus { branch:Option<String>, entries:Vec<GitEntry> }; GitEntry { path:Vec<u8>, old_path:Option<Vec<u8>>, index_state:char, worktree_state:char }; GitError::{InvalidOutput,NotRepository,CommandFailed,Cancelled}",
+    "first_assertion": "NUL-delimited Git státusz szóközt és sortörést tartalmazó nevet is egy fájlként őriz, index és worktree külön állapot.",
+    "read_paths": [
+      "crates/latexide-core/src/workspace.rs",
+      "apps/macos/Sources/LaTeXIDEKit/WorkspaceStore.swift"
+    ],
+    "review_focus": [
+      "Dirty IDE-buffer és más lemezverzió diffje ne legyen összekeverve.",
+      "Sortöréses/Unicode fájlnév és átnevezés ne sértse a parserargumentumokat.",
+      "Merge/rebase/stash közben fennálló konfliktus ne vesszen el újabb parancstól.",
+      "Credential ne jelenjen meg URL-ben, logban vagy support bundle-ben.",
+      "Push/pull/reset ne fusson puszta projektmegnyitás vagy agentváltozás miatt."
+    ],
+    "owned_paths": [
+      "crates/latexide-core/src/services/git/",
+      "crates/latexide-core/tests/git_service_contract.rs",
+      "integration/requests/P13.json",
+      "docs/development/results/P13.md"
+    ],
+    "test_command": "cargo +1.99.1 test -p latexide-core --test git_service_contract --locked"
+  },
+  {
+    "id": "P14",
+    "slug": "assistant",
+    "title": "Asszisztens, sessiontörténet és provideradapter",
+    "tier": "core",
+    "requirements": [
+      "AI-01",
+      "AI-02",
+      "AI-03",
+      "AI-04",
+      "AI-05",
+      "AI-06",
+      "AI-07",
+      "AI-08",
+      "AI-09",
+      "AI-10",
+      "AI-11",
+      "AI-12",
+      "AI-13",
+      "AI-14"
+    ],
+    "goal": "Tartós, újracsatlakoztatható és tényleges eszközállapotú natív agentmunkafolyamatot ad.",
+    "architecture": "A mostani Codex app-server adapter kap verzióalkut és per-session tartós eseménynaplót. A draft külön állapot; edit a meglévő MCP/Rust porton, nincs új engedélykapu minden szerkesztés előtt.",
+    "entry_path": "apps/macos/Sources/LaTeXIDEKit/Features/AssistantHistory/HistoryStore.swift",
+    "test_path": "apps/macos/Tests/LaTeXIDEKitTests/AssistantHistoryTests.swift",
+    "interface": "pub fn reduce_assistant(state:AssistantState, event:AssistantEvent) -> Result<AssistantState,AssistantError>;\n// AssistantState { session_id:String, draft:String, active_turn:Option<String>, last_sequence:u64 }; AssistantEvent { session_id:String, sequence:u64, kind:AssistantEventKind }; AssistantEventKind::{DraftChanged(String),TurnStarted(String),TurnStopped,Disconnected,Reconnected}; AssistantError::{WrongSession,SequenceGap,UnsupportedVersion}",
+    "first_assertion": "Panelváltás és reconnect után a draft változatlan; ismételt Stop idempotens, más session eseménye elutasított.",
+    "read_paths": [
+      "apps/macos/Sources/LaTeXIDEKit/Assistant/AssistantSession.swift",
+      "apps/macos/Sources/LaTeXIDEKit/Assistant/CodexProcessTransport.swift"
+    ],
+    "review_focus": [
+      "Reconnect után ismételt esemény ne ismételje meg az editet vagy a felhasználói turnt.",
+      "El nem küldött draft és csatolmány több ablak/session mellett se kerüljön más beszélgetésbe.",
+      "Unsupported Codex protokoll konkrét kompatibilitási hibát adjon.",
+      "Providerhiba vagy Stop valós toolállapotot mutasson, ne maradjon végtelen running.",
+      "Valós modellteszt credential/költség/online feltételei külön opt-in eredményként szerepeljenek."
+    ],
+    "owned_paths": [
+      "apps/macos/Sources/LaTeXIDEKit/Features/AssistantHistory/",
+      "apps/macos/Tests/LaTeXIDEKitTests/AssistantHistoryTests.swift",
+      "integration/requests/P14.json",
+      "docs/development/results/P14.md"
+    ],
+    "test_command": "swift test --package-path apps/macos --filter AssistantHistoryTests",
+    "adapter_language": "swift",
+    "adapter_interface": "func reduceAssistant(state: AssistantState, event: AssistantEvent) throws -> AssistantState"
+  },
+  {
+    "id": "P15",
+    "slug": "extensions",
+    "title": "LSP, plugin SDK és mellékfájlok",
+    "tier": "core",
+    "requirements": [
+      "EXT-01",
+      "EXT-02",
+      "EXT-03",
+      "EXT-04",
+      "EXT-05",
+      "EXT-06",
+      "EXT-07",
+      "EXT-08",
+      "DEV-08",
+      "DEV-10"
+    ],
+    "goal": "Korlátos, verziózott bővítési határt és külső nyelvi szolgáltatást ad.",
+    "architecture": "Izolált providerfolyamat, capability-alku és regisztrált parancsok; a plugin nem kap kanonikus szövegírási kerülőutat. SDK fixture önállóan teszteli a provider és host kompatibilitását.",
+    "entry_path": "crates/latexide-core/src/services/extensions/mod.rs",
+    "test_path": "crates/latexide-core/tests/extension_host_contract.rs",
+    "interface": "pub fn negotiate_provider(host:ProviderCapabilities, plugin:ProviderManifest) -> Result<ProviderSession,ProviderError>;\n// ProviderCapabilities { api_major:u32, commands:Vec<String> }; ProviderManifest { id:String, api_major:u32, requested_capabilities:Vec<String>, executable:String }; ProviderSession { id:String, granted_capabilities:Vec<String> }; ProviderError::{IncompatibleVersion,DeniedCapability,InvalidManifest,Untrusted}",
+    "first_assertion": "Más API-major és nem engedélyezett capability elutasított; kompatibilis read-only provider nem kap edit jogot.",
+    "read_paths": [
+      "crates/latexide-mcp/src/main.rs",
+      "crates/latexide-protocol/src/lib.rs",
+      "docs/IDE_PRODUCT_DIRECTION.md"
+    ],
+    "review_focus": [
+      "Összeomló vagy lassú plugin ne állítsa le a dokumentumruntimet.",
+      "Plugin API-major eltérés ne okozzon részben működő csatlakozást.",
+      "LSP régi dokumentumverzióra küldött editje csak stale hibát adhat.",
+      "Ismeretlen eredetű csomag ne kapjon automatikusan futtatási vagy hálózati jogot.",
+      "Hiányzó natív rendercapability esetén a plugin jelezzen unsupported állapotot."
+    ],
+    "owned_paths": [
+      "crates/latexide-core/src/services/extensions/",
+      "crates/latexide-core/tests/extension_host_contract.rs",
+      "integration/requests/P15.json",
+      "docs/development/results/P15.md"
+    ],
+    "test_command": "cargo +1.99.1 test -p latexide-core --test extension_host_contract --locked"
+  },
+  {
+    "id": "P16",
+    "slug": "terminal",
+    "title": "Integrált terminál és shellprofilok",
+    "tier": "core",
+    "requirements": [
+      "DEV-01",
+      "DEV-02"
+    ],
+    "goal": "Valódi PTY/ConPTY terminált ad korlátozott, átlátható profilokkal.",
+    "architecture": "Külön terminálfolyamat és bounded scrollback, natív renderadapterrel. macOS PTY és Windows ConPTY külön backend; shell életciklus a trustpolicy és taskcancel szerződését használja.",
+    "entry_path": "crates/latexide-core/src/services/terminal/mod.rs",
+    "test_path": "crates/latexide-core/tests/terminal_contract.rs",
+    "interface": "pub fn validate_terminal_profile(profile:TerminalProfile, trust:TrustDecision) -> Result<TerminalLaunch,TerminalError>;\n// TerminalProfile { executable:String, args:Vec<String>, cwd:String, env_keys:Vec<String> }; TerminalLaunch { executable:String, args:Vec<String>, cwd:String }; TrustDecision::{Trusted,Untrusted}; TerminalError::{Untrusted,OutsideRoot,InvalidExecutable,DeniedEnvironment}",
+    "first_assertion": "Untrusted projekt profilja nem indul; szóközös shellút argumentumtömbként változatlan, credential-env nem öröklődik.",
+    "read_paths": [
+      "crates/latexide-build/src/lib.rs",
+      "apps/windows/MainWindow.xaml.cpp"
+    ],
+    "review_focus": [
+      "Nagymennyiségű kimenet korlátos scrollback mellett se fagyassza a szerkesztőt.",
+      "Átméretezés és Unicode/combining karakter ne rontsa a cellaállapotot.",
+      "Shell gyermekfolyamat maradéktalanul megszakítható legyen mindkét OS-en.",
+      "Bracketed paste és veszélyes escape-szekvencia ne módosítson IDE-beállítást ellenőrizetlenül.",
+      "Projektkonfigurációból induló shell csak trust mellett kaphat folyamatindítási jogot."
+    ],
+    "owned_paths": [
+      "crates/latexide-core/src/services/terminal/",
+      "crates/latexide-core/tests/terminal_contract.rs",
+      "integration/requests/P16.json",
+      "docs/development/results/P16.md"
+    ],
+    "test_command": "cargo +1.99.1 test -p latexide-core --test terminal_contract --locked"
+  },
+  {
+    "id": "P17",
+    "slug": "developer-tools",
+    "title": "Task, teszt, debugger és fejlesztői eszközök",
+    "tier": "core",
+    "requirements": [
+      "DEV-03",
+      "DEV-04",
+      "DEV-05",
+      "DEV-06",
+      "DEV-07",
+      "DEV-09"
+    ],
+    "goal": "Bővíthető run/task/test/debug workflow-t épít a research mellékkód és a választható nyelvi vertikumok számára.",
+    "architecture": "Egy operation-state modellhez task, test és DAP adapterek kapcsolódnak. A környezetet explicit allowlist és trust határolja; eredmény adott forrás-/toolverzióhoz kötött.",
+    "entry_path": "crates/latexide-core/src/services/developer_tools/mod.rs",
+    "test_path": "crates/latexide-core/tests/developer_tools_contract.rs",
+    "interface": "pub fn transition_task(state:TaskState, event:TaskEvent) -> Result<TaskState,TaskError>;\n// TaskState::{Queued,Running,Passed,Failed,Cancelled,TimedOut}; TaskEvent::{Started,Exited(i32),Cancelled,Deadline}; TaskError::{InvalidTransition,Untrusted,InvalidConfiguration}",
+    "first_assertion": "Running→Exited(1) Failed, Running→Deadline TimedOut; végállapot után Started InvalidTransition.",
+    "read_paths": [
+      "crates/latexide-build/src/lib.rs",
+      "crates/latexide-protocol/src/lib.rs"
+    ],
+    "review_focus": [
+      "Tesztfolyamat exit0, de hibás report ne legyen hamis Passed.",
+      "Debugger disconnect és taskcancel minden háttérműveletet lezárjon.",
+      "Forrásváltozás után coverage/benchmark eredmény stale jelzést kapjon.",
+      "HTTP és konténer tool credentialje ne kerüljön projektfájlba vagy naplóba.",
+      "Futó task közben megváltozó run configuration ne változtassa a már indult folyamat paramétereit."
+    ],
+    "owned_paths": [
+      "crates/latexide-core/src/services/developer_tools/",
+      "crates/latexide-core/tests/developer_tools_contract.rs",
+      "integration/requests/P17.json",
+      "docs/development/results/P17.md"
+    ],
+    "test_command": "cargo +1.99.1 test -p latexide-core --test developer_tools_contract --locked"
+  },
+  {
+    "id": "P18",
+    "slug": "security",
+    "title": "Compilerizoláció, trust és adatvédelem",
+    "tier": "core",
+    "requirements": [
+      "SEC-01",
+      "SEC-02",
+      "SEC-03",
+      "SEC-04",
+      "SEC-05",
+      "SEC-06",
+      "SEC-07",
+      "SEC-08",
+      "SEC-09",
+      "SEC-10"
+    ],
+    "goal": "Tényleges, tesztelt fájlrendszer-/hálózathatárt és egységes titok-/sessionvédelmet ad.",
+    "architecture": "A trust policy explicit erőforrásdöntést hoz; compiler sandbox OS-specifikus és runtime-ban próbált, nincs fallback engedékeny módra. A közvetlen agent-edit/undo meglévő szerződése megmarad.",
+    "entry_path": "crates/latexide-core/src/services/security/mod.rs",
+    "test_path": "crates/latexide-core/tests/security_policy_contract.rs",
+    "interface": "pub fn authorize_resource(policy:&ExecutionPolicy, request:ResourceRequest) -> Result<ResourceGrant,SecurityError>;\n// ExecutionPolicy { project_root:String, writable_roots:Vec<String>, network:bool, trusted:bool }; ResourceRequest { path:String, write:bool, network:bool }; ResourceGrant { canonical_path:String }; SecurityError::{OutsideRoot,NetworkDenied,Untrusted,IdentityChanged}",
+    "first_assertion": "Compiler projektgyökéren kívüli írása és hálózatkérése elutasított; ez külön OS subprocess-próbával is igazolt.",
+    "read_paths": [
+      "crates/latexide-build/src/lib.rs",
+      "crates/latexide-ffi/src/session.rs",
+      "docs/compiler-assessment.md"
+    ],
+    "review_focus": [
+      "Symlink/rename versenyben az ellenőrzött fájlidentitás ne cserélődjön észrevétlenül.",
+      "Sandbox hiánya vagy indulási hibája ne vezessen korlátozatlan compilerfuttatáshoz.",
+      "Sessiondescriptor más user általi olvasása és ACL-hibája legyen tesztelt elutasítás.",
+      "Log/export/support bundle ne tartalmazzon credentialt vagy teljes tokent.",
+      "Windows child-process indulása előtt legyen érvényben a folyamatfa- és erőforráshatár."
+    ],
+    "owned_paths": [
+      "crates/latexide-core/src/services/security/",
+      "crates/latexide-core/tests/security_policy_contract.rs",
+      "integration/requests/P18.json",
+      "docs/development/results/P18.md"
+    ],
+    "test_command": "cargo +1.99.1 test -p latexide-core --test security_policy_contract --locked"
+  },
+  {
+    "id": "P19",
+    "slug": "quality-corpus",
+    "title": "Fault injection, korpusz és protokollminőség",
+    "tier": "core",
+    "requirements": [
+      "QA-01",
+      "QA-02",
+      "QA-05",
+      "QA-09"
+    ],
+    "goal": "Determinista hiba-/kiesési tesztekkel és reprezentatív LaTeX-korpusszal bizonyítja az adat- és protokollszerződéseket.",
+    "architecture": "Saját tesztprojektek és injektálható faultpontok, rögzített seedekkel. Tesztfuttató nem piszkálja a felhasználó élő appját vagy projektjét; minden eredmény a pontos forrás-SHA-hoz kötött.",
+    "entry_path": "tests/quality_corpus/run.py",
+    "test_path": "tests/quality_corpus/test_harness.py",
+    "interface": "pub fn expected_fault_outcome(point:FaultPoint, acknowledged_revision:u64) -> FaultExpectation;\n// FaultPoint::{BeforeJournalSync,AfterJournalSync,BeforeRename,AfterRename,MidFrame}; FaultExpectation { minimum_recovered_revision:u64, disk_may_change:bool, partial_edit_allowed:bool }",
+    "first_assertion": "AfterJournalSync kiesés után legalább a nyugtázott revízió visszajön, részleges többfájlos edit soha nem elfogadott.",
+    "read_paths": [
+      "tests/ipc_contract.py",
+      "tests/compiler_runtime_contract.py",
+      "evidence/ide-audit-2026-10-31/audit_probes.py"
+    ],
+    "review_focus": [
+      "Reprodukálható seed nélkül bukó fuzz eredmény nem lezárt regressziós teszt.",
+      "Kill/power-loss szimuláció után a valódi lemezállapotot és nyugtázott revíziót is ellenőrizni kell.",
+      "Korpuszhibát ne rejtse el automatikus fixture-átírás vagy baseline-frissítés.",
+      "Hosszú user/agent kevert session minden stale/error/undo átmenete naplózott legyen.",
+      "Teszt timeout megszakított eredmény, nem PASS vagy üres siker."
+    ],
+    "owned_paths": [
+      "tests/quality_corpus/",
+      "tests/quality_corpus/test_harness.py",
+      "integration/requests/P19.json",
+      "docs/development/results/P19.md"
+    ],
+    "test_command": "python3 tests/quality_corpus/test_harness.py",
+    "adapter_language": "python",
+    "adapter_interface": "def expected_fault_outcome(point: str, acknowledged_revision: int) -> dict: ...\ndef run_fault_case(case: dict, executable: Path) -> dict: ..."
+  },
+  {
+    "id": "P20",
+    "slug": "release",
+    "title": "Kiadási minősítés, migráció és csomagolás",
+    "tier": "core",
+    "requirements": [
+      "QA-10",
+      "QA-11",
+      "QA-12",
+      "QA-13",
+      "QA-16",
+      "OS-06"
+    ],
+    "goal": "Reprodukálható, aláírt és migrációval kipróbált kiadási folyamatot hoz létre.",
+    "architecture": "Pontos candidate SHA és toolmanifest alapján külön build/test/sign/notarize/runtime kapuk. A support bundle redaktált, a frissítés hiba esetén visszaállítható; a mostani ad-hoc bundle nem production release.",
+    "entry_path": "tools/release/qualify.py",
+    "test_path": "tools/release/test_qualification.py",
+    "interface": "pub fn qualify_release(evidence:ReleaseEvidence) -> Result<ReleaseDecision,ReleaseError>;\n// ReleaseEvidence { source_sha:String, required_gates:Vec<String>, passed_gates:Vec<String>, artifact_sha256:String }; ReleaseDecision { source_sha:String, artifact_sha256:String }; ReleaseError::{MissingGate,SourceMismatch,UnsignedArtifact,UnrunPlatform}",
+    "first_assertion": "Hiányzó Windows runtime gate vagy eltérő forrás-SHA esetén nincs ReleaseDecision, konkrét hiba van.",
+    "read_paths": [
+      "scripts/build_macos.sh",
+      "scripts/build_windows.ps1",
+      "tools/toolchain-lock.json"
+    ],
+    "review_focus": [
+      "Egy régebbi commit zöld bizonyítéka ne minősítsen újabb candidate-et.",
+      "Aláírás/notarizáció hibája ne legyen csendesen ad-hoc sikerre visszaminősítve.",
+      "Frissítés közbeni dirty munka és recovery-séma visszaállítható maradjon.",
+      "Support bundle csak redaktált adatot és a felhasználó által választott csatolmányt vigyen.",
+      "macOS minimumverzió és Windows x64 natív runtime a kiadási mátrixban külön igazolt legyen."
+    ],
+    "owned_paths": [
+      "tools/release/",
+      "tools/release/test_qualification.py",
+      "integration/requests/P20.json",
+      "docs/development/results/P20.md"
+    ],
+    "test_command": "python3 tools/release/test_qualification.py",
+    "adapter_language": "python",
+    "adapter_interface": "def qualify_release(evidence: dict) -> dict: ..."
+  },
+  {
+    "id": "P21",
+    "slug": "windows",
+    "title": "Windows 11 x64 natív minősítés és paritás",
+    "tier": "core",
+    "requirements": [
+      "OS-01",
+      "OS-02",
+      "OS-03",
+      "OS-09"
+    ],
+    "goal": "Valódi Windows build/link/indítás és Intel/AMD workflow-eredményt ad, majd pótolja a natív paritást.",
+    "architecture": "Először a jelenlegi WinUI forrás tiszta Windows gépen fordul; csak utána képességport a közös portokra. A Rust MSVC check kiinduló bizonyíték, nem natív appfuttatás.",
+    "entry_path": "apps/windows/Features/PlatformParity/Qualification.cpp",
+    "test_path": "tests/windows_native/qualification.ps1",
+    "interface": "pub fn evaluate_windows_evidence(e:WindowsEvidence) -> Result<WindowsQualification,PlatformError>;\n// WindowsEvidence { source_sha:String, msbuild:bool, linked:bool, launched:bool, workflow_passed:bool, cpu_vendor:String }; WindowsQualification { source_sha:String, cpu_vendor:String }; PlatformError::{BuildFailed,LinkFailed,LaunchFailed,UnrunWorkflow,UnsupportedArchitecture}",
+    "first_assertion": "msbuild=true, linked=true, launched=true, workflow_passed=false esetén UnrunWorkflow; csak MSVC check nem elegendő natív minősítéshez.",
+    "read_paths": [
+      "apps/windows/LaTeXIDE.vcxproj",
+      "scripts/build_windows.ps1",
+      "docs/windows-validation.md"
+    ],
+    "review_focus": [
+      "Windows natív dependency restore/link hibáját ne helyettesítsük Mac cross-checkkel.",
+      "ConPTY/Job Object/ACL valós Windows viselkedés külön tesztet kapjon.",
+      "Intel és AMD x64 gép eredménye külön scope és hardware-metaadat legyen.",
+      "IME, Ctrl-click, fókusz, mentés/undo és PDF-szöveg működése natív eseménnyel igazolt legyen.",
+      "Szóközös/Unicode/hosszú/UNC útvonal ne okozzon adatvesztést vagy hangtalan hibát."
+    ],
+    "owned_paths": [
+      "apps/windows/Features/PlatformParity/",
+      "tests/windows_native/qualification.ps1",
+      "integration/requests/P21.json",
+      "docs/development/results/P21.md"
+    ],
+    "test_command": "pwsh -File tests/windows_native/qualification.ps1",
+    "adapter_language": "powershell",
+    "adapter_interface": "function Test-WindowsQualification { param([hashtable]$Evidence) }\n# Qualification.cpp: WindowsQualification evaluate_windows_evidence(const WindowsEvidence& evidence);"
+  },
+  {
+    "id": "P22",
+    "slug": "linux",
+    "title": "Linux platformdöntés és natív port",
+    "tier": "core",
+    "requirements": [
+      "OS-04",
+      "OS-05"
+    ],
+    "goal": "Bizonyíték alapján választ Linux UI-t és külön bootstrap/runtime/desktop workflow-t épít.",
+    "architecture": "Döntési spike GTK/Qt és csomagolási következményekkel, majd XDG-runtime/Unix IPC és compilerport. Nincs előre késznek nevezett Linux-felület; a Mac /private/tmp konvenciója nem kerül át.",
+    "entry_path": "apps/linux/platform_probe/main.rs",
+    "test_path": "tests/linux_native/test_runtime_dir.py",
+    "interface": "pub fn validate_runtime_directory(path:String, owner_uid:u32, mode:u32, current_uid:u32) -> Result<String,PlatformError>;\n// PlatformError::{WrongOwner,UnsafePermissions,MissingRuntimeDirectory,UnsupportedDesktop}",
+    "first_assertion": "Más tulajdonosú vagy group/world elérhető runtime-dir elutasított; nincs automatikus /private/tmp fallback.",
+    "read_paths": [
+      "crates/latexide-ffi/src/session.rs",
+      "skills/latexide-platform-development/references/linux.md"
+    ],
+    "review_focus": [
+      "Hiányzó vagy nem biztonságos XDG_RUNTIME_DIR explicit hibát és dokumentált megoldást adjon.",
+      "Wayland és X11 fókusz/IME/PDF viselkedés külön igazolandó.",
+      "Választott UI toolkit licenc/csomagméret/RAM döntése mérésen alapuljon.",
+      "Sandbox és process-tree cancel Linuxon külön működjön.",
+      "Linux Rust unit PASS ne legyen natív desktop támogatásként kommunikálva."
+    ],
+    "owned_paths": [
+      "apps/linux/platform_probe/",
+      "tests/linux_native/test_runtime_dir.py",
+      "integration/requests/P22.json",
+      "docs/development/results/P22.md",
+      "apps/linux/platform_probe/Cargo.toml"
+    ],
+    "test_command": "python3 tests/linux_native/test_runtime_dir.py",
+    "adapter_language": "rust",
+    "adapter_interface": "pub fn validate_runtime_directory(path:String, owner_uid:u32, mode:u32, current_uid:u32) -> Result<String,PlatformError>;\n// Python runtime-dir test launches the compiled probe in a disposable directory."
+  },
+  {
+    "id": "P23",
+    "slug": "performance-accessibility",
+    "title": "Teljesítmény, hozzáférhetőség és használhatóság",
+    "tier": "core",
+    "requirements": [
+      "QA-03",
+      "QA-04",
+      "QA-06",
+      "QA-07",
+      "QA-15"
+    ],
+    "goal": "Összehasonlítható teljesítmény- és valós billentyűzetes/képernyőolvasós workflow-bizonyítékot ad.",
+    "architecture": "Release/debug külön mérés; azonos fixture és workload a LaTeXIDE/JetBrains/VS Code összevetéséhez. Natív AX és UI skálázási mátrix, rögzített gép/OS/termékverzió és hiányzó adatokkal.",
+    "entry_path": "tools/benchmarks/report.py",
+    "test_path": "tools/benchmarks/test_report.py",
+    "interface": "pub fn summarize_samples(samples:&[TimingSample]) -> Result<TimingSummary,MeasurementError>;\n// TimingSample { duration_us:u64, release:bool, fixture_sha:String }; TimingSummary { count:u32, median_us:u64, p95_us:u64 }; MeasurementError::{Empty,MixedBuildMode,MixedFixture}",
+    "first_assertion": "Debug/release vagy eltérő fixture mintái MixedBuildMode/MixedFixture hibát adnak, nem közös szép átlagot.",
+    "read_paths": [
+      "docs/IDE_AUDIT_2026-10-31.md",
+      "docs/IDE_PRODUCT_DIRECTION.md",
+      "apps/macos/Tests/LaTeXIDEKitTests"
+    ],
+    "review_focus": [
+      "Warm/cold cache, debug/release és eltérő hardver ne kerüljön egy rangsorba.",
+      "Képernyőolvasó tényleges fókusz- és névbeolvasását ne helyettesítse attribútum-létezés.",
+      "Kis ablak/nagy betű/más DPI mellett minden fő workflow elérhető maradjon.",
+      "Hiányzó vagy timeout mérés NA legyen, ne nulla és ne gyorsasági előny.",
+      "Felhasználói munkafolyamat hibaaránya és adatvesztése fontosabb mint egyetlen mikrobenchmark átlaga."
+    ],
+    "owned_paths": [
+      "tools/benchmarks/",
+      "tools/benchmarks/test_report.py",
+      "integration/requests/P23.json",
+      "docs/development/results/P23.md"
+    ],
+    "test_command": "python3 tools/benchmarks/test_report.py",
+    "adapter_language": "python",
+    "adapter_interface": "def summarize_samples(samples: list[dict]) -> dict: ..."
+  },
+  {
+    "id": "U01",
+    "slug": "jvm",
+    "title": "JVM / IntelliJ",
+    "tier": "optional",
+    "requirements": [
+      "UNI-01"
+    ],
+    "goal": "Külön választható technológiai programot épít: Maven/Gradle multimodule, Java/Kotlin, dependency graph, JUnit és enterprise framework navigation.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u01-jvm/src/lib.rs",
+    "test_path": "extensions/verticals/u01-jvm/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: Maven/Gradle multimodule, Java/Kotlin, dependency graph, JUnit és enterprise framework navigation",
+    "first_assertion": "Java kétmodulos projektben a cross-module definíció, dependency és JUnit eredmény pontos; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A JVM / IntelliJ eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u01-jvm/",
+      "integration/requests/U01.json",
+      "docs/development/results/U01.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u01-jvm/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U02",
+    "slug": "python-data",
+    "title": "Python / PyCharm / DataSpell",
+    "tier": "optional",
+    "requirements": [
+      "UNI-02"
+    ],
+    "goal": "Külön választható technológiai programot épít: venv/conda, Python typing/debug/pytest, notebook kernel és dataframe inspect.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u02-python-data/src/lib.rs",
+    "test_path": "extensions/verticals/u02-python-data/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: venv/conda, Python typing/debug/pytest, notebook kernel és dataframe inspect",
+    "first_assertion": "Két eltérő venv azonos importját a kiválasztott interpreter oldja, notebook output kernelhez kötött; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A Python / PyCharm / DataSpell eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u02-python-data/",
+      "integration/requests/U02.json",
+      "docs/development/results/U02.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u02-python-data/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U03",
+    "slug": "web",
+    "title": "JavaScript/TypeScript / WebStorm",
+    "tier": "optional",
+    "requirements": [
+      "UNI-03"
+    ],
+    "goal": "Külön választható technológiai programot épít: tsconfig/workspace, JS/TS/Vue/React, browser/node debug, npm test.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u03-web/src/lib.rs",
+    "test_path": "extensions/verticals/u03-web/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: tsconfig/workspace, JS/TS/Vue/React, browser/node debug, npm test",
+    "first_assertion": "TS workspace alias cross-package célját a helyes tsconfig oldja; JSX completion és node breakpoint fut; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A JavaScript/TypeScript / WebStorm eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u03-web/",
+      "integration/requests/U03.json",
+      "docs/development/results/U03.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u03-web/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U04",
+    "slug": "php",
+    "title": "PHP / PhpStorm",
+    "tier": "optional",
+    "requirements": [
+      "UNI-04"
+    ],
+    "goal": "Külön választható technológiai programot épít: Composer/autoload, PHP nyelvi motor, Xdebug, PHPUnit és framework routing.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u04-php/src/lib.rs",
+    "test_path": "extensions/verticals/u04-php/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: Composer/autoload, PHP nyelvi motor, Xdebug, PHPUnit és framework routing",
+    "first_assertion": "Composer namespace célja és PHPUnit eredmény pontos, Xdebug breakpoint valós PHP-folyamatban megáll; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A PHP / PhpStorm eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u04-php/",
+      "integration/requests/U04.json",
+      "docs/development/results/U04.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u04-php/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U05",
+    "slug": "dotnet",
+    "title": ".NET / Rider",
+    "tier": "optional",
+    "requirements": [
+      "UNI-05"
+    ],
+    "goal": "Külön választható technológiai programot épít: MSBuild solution, C#/F#, NuGet, debugger, tesztek és frameworkkorpusz.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u05-dotnet/src/lib.rs",
+    "test_path": "extensions/verticals/u05-dotnet/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: MSBuild solution, C#/F#, NuGet, debugger, tesztek és frameworkkorpusz",
+    "first_assertion": "Kétprojektes solution symbol+rename és dotnet test eredmény konzisztens; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A .NET / Rider eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u05-dotnet/",
+      "integration/requests/U05.json",
+      "docs/development/results/U05.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u05-dotnet/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U06",
+    "slug": "cpp",
+    "title": "C/C++ / CLion",
+    "tier": "optional",
+    "requirements": [
+      "UNI-06"
+    ],
+    "goal": "Külön választható technológiai programot épít: CMake/compile_commands, Clang toolchain, GDB/LLDB, CTest, toolchain-választás.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u06-cpp/src/lib.rs",
+    "test_path": "extensions/verticals/u06-cpp/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: CMake/compile_commands, Clang toolchain, GDB/LLDB, CTest, toolchain-választás",
+    "first_assertion": "Azonos header eltérő compile definitionnel a választott targetben helyesen oldódik; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A C/C++ / CLion eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u06-cpp/",
+      "integration/requests/U06.json",
+      "docs/development/results/U06.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u06-cpp/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U07",
+    "slug": "go",
+    "title": "Go / GoLand",
+    "tier": "optional",
+    "requirements": [
+      "UNI-07"
+    ],
+    "goal": "Külön választható technológiai programot épít: Go modules/workspace, gopls, delve, go test és race eredmény.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u07-go/src/lib.rs",
+    "test_path": "extensions/verticals/u07-go/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: Go modules/workspace, gopls, delve, go test és race eredmény",
+    "first_assertion": "go.work többmodulos definíció/rename és go test scope pontos; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A Go / GoLand eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u07-go/",
+      "integration/requests/U07.json",
+      "docs/development/results/U07.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u07-go/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U08",
+    "slug": "rust",
+    "title": "Rust / RustRover",
+    "tier": "optional",
+    "requirements": [
+      "UNI-08"
+    ],
+    "goal": "Külön választható technológiai programot épít: Cargo workspace/features, rust-analyzer, debugger, clippy, test/bench.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u08-rust/src/lib.rs",
+    "test_path": "extensions/verticals/u08-rust/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: Cargo workspace/features, rust-analyzer, debugger, clippy, test/bench",
+    "first_assertion": "Eltérő Cargo feature alatt a cfg-aktív symbol és diagnosztika helyes; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A Rust / RustRover eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u08-rust/",
+      "integration/requests/U08.json",
+      "docs/development/results/U08.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u08-rust/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U09",
+    "slug": "ruby",
+    "title": "Ruby/Rails / RubyMine",
+    "tier": "optional",
+    "requirements": [
+      "UNI-09"
+    ],
+    "goal": "Külön választható technológiai programot épít: Ruby interpreter/Bundler, Rails route/model, debugger, RSpec/Minitest.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u09-ruby/src/lib.rs",
+    "test_path": "extensions/verticals/u09-ruby/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: Ruby interpreter/Bundler, Rails route/model, debugger, RSpec/Minitest",
+    "first_assertion": "Két bundle/interpreter választás között Rails route és RSpec eredmény nem keveredik; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A Ruby/Rails / RubyMine eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u09-ruby/",
+      "integration/requests/U09.json",
+      "docs/development/results/U09.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u09-ruby/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U10",
+    "slug": "database",
+    "title": "SQL / DataGrip",
+    "tier": "optional",
+    "requirements": [
+      "UNI-10"
+    ],
+    "goal": "Külön választható technológiai programot épít: Read-only kapcsolatprofil, séma introspection, SQL dialektus, query/explain és migráció.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u10-database/src/lib.rs",
+    "test_path": "extensions/verticals/u10-database/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: Read-only kapcsolatprofil, séma introspection, SQL dialektus, query/explain és migráció",
+    "first_assertion": "Read-only kapcsolat DDL-t tilt, query-result és explain a kiválasztott sémához kötött; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A SQL / DataGrip eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u10-database/",
+      "integration/requests/U10.json",
+      "docs/development/results/U10.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u10-database/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U11",
+    "slug": "embedded",
+    "title": "Embedded/automotive",
+    "tier": "optional",
+    "requirements": [
+      "UNI-11"
+    ],
+    "goal": "Külön választható technológiai programot épít: Cross-toolchain, probe/device mapping, flash/debug, SVD/RTOS és safety-korpusz.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u11-embedded/src/lib.rs",
+    "test_path": "extensions/verticals/u11-embedded/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: Cross-toolchain, probe/device mapping, flash/debug, SVD/RTOS és safety-korpusz",
+    "first_assertion": "Eltérő target/device esetén flash explicit blokkolt, kiválasztott teszteszköz pontosan azonosított; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A Embedded/automotive eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u11-embedded/",
+      "integration/requests/U11.json",
+      "docs/development/results/U11.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u11-embedded/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U12",
+    "slug": "games",
+    "title": "Játékfejlesztés / Rider",
+    "tier": "optional",
+    "requirements": [
+      "UNI-12"
+    ],
+    "goal": "Külön választható technológiai programot épít: Unity/Unreal solution, engine/version mapping, attach/debug és asset linkage.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u12-games/src/lib.rs",
+    "test_path": "extensions/verticals/u12-games/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: Unity/Unreal solution, engine/version mapping, attach/debug és asset linkage",
+    "first_assertion": "Két engineverzió adatai nem keverednek; scriptből enginefolyamatra breakpoint attach igazolt; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A Játékfejlesztés / Rider eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u12-games/",
+      "integration/requests/U12.json",
+      "docs/development/results/U12.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u12-games/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U13",
+    "slug": "mobile",
+    "title": "Apple/mobil és AppCode-örökség",
+    "tier": "optional",
+    "requirements": [
+      "UNI-13"
+    ],
+    "goal": "Külön választható technológiai programot épít: Xcode/Swift/Kotlin/Android projektek, SDK/simulator/device, signing és debugger.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u13-mobile/src/lib.rs",
+    "test_path": "extensions/verticals/u13-mobile/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: Xcode/Swift/Kotlin/Android projektek, SDK/simulator/device, signing és debugger",
+    "first_assertion": "Kiválasztott SDK/device projektben index/build/debug saját natív eredményt ad; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A Apple/mobil és AppCode-örökség eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u13-mobile/",
+      "integration/requests/U13.json",
+      "docs/development/results/U13.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u13-mobile/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U14",
+    "slug": "dsl",
+    "title": "DSL / MPS",
+    "tier": "optional",
+    "requirements": [
+      "UNI-14"
+    ],
+    "goal": "Külön választható technológiai programot épít: Projectional model, persistence/migration, generator, undo és language workbench.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u14-dsl/src/lib.rs",
+    "test_path": "extensions/verticals/u14-dsl/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: Projectional model, persistence/migration, generator, undo és language workbench",
+    "first_assertion": "Modellátalakítás egy undo-val visszavonható; migráció után determinisztikus forrásgenerálás; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A DSL / MPS eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u14-dsl/",
+      "integration/requests/U14.json",
+      "docs/development/results/U14.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u14-dsl/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U15",
+    "slug": "docs-as-code",
+    "title": "Docs-as-code / Writerside",
+    "tier": "optional",
+    "requirements": [
+      "UNI-15"
+    ],
+    "goal": "Külön választható technológiai programot épít: Topic/link/snippet modell, preview, broken-link és site build.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u15-docs-as-code/src/lib.rs",
+    "test_path": "extensions/verticals/u15-docs-as-code/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: Topic/link/snippet modell, preview, broken-link és site build",
+    "first_assertion": "Broken cross-topic link build előtt jelzett, preview és export ugyanazt a topicrevíziót használja; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A Docs-as-code / Writerside eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u15-docs-as-code/",
+      "integration/requests/U15.json",
+      "docs/development/results/U15.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u15-docs-as-code/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U16",
+    "slug": "qa-automation",
+    "title": "QA automatizálás / Aqua-örökség",
+    "tier": "optional",
+    "requirements": [
+      "UNI-16"
+    ],
+    "goal": "Külön választható technológiai programot épít: Playwright/Selenium/API runner, fixture/env, trace/report és flaky triage.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u16-qa-automation/src/lib.rs",
+    "test_path": "extensions/verticals/u16-qa-automation/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: Playwright/Selenium/API runner, fixture/env, trace/report és flaky triage",
+    "first_assertion": "Két browser/env eredménye elkülönül, hibás teszt trace-szel reprodukálható; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A QA automatizálás / Aqua-örökség eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u16-qa-automation/",
+      "integration/requests/U16.json",
+      "docs/development/results/U16.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u16-qa-automation/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U17",
+    "slug": "remote",
+    "title": "Remote / WSL / devcontainer / web",
+    "tier": "optional",
+    "requirements": [
+      "UNI-17"
+    ],
+    "goal": "Külön választható technológiai programot épít: Remote authority, reconnect/offline, filesystem/credential boundary és latency budget.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u17-remote/src/lib.rs",
+    "test_path": "extensions/verticals/u17-remote/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: Remote authority, reconnect/offline, filesystem/credential boundary és latency budget",
+    "first_assertion": "Kapcsolatvesztés után azonos request nem szerkeszt duplán, dirty remote munka helyreáll; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A Remote / WSL / devcontainer / web eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u17-remote/",
+      "integration/requests/U17.json",
+      "docs/development/results/U17.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u17-remote/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U18",
+    "slug": "collaboration",
+    "title": "Valós idejű együttszerkesztés",
+    "tier": "optional",
+    "requirements": [
+      "UNI-18"
+    ],
+    "goal": "Külön választható technológiai programot épít: CRDT/OT választás, identity/presence, offline merge és direct-agent undo szemantika.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u18-collaboration/src/lib.rs",
+    "test_path": "extensions/verticals/u18-collaboration/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: CRDT/OT választás, identity/presence, offline merge és direct-agent undo szemantika",
+    "first_assertion": "Két kliens offline majd reconnect után konvergál, user undo nem vonja vissza más szerző editjét; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A Valós idejű együttszerkesztés eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u18-collaboration/",
+      "integration/requests/U18.json",
+      "docs/development/results/U18.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u18-collaboration/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U19",
+    "slug": "enterprise",
+    "title": "Enterprise és szervezeti szabályok",
+    "tier": "optional",
+    "requirements": [
+      "UNI-19"
+    ],
+    "goal": "Külön választható technológiai programot épít: Policy distribution, SSO/identity, audit/admin, plugin/update policy és retention.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u19-enterprise/src/lib.rs",
+    "test_path": "extensions/verticals/u19-enterprise/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: Policy distribution, SSO/identity, audit/admin, plugin/update policy és retention",
+    "first_assertion": "Aláírt policy migrációja reprodukálható, lokális user settings nem írja felül a tiltást; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A Enterprise és szervezeti szabályok eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u19-enterprise/",
+      "integration/requests/U19.json",
+      "docs/development/results/U19.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u19-enterprise/Cargo.toml --test capability_contract --locked"
+  },
+  {
+    "id": "U20",
+    "slug": "cloud",
+    "title": "Cloud/deployment és teljes tool-ökoszisztéma",
+    "tier": "optional",
+    "requirements": [
+      "UNI-20"
+    ],
+    "goal": "Külön választható technológiai programot épít: Kubernetes/cloud resource model, secrets, deployment dry-run/rollback és provideradapterek.",
+    "architecture": "P15 plugin SDK és a közös nyelvi/task/debug/test portok fölött izolált adapter. Első kapu saját capability-mátrix és rögzített toolkorpusz, utána slice-onkénti implementáció; ez nem automatikus vállalás teljes JetBrains-termékklónra.",
+    "entry_path": "extensions/verticals/u20-cloud/src/lib.rs",
+    "test_path": "extensions/verticals/u20-cloud/tests/capability_contract.rs",
+    "interface": "pub fn qualify_vertical(manifest:VerticalManifest, results:Vec<CapabilityResult>) -> Result<VerticalQualification,VerticalError>;\n// VerticalManifest { id:String, sdk_major:u32, tool_versions:Vec<String>, required_capabilities:Vec<String> }; CapabilityResult { capability:String, source_sha:String, platform:String, passed:bool }; VerticalQualification { id:String, verified_capabilities:Vec<String> }; VerticalError::{IncompatibleSdk,MissingCapability,UnrunPlatform,SourceMismatch}\n// Scope: Kubernetes/cloud resource model, secrets, deployment dry-run/rollback és provideradapterek",
+    "first_assertion": "Dry-run nem módosít infrastruktúrát, éles deployment csak explicit parancsból indul; hiányzó capability esetén MissingCapability, nincs teljes-paritás jelölés.",
+    "read_paths": [
+      "docs/development/contracts",
+      "docs/ide-audit-2026-10-31/comparison.json",
+      "docs/ide-audit-2026-10-31/sources.json"
+    ],
+    "review_focus": [
+      "A Cloud/deployment és teljes tool-ökoszisztéma eszközverzió és projektmodell eltérése explicit kompatibilitási eredményt adjon.",
+      "Nem megbízható projekt ne indítson automatikusan scriptet, plugint, deploymentet vagy csomagtelepítést.",
+      "Stale dokumentumra érkező provider edit csak a közös revíziózott tranzakción keresztül alkalmazható.",
+      "Provider/környezet kiesése közben dirty munka, fókusz és visszavonás maradjon meg.",
+      "A teljes vertikumparitás csak tételes capability-mátrix és tényleges platformkorpusz után állítható; a smoke adapter nem elég."
+    ],
+    "owned_paths": [
+      "extensions/verticals/u20-cloud/",
+      "integration/requests/U20.json",
+      "docs/development/results/U20.md"
+    ],
+    "test_command": "cargo +1.99.1 test --manifest-path extensions/verticals/u20-cloud/Cargo.toml --test capability_contract --locked"
+  }
+]

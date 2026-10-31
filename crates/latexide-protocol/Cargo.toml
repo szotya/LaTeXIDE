@@ -1,0 +1,14 @@
+[package]
+name = "latexide-protocol"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+
+[dependencies]
+latexide-core = { path = "../latexide-core" }
+serde.workspace = true
+serde_json.workspace = true
+interprocess.workspace = true
+
+[target.'cfg(target_os = "macos")'.dependencies]
+libc = "0.2"

@@ -1,0 +1,17 @@
+* text=auto
+*.rs text eol=lf
+*.swift text eol=lf
+*.py text eol=lf
+*.sh text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.ps1 text eol=crlf
+*.png binary
+*.pdf binary
+*.gpg binary
+*.gz binary
+*.xdv binary
+# Historical manifests hash exact bytes; do not normalize captured evidence.
+evidence/** -text
+docs/ide-audit-2026-10-31/*.csv -text

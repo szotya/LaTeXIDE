@@ -1,0 +1,43 @@
+{
+  "direct": {
+    "Microsoft.WindowsAppSDK": "2.6.4",
+    "Microsoft.Windows.CppWinRT": "3.0.260818.1"
+  },
+  "packages": {
+    "Microsoft.WindowsAppSDK": "2.6.4",
+    "Microsoft.WindowsAppSDK.Base": "2.6.4",
+    "Microsoft.Windows.SDK.BuildTools": "10.0.26100.4654",
+    "Microsoft.Windows.SDK.BuildTools.MSIX": "1.7.251221100",
+    "Microsoft.WindowsAppSDK.Foundation": "2.6.4",
+    "Microsoft.WindowsAppSDK.InteractiveExperiences": "2.6.4",
+    "Microsoft.WindowsAppSDK.WinUI": "2.6.4",
+    "Microsoft.Web.WebView2": "1.0.3719.77",
+    "Microsoft.WindowsAppSDK.DWrite": "2.6.4",
+    "Microsoft.WindowsAppSDK.Widgets": "2.6.4",
+    "Microsoft.WindowsAppSDK.AI": "2.6.4",
+    "Microsoft.WindowsAppSDK.ML": "2.6.4",
+    "Microsoft.Windows.AI.MachineLearning": "2.4.89",
+    "Microsoft.WindowsAppSDK.Search": "2.6.4",
+    "Microsoft.WindowsAppSDK.Runtime": "2.6.4",
+    "Microsoft.Windows.CppWinRT": "3.0.260818.1"
+  },
+  "native_import_order": [
+    "Microsoft.Windows.SDK.BuildTools",
+    "Microsoft.Windows.SDK.BuildTools.MSIX",
+    "Microsoft.WindowsAppSDK.Base",
+    "Microsoft.WindowsAppSDK.InteractiveExperiences",
+    "Microsoft.WindowsAppSDK.Foundation",
+    "Microsoft.Web.WebView2",
+    "Microsoft.WindowsAppSDK.WinUI",
+    "Microsoft.WindowsAppSDK.DWrite",
+    "Microsoft.WindowsAppSDK.Widgets",
+    "Microsoft.WindowsAppSDK.AI",
+    "Microsoft.Windows.AI.MachineLearning",
+    "Microsoft.WindowsAppSDK.ML",
+    "Microsoft.WindowsAppSDK.Search",
+    "Microsoft.WindowsAppSDK.Runtime",
+    "Microsoft.WindowsAppSDK",
+    "Microsoft.Windows.CppWinRT"
+  ],
+  "note": "Exact versions from official native/universal nuspec dependency groups only. Windows restore/build unrun."
+}

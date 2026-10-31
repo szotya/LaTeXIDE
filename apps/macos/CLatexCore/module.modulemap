@@ -1,0 +1,4 @@
+module CLatexCore [system] {
+    header "../../../include/latexide_core.h"
+    export *
+}

@@ -1,0 +1,23 @@
+[workspace]
+members = ["crates/latexide-core", "crates/latexide-protocol", "crates/latexide-ffi", "crates/latexide-build", "crates/latexide-mcp"]
+resolver = "2"
+
+[workspace.package]
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.99"
+
+[workspace.dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+rmcp = { version = "=3.8.0", features = ["server", "transport-io"] }
+interprocess = { version = "=2.4.7" }
+
+[profile.release]
+lto = "thin"
+strip = "debuginfo"
+
+# Native editor queries run synchronously; keep the shared parser responsive in local builds.
+# Debug symbols/assertions remain enabled; other workspace crates retain their normal profile.
+[profile.dev.package.latexide-core]
+opt-level = 2

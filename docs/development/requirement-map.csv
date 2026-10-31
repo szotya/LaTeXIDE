@@ -1,0 +1,227 @@
+﻿requirement_id,package_id,priority,effort,status,plan,prerequisites,acceptance
+QA-08,P00,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p00-integration.md,MCP-03,"Exit code, skipped/unrun és artifact hash géppel feldolgozható; timeout soha nem PASS."
+QA-14,P00,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p00-integration.md,QA-08,"Aktuális forrás, binary, teszt és leírás nem kap összemosott kész állapotot."
+OS-10,P00,P1,S,planned,docs/superpowers/plans/2026-10-31-parallel/p00-integration.md,QA-14,Új contributor relatív útvonalakból elindul; planned/check/build/run állapotokat megkülönbözteti.
+DOC-01,P01,P0,L,planned,docs/superpowers/plans/2026-10-31-parallel/p01-recovery.md,,Folyamatkiesés után visszajön az utolsó nyugtázott tartalom; sérült napló nem írja felül a fájlt.
+DOC-02,P01,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p01-recovery.md,DOC-01,Száz fájl bejárható; elrejtett dirty dokumentum és undo nem vész el; limit látható.
+DOC-03,P01,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p01-recovery.md,DOC-02,Agent száz fájlt olvas szerkesztőlimit nélkül; dirty tartalmat és stabil chunkrevíziót kap.
+DOC-05,P01,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p01-recovery.md,DOC-01,Mentett és törölt fájl kiválasztott revíziója visszaállítható; keret és törlés ellenőrzött.
+DOC-07,P01,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p01-recovery.md,DOC-01,Clean fájl frissülhet; dirty konfliktusnál mindkét változat megmarad és választható.
+DOC-13,P01,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p01-recovery.md,"DOC-01,DOC-06",Új névtelen szöveg újraindítás után is elérhető; mentés nem veszít előzményt.
+DOC-14,P01,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p01-recovery.md,DOC-07,Egy írásvédett vagy konfliktusos fájlnál látható az ok és nem indul félreérthető build.
+DOC-15,P01,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p01-recovery.md,"DOC-01,DOC-14",Ki-/bekapcsolás és fókuszváltás következetes; agentedit önmagában nem válik lemezes mentéssé.
+DOC-16,P01,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p01-recovery.md,DOC-07,Két saját apppéldány egy fájlon nem veszít módosítást; crash után nincs örök zárolás.
+WS-02,P01,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p01-recovery.md,"DOC-01,DOC-02","Normál restart után projekt, tabok, caret, viewport és el nem küldött munka visszajön."
+DOC-04,P02,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p02-transactions.md,,Egy szó gépelése természetesen vonható vissza; user/agent/save/IME határok következetesek.
+DOC-06,P02,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p02-transactions.md,MCP-03,"Ütköző név, ékezet, csak olvasható cél és megszakítás adatvesztés nélkül működik."
+DOC-08,P02,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p02-transactions.md,"MCP-03,DOC-02",Második fájl konfliktusánál egyik sem változik; tízfájlos művelet egyben visszavonható.
+DOC-09,P02,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p02-transactions.md,"DOC-06,DOC-08,DOC-05","Nyitott dirty fájl, hivatkozás és névütközés biztonságosan kezelhető; undo visszahozza."
+DOC-10,P02,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p02-transactions.md,QA-01,Hibapontoknál a régi vagy új teljes fájl marad; cél-ACL és attribútumok ellenőrzöttek.
+DOC-11,P02,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p02-transactions.md,DOC-08,UTF-16/legacy fájl nem sérül; konverzió visszavonható és veszteséget előre jelez.
+DOC-12,P02,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p02-transactions.md,"QA-03,MCP-02",Nagy .bib és hosszú sor kontrolláltan nyílik; nincs UI-megállás vagy csendes csonkítás.
+MCP-01,P03,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p03-runtime.md,,Lassú kliens mellett másik kliens és app kilépése korlátos; tokenvédelem megmarad.
+MCP-02,P03,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p03-runtime.md,,Lassú disk/index nem blokkolja a caret/gépelést; sorrend és stale-elutasítás megmarad.
+MCP-03,P03,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p03-runtime.md,,Régi/új kliens kompatibilitása tesztelt; hibás válasz nem okoz force-cast összeomlást.
+MCP-04,P03,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p03-runtime.md,MCP-03,"Tool, schema, prompt és allowlist egyezik; native/agent ugyanazt az állapotot használja."
+MCP-05,P03,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p03-runtime.md,MCP-03,Elveszett válasz utáni retry nem dupláz editet/fájlműveletet/buildet.
+MCP-06,P03,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p03-runtime.md,"MCP-03,SEC-03",Több app/projekt közül a megfelelőhöz kapcsolódik; token nem kerül UI-logba.
+MCP-07,P03,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p03-runtime.md,"MCP-02,MCP-03",Lassú kliens nem növeli korlátlanul a memóriát; újracsatlakozáskor resync lehetséges.
+MCP-08,P03,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p03-runtime.md,"DOC-12,MCP-03",Nagy fájl olvasása nem végez teljes másolást chunkonként; memória mérve.
+MCP-09,P03,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p03-runtime.md,"DOC-08,DOC-05,MCP-04",User utólagos editjét agentrevert nem törli; visszavonás új eredetű tranzakció.
+MCP-10,P03,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p03-runtime.md,"OS-01,SEC-03",Windows és későbbi Linux saját linked/runtime bizonyítékot ad; Mac eredmény nem helyettesíti.
+NAV-12,P04,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p04-vfs.md,"WS-01,DOC-07","Külső create/delete/rename a fában, keresésben és completionben ugyanúgy megjelenik."
+WS-01,P04,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p04-vfs.md,MCP-02,"Fa, keresés, index és build azonos fájlokat és változásokat lát; bounded bejárás."
+WS-10,P04,P3,L,planned,docs/superpowers/plans/2026-10-31-parallel/p04-vfs.md,"WS-01,MCP-03",Azonos fájlnév két rootban nem ütközik; agent/build mindig azonosított projekthez kötött.
+OS-07,P04,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p04-vfs.md,"DOC-07,DOC-10",Névütközés vagy eltűnt T9 nem veszít dirty munkát és nem ír másik fájlba.
+LANG-01,P05,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p05-language.md,MCP-02,Beillesztés után csak érintett részek frissülnek; félkész TeX nem fagyasztja a felületet.
+LANG-02,P05,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p05-language.md,"LANG-01,WS-08",Két főfájl azonos labelje nem keveredik; ciklus és hiányzó include diagnosztizálható.
+LANG-03,P05,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p05-language.md,LANG-02,"Csak releváns csomag jelöltjei, korrekt argumentumok; hiányzó adat látható."
+LANG-04,P05,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p05-language.md,LANG-02,Nem használt fejezet definíciója nem nyer indokolatlanul; dinamikus makróra nincs hamis bizonyosság.
+LANG-05,P05,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p05-language.md,"LANG-01,EXT-01",Nem lezárt környezet/címkehiba build nélkül látszik; stale eredmény eldobódik.
+LANG-07,P05,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p05-language.md,LANG-02,Többfájlos használatok és komment/verbatim kizárás a dokumentált scope szerint működik.
+LANG-08,P05,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p05-language.md,"LANG-07,DOC-08",Ütköző kulcs vagy stale fájl esetén nincs részleges átírás; egy undo mindent visszaállít.
+LANG-09,P05,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p05-language.md,"LANG-05,DOC-08",Missing label/environment javítása determinisztikus; nem érint más dokumentumot véletlenül.
+LANG-10,P05,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p05-language.md,LANG-03,Nyitott argumentumnál megfelelő paraméter; providerhibánál a gépelés tovább működik.
+LANG-12,P05,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p05-language.md,WS-01,Szóközös/ékezetes fájl beszúrható; gyökéren kívüli cél csak explicit támogatott policyvel.
+LANG-13,P05,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p05-language.md,"MCP-02,WS-01",Korlátos részleges eredmény látszik; cold scan és forced refresh nem blokkolja a főszálat.
+LANG-14,P05,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p05-language.md,LANG-02,Lexikális fallback azonnal marad; újraszínezés nem módosít text/revízió/undo állapotot.
+LANG-15,P05,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p05-language.md,"DOC-08,LANG-02",Hatáslista és konfliktus látható; agent közvetlen alkalmazását nem váltja fel approval-kapu.
+LANG-16,P05,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p05-language.md,"LANG-03,EDT-04","Ugyanaz az input reprodukálható; személyes rangsor törölhető, provenance megmarad."
+LANG-17,P05,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p05-language.md,"EXT-01,DOC-08",didOpen/didChange dirty Rust tartalmat küld; WorkspaceEdit ugyanazon undo-ba kerül.
+LANG-18,P05,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p05-language.md,QA-02,Dokumentált lefedettség és false-positive arány; túlkomplex TeX-nél explicit részleges állapot.
+LANG-06,P06,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p06-navigation.md,"LANG-02,NAV-04","Dirty másik fájl definíciójára ugrik; Unicode-tartomány, stale/limit hiba és visszanavigáció helyes."
+NAV-01,P06,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p06-navigation.md,"WS-01,MCP-02",Dirty szövegben is talál; találat revízióhoz kötött; nagy projekt megszakítható.
+NAV-02,P06,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p06-navigation.md,"NAV-01,DOC-08",Stale találat nem ír felül új szöveget; változás közösen visszavonható.
+NAV-03,P06,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p06-navigation.md,"LANG-01,LANG-02",Multifile projekt fejezetei és dirty címei frissülnek; kattintás helyes sorhoz ugrik.
+NAV-04,P06,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p06-navigation.md,WS-06,Definition→reference→vissza visszaadja a caret/viewportot tab-elrejtés után is.
+NAV-05,P06,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p06-navigation.md,"WS-06,LANG-06","Nagy listán rangsorolt találat; billentyűzet, empty/error/loading állapot következetes."
+NAV-06,P06,P2,S,planned,docs/superpowers/plans/2026-10-31-parallel/p06-navigation.md,"WS-01,DOC-09",Törölt/átnevezett fájl jelölői kezelhetők; user/agent edit után helyük követhető.
+NAV-07,P06,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p06-navigation.md,NAV-03,Beágyazott környezetből pontos navigáció; nem csak fájlútvonalat mutat.
+NAV-08,P06,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p06-navigation.md,"BLD-05,EDT-10",Abszolút/relatív/ékezetes/Windows path helyes; külső fájl nem nyílik meg tévesen.
+NAV-09,P06,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p06-navigation.md,LANG-11,"Szerző/cím szerinti találat helyes BibTeX-kulcsot illeszt, meglévő listát megőrzi."
+NAV-10,P06,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p06-navigation.md,"DOC-09,WS-01","Fa művelete ugyanazt az undo/recoveryt használja, mint parancs és agent."
+NAV-11,P06,P2,S,planned,docs/superpowers/plans/2026-10-31-parallel/p06-navigation.md,"NAV-01,LANG-02","Felhasználó látja, mi maradt ki; scopeváltás nem ad régi querytalálatot."
+EDT-01,P07,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p07-editor.md,DOC-08,Tíz kurzor Unicode-szövegen egy tranzakcióban szerkeszt; átfedés elutasítható.
+EDT-02,P07,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p07-editor.md,,Hosszú bekezdés ablakméretváltáskor olvasható; caret/SyncTeX valódi forrássort használ.
+EDT-03,P07,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p07-editor.md,LANG-01,"Környezet, math, verbatim és paste helyesen viselkedik; egy undo visszaállít."
+EDT-04,P07,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p07-editor.md,EDT-03,frac mindkét argumentuma bejárható; stale/IME/fókuszváltás nem nyeli el a Tabot.
+EDT-05,P07,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p07-editor.md,LANG-01,Összecsukott részen agentedit után helyes tartományok és visszaállítható caret marad.
+EDT-06,P07,P2,S,planned,docs/superpowers/plans/2026-10-31-parallel/p07-editor.md,WS-06,Billentyűzet és menü azonos eredményt ad; egy tranzakció és Unicode-helyes kijelölés.
+EDT-07,P07,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p07-editor.md,"DOC-08,EXT-01",Kijelölt blokk és teljes fájl formázása megőrzi revízióvédelmet és egy undo-t ad.
+EDT-08,P07,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p07-editor.md,LANG-01,"Magyar/angol próza vizsgálható; parancs, formula, citation és verbatim nem zajos."
+EDT-09,P07,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p07-editor.md,DOC-08,"Zero-length regex, Unicode és Replace All egy undo; nincs félbevágott surrogate."
+EDT-10,P07,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p07-editor.md,"BLD-05,LANG-05",Régi build hibája nem jelenik meg új szöveg hibás koordinátáján.
+EDT-11,P07,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p07-editor.md,WS-04,Téma/fontváltás nem szerkeszt szöveget; minden UI-szöveg olvasható nagyításkor.
+EDT-12,P07,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p07-editor.md,LANG-01,Verbatim/comment és escaped delimiter nem hamis pár; hibás dokumentum is kezelhető.
+EDT-14,P07,P2,S,planned,docs/superpowers/plans/2026-10-31-parallel/p07-editor.md,WS-06,Túl nagy sor/oszlop biztonságosan korlátozott; fókusz és viewport következetes.
+EDT-15,P07,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p07-editor.md,QA-06,Minden támogatott célon commit egyszeri; prompt/Find/source undo egymástól független.
+EDT-16,P07,P3,M,planned,docs/superpowers/plans/2026-10-31-parallel/p07-editor.md,"LANG-01,QA-03","Nagy dokumentumnál is mért költség; képernyőolvasóval kihagyható, source nem változik."
+WS-03,P08,P2,L,planned,docs/superpowers/plans/2026-10-31-parallel/p08-workspace.md,"WS-02,DOC-02","Két nézet ugyanazt a Rust tartalmat látja, saját caret/scroll állapottal."
+WS-04,P08,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p08-workspace.md,MCP-03,Hibás/újabb konfiguráció nem írja felül a jó állapotot; platformon eltérő érték jelölt.
+WS-05,P08,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p08-workspace.md,"WS-04,WS-02","Profilváltás nem törli a draftot, dirty szöveget vagy folyamatos agentturnt."
+WS-06,P08,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p08-workspace.md,,Menü/paletta/toolbar ugyanazt a parancsot és tiltott okot adja; nincs halott akció.
+WS-07,P08,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p08-workspace.md,"WS-06,QA-06",HU/US/AltGr alatt is helyes; prompt natív undo-ját globális binding nem lopja el.
+WS-08,P08,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p08-workspace.md,WS-04,Projekt másik gépen is helyes főfájlt/profilt választ; helyi abszolút path nem lesz kötelező.
+WS-09,P08,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p08-workspace.md,"DOC-06,RES-02",Hiányzó T9/volume nem fagyaszt; tiszta projekt létrehozása egyértelmű lépésekből áll.
+WS-11,P08,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p08-workspace.md,"WS-06,QA-06",Billentyűzettel teljes alapworkflow végigvihető; eltűnt view nem marad responder.
+WS-12,P08,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p08-workspace.md,QA-07,Kis laptopon nem takaródik el mentés/build/hiba; monitorcsere nem veszíti az ablakot.
+WS-13,P08,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p08-workspace.md,"MCP-02,WS-06",Egyszerre build+index+agent állapota nem írja felül egymást vagy hamisít completed állapotot.
+WS-14,P08,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p08-workspace.md,"WS-04,QA-06",Kontrasztellenőrzés és hibás theme fallback; app újratelepítés nem törli a választást.
+OS-08,P08,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p08-workspace.md,"WS-09,NAV-04","Már futó példányban helyes projekt/hely nyílik, dirty projektváltás védett."
+BLD-01,P09,P0,L,planned,docs/superpowers/plans/2026-10-31-parallel/p09-build.md,WS-01,Külső chapter/bib/style/kép változása elavultnak jelöli a hozzá tartozó PDF-et.
+BLD-02,P09,P0,L,planned,docs/superpowers/plans/2026-10-31-parallel/p09-build.md,BLD-01,Build közben változó fájl esetén nincs téves current állítás; build újraindítható.
+BLD-03,P09,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p09-build.md,,"Sérült, üres vagy nem-PDF kimenet failed; korábbi megnyitható PDF megőrzött."
+BLD-04,P09,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p09-build.md,WS-08,Két fődokumentum és Xe/Lua/pdfLaTeX választás újranyitás után megmarad.
+BLD-05,P09,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p09-build.md,BLD-01,Végül feloldott ref-warning nem marad aktív; hibás sor továbbra is navigálható.
+BLD-06,P09,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p09-build.md,"BLD-01,BLD-04",Gyors húsz mentésből korlátos build lesz; régi artifact nem írja felül az új státuszt.
+BLD-07,P09,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p09-build.md,"BLD-04,QA-02","Biblatex+Biber, natbib+BibTeX, index és glossary minták offline reprodukálhatók."
+BLD-08,P09,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p09-build.md,BLD-05,Hiány pontosan azonosítható; nincs háttérben észrevétlen hálózati/fordítócsere.
+BLD-09,P09,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p09-build.md,"BLD-07,SEC-04",Friss gépen a deklarált környezet újraépíti a dokumentumot; eltérés reportolt.
+BLD-10,P09,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p09-build.md,PDF-03,Száz build után korlátos lemezhasználat; megnyitott/visszanézett generáció nem tűnik el.
+BLD-11,P09,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p09-build.md,MCP-02,Hosszú napló nem küldi újra a teljes előnézetet; cancel után végállapot egyértelmű.
+BLD-12,P09,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p09-build.md,"OS-01,QA-01",Azonnal forkoló és pipe-ot tartó child sem marad futva; app kilépése korlátos.
+BLD-13,P09,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p09-build.md,BLD-04,Hiányzó engine/PATH/font pontos hiba; bundled és külső környezet nem keveredik.
+BLD-14,P09,P2,L,planned,docs/superpowers/plans/2026-10-31-parallel/p09-build.md,"SEC-01,WS-08",Szóközös path argvban megőrzött; nem megbízható projekt nem kapcsolhat be futtatási jogot.
+BLD-15,P09,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p09-build.md,"BLD-09,PDF-03",Megosztott reportból az inputok/verziók megállapíthatók; session-token nincs benne.
+BLD-16,P09,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p09-build.md,"QA-02,OS-01","Támogatási lista konkrét PASS/FAIL/unrun eredménnyel, váratlan globális telepítés nélkül."
+PDF-01,P10,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p10-pdf.md,"BLD-01,PDF-03",Caretből helyes oldal/pozíció; source-hash eltérésnél nem mutat pontosnak régi koordinátát.
+PDF-02,P10,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p10-pdf.md,"PDF-01,NAV-04",Másik include fájlba is helyesen ugrik; zoom/rotation/scaling és Unicode path tesztelt.
+PDF-03,P10,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p10-pdf.md,BLD-01,PDF-re és SyncTeXre ugyanaz a generáció érvényes; takarítás nem töri a nézetet.
+PDF-04,P10,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p10-pdf.md,PDF-03,Keresett ékezetes kifejezés találatai bejárhatók; új buildnél stale találat eldobódik.
+PDF-05,P10,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p10-pdf.md,PDF-03,Kisebb forrásmódosítás és panelváltás után ugyanazon tartalom közelében marad az olvasó.
+PDF-06,P10,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p10-pdf.md,PDF-03,Hosszú dolgozatnál gyors navigáció és mért thumbnail-memóriakeret.
+PDF-07,P10,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p10-pdf.md,PDF-01,Vegyes lapméret és elforgatás nem töri a forward/inverse koordinátát.
+PDF-08,P10,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p10-pdf.md,"OS-01,PDF-04","Valós Windows gépen ékezetes szöveg kijelölhető, kereshető és felolvasható."
+PDF-09,P10,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p10-pdf.md,"PDF-03,BLD-15",Tördelésváltás és tényleges tartalomváltozás megkülönböztethető; eredet jelölt.
+PDF-10,P10,P2,S,planned,docs/superpowers/plans/2026-10-31-parallel/p10-pdf.md,PDF-03,Régi artifact exportja is egyértelműen azonosított; felhasználó választ célhelyet.
+PDF-11,P10,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p10-pdf.md,"QA-03,BLD-03","Ezeroldalas és sérült fixture mellett az editor használható, nincs korlátlan memória."
+PDF-12,P10,P2,L,planned,docs/superpowers/plans/2026-10-31-parallel/p10-pdf.md,"PDF-03,LANG-10",Új build után bizonytalan annotáció jelölt; LaTeX forrás és PDF eredet megőrzött.
+RES-01,P11,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p11-research.md,LANG-02,"Komment, képlet és bibliográfia kezelése deklarált; kézi fixture-eredményekkel ellenőrzött."
+RES-02,P11,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p11-research.md,"DOC-06,BLD-09",Új projekt azonnal offline fordul; intézményi követelmények konkrét verzióhoz kötöttek.
+RES-05,P11,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p11-research.md,"LANG-12,DOC-09",Átmozgatott asset hivatkozása javul; nagy kép nem blokkolja a szerkesztőt.
+RES-06,P11,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p11-research.md,"EDT-04,EDT-12","Már meglévő delimiter/caret megőrzött, egy undo; nem kell modellhívás."
+RES-07,P11,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p11-research.md,"BLD-14,DOC-05","A diff külön generáció, nem írja felül az eredeti forrást vagy publikációs artifactot."
+RES-08,P11,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p11-research.md,"BLD-09,SEC-06","Csomag tiszta könyvtárban újrafordul; cache, sessiontoken és titok nem kerül bele."
+RES-09,P11,P2,L,planned,docs/superpowers/plans/2026-10-31-parallel/p11-research.md,"DEV-03,BLD-14",Adatból ábra/táblázat és LaTeX export ismételhető; futtatási környezet azonosított.
+RES-10,P11,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p11-research.md,WS-05,"Profilváltás megőrzi a draftot, caret/viewportot és dirty fájlokat."
+RES-11,P11,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p11-research.md,"LANG-03,BLD-07",Gls-kulcs és indexgenerálás offline corpusban helyes; unsupported macro jelölt.
+RES-12,P11,P2,L,planned,docs/superpowers/plans/2026-10-31-parallel/p11-research.md,"RES-08,BLD-05",Minden eredmény input/build/profilhoz kötött; automatikusan nem állít megfelelőséget.
+LANG-11,P12,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p12-bibliography.md,LANG-01,"Dupla kulcs, örökölt mező és hibás entry célzottan jelezhető; eredeti forrás megőrzött."
+RES-03,P12,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p12-bibliography.md,LANG-11,"Hiányos vagy duplikált adat célzottan javítható, forrás és formázás megőrzött."
+RES-04,P12,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p12-bibliography.md,"RES-03,SEC-06","Hálózati hiba nem módosít fájlt; importált adat javítható, kulcsütközés kezelhető."
+EDT-13,P13,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p13-git.md,"DOC-08,DOC-01",Konfliktusos merge újraindítás után folytatható; eredmény a Rust dokumentumba kerül.
+GIT-01,P13,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p13-git.md,"WS-01,MCP-02",Nem-Git projekt is működik; külső CLI-módosítás frissíti a státuszt.
+GIT-02,P13,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p13-git.md,"GIT-01,EDT-13","A diff jelzi, melyik állapotot mutatja; agent nem mentett változása is látható."
+GIT-03,P13,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p13-git.md,GIT-02,Részleges staging nem nyeli el a nem mentett buffer szerkesztését.
+GIT-04,P13,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p13-git.md,"GIT-01,DOC-07",Ágváltás előtt nincs csendes adatvesztés; új manifest/index/PDF-stale frissül.
+GIT-05,P13,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p13-git.md,"GIT-02,EDT-13,DOC-01",Minden konfliktus feloldott vagy nyitottnak jelölt; abort visszaállítható.
+GIT-06,P13,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p13-git.md,"GIT-01,DOC-05",Rename-történet és Unicode path megjelenik; historical snapshot nem dirty dokumentum.
+GIT-07,P13,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p13-git.md,"GIT-03,GIT-05",Kulcs nem naplózott; művelet eredménye a valós remote/exit állapotból származik.
+GIT-08,P13,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p13-git.md,"GIT-04,DOC-08",Másik ág változásával ütköző visszahozás nem veszít egyik változatból sem.
+GIT-09,P13,P3,M,planned,docs/superpowers/plans/2026-10-31-parallel/p13-git.md,"GIT-02,SEC-06",Fájlsor mapping és commitazonosság helyes; szolgáltató hiányában a helyi munka folytatható.
+GIT-10,P13,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p13-git.md,"GIT-01,RES-02",PDF/cache/autogen állapot érthető; felhasználói ignore nincs önkényesen felülírva.
+GIT-11,P13,P2,L,planned,docs/superpowers/plans/2026-10-31-parallel/p13-git.md,"GIT-05,DOC-01",Elakadt művelet újraindítás után azonosítható és folytatható; dirty munka megmarad.
+GIT-12,P13,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p13-git.md,"DOC-08,EDT-13",Közvetlen agentedit azonnali marad; áttekintés nem vezet be szerkesztésenkénti approvalt.
+AI-01,P14,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p14-assistant.md,"WS-02,SEC-06",Restart után a draft megmarad; explicit reset töröl; más projekt nem kapja meg.
+AI-02,P14,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p14-assistant.md,MCP-03,Ismeretlen schema biztonságos hibát ad; támogatott verziók stream/cancel/tools működnek.
+AI-03,P14,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p14-assistant.md,MCP-04,Az agent csak létező eszközt kap ajánlásként; új tool nem nyer automatikus jogot.
+AI-04,P14,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p14-assistant.md,"GIT-12,MCP-04",Válasz megkülönbözteti tanács/edit/save/build eredményt; egy kattra megnyitható a valódi diff.
+AI-05,P14,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p14-assistant.md,AI-02,Nem gyárt token/költségadatot; providerhiba és keretkimerülés külön látható.
+AI-06,P14,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p14-assistant.md,"LANG-06,BLD-01","Régi kontextus nem látszik aktuálisnak; limitnél a csatolmány kezelhető, prompt nem vész el."
+AI-07,P14,P2,L,planned,docs/superpowers/plans/2026-10-31-parallel/p14-assistant.md,"AI-01,AI-02",Turn késői eseménye nem kerül másik chatbe; projektváltási leállítás megmarad.
+AI-08,P14,P3,L,planned,docs/superpowers/plans/2026-10-31-parallel/p14-assistant.md,"AI-02,EXT-04",Codex regresszió nélkül működik; új adapter bizonyított state/tool/stop viselkedést ad.
+AI-09,P14,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p14-assistant.md,"AI-01,MCP-05",Hiba után nincs kétszer alkalmazott edit/save; bizonytalan eredmény újraolvasással tisztázott.
+AI-10,P14,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p14-assistant.md,"QA-05,AI-02",Minden támogatott kombináció saját eredményt kap; fixture nem szerepel valós modellpróbaként.
+AI-11,P14,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p14-assistant.md,"AI-04,WS-06","Edit a Rust undo-ba kerül; mezőfókusz és Escape működik, nincs automatikus modellhívás."
+AI-12,P14,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p14-assistant.md,"WS-04,SEC-06",Dokumentumszöveg nem lép elő fejlesztői instrukcióvá; változás auditálható.
+AI-13,P14,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p14-assistant.md,"DEV-05,BLD-11,MCP-04",Agent csak lefutott ellenőrzést nevez sikeresnek; stop minden birtokolt műveletet elér.
+AI-14,P14,P3,L,planned,docs/superpowers/plans/2026-10-31-parallel/p14-assistant.md,"AI-07,DOC-08,MCP-05",Két agent ugyanazon revízión nem írja felül egymást; háttérmunka állapota látható.
+EXT-01,P15,P2,L,planned,docs/superpowers/plans/2026-10-31-parallel/p15-extensions.md,"MCP-02,MCP-03",Server crash/restart/cancel nem veszít dirty dokumentumot; nincs második hiteles textmodell.
+EXT-02,P15,P2,L,planned,docs/superpowers/plans/2026-10-31-parallel/p15-extensions.md,"MCP-03,WS-06",Hibás plugin kikapcsolható; kompatibilitás és API-életciklus dokumentált.
+EXT-03,P15,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p15-extensions.md,"EXT-02,SEC-04",Félbeszakadt frissítés rollbackelhető; ismeretlen plugin nem indul automatikusan.
+EXT-04,P15,P2,L,planned,docs/superpowers/plans/2026-10-31-parallel/p15-extensions.md,"MCP-02,SEC-02",Egy provider túlterhelése/crash nem állítja le az editort és nem bővíti másik jogait.
+EXT-05,P15,P3,M,planned,docs/superpowers/plans/2026-10-31-parallel/p15-extensions.md,"EXT-03,QA-03","Rossz bővítmény után a projekt tovább megnyitható, dirty recovery elérhető."
+EXT-06,P15,P3,M,planned,docs/superpowers/plans/2026-10-31-parallel/p15-extensions.md,EXT-02,Külső fejlesztő checkoutfüggetlen példát le tud futtatni támogatott OS-en.
+EXT-07,P15,P3,L,planned,docs/superpowers/plans/2026-10-31-parallel/p15-extensions.md,"EXT-03,SEC-04",Eredet/licenc/kompatibilitás látszik; registryhiba nem blokkol helyi munkát.
+EXT-08,P15,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p15-extensions.md,"EXT-02,OS-01",Mac-only provider nem látszik működő Windows/Linux funkciónak; hiány pontosan jelölt.
+DEV-08,P15,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p15-extensions.md,"EXT-01,WS-04",Egy dolgozat scripts/data/config fájljai helyes language ID-t és tartalomfüggő szolgáltatást kapnak.
+DEV-10,P15,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p15-extensions.md,"EXT-02,DOC-12",Nagy/binary fájl nem szövegszerkesztőként hibázik; source módosítás tudatos marad.
+DEV-01,P16,P2,L,planned,docs/superpowers/plans/2026-10-31-parallel/p16-terminal.md,"SEC-01,EXT-04","Interaktív shell működik; billentyűket fókusztulajdonos kapja, child kilépés kezelhető."
+DEV-02,P16,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p16-terminal.md,DEV-01,Projektváltás és terminál-újranyitás nem használ hibás munkamappát; nincs globális shellrc átírás.
+DEV-03,P17,P2,L,planned,docs/superpowers/plans/2026-10-31-parallel/p17-developer-tools.md,"SEC-01,EXT-04",Python script/formatter/test task saját eredményt ad; shellszöveg nem kötelező.
+DEV-04,P17,P3,L,planned,docs/superpowers/plans/2026-10-31-parallel/p17-developer-tools.md,"DEV-03,EXT-01",Támogatott adapterrel step/stop/restart és stale-source mapping ténylegesen működik.
+DEV-05,P17,P2,L,planned,docs/superpowers/plans/2026-10-31-parallel/p17-developer-tools.md,"DEV-03,EXT-02","Valódi tesztek futnak, skipped/fail/pass külön; futásból forrásba lehet ugrani."
+DEV-06,P17,P3,M,planned,docs/superpowers/plans/2026-10-31-parallel/p17-developer-tools.md,DEV-05,Csak illeszkedő source-revízióra fest; benchmarknál környezet és bizonytalanság jelölt.
+DEV-07,P17,P3,M,planned,docs/superpowers/plans/2026-10-31-parallel/p17-developer-tools.md,"DEV-03,SEC-06",Valódi status/header/body látható; secret nincs verziózott fájlban vagy exportban.
+DEV-09,P17,P3,L,planned,docs/superpowers/plans/2026-10-31-parallel/p17-developer-tools.md,"DEV-03,EXT-02",Választott környezetben fut a task; hiányzó runtime nem látszik connected állapotnak.
+SEC-01,P18,P0,L,planned,docs/superpowers/plans/2026-10-31-parallel/p18-security.md,BLD-04,Saját tesztsentinel a projekten kívül nem olvasható/írható; offline build tovább működik.
+SEC-02,P18,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p18-security.md,MCP-03,Projekt megnyitása nem indít rejtett kódot; megbízható projekten direct agent edit megmarad.
+SEC-03,P18,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p18-security.md,"OS-01,MCP-01",Másik jogosulatlan helyi user nem csatlakozik; jogos kliens nem veszít runtime-hozzáférést.
+SEC-04,P18,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p18-security.md,QA-10,Minden kiadott komponens verziója/eredete ismert; signature nem malware-free állítás.
+SEC-05,P18,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p18-security.md,DOC-10,Projektcél lecserélése nem ír másik fájlt; hardlink/case/Unicode viselkedés deklarált.
+SEC-06,P18,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p18-security.md,MCP-03,"Saját sentinel nem jelenik meg log/export/assistant kontextusban, kivéve tudatos kijelölését."
+SEC-07,P18,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p18-security.md,SEC-02,"Minden aktív futtatási felülethez tulajdonos, mitigáció és ellenőrzési bizonyíték tartozik."
+SEC-08,P18,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p18-security.md,"MCP-01,QA-09","Egy rossz projekt vagy kliens korlátos hibát okoz, editorban mentés/recovery elérhető."
+SEC-09,P18,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p18-security.md,"DOC-05,AI-01",Törlés hatóköre látható; érzékeny projekt nem kerül automatikus syncbe vagy telemetrybe.
+SEC-10,P18,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p18-security.md,"OS-01,BLD-12",Azonnal childot indító compiler cancel/timeout után sem hagy utódot a kijelölt támogatott OS-en.
+QA-01,P19,P0,L,planned,docs/superpowers/plans/2026-10-31-parallel/p19-quality-corpus.md,DOC-01,"Utolsó nyugtázott edit recoveryből megvan; a lemezen mindig teljes, azonosított változat marad."
+QA-02,P19,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p19-quality-corpus.md,,"Minden támogatott recept/platform saját PASS/FAIL/unrun táblát kap, publikálható reprodukcióval."
+QA-05,P19,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p19-quality-corpus.md,"DOC-02,MCP-02","Nincs növekvő leak, elveszett draft vagy hibás revízió; minden hiba reprodukálható nyomot ad."
+QA-09,P19,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p19-quality-corpus.md,,Panic/hang/minimal reproducer követhető; érvénytelen input után a mag használható.
+QA-10,P20,P0,L,planned,docs/superpowers/plans/2026-10-31-parallel/p20-release.md,,"Kiadott bináris valóban release, arm64, teljes erőforrásokkal; forrás/hash és profile összerendelt."
+QA-11,P20,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p20-release.md,"QA-10,OS-01",Tiszta támogatott gépen megnyílik/települ; tanúsítvány és Gatekeeper/Windows eredmény rögzített.
+QA-12,P20,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p20-release.md,"QA-10,DOC-01,WS-04",Félbeszakadt frissítés után az előző vagy új app indul; dirty recovery kompatibilis.
+QA-13,P20,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p20-release.md,"SEC-06,MCP-03","Reprodukálható hibaelemek szerepelnek, dokumentumtartalom/token alapból kimarad."
+QA-16,P20,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p20-release.md,"QA-10,QA-08",Egy release állítása minden aktív platformon saját bizonyítékra mutat; visszavonható hibás kiadás.
+OS-06,P20,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p20-release.md,QA-10,Minden hirdetett OS saját install/launch/workflow eredményt kap; Intel nem új követelmény.
+OS-01,P21,P0,L,planned,docs/superpowers/plans/2026-10-31-parallel/p21-windows.md,,"Valódi x64 appon edit/save/IME/agent undo/build/PDF ciklus, nem Mac cross-check."
+OS-02,P21,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p21-windows.md,"OS-01,AI-02","Saját makró/ref/cite, stale fallback, prompt undo és stop tényleges Windows gépen PASS."
+OS-03,P21,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p21-windows.md,"OS-01,WS-04,PDF-08","Funkciómátrix szerint mérhető paritás; eltérő funkció unavailable, nem megtévesztő ikon."
+OS-09,P21,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p21-windows.md,"OS-01,QA-06,QA-07",Architecture/driver/OS eredmények külön rögzítettek; Windows ARM64 és x86 nem kerül támogatottnak.
+OS-04,P22,P3,L,planned,docs/superpowers/plans/2026-10-31-parallel/p22-linux.md,MCP-03,Linuxon saját Rust/link/IPC/build bizonyíték; Mac payload/útvonal nincs újrahasználva.
+OS-05,P22,P3,XL,planned,docs/superpowers/plans/2026-10-31-parallel/p22-linux.md,"OS-04,EXT-08",Teljes saját edit→agent→undo→save→build→PDF workflow a kijelölt Linuxon.
+QA-03,P23,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p23-performance-accessibility.md,,"Nyers adatok, hardver/corpus/verzió és percentilisek rögzítettek; regressziós budget meghatározott."
+QA-04,P23,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p23-performance-accessibility.md,"QA-03,QA-02",Külön startup/idle/edit/build és összes child RSS; nincs nyelvválasztásból levezetett sebességállítás.
+QA-06,P23,P1,L,planned,docs/superpowers/plans/2026-10-31-parallel/p23-performance-accessibility.md,,Alapworkflow egér nélkül végigvihető; completion és agentállapot felolvasható.
+QA-07,P23,P1,M,planned,docs/superpowers/plans/2026-10-31-parallel/p23-performance-accessibility.md,,Nincs clipping vagy elérhetetlen művelet; live és off-screen render bizonyíték külön jelölt.
+QA-15,P23,P2,M,planned,docs/superpowers/plans/2026-10-31-parallel/p23-performance-accessibility.md,"RES-02,RES-08","Feladatvégzés, hibák és elakadások mértek; konkrét UX javításokhoz rendeltek."
+UNI-01,U01,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u01-jvm.md,"EXT-02,DEV-04,DEV-05",Java/Kotlin projektben completion/rename/run/debug/test/dependency és framework workflow külön kvalifikált.
+UNI-02,U02,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u02-python-data.md,"EXT-02,DEV-04,DEV-05",Notebook eredmény/runtime eredete helyes; Python és adatkutatói workflow teljes saját korpuszon működik.
+UNI-03,U03,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u03-web.md,"EXT-02,DEV-04,DEV-05","Cross-language rename, dev server, browser debug és webtesztek végig működnek."
+UNI-04,U04,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u04-php.md,"EXT-02,DEV-04,DEV-05",Full-stack PHP fixture-ben navigation/refactor/run/debug/test és framework feloldás igazolt.
+UNI-05,U05,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u05-dotnet.md,"EXT-02,DEV-04,DEV-05","Többprojektű .NET solutionön szemantika, build/debug/test és refaktorálás saját bizonyítékkal működik."
+UNI-06,U06,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u06-cpp.md,"EXT-02,DEV-04,DEV-05","Template/include/refactor, CMake preset, native debug és sanitizer hibahely működik."
+UNI-07,U07,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u07-go.md,"EXT-02,DEV-04,DEV-05",Go workspace run/test/debug/rename és module/frissítési művelet célkörnyezetben igazolt.
+UNI-08,U08,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u08-rust.md,"EXT-02,DEV-04,DEV-05","Rust workspace-ben valódi macro/cfg navigation, test és debugger; megvalósítás nyelve nem bizonyíték."
+UNI-09,U09,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u09-ruby.md,"EXT-02,DEV-04,DEV-05","Rails model/view/controller feloldás, RSpec/Minitest és remote debug saját példán igazolt."
+UNI-10,U10,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u10-database.md,"EXT-02,SEC-06","Korlátos adatnézet, reconnect és tranzakcióeredmény helyes; titokkezelés és serverkülönbség kvalifikált."
+UNI-11,U11,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u11-embedded.md,UNI-06,Valódi hardveren build/flash/debug célonként igazolt; host build nem embedded futás.
+UNI-12,U12,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u12-games.md,"UNI-05,UNI-06","Valódi engine-projekten editor attach, navigation és futó játék debug működik."
+UNI-13,U13,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u13-mobile.md,"EXT-02,DEV-04,DEV-05",Szállított mobilcélon valódi simulator/device workflow; a LaTeX IDE Mac buildje nem bizonyítja.
+UNI-14,U14,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u14-dsl.md,"EXT-02,DOC-08","Modellváltozás, nem szöveges jelölés, generálás és versioning működik; külön architektúrabecslés szükséges."
+UNI-15,U15,P4,L,planned,docs/superpowers/plans/2026-10-31-parallel/u15-docs-as-code.md,"DEV-08,DEV-03",Dokumentáció build/preview/linkvizsgálat reprodukálható; publikálás külön tudatos művelet.
+UNI-16,U16,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u16-qa-automation.md,"UNI-03,DEV-05","Valódi browserteszt, locator navigation és jelentés igazolt; az IDE saját unit tesztje nem ez."
+UNI-17,U17,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u17-remote.md,"EXT-08,WS-10,MCP-05",Hálózatvesztés mellett dirty munka védett; távoli input és build tényleges helye látható.
+UNI-18,U18,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u18-collaboration.md,"DOC-08,MCP-05",Két kliens offline/online merge mellett konvergál; meglévő agent undo nem romlik.
+UNI-19,U19,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u19-enterprise.md,"WS-04,EXT-03,SEC-07,QA-12",Szervezeti korlát és személyes adat elválasztott; offline install és támogatási művelet reprodukálható.
+UNI-20,U20,P4,XL,planned,docs/superpowers/plans/2026-10-31-parallel/u20-cloud.md,"DEV-09,UNI-17,SEC-06",Minden meghirdetett provider saját end-to-end eredményt kap; általános ikon nem paritásbizonyíték.

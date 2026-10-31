@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(PackagesRoot)Microsoft.Windows.SDK.BuildTools.10.0.26100.4654\build\native\*.props" />
+  <Import Project="$(PackagesRoot)Microsoft.Windows.SDK.BuildTools.MSIX.1.7.251221100\build\native\*.props" />
+  <Import Project="$(PackagesRoot)Microsoft.WindowsAppSDK.Base.2.6.4\build\native\*.props" />
+  <Import Project="$(PackagesRoot)Microsoft.WindowsAppSDK.InteractiveExperiences.2.6.4\build\native\*.props" />
+  <Import Project="$(PackagesRoot)Microsoft.WindowsAppSDK.Foundation.2.6.4\build\native\*.props" />
+  <Import Project="$(PackagesRoot)Microsoft.Web.WebView2.1.0.3719.77\build\native\*.props" />
+  <Import Project="$(PackagesRoot)Microsoft.WindowsAppSDK.WinUI.2.6.4\build\native\*.props" />
+  <Import Project="$(PackagesRoot)Microsoft.WindowsAppSDK.DWrite.2.6.4\build\native\*.props" />
+  <Import Project="$(PackagesRoot)Microsoft.WindowsAppSDK.Widgets.2.6.4\build\native\*.props" />
+  <Import Project="$(PackagesRoot)Microsoft.WindowsAppSDK.AI.2.6.4\build\native\*.props" />
+  <Import Project="$(PackagesRoot)Microsoft.Windows.AI.MachineLearning.2.4.89\build\native\*.props" />
+  <Import Project="$(PackagesRoot)Microsoft.WindowsAppSDK.ML.2.6.4\build\native\*.props" />
+  <Import Project="$(PackagesRoot)Microsoft.WindowsAppSDK.Search.2.6.4\build\native\*.props" />
+  <Import Project="$(PackagesRoot)Microsoft.WindowsAppSDK.Runtime.2.6.4\build\native\*.props" />
+  <Import Project="$(PackagesRoot)Microsoft.WindowsAppSDK.2.6.4\build\native\*.props" />
+  <Import Project="$(PackagesRoot)Microsoft.Windows.CppWinRT.3.0.260818.1\build\native\*.props" />
+</Project>

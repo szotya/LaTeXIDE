@@ -1,0 +1,3918 @@
+{
+  "schema": 1,
+  "policy": "raw run logs, screenshots, generated artifacts and captured local metadata are retained locally; only hashes are published",
+  "artifacts": [
+    {
+      "path": "evidence/acquisition/compiler-review/binary-signatures.json",
+      "bytes": 1321,
+      "sha256": "1dfc50936c3ec7cf1952ee2d3f40210a90651f817c47334f85c377dadb2a1ed3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/commit.json",
+      "bytes": 4106,
+      "sha256": "edc9a9b7870c29cee4dba592a76a567f7c57a59a2e145dd931f7bf0a91b8518e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/dependency-classification.json",
+      "bytes": 5342,
+      "sha256": "8faa34832b9ac160f4500add3af1b276f7e808a6d943a1f81e94f0cea4216d5c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/evidence-manifest.json",
+      "bytes": 20788,
+      "sha256": "7f6285aee813fec42be36a15ef95795eec922ea7bd76dddf58fae2ba819b4c2c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/final-verification.json",
+      "bytes": 797,
+      "sha256": "d3850e4ff8c1a3bc8433222d2c718b55c1ac1f763896a80640d1685af0dd8ef3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/latest-release.json",
+      "bytes": 25283,
+      "sha256": "c2ba04411d17c9ae99ba61952603455cf4aeb75a1c8c5147cc364686c4e7a71d",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/mactex-download.html",
+      "bytes": 16485,
+      "sha256": "a5d4da026c388db690b908880a3d9d8806d7137f31df33a0efae3e7219e66a40",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/registry/byte-unit-5.2.5/Cargo.toml",
+      "bytes": 1994,
+      "sha256": "1169d8666b035173b202773a5b435f2daf13aee9c73e4ab9d4a5d26c8de983e3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/registry/flate2-1.1.9/Cargo.toml",
+      "bytes": 5253,
+      "sha256": "06464242e6674c339ff6c564551fddc9288a57c2bc1b78f363a643d7c566f007",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/registry/gix-config-0.50.0/Cargo.toml",
+      "bytes": 4371,
+      "sha256": "751b44013ac0a184758812e803c18e3a224fecba36ead1257165c347442da59f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/registry/gix-hash-0.21.2/Cargo.toml",
+      "bytes": 3990,
+      "sha256": "9b2531c6ab010c90b4b148916389224250838fb2bcad95b0af259d1dd45855d2",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/registry/gix-path-0.10.22/Cargo.toml",
+      "bytes": 3721,
+      "sha256": "2ac94336dc77e95682808b56c68da9b48f8bd66c4f9b7e3d1fa51c2e07ab3fe7",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/registry/gix-ref-0.57.0/Cargo.toml",
+      "bytes": 4214,
+      "sha256": "b8a1dfecf52cab238e9c51a52a6593e0e30a3ec35f272549df2b53624c01dd62",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/registry/ignore-files-3.0.5/Cargo.toml",
+      "bytes": 2088,
+      "sha256": "79d4d09a1e3dad9b1604738a6e01344a2d8a73d5ecff659d1b7ba1ec5dc12ace",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/registry/quinn-0.11.11/Cargo.toml",
+      "bytes": 4923,
+      "sha256": "d399537966b571462de862af3cfe03318286d67b300c0db6b87fedfd5189a540",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/registry/reqwest-0.13.4/Cargo.toml",
+      "bytes": 13129,
+      "sha256": "e8b4f877a9c0e7c7c22d95671e97b4b8ed84c793d218b65c5503505f9789e6a4",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/registry/rust_decimal-1.42.1/Cargo.toml",
+      "bytes": 7129,
+      "sha256": "33cbd9b506cfaa14d1df68bab1af011ceccbd66000a6d68a5ef56ecb776ac9ac",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/registry/rustls-0.23.41/Cargo.toml",
+      "bytes": 4159,
+      "sha256": "3c7dca97723b68026a35f6f0a316b57dcc0365d21b88e470c9fc59ff8b3dc14d",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/registry/rustls-platform-verifier-0.7.0/Cargo.toml",
+      "bytes": 3499,
+      "sha256": "3032a2b58429a8786207a229216b5ea0cdf04a33f5f545660b83218f3322d1b0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/registry/watchexec-filterer-globset-8.0.0/Cargo.toml",
+      "bytes": 1791,
+      "sha256": "4a14b672f94ee3be641514073572d8cde022e87a3a7b84fc50a872eae8330643",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/registry-provenance.json",
+      "bytes": 6379,
+      "sha256": "6158a5892a6c4c261f9af5d8d7a02d2d6f0fee2ae11cbf8f392551d2357522e1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/tag-object.json",
+      "bytes": 794,
+      "sha256": "1ce504ee69723617edf6d161d103f80f351a2cc613b545b1d1470d1736e2ec79",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/tag-ref.json",
+      "bytes": 430,
+      "sha256": "d9c9e164e979fe07dca263ed7669284a18aaa8de4f71f908041a19a4c95deb36",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-amsfonts-owner.log",
+      "bytes": 146,
+      "sha256": "4de274510afd7b976ffe719555f27d307765e474f61fc7ed6c3f04cca8e9f1c4",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-amsfonts-preflight.log",
+      "bytes": 3899,
+      "sha256": "6c0355f1611cb56467b0338ee7c481aae97ef66cbed34f08f768bab8ba394c46",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-copying.html",
+      "bytes": 4924,
+      "sha256": "64c91cc9a2e34e60e747ccd6b89871c9e9d19a85ef80582df718e5a69f8685c2",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-core-fixture/main.tex",
+      "bytes": 488,
+      "sha256": "a39d2b524b993faab5e4dfb8ed8e29fb05d5428025ad3ad0120fe0f36d5e9998",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-core-fixture/output/main.aux",
+      "bytes": 135,
+      "sha256": "24b9c0d057a8dfe52194ee3701d2f5ea50595c65562355efbdc6c48612aa604f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-core-fixture/output/main.fdb_latexmk",
+      "bytes": 3610,
+      "sha256": "a0691019f098ef706a9702237812719ff04d305a02c7b96704a97450d0daa60a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-core-fixture/output/main.fls",
+      "bytes": 3324,
+      "sha256": "18963dca0051417c10de1d11a48b08c5e39e0c382e2b904ba382891139552cb1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-core-fixture/output/main.log",
+      "bytes": 9247,
+      "sha256": "63db618ef7508d422e2c1c98133a412c4df35a7f32a16f370f7fc18e484301b0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-core-fixture/output/main.pdf",
+      "bytes": 12406,
+      "sha256": "008864ba823685a89b895f49f9341e5b055a26eafed88b9b48319ee19702f2a1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-core-fixture/output/main.synctex.gz",
+      "bytes": 1112,
+      "sha256": "ba47ad354fc988390337568c232ddfc98f87092338ed8e960f9f8e414acb1dbf",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-core-fixture/output/main.xdv",
+      "bytes": 3420,
+      "sha256": "288cca3b69ec8ae9c4e3ddc3a90d152eca06f5006b76d79f93a594bdbdc93e42",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-core-fixture-result.json",
+      "bytes": 923,
+      "sha256": "fd993b5eb2e34a720859dd87c6de362b7f2b6ce327e800ebac298850250e0516",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-core-fixture.log",
+      "bytes": 4183,
+      "sha256": "eeb6c9246e0dfdcff6fe66a60f37fccd43aca8a767dd8236d83a401e56cfc7a6",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-font-name-preflight.log",
+      "bytes": 2970,
+      "sha256": "da66f955da498e1b6b48c3b83bf991221dd58b1aa377a43ecfdebe0c02502b21",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-format-recovery-command.json",
+      "bytes": 413,
+      "sha256": "16abcf8b854cd94f889600043c3e69903e4d54d25ec094ec98fa376b579af3d7",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-format-recovery.log",
+      "bytes": 12784,
+      "sha256": "72829ddb40860c748d97f0d180168c348e7f9be3ad0eab9f3ed99c9450247ce8",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-guide.html",
+      "bytes": 430379,
+      "sha256": "1125a6abc8407d7bf20c4665eb698bf9d8e239240399b5fadcb6dcd6ad3aef7d",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-install-command.json",
+      "bytes": 1360,
+      "sha256": "e05c674865ed6ee0ae72c66f00386d40b8ac1295936a53810562a39bc1d3d599",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-install.html",
+      "bytes": 36469,
+      "sha256": "e0943ba4d78a9576441669e1da2796e984560633c70edd2970a404720523aaf8",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-install.log",
+      "bytes": 4184,
+      "sha256": "8315d78cc012a40a2ca8d376737c77d7baabb69384fb93d221f00ce0a0c63a79",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-installed-packages.json",
+      "bytes": 26079,
+      "sha256": "567f2fcbd1bffdec5bc6dfb8761467f0e100be83ac2ca06b749738660c500ff3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-installed.tlpdb",
+      "bytes": 268880,
+      "sha256": "3f5f0becc2c65c51f67e7593782cdd10e278fa9dc34630cc93ef6c9c52cce15f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-installer-payloads.json",
+      "bytes": 2975,
+      "sha256": "cba942382147eea783f3d7df0b1711083355f7ad888f5ea0f17bb1618b6faabb",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-installer-signatures/install-tl.zip.sha512",
+      "bytes": 145,
+      "sha256": "22db6376c4549d0e250e8187db09574876cccee58b12bf4f50ac64d45fdbfbae",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-installer-signatures/install-tl.zip.sha512.asc",
+      "bytes": 488,
+      "sha256": "6ee3e65bdbb052c658005fc9abb0ff9df65f1c7e45a4999285a2488a7b92bdc4",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-installer-signatures/isolated-gnupg/pubring.kbx",
+      "bytes": 32,
+      "sha256": "1c21fbc0385ca6a0199768a042e371a0751d27bca4a7ab2f31699dfe5b515e2f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-installer-signatures/isolated-gnupg/trustdb.gpg",
+      "bytes": 1200,
+      "sha256": "506f041aebddc4bfb291db0aaedcc665ae4707fb322b1dc559f5c2880cfb612e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-installer-signatures/provenance.json",
+      "bytes": 2134,
+      "sha256": "c4b46d27e3db68043031b6ef3b1f3c05c156d797ba6ea1e27b66058857b2344d",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-installer-signatures/verification.json",
+      "bytes": 3172,
+      "sha256": "c6b65bdfe19ca97d08c1557b9735279da38f63d948c2b3baa132b2b7cbae152f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-local-issues.json",
+      "bytes": 1442,
+      "sha256": "47725d5d2307377a25e13a6d40a336b75fc5e23a950a496335fb7879155da95a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-offline-network-enforcement-command.json",
+      "bytes": 691,
+      "sha256": "fcd9c662ebed1d51ef368d0bf487e1b2eaf1111b78ac0e4c4c818f46d2146b3a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-offline-network-enforcement.log",
+      "bytes": 70,
+      "sha256": "8d3409c23eba435ea9d5b700fd6ff8ad9dc937e2de1ed1761d5070eea4e56262",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-packages-command.json",
+      "bytes": 1212,
+      "sha256": "d8f9464a8bb3fd2e50fe13364cdaad33bea650fcc6c7055e5f967476502f18c5",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-packages.log",
+      "bytes": 810,
+      "sha256": "cf9209187626eb3d7e1c1c50cc30f0b1c96c8af8af3939f06648d1fbe98041df",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-plan-command.json",
+      "bytes": 1385,
+      "sha256": "d20abab636ba19cb39dcbb2ac394ee982fee5b5487c367df139cb67d475f8d46",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-plan.log",
+      "bytes": 687,
+      "sha256": "6acc18d1d38add005ae38313a706ff134a182f2e854a328a1bea93d010421af7",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-runtime-manifest.json",
+      "bytes": 3126,
+      "sha256": "b246e2e15d836de8156813558a464760ed79db3a2ebdc00c60fc7bcf75554e96",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke/Árvíztűrő tükörfúrógép/main.tex",
+      "bytes": 454,
+      "sha256": "7f28ccb46c8ceaa983432733b33073ff178e0f5ef14b156ca323553dfb929653",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke/Árvíztűrő tükörfúrógép/offline/main.aux",
+      "bytes": 181,
+      "sha256": "d4d6b58394a2d89aca74c0eb078cbf8f47307d200c11466b2af5977c8eddbcf3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke/Árvíztűrő tükörfúrógép/offline/main.fdb_latexmk",
+      "bytes": 3224,
+      "sha256": "9bac0ae2167a370b79a65024968276fe15995d88679b81051762459df366134c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke/Árvíztűrő tükörfúrógép/offline/main.fls",
+      "bytes": 3806,
+      "sha256": "4def85535c523bebf6dc4c5f244f1c497e601cd34cc33770285ae0faee810850",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke/Árvíztűrő tükörfúrógép/offline/main.log",
+      "bytes": 11413,
+      "sha256": "5b25414ccf09016f5dca91230fb8a034ebf65ecded163b0412efa8dac61826c7",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke/Árvíztűrő tükörfúrógép/offline/main.pdf",
+      "bytes": 15617,
+      "sha256": "9d553920f69823d527d6dfd620425931dc115b64ef02a491e2484317ba9e0e74",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke/Árvíztűrő tükörfúrógép/offline/main.synctex.gz",
+      "bytes": 1647,
+      "sha256": "bb4eaa600d6a37d0dfa1f1c0b5b9e18d255e0a32ad4b6ff9448248d9f6dd2bcf",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke/Árvíztűrő tükörfúrógép/offline/main.xdv",
+      "bytes": 3732,
+      "sha256": "afb606f21df843dfdadb59f5bd772e99810d323c820be8b6e9ddee99c605fd05",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke/Árvíztűrő tükörfúrógép/online/main.aux",
+      "bytes": 181,
+      "sha256": "d4d6b58394a2d89aca74c0eb078cbf8f47307d200c11466b2af5977c8eddbcf3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke/Árvíztűrő tükörfúrógép/online/main.fdb_latexmk",
+      "bytes": 3213,
+      "sha256": "dd6c80bbb1cb64a149ad46cf5b60c8f88912bf0853a3b4552694e068dcc39f95",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke/Árvíztűrő tükörfúrógép/online/main.fls",
+      "bytes": 3799,
+      "sha256": "2cd6a88c70be093dcd3be928887dfe6ba820820f810bffa9c3d0b68ebab7f3b2",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke/Árvíztűrő tükörfúrógép/online/main.log",
+      "bytes": 11410,
+      "sha256": "fd9ffa99a63fb2f4d42b31dae767fce51afca7fd15d6ba5ab0467a183774a50d",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke/Árvíztűrő tükörfúrógép/online/main.pdf",
+      "bytes": 15619,
+      "sha256": "fd4d72a18ce5775a327416409cae209b0bdc7801f625e3a2f77bd01c4bd15a53",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke/Árvíztűrő tükörfúrógép/online/main.synctex.gz",
+      "bytes": 1646,
+      "sha256": "b0054619334e2f3810e0f85e074d844f4d8d3b8f7fa8264175794781e37f1dd7",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke/Árvíztűrő tükörfúrógép/online/main.xdv",
+      "bytes": 3732,
+      "sha256": "afb606f21df843dfdadb59f5bd772e99810d323c820be8b6e9ddee99c605fd05",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke/Árvíztűrő tükörfúrógép/online/missfont.log",
+      "bytes": 15,
+      "sha256": "76d181361ec6a830f539e03bea287a6fb1c7d43b1c96fcca6552cd206372fed3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke/Árvíztűrő tükörfúrógép/szöveg.tex",
+      "bytes": 214,
+      "sha256": "e6a4bfe97c784037e8f1eb482729cda9396d8967dc4baccd5fb35c5984b7f8a7",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke-offline-command.json",
+      "bytes": 794,
+      "sha256": "d8a6ecee6fdd63f5ad2bc6970834004e6fafa00a611bdad6ee3f8d9cbce0cea2",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke-offline.log",
+      "bytes": 2990,
+      "sha256": "0ff0608f07ec086f7607e14a82c6f89eb6905ba7180f29b54246c2da1e100c23",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke-online-command.json",
+      "bytes": 705,
+      "sha256": "b88301411125d0235c18befcd42e666fd459b66e769cf99f7d5fb031aa8be060",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-smoke-online.log",
+      "bytes": 2974,
+      "sha256": "fe97074ad03ac76cff6919a11e4a773f5acdfb94371a5737e2e290af7a057ad8",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-tlmgr.html",
+      "bytes": 117687,
+      "sha256": "231597cd304f7ce8ed9dab97e425c025f19d7dbc0193066fb0c94f0521961d57",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-verify.html",
+      "bytes": 5856,
+      "sha256": "ec1781d08dcc61116f251f1246afed87a2957bdebcdcaeb03f623da55c112a25",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-version-latexmk-command.json",
+      "bytes": 344,
+      "sha256": "c82392f3a8ac5f656c88b078c14ddf6b912ada5a7268a168e28090df6ef7c627",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-version-latexmk.log",
+      "bytes": 50,
+      "sha256": "dda649fd13d05db4298d3ef3f06dcf4ac5fd486ae77f8d5d3e54ef738fb963e3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-version-perl-command.json",
+      "bytes": 290,
+      "sha256": "e857287c529a41b9695d509bee950f114dd849fc7d8f8cf939bd4dad7c743d86",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-version-perl.log",
+      "bytes": 28,
+      "sha256": "f359bbd59557ab084176a64ae06fa4da83a05b7583c02e0c042e8e17b5898401",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-version-platform_arches-command.json",
+      "bytes": 346,
+      "sha256": "f84ad1f72cda4c49c0b8a53ad424d2d9494958a1e42dc6e14de58f7005203299",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-version-platform_arches.log",
+      "bytes": 13,
+      "sha256": "9cb483fd3739db2602d4c5bf672f4af954dc6dad82b36e8642b034af58f11c11",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-version-xelatex-command.json",
+      "bytes": 330,
+      "sha256": "4bef518958353dfc8f9863871d58b89e25b80f59cfafd2a5d423c54dbe5340a6",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/texlive-version-xelatex.log",
+      "bytes": 791,
+      "sha256": "df941823c72e9660b7af9923a5a0268666d38d21567b60b16530704782ce68ab",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/upstream/.github/actions/build-and-test/action.yml",
+      "bytes": 4074,
+      "sha256": "586d00a44d68531709ff2d3aac944fcd5e7d5fe647e12f53de5b15f77a034e13",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/upstream/.github/actions/build-setup/action.yml",
+      "bytes": 2108,
+      "sha256": "b14b6f15937e3d1ba631a239f1fc81fcccaa86d22310d27bc5dd158fc53da815",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/upstream/.github/actions/vcpkg-deps/action.yml",
+      "bytes": 1574,
+      "sha256": "51511f0d81872556009dbdc0b39d898a6da7ceb77a1087571273378ef0e8a88e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/upstream/.github/workflows/build_and_test.yml",
+      "bytes": 11584,
+      "sha256": "94c16eab8ba7d3f6b474af91624992a0406348cb5e27e35fa75a550148ed0e42",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/upstream/.github/workflows/deploy.yml",
+      "bytes": 5035,
+      "sha256": "227279fdcb402577410c4ec989fb9c7875f4ae41ecbf0ddccc8ce8872b891c7e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/upstream/.gitmodules",
+      "bytes": 256,
+      "sha256": "20fdfc0ac4ee5f326fb4736247b7ab7696c5007cd31b98fae2ae346316de53a6",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/upstream/Cargo.toml",
+      "bytes": 6940,
+      "sha256": "b71485a660912b7147ecb332e6aaa64dc7c40f356bfc4a05191fc7aa3eb002c8",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/upstream/LICENSE",
+      "bytes": 1192,
+      "sha256": "814a258f76e420b25cb3c07172eb2b3956f34cefbf0a650413b78e65c425f306",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/upstream/README.md",
+      "bytes": 4013,
+      "sha256": "d3959b2b6aa76e91821da78776cf5f7696dcaad20022487f294391fa9d4137bd",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/upstream/build.rs",
+      "bytes": 614,
+      "sha256": "9ac22c5ade621cc33af548c73b8339e04fd556549184ac9faa0df081c15eadfd",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/upstream/crates/bundles/Cargo.toml",
+      "bytes": 1614,
+      "sha256": "182d9c6b2b96bd8a565cfbf6914386d6bbe8ab50c025aa923fb4a3b650fefe4b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/upstream/crates/docmodel/Cargo.toml",
+      "bytes": 862,
+      "sha256": "899bdfccabf8fd5f82f23cf6e6d5d98b58ba614f668220e926798f5c10de7975",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/compiler-review/upstream/crates/geturl/Cargo.toml",
+      "bytes": 1072,
+      "sha256": "8fafd7b62361115ad9f22fc4cbbd22c64213b56c013aef1854cc2ad8bb8e3680",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/cppwinrt-versions.json",
+      "bytes": 3009,
+      "sha256": "c9f81464745640e7a072861b6901178ba9b57926d2eb7e773b59cfb42a93d5bc",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/install.log",
+      "bytes": 347,
+      "sha256": "f0f71faa6b7d3c57dfe59597c43af2ece05f73738186e0c32a14a54e7e65fc57",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/interprocess-crate.json",
+      "bytes": 47559,
+      "sha256": "aa4a055e97b332141946028c909d68577637c320a55ce0ce114f99443dde107b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/reputation.json",
+      "bytes": 323,
+      "sha256": "753119be197ec7df28052e235294193efb1679867216b48c0c454e3d8f79b9bc",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/rmcp-crate.json",
+      "bytes": 214809,
+      "sha256": "34ce19a7a213fe03ecef721be854dc195e4233644adb9960f200d16e1b2ffe43",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/rust-stable-channel.toml",
+      "bytes": 943486,
+      "sha256": "fb152be80975c194aa5fc684b2aec3a6e14e2b855efe2faa4e5f8ae6e590f463",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/tectonic-0.17.0-release.json",
+      "bytes": 21820,
+      "sha256": "7d022f6f401093d2ae0532e420e5325412026fe3c3de66124025f65af424beeb",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/tectonic-Cargo.lock",
+      "bytes": 112386,
+      "sha256": "4a6e5c44fdb10188005cba9ae6a253fe60d79676b1cef999da669ec71c3850e9",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/tectonic-advisories.json",
+      "bytes": 8456,
+      "sha256": "3ed2a4cd1bd5234909ee7f313ce9a266157d5801a6944ac940c3f9b69bcfe2fe",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/tectonic-config.rs",
+      "bytes": 6034,
+      "sha256": "a8a3cc39e399d0c4dee207981e299b40560ba081e5db151dd45e28a0d0d36670",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/verified-tools.json",
+      "bytes": 3882,
+      "sha256": "6191c3ec090210a4f7da2e1126a609587b33f06d33a9759ec772ee9cde2332dd",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-app-sdk-versions.json",
+      "bytes": 3014,
+      "sha256": "8ff55974fa1f265d25b5ef7865bd6c75c382a8f7aa83ee522f2a4d7fdb8a2312",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-app-sdk.nuspec",
+      "bytes": 2007,
+      "sha256": "39e25bc3901d91e0b93e9d92900a40d59f66f6b37bb16e5753c394d4182f8088",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.Bcl.Numerics.9.0.0.nuspec",
+      "bytes": 1062,
+      "sha256": "5be662e07bc94c243081a45c5dcb11a295765d1c8eb12dfdf4b0204882b702fb",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.NETCore.Platforms.1.1.0.nuspec",
+      "bytes": 1067,
+      "sha256": "0d2c35bda9b060d2b4f6f62f8bb0d381aac8f6e966773747afceb88d73a0be23",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.NETCore.Targets.1.1.0.nuspec",
+      "bytes": 1148,
+      "sha256": "612eb4c55cfd4ec008f5826c70a9022ca8329fc32cdf488eef07a9650b559cdb",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.Web.WebView2.1.0.3719.77.nuspec",
+      "bytes": 1364,
+      "sha256": "91e48b81230cb1e4e8a5dbd24607aa4f4575475f5490c28b13a3aa293fb42da0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.Win32.Primitives.4.3.0.nuspec",
+      "bytes": 1936,
+      "sha256": "21492782cc38dc537fb64e022c9036c416590e9766fc99f2d0e413e3dba84a00",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.Windows.AI.MachineLearning.2.4.89.nuspec",
+      "bytes": 1404,
+      "sha256": "dbd2debdb0b0b2ee075f0a030a146d1be971dcf1b33b7b605a5b5cd0ada22a80",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.Windows.CppWinRT.3.0.260818.1.nuspec",
+      "bytes": 1196,
+      "sha256": "a2e6f12010912105b086ed83939ddbbebf988a79c70c6f45bd10b21a02e3816c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.Windows.SDK.BuildTools.10.0.26100.4654.nuspec",
+      "bytes": 911,
+      "sha256": "b02b276d58576179916443e9e2b8a5fe6aa727f1a7e0c1768dc69ff49bb9cb49",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.Windows.SDK.BuildTools.MSIX.1.7.251221100.nuspec",
+      "bytes": 848,
+      "sha256": "ff893cc56edf912ee2c7779794c4903f9d0c455f9f7ef819958ade44d4ab2496",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.WindowsAppSDK.2.6.4.nupkg",
+      "bytes": 72439,
+      "sha256": "89328823a9ae19d7f4f104836ac974cc85553ec24aaa02cc3cab9aa36277fe5b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.WindowsAppSDK.2.6.4.nuspec",
+      "bytes": 2007,
+      "sha256": "39e25bc3901d91e0b93e9d92900a40d59f66f6b37bb16e5753c394d4182f8088",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.WindowsAppSDK.AI.2.6.4.nuspec",
+      "bytes": 1091,
+      "sha256": "c4b73b8f733998f2bbb449890204cde67e7429cb527b039ad8b6b2e03f2ead61",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.WindowsAppSDK.Base.2.6.4.nuspec",
+      "bytes": 1577,
+      "sha256": "a4f62afd0e2d8e83a6e1666f6ab2ec174808c0a63ad393b886111d36f377f9e6",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.WindowsAppSDK.DWrite.2.6.4.nuspec",
+      "bytes": 1015,
+      "sha256": "a6cb622bf33a2c21beae965d7b4c6e55cbbf11409735140fce97fe210d2ea43f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.WindowsAppSDK.Foundation.2.6.4.nuspec",
+      "bytes": 959,
+      "sha256": "c851d231696bca70d45d2f4fc3c3c063b109e1fce24dc92805feb4e548885db0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.WindowsAppSDK.InteractiveExperiences.2.6.4.nuspec",
+      "bytes": 1118,
+      "sha256": "e21742b6f0d127f8533f06420b7e9a1d9d5c6c6263bfd22f652ff66e97bb3084",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.WindowsAppSDK.ML.2.6.4.nuspec",
+      "bytes": 2066,
+      "sha256": "49ed7ef5bcded44572563d92c191e56db20f6063a488cdf793d0379e4399c669",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.WindowsAppSDK.Runtime.2.6.4.nuspec",
+      "bytes": 1470,
+      "sha256": "10a82e85b82e06acbf10fff69f7ccd80d83547df30a7f4433c278abcbfc3deff",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.WindowsAppSDK.Search.2.6.4.nuspec",
+      "bytes": 1212,
+      "sha256": "3cbbfc0af1e90256cc7d764a87369206c2adeeb53757e2ade6bfbe39918e0fa8",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.WindowsAppSDK.Widgets.2.6.4.nuspec",
+      "bytes": 1120,
+      "sha256": "5c134e82f1d6525f8bd3048966d06fac35c7d67b36e89a8db534335d3c4673c0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.WindowsAppSDK.WinUI.2.6.4.nuspec",
+      "bytes": 1520,
+      "sha256": "940c87a74cc76c945c6e6936f0ef4558b0d35fed5e58fe2efb6f74413ed8d612",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.WindowsAppSDK.props",
+      "bytes": 253,
+      "sha256": "8aa494428263ce8b8444f2baaf8afe8cd4d4a56f172c724456bc8a991019a969",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.WindowsAppSDK.props.top",
+      "bytes": 341,
+      "sha256": "a39247ea08a8aca347c95dbac5421bb79a65bbc6c4454bb96746b5577741ffa8",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.WindowsAppSDK.targets",
+      "bytes": 3703,
+      "sha256": "b809761d9d33bb602a15a871848850bc9418fe980afb2358b74ee2f02727893c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/Microsoft.WindowsAppSDK.targets.top",
+      "bytes": 167,
+      "sha256": "68e4e95e495f52525e251e3094afa45af299c902d1442b2e2f7f9aacea4370ed",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/NETStandard.Library.1.6.1.nuspec",
+      "bytes": 10337,
+      "sha256": "add71288893598afa85ff01822de853ac24a6207705d7c6b620aac67a11c4e3e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.AppContext.4.3.0.nuspec",
+      "bytes": 2411,
+      "sha256": "a36f7e21fe3eed988a535a2c96218260a5633114e9252e208d0090f9d4f4ff2b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Buffers.4.5.1.nuspec",
+      "bytes": 2316,
+      "sha256": "1d91cfeda4befe060d1766b5d9dfe6b5732fb82002766aea411fceef58ef41dd",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Collections.4.3.0.nuspec",
+      "bytes": 3231,
+      "sha256": "7ad270df3e52b0ae360a73876568e4f21e8afbd17fdaad54ab46b39e36f46c9a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Collections.Concurrent.4.3.0.nuspec",
+      "bytes": 4073,
+      "sha256": "6a48e65cc5785d123ae442cf3087e383350bf3eb54a611855b9af1dcb40a2131",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Console.4.3.0.nuspec",
+      "bytes": 2020,
+      "sha256": "f9e15a917f588f6f16c5cc3bdd3434835d0fc0bddf91dd5521319e622eea3fc7",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Diagnostics.Contracts.4.3.0.nuspec",
+      "bytes": 2460,
+      "sha256": "1d6a745fab6e83cea8015465f0c8e62cbebf0bb4327d45ce0b3f1b439b47bb3a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Diagnostics.Debug.4.3.0.nuspec",
+      "bytes": 2962,
+      "sha256": "ed2b10a24e8c5125d0b0216c881dbf75d2d90e3e66de3a104b31dd26a3f43e7e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Diagnostics.DiagnosticSource.4.3.0.nuspec",
+      "bytes": 2459,
+      "sha256": "cc70cf8775b3f26bb5e9c5cd3f81a96b623dbcda764134df865222e60c1324af",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Diagnostics.Tools.4.3.0.nuspec",
+      "bytes": 2470,
+      "sha256": "0391e0a89fa399e5271989aae3566c206962dd5d73c365fd8b0f1df26909cce8",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Diagnostics.Tracing.4.3.0.nuspec",
+      "bytes": 3528,
+      "sha256": "f9124f452660a77a0861a076d500fbf81da1ba140113d44660e6db3c83b57658",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Globalization.4.3.0.nuspec",
+      "bytes": 2869,
+      "sha256": "d02e7c00f3827bfe4112b1b581f0ef56af0a7486bff330646a23d293ac715ab6",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Globalization.Calendars.4.3.0.nuspec",
+      "bytes": 2365,
+      "sha256": "3ba6fec23ec7f540d0976fdeac1a143513da47a58f91185c8aed8fb997319951",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Globalization.Extensions.4.3.0.nuspec",
+      "bytes": 2300,
+      "sha256": "37fcb32bfb943c9071a34d50175dc384393d510c5a3453f22a359cb4ac792338",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.IO.4.3.0.nuspec",
+      "bytes": 3871,
+      "sha256": "a3c7c712b172fa869cc4dfd8ee7363bb71bc78e44dafc265d159760d220450d6",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.IO.Compression.4.3.0.nuspec",
+      "bytes": 5433,
+      "sha256": "c56f7536d9f825ffc7d7afab55a2c568ee06fbefba7107764b5e5398e5f1f126",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.IO.Compression.ZipFile.4.3.0.nuspec",
+      "bytes": 2516,
+      "sha256": "f22faf2609bb2c99a818809cf42ad3b9d994b529ee36aef8acb807cd14b7c1fc",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.IO.FileSystem.4.3.0.nuspec",
+      "bytes": 2465,
+      "sha256": "7afa1eca3e1dea0c9c2e9dfe0587c5b575c9b0d77132458ff7610099de0348db",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.IO.FileSystem.Primitives.4.3.0.nuspec",
+      "bytes": 1891,
+      "sha256": "9985249f157ef3f041c57c9598bfe2604e3c5b1050c2947ab90473c73e0c79e1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Linq.4.3.0.nuspec",
+      "bytes": 3325,
+      "sha256": "2f911b3accf6c9bf3b67d00b9be88125622c337b58fd6217031a981959f94869",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Linq.Expressions.4.3.0.nuspec",
+      "bytes": 5486,
+      "sha256": "97549bb5066025231dfac6c08204aba176fbce9f0fc8ed0dc11a619c2c3a6ee4",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Memory.4.5.5.nuspec",
+      "bytes": 5378,
+      "sha256": "d3747c2465e540187fd68f3baf881093aadb414cf7f03871c7f0403fb93dc3cf",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Net.Http.4.3.0.nuspec",
+      "bytes": 9158,
+      "sha256": "d103c2d2ec11427a3c4706e0bc125acc3f04f1b914999bd7ce2aabb361f30f04",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Net.Primitives.4.3.0.nuspec",
+      "bytes": 3312,
+      "sha256": "6f8c5ff4df107e7044db58c9318dd613a5a1177abcb45a90414a4227c4656a02",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Net.Sockets.4.3.0.nuspec",
+      "bytes": 2483,
+      "sha256": "0e0ad50851b282fe100e8362a2dbf8c373e0fdfb6ddc00cdcc3c63fac676c0d2",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Numerics.Tensors.9.0.0.nuspec",
+      "bytes": 1479,
+      "sha256": "bef90490c91cd8056739670dd6be6a61541ab50f4002b14f21d8ee96a4bcbc82",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Numerics.Vectors.4.5.0.nuspec",
+      "bytes": 2555,
+      "sha256": "4d8fc002a8820a4364bf1cb5dc8211c2d14e45ebd4292e86d8dd8d6a94b4ca8c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.ObjectModel.4.3.0.nuspec",
+      "bytes": 3459,
+      "sha256": "0936e1863f5218c71fa90e715448b7cb657077f8d217b03f54e5737f3fe416bd",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Reflection.4.3.0.nuspec",
+      "bytes": 3880,
+      "sha256": "2e734d31415658923b1fa0a7cde26b2ec2d76d0857155c4a23709caf088ff194",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Reflection.Emit.4.3.0.nuspec",
+      "bytes": 2326,
+      "sha256": "2afb0d2bfe629c3109c12f1c93382f0a7e6bf1ece6fc85b9f9ea7013b85ce94b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Reflection.Emit.ILGeneration.4.3.0.nuspec",
+      "bytes": 2140,
+      "sha256": "ac7e6cc4b8f83320dfdb3947fa0e9777bfb77ba564a5af03bbc822612f0487d6",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Reflection.Emit.Lightweight.4.3.0.nuspec",
+      "bytes": 2054,
+      "sha256": "75d279c098a1898fa098c626ca4aadb403e69180f451ed5d817e50e267ee35af",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Reflection.Extensions.4.3.0.nuspec",
+      "bytes": 2429,
+      "sha256": "af49a37c262b691f3a478960410a8b1f0f0ff9462461705b162c13827789731c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Reflection.Primitives.4.3.0.nuspec",
+      "bytes": 2535,
+      "sha256": "01dfcebea5d7125f41c35dfaf885cd80cdf314ad3e8f8e21798fc11d8f805c9f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Reflection.TypeExtensions.4.3.0.nuspec",
+      "bytes": 3051,
+      "sha256": "8f106fa45d7167cb14fa2c5f6177261b9125fb5373c7d54bc545ea601dd12ed7",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Resources.ResourceManager.4.3.0.nuspec",
+      "bytes": 2699,
+      "sha256": "b63702b9cbbeb2cb9bf1a76850029ca90a79904dc727f19f71b99b6241751c1d",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Runtime.4.3.0.nuspec",
+      "bytes": 3981,
+      "sha256": "84c924fd94cb6e72d5f15365b99e75f6ab156d4482ea1487efbcab520436b4d4",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Runtime.CompilerServices.Unsafe.4.5.3.nuspec",
+      "bytes": 1938,
+      "sha256": "6ada5976e1805ca44b89b68aa17f89110d84fa130feea6a1151ff71123607f05",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Runtime.Extensions.4.3.0.nuspec",
+      "bytes": 3347,
+      "sha256": "749f6fa77e79b7d1759363119b946a6d56924fdb7eab81402035c75efd20321b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Runtime.Handles.4.3.0.nuspec",
+      "bytes": 2140,
+      "sha256": "4be0fcc65f3638d444cb35cc9e2fd0fe0088a4c80dade529b3c5c7eb631385f4",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Runtime.InteropServices.4.3.0.nuspec",
+      "bytes": 5536,
+      "sha256": "3eb8a86db9fa4162d54cd6a213bda72d314136799efd6acd12250569c6378dd9",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Runtime.InteropServices.RuntimeInformation.4.3.0.nuspec",
+      "bytes": 2862,
+      "sha256": "c013c4f562928fb72c9ed6376010c6fd495e952a393b3ab11680d497fb19b551",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Runtime.Numerics.4.3.0.nuspec",
+      "bytes": 2796,
+      "sha256": "175134aec900ace7dc5fbad503ea89d041f0c606ee4e3bd1c0d8e18e9b6e8d33",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Runtime.WindowsRuntime.4.3.0.nuspec",
+      "bytes": 3399,
+      "sha256": "d96e7d828fa65afb61db8de93ea30115b8a2e2e278393e7535c460c5785ecd9a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Security.Cryptography.Algorithms.4.3.0.nuspec",
+      "bytes": 5856,
+      "sha256": "353ae479fb964602488b6f640ec6d5ba0904e34c50c8f5c6cd2e34c803642ff8",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Security.Cryptography.Cng.4.3.0.nuspec",
+      "bytes": 4883,
+      "sha256": "79ad3ca26967c1b3b9ae5e0da0e0b01c294d8d9f97efece4aa363577415f97a9",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Security.Cryptography.Csp.4.3.0.nuspec",
+      "bytes": 3082,
+      "sha256": "817a3cac952b0b75042c6a430348558f028eb6da805c46b47324c416b87ff3e1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Security.Cryptography.Encoding.4.3.0.nuspec",
+      "bytes": 2923,
+      "sha256": "9c1b3a7fb083bb1acbfb34c65978c9d9177f850065963451e787fcadfb1d6e13",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Security.Cryptography.OpenSsl.4.3.0.nuspec",
+      "bytes": 4100,
+      "sha256": "42044c62b6eccfdd3d121770ad8a351aa623adc0f18d4c02074bdd2399922748",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Security.Cryptography.Primitives.4.3.0.nuspec",
+      "bytes": 2710,
+      "sha256": "5194eb59279bffe6c2c6fb1f50700cbddbe0bd5635cbf658d9e4fda5ffca310d",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Security.Cryptography.X509Certificates.4.3.0.nuspec",
+      "bytes": 7814,
+      "sha256": "471306af5b167a907825287e84b4e2af62be852aecf7bc6f04067bfce4fe34a9",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Text.Encoding.4.3.0.nuspec",
+      "bytes": 2766,
+      "sha256": "0693a62ec62384e65db1c2370598db2e6fe38afaaba2e66d1cadca2ec8c768b2",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Text.Encoding.Extensions.4.3.0.nuspec",
+      "bytes": 2802,
+      "sha256": "43769235d505f31ac80f8734543b7f6481a5f5184bcae7165bbf161444470296",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Text.RegularExpressions.4.3.0.nuspec",
+      "bytes": 3780,
+      "sha256": "a0020dd4952554e1fe06d6b27e6467c8d3fa2ed2adb9ce8f306e6b6ac88a130f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Threading.4.3.0.nuspec",
+      "bytes": 2781,
+      "sha256": "f4c85e18f175e76f34970d459c37d0ca3ccdea5e892da8d54a64dae3ee16ad00",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Threading.Tasks.4.3.0.nuspec",
+      "bytes": 2843,
+      "sha256": "0117a141faf59d8c67662b23838375e24acaeb79cad8697f898b9a01a234b0c4",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Threading.Tasks.Extensions.4.3.0.nuspec",
+      "bytes": 1848,
+      "sha256": "ed1cda6bb2fd4d2c2bb3530151768ce1fe9cf4e15e67737dcaa6342021910190",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Threading.Timer.4.3.0.nuspec",
+      "bytes": 2208,
+      "sha256": "41198c383cd17c26a74931675ba18e52a7e6a96a33788e6e8eeff11df7a3a77d",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Xml.ReaderWriter.4.3.0.nuspec",
+      "bytes": 5217,
+      "sha256": "22b02c5e6ea8bcba8850f53fcbc6e7ce45c33a5b5ba02390b0cab7cf9b766629",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/System.Xml.XDocument.4.3.0.nuspec",
+      "bytes": 4480,
+      "sha256": "39e2516196ae7fc632021c4b66ef944b451221c6a77ed0913758346403aa6375",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/runtime.debian.8-x64.runtime.native.System.Security.Cryptography.OpenSsl.4.3.0.nuspec",
+      "bytes": 1104,
+      "sha256": "e0e1c091f18ec53d92342163ff6aa6b6c88026c7ae1823d495c1403196560e46",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/runtime.fedora.23-x64.runtime.native.System.Security.Cryptography.OpenSsl.4.3.0.nuspec",
+      "bytes": 1106,
+      "sha256": "cfcbe7fd90b89da22710438f9535bbd614f74695d6bab0e12d9da2f2cdfc9192",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/runtime.fedora.24-x64.runtime.native.System.Security.Cryptography.OpenSsl.4.3.0.nuspec",
+      "bytes": 1106,
+      "sha256": "258d89aab3e32ca1d5ac9d11ca8795df46c7640cbe2b04abbbac8afa461203b3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/runtime.native.System.4.3.0.nuspec",
+      "bytes": 1201,
+      "sha256": "a17a324b946f0fada0c89348643ebcf688877df6f02f116fabb62f482f5b9e38",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/runtime.native.System.IO.Compression.4.3.0.nuspec",
+      "bytes": 1231,
+      "sha256": "78043f67aa3c21e8e628c6a8a8d8858e21013a56d51c81cd5d389c5a1619702b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/runtime.native.System.Net.Http.4.3.0.nuspec",
+      "bytes": 1219,
+      "sha256": "a16d9e4e96af5c2e9a82767c5baf7ac6c33f7226bd52d0e84aa0aeafda901102",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/runtime.native.System.Security.Cryptography.Apple.4.3.0.nuspec",
+      "bytes": 1232,
+      "sha256": "ee735ffdc8f24ffd1edb9f5e8bd07f797dee7026bb7cfd92b50c154217f3bc13",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/runtime.native.System.Security.Cryptography.OpenSsl.4.3.0.nuspec",
+      "bytes": 2304,
+      "sha256": "28a715960dfc96896ef53c34b28ac808b446ed6ea2e1993ebf04ef46bbef1300",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/runtime.opensuse.13.2-x64.runtime.native.System.Security.Cryptography.OpenSsl.4.3.0.nuspec",
+      "bytes": 1114,
+      "sha256": "93303b09e65d1b9834d2875d2165eebaa23ee7c6ef4bc383550a8dc0f53a45f5",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/runtime.opensuse.42.1-x64.runtime.native.System.Security.Cryptography.OpenSsl.4.3.0.nuspec",
+      "bytes": 1114,
+      "sha256": "1992f9e983891ddc1623933127d41fad87e8a8aa9c74a388235c4c774ec79982",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/runtime.osx.10.10-x64.runtime.native.System.Security.Cryptography.Apple.4.3.0.nuspec",
+      "bytes": 1102,
+      "sha256": "b04a07ae7f4213fa9eae51b9b220f917ea6064b9d86255a5e9f6d8240c2923f6",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/runtime.osx.10.10-x64.runtime.native.System.Security.Cryptography.OpenSsl.4.3.0.nuspec",
+      "bytes": 1106,
+      "sha256": "9269ee6a2ec863dcf05a9a33bf50e374eb0f0ccdfd0ccc8adb3436db3676b98a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/runtime.rhel.7-x64.runtime.native.System.Security.Cryptography.OpenSsl.4.3.0.nuspec",
+      "bytes": 1100,
+      "sha256": "d6e09e444d320d6759feb91f2902cf5507c0bcb041132799498dc20d3e1e73bb",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/runtime.ubuntu.14.04-x64.runtime.native.System.Security.Cryptography.OpenSsl.4.3.0.nuspec",
+      "bytes": 1112,
+      "sha256": "711b7e2e6b2e372f61b2f63ad6c4ebf8a4d226dcb199b0211b43091434a466b1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/runtime.ubuntu.16.04-x64.runtime.native.System.Security.Cryptography.OpenSsl.4.3.0.nuspec",
+      "bytes": 1112,
+      "sha256": "352b2d0971ad5a971ef793c995744fcf7be7ea3ce1e6dc4d6e06dfa1e3849607",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/acquisition/windows-nuget/runtime.ubuntu.16.10-x64.runtime.native.System.Security.Cryptography.OpenSsl.4.3.0.nuspec",
+      "bytes": 1112,
+      "sha256": "f17636f86539d622317585d687037f06ee5262b56d47ad9723e63566548606b5",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/build-green.log",
+      "bytes": 1652,
+      "sha256": "f81caedf4c01df37b442c4ab2eeb08602d7ef6d93d1844dbb2f41a4cb5a28b7d",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/build-red.log",
+      "bytes": 1373,
+      "sha256": "86bb360ef4a96b72da90d1560ab4a39734d071e444c6fe69ba6151f16b6ab9e0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/compilation/basic/main.log",
+      "bytes": 8732,
+      "sha256": "561da2215c06e09152b2a5daa672b17a050b2d000907665faf274b73061ecef8",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/compilation/basic/main.pdf",
+      "bytes": 12420,
+      "sha256": "3f8d39a5785549a5fa40a4093b4367abbb7e6057e5ced72264ef75618b402b3e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/compilation/basic-offline/main.log",
+      "bytes": 8732,
+      "sha256": "561da2215c06e09152b2a5daa672b17a050b2d000907665faf274b73061ecef8",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/compilation/basic-offline/main.pdf",
+      "bytes": 12420,
+      "sha256": "ed49bc92eaa9e5edba60b993e4723f9541fd6dd506e583f72b98fca510ea1922",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/compilation/basic-offline.log",
+      "bytes": 438,
+      "sha256": "c0823fc216299d27b5685ae3650ab68de682e8984d491f4b01db578e4352cee9",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/compilation/basic-online.log",
+      "bytes": 987,
+      "sha256": "586a1ff8f54aded5f34e99cbf5c1ea26fd835474541f377a58280aa5d452d24f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/compiler-runtime-tests.log",
+      "bytes": 263,
+      "sha256": "4f0590eb5546a1d4e85fa4893d9232157c6f9aa839c49b4149f92172a7d5aa62",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/completion-enter-2026-10-31/bundle-check.json",
+      "bytes": 1225,
+      "sha256": "b042ada67fc62b5d976e38b5e266b2d38f60d7c699b2f2ca1a3d6e40a1b6500e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/completion-enter-2026-10-31/codesign.log",
+      "bytes": 89,
+      "sha256": "1a81f0ccc274104cc3bf93af4d08e6bf738fa41b27bceddc94de4cf435df6b90",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/completion-enter-2026-10-31/keyboard-initial.log",
+      "bytes": 1433,
+      "sha256": "0e64ce14580d8234bc6896ec0f384d35cb9b3d64f59e253d84d2acd1c0d39b0b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/completion-enter-2026-10-31/keyboard-tests.log",
+      "bytes": 2191,
+      "sha256": "8104540993e77c7f54c72ab72fa3133be45aa4827e2b6bb60f477e38cc4a5939",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/completion-enter-2026-10-31/live-before.json",
+      "bytes": 2018,
+      "sha256": "a9a15c4e088caf92025dc86bebcf4b9a6ae6993541555023882e644fbf0e9718",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/completion-enter-2026-10-31/live-observations.json",
+      "bytes": 1112,
+      "sha256": "fb826855563cc89184cb1fca6d2ca46b98bda9186c3e24fbf11706322b862763",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/completion-enter-2026-10-31/live-restored.json",
+      "bytes": 580,
+      "sha256": "80519d198e0cbdf9c84be5f1fd5fff58bc2be7b2823993f22ef4dab8636f3daa",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/completion-enter-2026-10-31/markdown-links-all.json",
+      "bytes": 302,
+      "sha256": "ea6bf5015ccd3ca73a277255efb6547a71152bb3394f350d501984465e425cc1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/completion-enter-2026-10-31/markdown-links.json",
+      "bytes": 398,
+      "sha256": "5892907520c0cb5a0b1339b93c6c069712ea12f96aecee8f2b31b9c580337b1e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/completion-enter-2026-10-31/native-tests.log",
+      "bytes": 19828,
+      "sha256": "b8c44220d5b872da24250134429fac73b695436e093cf0835a11a291fce75a84",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/completion-enter-2026-10-31/skill-validation.log",
+      "bytes": 16,
+      "sha256": "db349825903d66adffea3ecf1bd8e1803043e8a71cf1a051235dabc5371f5bb0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/completion-enter-2026-10-31/verification-summary.json",
+      "bytes": 819,
+      "sha256": "605681d7ee772912d757a8125f548b4d42c4d5c40a50ceb06d51b83d7f8c1e4e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/composition-green.log",
+      "bytes": 103,
+      "sha256": "1b101ce57c04626172c3f5923a5391e07faf388124d788e08edbd2c7ad83a1df",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/composition-red.log",
+      "bytes": 1052,
+      "sha256": "7a59ba3947bceb5722a19bbc4e86d8881e9b26b71b8f99812607eec45baa2349",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/core-green.log",
+      "bytes": 1494,
+      "sha256": "eb437196989888b87700afe5ee9d0118a0de7be4ad09f3790f9364d7d255c12b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/core-red.log",
+      "bytes": 1318,
+      "sha256": "baf82de3d2f66cae79e8852c40fa5ea2a4a5b49ea162925ac86f2827fdef4467",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/check_bundle.py",
+      "bytes": 3338,
+      "sha256": "a010d5ea08e96ae942dbf6647fefca2fabfe412d431e70f1d501a97812715656",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/codesign.log",
+      "bytes": 173,
+      "sha256": "365124dd0473c4b74329769922ef7b9ab863d6235b41c4bd6fde546b1fab33d9",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/core-green.log",
+      "bytes": 2238,
+      "sha256": "1525ad4cf80611ce7b694af57abb14a44eec848b2fdd43d60ac3723f1db930ff",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/core-red.log",
+      "bytes": 5187,
+      "sha256": "28731ec672bed967a5bd8170a73422cecc02eeef34346b6d2897663b06df6757",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/ffi-build.log",
+      "bytes": 476,
+      "sha256": "feec1d92e92991a4281fdcd29f605a3512a2e002bac27b0a9d7f3763c826a2be",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/ipc-red.log",
+      "bytes": 1205,
+      "sha256": "00e61decb547b08396dc12468f54c40c5e99582a1fed2bad3f779e36448162c9",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/ipc-tests-final.log",
+      "bytes": 109,
+      "sha256": "81a79a9ea59fee8e8e677db715d256d138b2a06ca66dca21143e22b216fe9360",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/ipc-tests.log",
+      "bytes": 109,
+      "sha256": "d21fab5e1d190ca726898c4f3af1ae0278580b37ffd471b695f08d18a7477b50",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/macos-app-manifest.json",
+      "bytes": 1700,
+      "sha256": "22545a50b7e539a331a9dca24503d229e44e315c62740862ea077d915607f653",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/macos-build-final.log",
+      "bytes": 643,
+      "sha256": "1f75eb971707a8a128de6d711124f6ee7a180826480ca32053c239228bb1982d",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/macos-build.log",
+      "bytes": 912,
+      "sha256": "761038577a82363b0c7e6884912ac8b57008e1044e43fdf4bbee8704af10fb79",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/markdown-links.json",
+      "bytes": 183,
+      "sha256": "13108f68794789f3743efede3b6ebc18e45e0baf373174387c86bb2150cf2874",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/mcp-tests-final.log",
+      "bytes": 98,
+      "sha256": "8766719f258c582be1017c272f3924bcaa3d01c6636e1f344b859d29cc1a775c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/mcp-tests.log",
+      "bytes": 98,
+      "sha256": "969f933fff5190852df7f9927819c2fd6dda78a497d719b274a9c292823ff732",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/native-first-integration.log",
+      "bytes": 13376,
+      "sha256": "112c516ad8f92b8d1abe0e3f7e35708eb7774f24081c5f336e9b88fea3739436",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/native-green.log",
+      "bytes": 3117,
+      "sha256": "42687e96399aa282cb545b3c06cf9859037bb42b4175b9f1f8981571e9f43447",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/native-red.log",
+      "bytes": 18207,
+      "sha256": "da43b6141ecf7e846653db668ea9d72064e821873cc2d51abb6cfc9923047047",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/native-tests-final.log",
+      "bytes": 23130,
+      "sha256": "8f37a54294a7cfd07e4d44eb692a1b581ca37c13ca324ddad5f91d41fd416714",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/native-tests.log",
+      "bytes": 22591,
+      "sha256": "24895f1e5f502999ac9a51d24e218ae1471241d4ffb173770b88b292eb2a6f9e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/review-core-red.log",
+      "bytes": 2438,
+      "sha256": "421bd0c8fa1e0dc9cee2a266073625e2d95a6a6bfdbb0bd78e010bb387e89b4e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/review-native-green.log",
+      "bytes": 6689,
+      "sha256": "d41ae12b16f8c18a0bd89289ccbd830bbc4654fa941a17d19466aa48929f0625",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/review-native-red.log",
+      "bytes": 1843,
+      "sha256": "63b8ccba9cdc1c0d1ca1cfc69ad0eb2ff7d75ed348140bc1c5d03bed11c16767",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/rust-tests-final.log",
+      "bytes": 8414,
+      "sha256": "4dad6bd71eced881fa84fefb826e52a68405c1b3bf7baa7c5791c35257849946",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/rust-tests.log",
+      "bytes": 8241,
+      "sha256": "b2060f3139c7f5ef345401d64dfd3692dac991ce6f7b6f0688c24549f4e5c0d1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/skill-validation.log",
+      "bytes": 16,
+      "sha256": "db349825903d66adffea3ecf1bd8e1803043e8a71cf1a051235dabc5371f5bb0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/verification-summary.json",
+      "bytes": 1631,
+      "sha256": "19232d285539fb697b7fc4cf53643c156afcb2499fe81287b55366cdf47c4243",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/windows-rust-check-final.log",
+      "bytes": 573,
+      "sha256": "08aa0f3f92630825395eb9d4b8c3651601757160c9941a22e6e9742c91815521",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/definition-navigation-2026-10-31/windows-rust-check.log",
+      "bytes": 573,
+      "sha256": "6fd16df3b987732e68118a8def4ad4d2729ae99cb600eb517e30d9a7d389a37a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/dependency-fetch.log",
+      "bytes": 1619,
+      "sha256": "6b7e167224642be8ca63e38efbf587e38a57da138eb350ca7f4ddb07f78166a4",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ffi-build.log",
+      "bytes": 169,
+      "sha256": "73f3501e20419c43d023e504891b8594dc747edeffe770f6193e268fdf8de804",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ffi-c-tests.log",
+      "bytes": 73,
+      "sha256": "e45be323e465d32b329c3d9ffa13b12795ff9e992d426d07d30a958535bebdaf",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/handoff-links.json",
+      "bytes": 64,
+      "sha256": "5b0335c2d2c7fce6d006a0098d079fe466643505691ff6c452c2c9db5f2a8705",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/additional-check-results.json",
+      "bytes": 706,
+      "sha256": "5a97186c2562e9673e23df2216fee90a741f778c30e1d1d47dd6342065cba54c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/artifact-validation.json",
+      "bytes": 1504,
+      "sha256": "dc3645693f899c93070189e73a8c905007baa24bf4b8a98f704516e6756b491b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/artifact-validation.log",
+      "bytes": 1504,
+      "sha256": "dc3645693f899c93070189e73a8c905007baa24bf4b8a98f704516e6756b491b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/audit-output-manifest.json",
+      "bytes": 35526,
+      "sha256": "fc0d1e527cde3f69b15d16ef6f0d24b165feea86ac0ea0eda1d30ceb238b07fd",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/audit-probe-results.json",
+      "bytes": 2353,
+      "sha256": "1ede71681f8e44e9bcd4b65d13ae8b05d2f499c801be5bbe7e53c703959815f2",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/audit-probes.log",
+      "bytes": 1848,
+      "sha256": "5df353ef254d7ea5575be710b8a855f4b8d0771e5270a18cc8464e0fdc1595d4",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/closure-results.json",
+      "bytes": 855,
+      "sha256": "bb8a69a3532bde0c7bb431065861ba58071d866bba8cae2df488225b4a44dcff",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/compiler-runtime-tests.log",
+      "bytes": 263,
+      "sha256": "441b298c144acd8156b41abb18a091982df50f1daf00e2acae08dd3882b7884a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/completion-timing.log",
+      "bytes": 1408,
+      "sha256": "72b7eec9b6facdf8e16030fabdd5a561a0827d29bdee947560febd1733f92d66",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/environment.json",
+      "bytes": 1096,
+      "sha256": "6ca471dc0bc7010738922bfd962e9c5a1136a858335dbedb5e97b35ea8d41ae3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/existing-app-signature-final.log",
+      "bytes": 89,
+      "sha256": "1a81f0ccc274104cc3bf93af4d08e6bf738fa41b27bceddc94de4cf435df6b90",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/existing-app-signature.log",
+      "bytes": 89,
+      "sha256": "1a81f0ccc274104cc3bf93af4d08e6bf738fa41b27bceddc94de4cf435df6b90",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/ffi-build.log",
+      "bytes": 72,
+      "sha256": "2461b00c8697c4189b2de92ca6fb05b5d72273c78a0a47b1ce4e83ccca077b70",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/ffi-contract",
+      "bytes": 33936,
+      "sha256": "239d9989dd9f344830615591c9451cbb476bbd230fc74d0861ef46db77d30333",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/ffi-contract.log",
+      "bytes": 73,
+      "sha256": "e45be323e465d32b329c3d9ffa13b12795ff9e992d426d07d30a958535bebdaf",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/ipc-enabled-verification-results.json",
+      "bytes": 1197,
+      "sha256": "56e4b2ab08b14a3e9c8a403a2f811c445583a6d090c0da420dc71f9f64b97e77",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/ipc-tests.log",
+      "bytes": 107,
+      "sha256": "7851e657783ce17776d7f19ebf31d3dfc62d4032594b5be6c9d3d29a0e90d9da",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/mcp-tests.log",
+      "bytes": 98,
+      "sha256": "d95da1e953384023149b453b285c381104f5abfcdc3e6ac99936aea01a26b2aa",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/native-verification-inputs.json",
+      "bytes": 7316,
+      "sha256": "8d0c6a95e484c1c8985a211f4f9d9febaa175876ff107b9cb91437b8d029fa4a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/portable-cpp-results.json",
+      "bytes": 694,
+      "sha256": "6b168acbe0a208628f479df5f7db48f18219fa612630294e720c48ff62bdbde1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/python-units.log",
+      "bytes": 104,
+      "sha256": "1e43b905e11ca028139fe5078016515111aaf7cebf8d6a3e224b7d03b9cb6ac9",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/rust-test-result.json",
+      "bytes": 213,
+      "sha256": "764d660cc7f9e6b8413d3b29b78903b2f156553a889465c9fbd014935898bc43",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/rust-tests.log",
+      "bytes": 6656,
+      "sha256": "6c7b4009e8f81af98596ed0d34f812afc483eec4fc36729bf08e886012b434a5",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/skill-validation.log",
+      "bytes": 16,
+      "sha256": "db349825903d66adffea3ecf1bd8e1803043e8a71cf1a051235dabc5371f5bb0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/snapshot-candidate.json",
+      "bytes": 20154,
+      "sha256": "aba809ae03873788c951bff1090ebea32c5e7376bee0178c37bdc8ed64d3d3ad",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/snapshot-delta.json",
+      "bytes": 4678,
+      "sha256": "893b07cac55a527b2df8dfba9e544a04fd6469c895fdd167be054c1eb71ccb86",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-manifest-final.json",
+      "bytes": 28766,
+      "sha256": "029c594e2e6d136cac53489512cc45301d86b67a4691a11e54d0ea8f8251a856",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-manifest.json",
+      "bytes": 32770,
+      "sha256": "8c850fcc35dbe089a8a33550ed8fbb30d669c69dfc026a1058764445b4d669ae",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDE/App.swift",
+      "bytes": 3154,
+      "sha256": "19639663b5262fb1ee81a5f82c0b9f20efb1b4720dce5315f955319fcc34a4d8",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Appearance/AppearancePicker.swift",
+      "bytes": 4068,
+      "sha256": "97d746cda5ab5b9d67401311567e8b9b0c01f8a7685932a50c7ff8c8b44c71e7",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Appearance/ThemeCatalog.swift",
+      "bytes": 5433,
+      "sha256": "db9d448f13e6f0cc406df986071721a92a337a947494e816c8f47fa6c88bde3e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Assistant/AssistantModels.swift",
+      "bytes": 3070,
+      "sha256": "a40d5d7ca24f88ab7aa82a732a6a640a0f009b586ac9cb59bddee18b43c177ec",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Assistant/AssistantPanel.swift",
+      "bytes": 14181,
+      "sha256": "205408e302d9db7443a7c8f8fa16423ab030a2d9b8721a8cc47997c19dca7e17",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Assistant/AssistantSession.swift",
+      "bytes": 23950,
+      "sha256": "9ecc336badba88d1fa47d53550402bb63aa96322306457db1c556c8b38fd86b0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Assistant/CodexProcessTransport.swift",
+      "bytes": 8989,
+      "sha256": "328aded42c23160d7f99605ce05d4321abfb47a533487df70edd7a8df48cf1b8",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Chrome/IDEControls.swift",
+      "bytes": 4011,
+      "sha256": "ee276d09a8bf382ea22419cf0fb54f7690d98c0213d7efc738f2a17c4dba01d3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Chrome/IDEResizeHandle.swift",
+      "bytes": 1604,
+      "sha256": "fc8d36525ff5c1368a3eaff153054aeb7b5dd056e71143311f2f9d6f49708f2d",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Chrome/WorkspaceChrome.swift",
+      "bytes": 5495,
+      "sha256": "fd4d2fb40f28c4e58ce60e3aa162086bf7bb1876167d743f36fcb919407ef63d",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Chrome/WorkspaceStatusBar.swift",
+      "bytes": 3254,
+      "sha256": "37cb87a6c02829fc1a7420c2b456cfa0cb7ca2a91066d30c090a6a18a4b52a48",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/CoreBuildIdentity.generated.swift",
+      "bytes": 197,
+      "sha256": "2fb19a52061d0ba43430bfd9667c064301c86e2a835cf4a55b6aea221c58710a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Editor/CompletionController.swift",
+      "bytes": 10126,
+      "sha256": "e7b82f4f285093b6b3bbdc37ad459910d25cf93f7b3c64d4c7772d151589e767",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Editor/LineNumberRuler.swift",
+      "bytes": 2579,
+      "sha256": "84280a61e32bd7b490c594f1bdc84c511f18205fce9f99ddf214bca992eeef04",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Editor/SourceLineMap.swift",
+      "bytes": 670,
+      "sha256": "5b9486b4216853f6d03fbed19829b5dc90ddd03e8f2a4102d81c0efa2d536f2d",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Editor/SourceTextView.swift",
+      "bytes": 4064,
+      "sha256": "58404c489d25f9effc939a52efee0d3016bd853398762d5a6a451cca6a0ab9da",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/NativeEditor.swift",
+      "bytes": 15199,
+      "sha256": "f0c3154e6fa0099b6227b91af0b5bf9f07f66624a491b260e2c03f15f0a2ae27",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/NativeRuntime.swift",
+      "bytes": 2280,
+      "sha256": "b9ba5b9965f78b1c3773691bfc2a7ded99fe169bae2cfec8e72549727f703d2b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Panels/BuildPanel.swift",
+      "bytes": 4302,
+      "sha256": "1565c5326c356861f098631bba12b80876001bf8d8003f9b4421ca16fd0bc861",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Panels/InspectorPanel.swift",
+      "bytes": 2262,
+      "sha256": "5a06ff821ed61f6ba7044855bff792a254c18f1288fa02b6d04258f8660f90d5",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Panels/PDFPanel.swift",
+      "bytes": 5661,
+      "sha256": "873758aedf7d603b775acc2ff536a1f2600681d25855482dddcff120a7fbd01b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Panels/ProjectPanel.swift",
+      "bytes": 7152,
+      "sha256": "ac927ceb5fdd4cd1381c368bcb8f4e1759de252cc15dc92f19cc969438c8e6e1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/SourceEdit.swift",
+      "bytes": 2344,
+      "sha256": "bfad5ca7372a09d94381f7dbb91ef20780672344bb11b2622c245efbe32af780",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Workspace/DefinitionNavigation.swift",
+      "bytes": 2272,
+      "sha256": "40e649f64c7718f4d0972677bd5bf9bbc36d70a3b67e71df8e4a7ef060a8e644",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Workspace/EditorWorkspace.swift",
+      "bytes": 6153,
+      "sha256": "0949c006ce3e96abb4a895487938b9f4786b1f73eb156fff62f3a9788d6904c1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Workspace/QuickOpen.swift",
+      "bytes": 7524,
+      "sha256": "64e3f8f6e35fe94bcc6a573a4fabf464481e5d3374ef31c2e84e4c8b1886fc5f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/Workspace/WorkspacePresentation.swift",
+      "bytes": 4702,
+      "sha256": "eeb052111e9ad603b2f4f800a903aadcf461ebcbc03d682ebcfed7d1007d2057",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/WorkspaceStore.swift",
+      "bytes": 18604,
+      "sha256": "1598e0e2a18e0006fb5c4fcc95d4ee12718f717ba8d95c57c9016a7ee74c810c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Sources/LaTeXIDEKit/WorkspaceView.swift",
+      "bytes": 4924,
+      "sha256": "7b2a58c5e70fe8ab39e2c55499b4108ddb8dfc5e6ae7192d88d10f319fd3a3c3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Tests/LaTeXIDEKitTests/AssistantDraftTests.swift",
+      "bytes": 2488,
+      "sha256": "dc707e3857bcc3dedf5fc6ce89d0b1dfd615a7f5917a690c510749bbb98cee78",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Tests/LaTeXIDEKitTests/AssistantSessionTests.swift",
+      "bytes": 13824,
+      "sha256": "f664effa03d0c50b956aa17e6730140c155bb1b3e4209d6af5b8e07bf1cc98c6",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Tests/LaTeXIDEKitTests/CompletionKeyboardTests.swift",
+      "bytes": 4981,
+      "sha256": "4e0063c70cce4f4d9920c8c9e2bfaa6bc0138ae0c5a4e08dff43c1bf6b2bda56",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Tests/LaTeXIDEKitTests/CompletionTests.swift",
+      "bytes": 6940,
+      "sha256": "dc589267c96bb409fc94b89ed74f935e10ebd6de9996a3f598d86200c0b61312",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Tests/LaTeXIDEKitTests/DefinitionNavigationTests.swift",
+      "bytes": 8995,
+      "sha256": "f2bc6ec73d21c2979fa1dd1925517e7eda63107c2ab8f60ee9c70a005305be18",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Tests/LaTeXIDEKitTests/EditorViewportTests.swift",
+      "bytes": 3159,
+      "sha256": "0c0088a3309706a9a0db1477badb844f481e334faed5679844c6b0df0e6efb67",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Tests/LaTeXIDEKitTests/IntelligenceRenderTests.swift",
+      "bytes": 3984,
+      "sha256": "b1120ab486b210a6548b281e71626a8407c6f3ddca07aabaeea1e84d524d5f7f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Tests/LaTeXIDEKitTests/KeyboardRoutingTests.swift",
+      "bytes": 5118,
+      "sha256": "5733564315e601a461917cca97c5f217010fb27f8f10234850d00c62c98129b5",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Tests/LaTeXIDEKitTests/NativeColoringTests.swift",
+      "bytes": 3402,
+      "sha256": "acf4b7e65ac9e17865ad2fcf455757b622a17678c94810126e2768fa0aee6923",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Tests/LaTeXIDEKitTests/NativeProjectTests.swift",
+      "bytes": 4914,
+      "sha256": "712ea22b2d6b28fb9bf8d734265742eb3139b3f79ec02ce4d66b22617b164ae3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Tests/LaTeXIDEKitTests/ProjectCompletionRenderTests.swift",
+      "bytes": 4332,
+      "sha256": "78aba2a7bc3224b6a98db9cc39cffa369cfe8d9286343d71f63b4cd75b38fd47",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Tests/LaTeXIDEKitTests/ProjectCompletionTests.swift",
+      "bytes": 7319,
+      "sha256": "3d65c9d639209872c322ae479a011cf62627895af6c2555b6cd8ce0381dc17ee",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Tests/LaTeXIDEKitTests/TextEditTests.swift",
+      "bytes": 869,
+      "sha256": "6b9ff105a7f74c1e32740d860ebf6f31d0240a69b1421c6fdb48daf6710a7144",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Tests/LaTeXIDEKitTests/ThemeContractTests.swift",
+      "bytes": 2818,
+      "sha256": "e086d0dda14313004f0ee7712eecd63ccc7bfad2a6f2dab0180b74a8d447f0fe",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Tests/LaTeXIDEKitTests/WorkspaceRenderTests.swift",
+      "bytes": 5405,
+      "sha256": "5db316ddbc64c16631fc82296192cb58d895785d2e2165ebb947c2db91afb88a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/macos/Tests/LaTeXIDEKitTests/WorkspaceTabsTests.swift",
+      "bytes": 2093,
+      "sha256": "4365c68ec78192aa3571082b7c4fac3e9f0f4518dff8321bf7a41a62b8468e45",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/App.idl",
+      "bytes": 103,
+      "sha256": "fa7a1f9d477ada84ecd957a54195e3bdfc94dbcee948871210d0967af70e49b5",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/App.xaml",
+      "bytes": 408,
+      "sha256": "414f780a2bc80e23499f8b63db322bf2c78ca58805e341428e1324ab69e0e139",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/App.xaml.cpp",
+      "bytes": 306,
+      "sha256": "7b4a5ad81083b5f3ca9ff5906b7ddf8d0cb6bfea82597cd171c6e14ea84f8a16",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/App.xaml.h",
+      "bytes": 343,
+      "sha256": "f3789597d6ddf99b119cb53566bf5472964d12f772c9b24205d4e49a46c48c3e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/LaTeXIDE.vcxproj",
+      "bytes": 4512,
+      "sha256": "7f4883e430c213920c3d65fc3d6b5f4b24ca5aae66df5ce6f55eb62528dc1fd6",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/MainWindow.Editor.cpp",
+      "bytes": 16675,
+      "sha256": "93c8e5df650fb4b7354755074755c1a5d2e9b84d87263246a03a316cd42378ca",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/MainWindow.Presentation.cpp",
+      "bytes": 16840,
+      "sha256": "32d7cf12e68584693201c23ff52eb7415c0a153cfaa296f732803913e795fa2a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/MainWindow.idl",
+      "bytes": 112,
+      "sha256": "ea17169ad5b9423cd3d501d7580e9a96518d6e97b7a5b59e33a83393b138e3fa",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/MainWindow.xaml",
+      "bytes": 18193,
+      "sha256": "bebe992678b9bc8871eea8d23cd309de1efb325a398e0b8501c76d1f4b120b45",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/MainWindow.xaml.cpp",
+      "bytes": 18285,
+      "sha256": "3906c4931a7c79460a9abb8ce64af45a8a93a75fa8b76608d1a4cbe8d4cbb69f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/MainWindow.xaml.h",
+      "bytes": 7487,
+      "sha256": "c2553d0a858edeb6b89e85a63305bb9a51061b5dfdc250e7fab74039f203595e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/NativeCore.cpp",
+      "bytes": 2080,
+      "sha256": "81331387c1d59d0ecbc54771a3e6222296459a931e29bfef9332c277aff77942",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/NativeCore.h",
+      "bytes": 941,
+      "sha256": "5301b378891a09a89b468d92949df7286a649d75ec57e925954f519483adde06",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/NuGet.Native.props",
+      "bytes": 1695,
+      "sha256": "84fe1badc1c9a2a39e0133cd2f8b407741d2561d411c5c6e617127524b88c98a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/NuGet.Native.targets",
+      "bytes": 1727,
+      "sha256": "0c1b1c16916ba3a67cf5689ac36a573b709c3b4a1215007d706f702e78d2cedc",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/ProjectFiles.h",
+      "bytes": 553,
+      "sha256": "20d76b07b192c0dae67d1adfdf9d1c419c6c4f064924eb2832ee690f294a50c1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/TextAdapter.h",
+      "bytes": 3281,
+      "sha256": "f173337d583c3676fb1f9f327138364fd33c7a198b872d106a63eb829d82cc56",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/ThemeCatalog.cpp",
+      "bytes": 4316,
+      "sha256": "e4afcc36eecc6df65b3cfbff542a2c5a41a37627b2cb9b9233051c7841b4a8bb",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/ThemeCatalog.h",
+      "bytes": 672,
+      "sha256": "6c85298ac7b6c77a94386cd0320a065aa359589bbd291daff86e50ac6ff9978e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/WinUIHelpers.h",
+      "bytes": 1909,
+      "sha256": "5126f931f70b73547590fadf10b089d2e40f0c85f5dbc4c3e095a1e8f648a30a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/packages.config",
+      "bytes": 1557,
+      "sha256": "1bc60743108c519666445934d497c84f02b40d6523049fac9946a1cf16784759",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/pch.h",
+      "bytes": 1134,
+      "sha256": "59328138b8613e55b25ed77c5bccbee6149dd2c3fc53b064bde48be9e77ebb19",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/tests/check_ui_source.py",
+      "bytes": 2294,
+      "sha256": "c44cbf728f29718bf51240952b55ddeb021dfddf6e1f2c50a8e4ee1bbb705674",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/apps/windows/tests/editor_helpers.cpp",
+      "bytes": 2104,
+      "sha256": "d77acbcbc10bc3b598b4a6b26f765e4d1175bc6f7f8c67c96668c4b3378d01d6",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-build/Cargo.toml",
+      "bytes": 376,
+      "sha256": "521833ac87c832a536ffd86eb66790db9bda407bfce65d97e288e26cb6ad1365",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-build/src/lib.rs",
+      "bytes": 12438,
+      "sha256": "a55f666d8241ea81ec2ea4a7c1d1e1a55e905d8aae1864c095b85fa72f985d7c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-build/src/process.rs",
+      "bytes": 3726,
+      "sha256": "2de2cf1c7052c64e62a33731175cbce686ed218d9efb0afe1c7ba0e6b501832f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-build/tests/supervisor_contract.rs",
+      "bytes": 6446,
+      "sha256": "b7ea94e552b4d01cb07ff4b38a9a8f7f5576b99a5552cca94e007bac67c8768d",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-core/Cargo.toml",
+      "bytes": 152,
+      "sha256": "479c452421195d832ee8abe00a013996ec39661bd4541afa58f8f3644d6ce784",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-core/src/completion.rs",
+      "bytes": 14543,
+      "sha256": "7a19ebc7c69b2ac2a229d6d59942f11c1ff9cbacd9432573bc7e3cbed27f5f17",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-core/src/definition.rs",
+      "bytes": 2772,
+      "sha256": "7e469f47eeb3b7323bd9eaf00343e39fdfc5757375ae3597b3a5a689c1340b29",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-core/src/document.rs",
+      "bytes": 6447,
+      "sha256": "b6db16774158938e42e814e92b5c11db303250bb023ca88a4a8a071b6b8f5337",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-core/src/lib.rs",
+      "bytes": 1119,
+      "sha256": "1593e04e2191d30dc1779ad1c3a397129c96e4f2a8934cd15b3ce5744c2935bc",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-core/src/project_index.rs",
+      "bytes": 15404,
+      "sha256": "ae7662f1449589f7b7e605e7eb51307909f04264022f3a097deba9b7f64f5f89",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-core/src/syntax.rs",
+      "bytes": 9552,
+      "sha256": "ac075aecdd0e8eeb3e61d02f9fa466ad9df355d9ce68fbd669e7294553d426a9",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-core/src/tex_scan.rs",
+      "bytes": 5527,
+      "sha256": "bacc3d85484fb55f53520cdd86ea5d42d218db6fe2b5e41d4dd295ba07dd10a7",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-core/src/workspace.rs",
+      "bytes": 11589,
+      "sha256": "25501b381f7c25f5ea284a188dad3a9e67c26e57425ee750be9c3720490ed907",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-core/tests/completion_contract.rs",
+      "bytes": 2624,
+      "sha256": "4b06afa1ed5d643001e1bba3266b9d9fcc9cf042d12e024272e20f5630040fee",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-core/tests/definition_contract.rs",
+      "bytes": 7968,
+      "sha256": "139dd664f39df03621b798b9dd2356331f5c3928121701d91cf9173bb7021187",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-core/tests/document_contract.rs",
+      "bytes": 8199,
+      "sha256": "53a76d240dc4b90ca708223339e1f949c91b7233b889555e1a0fe59c02e923a6",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-core/tests/project_completion_contract.rs",
+      "bytes": 17107,
+      "sha256": "4fc240604f9ec72f0acc7e7f3e0f3c4f1dc5498401f830ebe03d8fc154a6b10d",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-core/tests/syntax_contract.rs",
+      "bytes": 4458,
+      "sha256": "5722b958f20f530a119548bdbc10396bc5cb39bece84f01bbed13039958521ca",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-ffi/Cargo.toml",
+      "bytes": 482,
+      "sha256": "c04ee2514f5e62201c20d774c21026a5877396973f8c5ee215f337f96d068567",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-ffi/src/lib.rs",
+      "bytes": 3659,
+      "sha256": "dd1817620d84a9237d5769c2f51d531310642aa1a2e3f6bc33ffea50fc5ad04c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-ffi/src/runtime.rs",
+      "bytes": 11791,
+      "sha256": "7de974eefe742b09e97eff8f2dec2c0d5aee97377d901dda5c805b5cbdff55f9",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-ffi/src/session.rs",
+      "bytes": 5403,
+      "sha256": "039cc618e3e35ac59de36379a84206fc1af14a3d0f6e3688415e0c3f69dcfd71",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-mcp/Cargo.toml",
+      "bytes": 313,
+      "sha256": "1ab35db6fb9baadb3a68695023079ed902e32d800f80c2c8571239994ea4ba00",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-mcp/src/main.rs",
+      "bytes": 5378,
+      "sha256": "8d3c7c43853c49add03ce7e17cd8d24e6a57e2ddad47bc739084261fd3c4156a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-protocol/Cargo.toml",
+      "bytes": 323,
+      "sha256": "5057919d23ccb1608f0312ef2a0dd269bd6105ea9e53544ccb3bdd5c15ef0d24",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-protocol/src/ipc.rs",
+      "bytes": 3955,
+      "sha256": "a095e2fc95acc7c6fe19c280d4db5055e06318ff75724e21f170328908c13690",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/crates/latexide-protocol/src/lib.rs",
+      "bytes": 3129,
+      "sha256": "b2ce60b6288601dec2e0fc1cdeef5e3a555e094570fb6ed0550a30c525e966b5",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/include/latexide_core.h",
+      "bytes": 616,
+      "sha256": "22767aaacc02502e989d1db9ba3991febe97d99bd0da6cc4ca67e86a1f8d4715",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/script/build_and_run.sh",
+      "bytes": 837,
+      "sha256": "5f7f2bc23820b7adad88a21648556080239dca9fd5cf576f4e46f8858c5ff1a7",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/scripts/acquire_tools.py",
+      "bytes": 7174,
+      "sha256": "3a97a4814e00f997cf0fbf8651a93699b97c7c6e1e9680cc4ea0aa392f8207fa",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/scripts/build_macos.sh",
+      "bytes": 3562,
+      "sha256": "f01f7cd455d623745e4592ae95a62500e263596d48bad5317d11957d50012239",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/scripts/build_windows.ps1",
+      "bytes": 2087,
+      "sha256": "1ff0b240897ad29a4590b3b79aeac626d6e8f4048b04ff417d21cbaad1ba94ae",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/scripts/cargo-local.sh",
+      "bytes": 340,
+      "sha256": "57c37607a1e3de33f8fe0637eadfb1095b8a91ba23c5aa92bfb2deac96f7ea08",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/scripts/mcp_gui_probe.py",
+      "bytes": 2197,
+      "sha256": "19a11b31a79f62c9d11ae0be0e93b0da5490859e07ed672e32395eca47fa9696",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/shared/ide-theme/Package.swift",
+      "bytes": 278,
+      "sha256": "eb0975c500cb78dbde507208ec4d21872dfac2bbd6a1171441bdab93b1182d95",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/shared/ide-theme/Sources/IDEThemeAssets/Resources/editor-themes.json",
+      "bytes": 6698,
+      "sha256": "4af1e2ed84e93d8f68d6ee06ed0e6664445c81c4474c909c0a99f5c72a0b4cd3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/shared/ide-theme/Sources/IDEThemeAssets/ThemeAssets.swift",
+      "bytes": 305,
+      "sha256": "a4319be2592809e871aef73d0cfe394a95da102b75ef30447a94a7f92446284a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/tests/compiler_runtime_contract.py",
+      "bytes": 4875,
+      "sha256": "50a7811e8b8cec1edf2ab57ee4a76ece446d5a3d0c982886a5e27270930b0552",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/tests/ffi_contract.c",
+      "bytes": 1564,
+      "sha256": "346aee7c56aad6addfd53da4c5fbb9d90a3611a0bbae2f5896c25cf73ea832a6",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/tests/ipc_contract.py",
+      "bytes": 12311,
+      "sha256": "76d297219852a60657caea9a144c8fa7092b53971117e129a9a6f78dfb01a820",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/tests/mcp_contract.py",
+      "bytes": 4860,
+      "sha256": "d5116ecaa9a4a0acc88bb775243ee1509010751538957e6f2cef5e3a50c82e5c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/tests/test_texlive_profile.py",
+      "bytes": 1041,
+      "sha256": "392acd97d019bb76b357cc1d803f9468041656c07003f2dc9c58b4ccfe1eae9b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/tests/test_tool_acquisition.py",
+      "bytes": 2911,
+      "sha256": "a31bff94451b91135035168edf37b6488f7675cfb84a277513d473d160ce157e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/source-snapshot/tests/windows_text_adapter.cpp",
+      "bytes": 725,
+      "sha256": "7cf2ccc881e983794ea3eb06eacef885c79ac128be75ac358a386ec058e05b59",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/swift-tests-final-result.json",
+      "bytes": 582,
+      "sha256": "303afec2eaa22ac6395e6b23b3c4cb396b1e52affa5066dca7b7e0cab489e08d",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/swift-tests-final.log",
+      "bytes": 19019,
+      "sha256": "62b867235874f27946f205ce461d470bdc93a3b749e11c0ae795ba5973e2b7b2",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/swift-tests-ipc-enabled.log",
+      "bytes": 18047,
+      "sha256": "bccc0f7cbf0cb7ba110d203ba510c47ac20042c7a9de25feeb0be605f355a96b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/swift-tests.log",
+      "bytes": 53816,
+      "sha256": "2d14e67e15a81584ef94de3cd9f17b29706cd30c5000ec43a6b6e5457ee58409",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/verification-results.json",
+      "bytes": 1690,
+      "sha256": "6279de62df571678b30351dd24c54f17d030d2a749803487ea930a29549b8738",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/visual-inspection.json",
+      "bytes": 485,
+      "sha256": "050fb22f06cb4d0572d95253eafbf8b0deaa0712ecae2130990c5dfedf76f542",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/windows-editor-helpers",
+      "bytes": 123688,
+      "sha256": "b7febdc9840371d04655b8cde154bfcb9b3fb7070d58895d83b5fa9f482a8554",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/windows-editor-helpers.log",
+      "bytes": 110,
+      "sha256": "01ba19b6d5aca108e81be8b2c1a66c4c5f8e6ae5609dd39c7bdfc0aae98341d3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/windows-rust-check.log",
+      "bytes": 72,
+      "sha256": "f2066ca264b9a8598ecd436c70919e1efe1acea4098ad2a13b5d82d67bc049ec",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/windows-source-check.log",
+      "bytes": 195,
+      "sha256": "9fff62b96e57684f7e1b3335033d26ad270a29d0f1db0a51ce5f7894631481e2",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/windows-text-adapter",
+      "bytes": 69928,
+      "sha256": "3c0ad15c1118f7251fd38f9e13685133993258edfb81a4adf883590a12a1703f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ide-audit-2026-10-31/windows-text-adapter.log",
+      "bytes": 103,
+      "sha256": "945f6a425621abe2786b3530540080dcf4180450863be22f05c4df822f08ef02",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/assistant-binding-red.log",
+      "bytes": 4563,
+      "sha256": "f84a386454ace0af7ad50ab46c740ec524c46a120775aa94e20dae9c57460f98",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/assistant-cli-handshake.log",
+      "bytes": 1022,
+      "sha256": "6025888d1a7442aab2216093f53c3a91dca1a8a22ab7e8a8073b61e00a51644e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/assistant-fixture.py",
+      "bytes": 7816,
+      "sha256": "69e846e4ed5aa7e19c45e0f0cabf3baf6f6240a56742b044677afdfc9aa85b94",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/assistant-isolation-red.log",
+      "bytes": 1895,
+      "sha256": "b19af920f3984daede9c76c761eed194d6ca780fbe470e4ce7cc2eb939effd8c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/assistant-live-approval-green.log",
+      "bytes": 5096,
+      "sha256": "13552f956b5e009b0379bde918ca19b8d145c62ebc572d849d5c20af060e9910",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/assistant-live-approval-red.log",
+      "bytes": 1778,
+      "sha256": "f83ff0fc32f68317ca5d0c1c40d8bf71fb08229257dcd7fdc966a28d85e1b269",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/assistant-native-suite.log",
+      "bytes": 12545,
+      "sha256": "aabde304761db642694904921aee830201405ae1da1560f88086b791adcafc80",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/assistant-panel-build.log",
+      "bytes": 286,
+      "sha256": "ee57376d5b6eedf009d6fa27e0bf7cd57e0b5e567a9e2c7816e34b61d80ca331",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/assistant-panel-dark.png",
+      "bytes": 139230,
+      "sha256": "30c98cd0d701e59c76c4b92e7eb08b168acb1db8ab4c2ed7cc748ed443e9da75",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/assistant-red.log",
+      "bytes": 14654,
+      "sha256": "3fc2dff64565f806311a14139fffd29ad27d5a02845b00fd7881a57bf0642b21",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/assistant-tests.log",
+      "bytes": 4983,
+      "sha256": "304b43c9d723baf556c748bd504e7ca0ee6ceb016cab8f4834b38aedaad548b5",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/assistant-verification.json",
+      "bytes": 5695,
+      "sha256": "97648e5a20d149c9ee149b0d09c4b995f742369014500c8ffb18c7f2c2c4ff5c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/codesign.log",
+      "bytes": 89,
+      "sha256": "1a81f0ccc274104cc3bf93af4d08e6bf738fa41b27bceddc94de4cf435df6b90",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/command-completion-dark.png",
+      "bytes": 112107,
+      "sha256": "938639e82be414102313ce1813d0a26d645e89a2f5c7afb67f6a2b6d18d385ab",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/compiler-tests.log",
+      "bytes": 263,
+      "sha256": "716ee786b4bb67ec28062ea8a390624a003005410e8077fbdca617419c43eaa6",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/component-render-scope.txt",
+      "bytes": 165,
+      "sha256": "dc6eb9a7cd29e39ee86a882ebf9b66b1643cca2ada1b6fb7d4568700a913bfe0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/component-render.log",
+      "bytes": 1084,
+      "sha256": "f3057f65ecb9cb164e05ecdccad004dff355d8ab5614fcb48dace53112b951de",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/demo-project/chapters/modell.tex",
+      "bytes": 256,
+      "sha256": "9dddd8acc2df08de2b5424ad0fce15f9b6e189da00fd916f0afa1cbbb5bebe00",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/demo-project/commands.tex",
+      "bytes": 1,
+      "sha256": "a9253dc8529dd214e5f22397888e78d3390daa47593e26f68c18f97fd7a3876b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/demo-project/main.tex",
+      "bytes": 701,
+      "sha256": "2556b55df42349e45421b6014e07cf3ae028c93be01e3cf0c25ba4845d20ad21",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/demo-project/references.bib",
+      "bytes": 122,
+      "sha256": "143c7905038ecbe8d1f4e83f935d8c465c823a43bcf273213cbe3102add15823",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/ipc-tests.log",
+      "bytes": 105,
+      "sha256": "e881cf9cdd8bfc380c6cdb0e72b47f6bc086755ca8d3ba5dc341c4d0e46eabf0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/live-after-assistant-edit.json",
+      "bytes": 401,
+      "sha256": "2a81af3dd9df5e0932ffb9061307a24d792067572395c1c957f4bbd776aa9399",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/live-after-cmd-z.json",
+      "bytes": 398,
+      "sha256": "9c671638b1361d9bec0c81a45486407fac586155237d0dd234398f004ca21215",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/live-after-composer-undo.json",
+      "bytes": 405,
+      "sha256": "75bd5796d57ea01e9158b1647cedebc63a03ab042c7473c83227fe620041a6f1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/live-after-redo.json",
+      "bytes": 396,
+      "sha256": "84ed9b58e88ba2858b082e8edc41e7be2e664bb609c0bfe42dce602a162265c1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/live-baseline-source.txt",
+      "bytes": 701,
+      "sha256": "2556b55df42349e45421b6014e07cf3ae028c93be01e3cf0c25ba4845d20ad21",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/live-before-assistant-edit.json",
+      "bytes": 402,
+      "sha256": "e8ad4c90a5b91a90e7f6040e7b6738803cf1f9748193e4bdea48293d4cf555ef",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/live-build.json",
+      "bytes": 8259,
+      "sha256": "bf23e48d382e6ebf92f1f09be59bc5c2f5a74c103971216b3f6e8cd63938751f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/live-final-restored.json",
+      "bytes": 680,
+      "sha256": "98c8572e725cbbba6612cbc3e6674d9385e539d3b2fea6e69b40dbe27163d930",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/live-ui-observations.json",
+      "bytes": 3090,
+      "sha256": "cab976df24276ce242e77b18ff3bbcbfcd89251ab87a97192c5759bf6019c972",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/live_snapshot.py",
+      "bytes": 3162,
+      "sha256": "cb555dd42fc09bd1cd9762c4983b452f8a7063bdc2a680bba58bcd4901966706",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/macos-app-manifest.json",
+      "bytes": 1602,
+      "sha256": "100c575412fc29d5ac0a27a7c8f78c7c73f2c12e2150e9d7958bf09cae17a4cb",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/macos-architecture.log",
+      "bytes": 74,
+      "sha256": "4227577df6a2ff22f6c6fa9d9375050159a4f8b8e7ac11d0aedd5231975ab119",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/macos-build.log",
+      "bytes": 447,
+      "sha256": "b06af155434af26070d65f186710dc78e5d54a9bfc2b3dce0a196e86bc7d7366",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/markdown-links.json",
+      "bytes": 169,
+      "sha256": "2debe2a4da3477f93681d481e387f926ba6b71e6eb255dc7c89527ffde4637e4",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/mcp-tests.log",
+      "bytes": 98,
+      "sha256": "1db87e539e7ea38c073c14da33053d8e54d6670057e4f4f9e86c35aa010a0e50",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/native-render.log",
+      "bytes": 1345,
+      "sha256": "65ff3b30739980b5870627acefa558adee399e6da1c605454d4cbdea897f6e03",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/native-tests.log",
+      "bytes": 14725,
+      "sha256": "b6bdd247bbfddc8eafd4b0caa85e7b684ad118af7e7656f22833bfa4faf35527",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/pre-ui-restart.json",
+      "bytes": 263,
+      "sha256": "fc9bab768f18de4cd05ca844e89fc49a06610478193f598cb88435dda892932e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/review-completion-red.log",
+      "bytes": 3271,
+      "sha256": "245cef1a07f771b338cd7a1dd4bcafc5c2c80dd95dd335a1bd0232bd4e270458",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/review-native-red.log",
+      "bytes": 4381,
+      "sha256": "0c42996e82d377fbee49d00777db5210dc4d2b9edc83040738b22df4807e4cdb",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/review-revision-red.log",
+      "bytes": 6811,
+      "sha256": "adec1a3eb7440b01eeee8111681f0d56088f9c786e60485b31ea547dd716c257",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/review-star-red.log",
+      "bytes": 1361,
+      "sha256": "05355891bbcfbe307c781b836c033bca6db88127e71e5ae7f00bec6672058e71",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/runtime-build.log",
+      "bytes": 169,
+      "sha256": "72d9bb1cc9adf7b4c352ecbffc17ed99ede90a528ee522db1db87abc700f83d0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/rust-tests.log",
+      "bytes": 5238,
+      "sha256": "69fdf3f7acb65f233381c5a19f297c6762580d7f3f046c54d4d0328183285f48",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/skill-validation.log",
+      "bytes": 16,
+      "sha256": "db349825903d66adffea3ecf1bd8e1803043e8a71cf1a051235dabc5371f5bb0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/verification-summary.json",
+      "bytes": 2354,
+      "sha256": "c7548079a27cc24d95eddbddb87fc4f94e6fbbcc02e0818d64336f574934602b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/intelligence-2026-10-31/windows-rust-check.log",
+      "bytes": 573,
+      "sha256": "c14bdd24068a87d5df32f504ffd2a9661ccd0e35a605e2d2f21862431942a5f1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/KeyEventProbe.swift",
+      "bytes": 2696,
+      "sha256": "12387d4801b388d18d572e02ccb88b1bb45155e89fdeecafc86959d5369ebefb",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/actual-redo.json",
+      "bytes": 92,
+      "sha256": "31b95fccef8c152574625d0e120942aeafd04d2e123a6dc985c193bb8617a52a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/actual-saved.json",
+      "bytes": 93,
+      "sha256": "463ddd86820db3548120c568b230e41e0d06b9e39ffbfc8dfb3daadba9222246",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/actual-undo.json",
+      "bytes": 91,
+      "sha256": "35ff4e7e4ef86d62f5d10b0882731fa9306025154babd1ec366db8302790177f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/assert_snapshot.py",
+      "bytes": 1081,
+      "sha256": "5cede3a14d76a50cb678b2244c325b766a83fac4400300be4f073714cb20dbcc",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/baseline-source.txt",
+      "bytes": 701,
+      "sha256": "2556b55df42349e45421b6014e07cf3ae028c93be01e3cf0c25ba4845d20ad21",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/codex-schema.log",
+      "bytes": 104,
+      "sha256": "3087f13b0d34323fbc05177ef68ae53dc523d9acaf6c0c63852825479db5af2a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/codex-version.txt",
+      "bytes": 28,
+      "sha256": "be0e6ff319c54a10bf765d5095e195f8600fc242efac27050d7aec00a00ddfa5",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/completion-arguments-red.log",
+      "bytes": 1277,
+      "sha256": "f14152f5ca230730cbe8e2242f37cdd142f3e82c13304c85f0ad3b1eb73d80c3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/completion-green.log",
+      "bytes": 675,
+      "sha256": "ef8e2b1f1303af8035cbe9d69892b1d3f6fce58e2394cf2ee1497d70edb37088",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/completion-red.log",
+      "bytes": 512,
+      "sha256": "bd21a4dc4973e031027ea894648e1fd04568bd129b3dd7bb11586ded2f94635e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/events.jsonl",
+      "bytes": 370,
+      "sha256": "755d52279115612cd274d84cb40456116597db38398f2c7403f634c087f6f2df",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/field-focus-red.log",
+      "bytes": 2170,
+      "sha256": "83d1b644ad24180078b11d6454365a117012695dca39b959c073462a40171157",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/ipc-tests.log",
+      "bytes": 105,
+      "sha256": "5ad54b48d846b7511a8a79dad8b2b6c24538da381ddf86293bf18a22ab9731ab",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/layout-green.log",
+      "bytes": 7140,
+      "sha256": "6b6c82a5bc2430fa444444aedbb73c189ee700abfe1710a4173aa33de960ae49",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/layout-red.log",
+      "bytes": 17568,
+      "sha256": "a669b19f6fa4d45e9ab7572721ac8deea49fd23e89960d8f224902967c362e0e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/live-session.json",
+      "bytes": 188,
+      "sha256": "ed33a30f73a3b2b6a7004b58bf25ef78824383686dc71768a1289a6fad8e387b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/mcp-edit.log",
+      "bytes": 78,
+      "sha256": "b7126f1f2745e9d749329aa823903b9d9e45631912f4888f49ef7aff5830a9e8",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/menu-route-red.log",
+      "bytes": 11648,
+      "sha256": "699a7edc6aff43ee7bd16b0ba9abd8a05b5fa49f2f4d9804927b69a4bd513589",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/modifiers-red.log",
+      "bytes": 3267,
+      "sha256": "1f2a5072bb7c431d75893bd11bbf9e818e8a8746ac454cd7c4332f84fc6d5067",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/native-completion-green.log",
+      "bytes": 2037,
+      "sha256": "5f25a9294251ad544e525ec4f58bdc840c11f87ac4c967c257a7c08d3035b253",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/native-completion-red.log",
+      "bytes": 10955,
+      "sha256": "326552e7ffb44f82d635e2c708fa9f96d58fd9e7c856275d34e7ae87ceb2dfd4",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/native-full.log",
+      "bytes": 14605,
+      "sha256": "df9f8ebb2ee2183290ed6751ccca538c3249fa2db0184458aa69606a82a0f1ac",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/native-render.log",
+      "bytes": 1711,
+      "sha256": "3f7b2c5292abc31d870b03982f89e4d7ac54e7eb4558079eb293d6765a32735b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/probe-build.log",
+      "bytes": 716,
+      "sha256": "b740f7af12d3cbcf3a957e723495831b0bdc3bb81d672795af3deb78758cae58",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/runtime-build.log",
+      "bytes": 169,
+      "sha256": "48d48d2608e6601fb7cbb179c24d2e2ba87c033efe85998a41ff980cf0231147",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/rust-tests.log",
+      "bytes": 5172,
+      "sha256": "766cd0ca1b3b83d0e5927e41eaf60ee6adb855f3f36715db082ba197c13c94eb",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/keyboard-2026-10-31/windows-rust-check.log",
+      "bytes": 573,
+      "sha256": "a72dd76567170d4d71724fac3fb73faf397932503608ff9448c5c963a28de71f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/mac-gui-project/main.tex",
+      "bytes": 508,
+      "sha256": "ee70c98d981d5a0b7f9abae9b816b78085333f1a9528148b5d70df2422d975d0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/macos-app-build.log",
+      "bytes": 409,
+      "sha256": "9995462615e1ccd808ce93522cfcfef7c837cce1f1d02973987d9742c8f0d91c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/macos-app-manifest.json",
+      "bytes": 1076,
+      "sha256": "94a07ceed63e8622200390de66e4e93c2bf4443c00ada7cf966e9916d23485c3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/macos-codesign-check.log",
+      "bytes": 173,
+      "sha256": "365124dd0473c4b74329769922ef7b9ab863d6235b41c4bd6fde546b1fab33d9",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/macos-launch.log",
+      "bytes": 415,
+      "sha256": "24d14dd0605a8aa2d5e4e31aba21fad390d982e451fe8183cfe71b5ba559bfbf",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/macos-memory-debug.txt",
+      "bytes": 97,
+      "sha256": "39cb27a601b79ecfd2ac92824c7d58095479bdb5890cec4fd0f0a69a560f1c75",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/macos-sample-command.log",
+      "bytes": 120,
+      "sha256": "6fd2cf534bc3d9e1b095d5370b98a10f4955787e365b6cd346cf6b242525be9f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/mcp-build.log",
+      "bytes": 2096,
+      "sha256": "f781451403dcc434854dc98f41d1c5adde5be703f98e52fdb87d6ba329f56c54",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/mcp-dependencies.log",
+      "bytes": 4389,
+      "sha256": "000d075c9acae3d48e67f52848e490b1dc816a6269334dcd17fb5c56f78b6e5b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/mcp-green.log",
+      "bytes": 98,
+      "sha256": "60a6a63859e9de2b7627d478255c5e0951283f152f546737b2c0957f2153e759",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/mcp-gui-probe.log",
+      "bytes": 78,
+      "sha256": "8c5a3f06b0e0530d1e709c01c72cb44f88bf528ae08641a3c33c759c41347983",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/mcp-red.log",
+      "bytes": 1676,
+      "sha256": "6997080629f72158a440f76814bb72b64f4d396821a47f1e08a9589655890da8",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/native-runtime-build.log",
+      "bytes": 72,
+      "sha256": "736e2582f563605dd272e5fb977840b0c0767377d27b6940c440caf75eec7157",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/accepted-popup-red.log",
+      "bytes": 1840,
+      "sha256": "2551bf76c4af6646f9204bfe0479f948b3a14b74a7d78a6d9793894cd51160ab",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/codesign.log",
+      "bytes": 89,
+      "sha256": "1a81f0ccc274104cc3bf93af4d08e6bf738fa41b27bceddc94de4cf435df6b90",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/compiler-tests.log",
+      "bytes": 263,
+      "sha256": "b37683d629c021e80c23d77a7a5e82f5dd82ad1660e478f4649127b199a647a5",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/context-red.log",
+      "bytes": 2781,
+      "sha256": "75fe85990ed8ae827fc4c6422a37541ffc996ff6cbea665016219d9d36aaff71",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/core-before-optimization.log",
+      "bytes": 7006,
+      "sha256": "ac5ca75fc5683512ad50f254f97f06dcbef54a3bd50168c732fdd7c5b4ccf420",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/core-first-green.log",
+      "bytes": 1345,
+      "sha256": "fff9aca07842bb032cd460c447b701c5842ca82908900989e26508d24be42ac8",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/core-optimized.log",
+      "bytes": 1871,
+      "sha256": "fbb9aab918efa9e077427b5649ce46ecb1a8c51efdd62b0c3bd5ac6111980e7d",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/core-red.log",
+      "bytes": 7978,
+      "sha256": "9cc137bd73abbd957e77abf2945edcf688c26052541427107a1ca15c7d1f731e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/demo-project/chapters/methods.tex",
+      "bytes": 212,
+      "sha256": "a61f2a3373fb1680999839c67ead7123e8b9afca3298b54955c5809c6d49b4b1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/demo-project/citation-example.tex",
+      "bytes": 18,
+      "sha256": "1c7b3f96f4e70b1c35d34e0edcfab84eaa48c343ab40fb6769d2b773dbc5eb6a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/demo-project/macro-example.tex",
+      "bytes": 1,
+      "sha256": "a9253dc8529dd214e5f22397888e78d3390daa47593e26f68c18f97fd7a3876b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/demo-project/macros.tex",
+      "bytes": 156,
+      "sha256": "a304d80f633a4a90d761d063e3274b5d2c67b55df7b860f0aa805658106a44cb",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/demo-project/main.tex",
+      "bytes": 483,
+      "sha256": "05caa04a7fbe0715cdc2080da9e459d1b8a6af7d0a2d1ac895d58dadf7a4a866",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/demo-project/reference-example.tex",
+      "bytes": 10,
+      "sha256": "c0659527ab756731d8b0b6110395724ff2a7a7282365047004ff57aadb527738",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/demo-project/references.bib",
+      "bytes": 220,
+      "sha256": "fb5f6d70b3be129e1c67fafb9f5c4b77f88582f84dffa6cab7106018a4169f35",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/exact-key-red.log",
+      "bytes": 2538,
+      "sha256": "8fc5f8861d1868c2b372f8f32df2a6ea977f95a44a77668722144567aae00a46",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/ipc-red.log",
+      "bytes": 929,
+      "sha256": "8a2be1a15b27234c69bf790a583d663a9399d54b91a6dff9f46f93664ad348a5",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/ipc-tests.log",
+      "bytes": 107,
+      "sha256": "e5461dfac63c4389f9bf80b5b6ff0cf8a9b81b4bc84704d7882ba6b83829daf4",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/live-agent-definition.json",
+      "bytes": 327,
+      "sha256": "53b07d2a313ddc9438d7ece6bfb902f912fa29eda4a6689b8f796fefe5a12975",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/live-agent-label-insert.json",
+      "bytes": 323,
+      "sha256": "082fff5ec3e7c4fdc3e42dedf4a4f80b1527f1d451d217387c3e4da00ad79e27",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/live-build-final-package.json",
+      "bytes": 9148,
+      "sha256": "96df4ac0f26e15c91a925506dd3aac2f4fb28905a0c610f64cacf0aa586f5da3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/live-build.json",
+      "bytes": 9299,
+      "sha256": "91b6c63da20d35c2d1e9f3e8ba483ce5d3f7c933df0b667152995b0d7461d8b9",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/live-citation-insert.json",
+      "bytes": 327,
+      "sha256": "ccc3cfb77e72dc8ca33b0c9826d4322835294906ad8e85769bff3ca8bef95d39",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/live-citation-restored.json",
+      "bytes": 335,
+      "sha256": "bbffcb877ee8e66da3a8776270df806e752bb4c919d664015f28eb88ef7b5075",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/live-final-package.json",
+      "bytes": 535,
+      "sha256": "b219eecdc46fa81181c958f839c6a4cce02de43bde03cf108aaf5a288ea3b8b6",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/live-final.json",
+      "bytes": 982,
+      "sha256": "deddf0cf6b057d1adcbd66f318fd59637807b2fcf84cc25c171dd5d7bf6bc6ba",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/live-macro-insert.json",
+      "bytes": 304,
+      "sha256": "6b2e37546ffb8e618899748e32c4dc9feba433c4c3e8986661885c8617c08d27",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/live-macro-redo.json",
+      "bytes": 307,
+      "sha256": "5941a488d18d87a4ff4dfe8975d5814b7b67401766032b1a233b840c8bed36f8",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/live-macro-restored.json",
+      "bytes": 312,
+      "sha256": "14a1c3f6a035221b0d30e0f3f74fcac9b1db3e90dae1d319e014062d5e6a582c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/live-macro-undo.json",
+      "bytes": 307,
+      "sha256": "33655207943f0700e371593edb88b449dce986fa1602348601f784c79dec4d61",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/live-reference-insert.json",
+      "bytes": 321,
+      "sha256": "82fb8c36c22ca6997a9da6a75c3c8902efeec57686c60854ff01c7c4cb70b291",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/live-reference-restored.json",
+      "bytes": 329,
+      "sha256": "93d1c3d04d28b220e569491eb6626a978dd6494d20e3b213326716380c2a63d2",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/live-ui-observations.json",
+      "bytes": 2018,
+      "sha256": "2d6c28996356fc9e65097d57ed99bbd895f9c21ffb932a4b152e0e14dc5b94f5",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/live_check.py",
+      "bytes": 2651,
+      "sha256": "45f1c158c7ed3ed898a009fceb59f39d2cb17a7bca319837a3ee5d0acfbcab2a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/macos-app-manifest.json",
+      "bytes": 1493,
+      "sha256": "d88f9f6bb44b030b48177e742a87a27ddc09621316b6a99d98dcec464c4b7233",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/macos-build.log",
+      "bytes": 540,
+      "sha256": "7c7484275eb758df88132fc07ed903e10b7c7a82dbba0846f7a7dbc2cdd6ddfe",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/markdown-links.json",
+      "bytes": 158,
+      "sha256": "5788d42007f15fbe0057137ed70971dc2895b682471d7f282d7f3aaed3af8278",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/mcp-tests.log",
+      "bytes": 98,
+      "sha256": "8f3d62598eba00ba86df6937222c0683066035142f56b71ccfc0455dd0a8c301",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/native-intermediate.log",
+      "bytes": 22550,
+      "sha256": "cd2dd0c30061bb613363e3e08ce0c4440875894ff62ed2ec7f4cbcd4290885d2",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/native-red.log",
+      "bytes": 3897,
+      "sha256": "e0f7c616f742c36426f88252c2412e7bcb42effa7cb6b4b61a98f195e2dcb51f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/native-render.log",
+      "bytes": 978,
+      "sha256": "1eaae9b3d2a54d9ce955c2cc02b6c35902c3b406962f598c7dc1c4baca7c899e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/native-tests.log",
+      "bytes": 18332,
+      "sha256": "534440765afea4394d66ce51557881a7242bff61b1abcb7feac9790e9098e7a1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/pre-live-state.json",
+      "bytes": 610,
+      "sha256": "b0f4f6ff9ed08826b2a78286be285f179789ebc747bccbfad388533f95b70c5c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/preserved-inputs.json",
+      "bytes": 302,
+      "sha256": "b9210fe91c59fa7b76ff0f57783fc89c718348bc1fc2c92bd139566634219ccc",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/project-citation-dark.png",
+      "bytes": 67905,
+      "sha256": "596edfbc9de40c15c4991494655af75751f27b3d2471060ec7ca6ba757b08c96",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/project-macro-dark.png",
+      "bytes": 63996,
+      "sha256": "6f8656c4bdf85ac6af2f16a078452ef3f24a51f852eafc47f38a5f3d42d96b84",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/project-reference-dark.png",
+      "bytes": 61956,
+      "sha256": "74a6c7726f39288b2169a0095e00766620368507e628546399acdd0c42aebbdb",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/render-scope.txt",
+      "bytes": 142,
+      "sha256": "d2adbd592bbb7398d7c74b6e94987b508c9276905dc501322798cb86a62ca85c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/review-native-red.log",
+      "bytes": 3960,
+      "sha256": "c71ccec79e54972b2c035f7e19342b653df34bc6209b74052d8c76f047754262",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/review-red.log",
+      "bytes": 3781,
+      "sha256": "5cd9d77774d78d5c813a34d804796fa5e81916bbd3aa773c48106013a9e35019",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/runtime-build.log",
+      "bytes": 476,
+      "sha256": "4345bae485d1059f7cec030924d383002e5656bc3229f785ab1450a6a2044728",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/rust-tests.log",
+      "bytes": 7740,
+      "sha256": "f7f4ede10ee2924d4953aeca7c1dd8a49c970b88c7c99842a62c09925da4ee1b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/skill-validation.log",
+      "bytes": 16,
+      "sha256": "db349825903d66adffea3ecf1bd8e1803043e8a71cf1a051235dabc5371f5bb0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/verification-summary.json",
+      "bytes": 1943,
+      "sha256": "5a55d81de1537a0ca6eb9ac3b62e2802456af3c1a59c3bf90720f55a0efa4ba5",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-completion-2026-10-31/windows-rust-check.log",
+      "bytes": 573,
+      "sha256": "cef099a6bd4dce0f370af3b01ffaf3dd2cdb9d4af83379bb3991ffce957baebc",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/project-skill-validation.log",
+      "bytes": 16,
+      "sha256": "db349825903d66adffea3ecf1bd8e1803043e8a71cf1a051235dabc5371f5bb0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/python-unit-tests.log",
+      "bytes": 104,
+      "sha256": "d1a3bdcaa925bbf92cc120237c5ab1078f911832e5f3bbdd16fd82aab85d59fa",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/repository-2026-10-31/local-checks.json",
+      "bytes": 520,
+      "sha256": "7c30398b215794ff6e7c37dc880fd48ff73a517226a5d1a758d9dafd6c5bcc95",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/repository-2026-10-31/package-validation.log",
+      "bytes": 290,
+      "sha256": "d010fd80222e7aa6c0286cab3951b2f75529ef3b03165ef316500c9641de2b29",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/repository-2026-10-31/python-units.log",
+      "bytes": 104,
+      "sha256": "1e43b905e11ca028139fe5078016515111aaf7cebf8d6a3e224b7d03b9cb6ac9",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/repository-2026-10-31/remote-created.json",
+      "bytes": 208,
+      "sha256": "340ae4040f5ece5e8696bc49ffa3c2a04d4118c5df6d60a5837d9252a8077952",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/repository-2026-10-31/rust-workspace.log",
+      "bytes": 7913,
+      "sha256": "8c906fc8c20b91d4663b5f735730bdf10e04f137d95653bdba2d32a339daf860",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/repository-2026-10-31/skill-validation.log",
+      "bytes": 16,
+      "sha256": "db349825903d66adffea3ecf1bd8e1803043e8a71cf1a051235dabc5371f5bb0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/repository-2026-10-31/staged-content-check.json",
+      "bytes": 153,
+      "sha256": "b6fdbe8e83b6c3c6bcf1ad27abb0277e94d4ccd59b553c038c4394cb4d42906c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/repository-2026-10-31/tracked-markdown-links.json",
+      "bytes": 63,
+      "sha256": "ae30b2a1a00d21e0486267268150e7742b5ce1df1625fbe30c925c63863d55ba",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/review-build-red.log",
+      "bytes": 1980,
+      "sha256": "5e45d74f1134782a5c67f71e4b84517a2de954d7d676d80883daa8a56b71c60c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/review-composition-red.log",
+      "bytes": 894,
+      "sha256": "f328845c93d4102d5e51f6fb3a62757d864ee3b9e85c8719db0a4c88a6123af7",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/review-installer-green.log",
+      "bytes": 98,
+      "sha256": "fb184ea57734512b1f088f9181209901b9cd46df3eb7eaa2500ea9e48dde20b5",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/review-installer-red.log",
+      "bytes": 825,
+      "sha256": "6d5d87d3a57d706ed541b9cb66d404c167acf3a701f5a16145755b9d41aefee2",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/review-native-ime-red.log",
+      "bytes": 1996,
+      "sha256": "4207d43eef8936adb80eaeb73560fa672ae55ff0824d798f88e102ef0fc08081",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/review-swift-red.log",
+      "bytes": 3787,
+      "sha256": "b9df53f54a490e89a0189affc507e246de0bec814ccff92a22a95de3e85eb1c2",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/rust-workspace-tests.log",
+      "bytes": 3550,
+      "sha256": "147843cafc49a94fcba3d16e00a2182980b140646e675e585fd43a0f2ad46f1e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/skill-validator-dependency.log",
+      "bytes": 239,
+      "sha256": "e93235d76bfda0b242ad97dc97b4922d7ae8abb73df3a1f8a8e57a6121363349",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/swift-adapter-red.log",
+      "bytes": 1979,
+      "sha256": "67172049771ee0301bf805bcb567f0e3fe3ac36e43fe8d6bf64ec93f3b5383d9",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/swift-build-default.log",
+      "bytes": 8834,
+      "sha256": "48947892259385faff2418ae14bd1ee79cc36a80172f60fa2e4a46662dfc60b5",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/swift-build.log",
+      "bytes": 684,
+      "sha256": "62eb2ca64e1712ff0623656fc449769e2280f22292e9fcaddf4f51cffaca6556",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/swift-project-red.log",
+      "bytes": 1114,
+      "sha256": "e03480cf88ad99ff1a7176e6a2c287d76e86234627683286a7bde99dbfa28644",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/swift-red.log",
+      "bytes": 88,
+      "sha256": "ed7bd6ce9a6e9c7c4d7e02a3d2b53b2be54f3c93f92db3fa81390f428083581e",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/swift-tests.log",
+      "bytes": 2931,
+      "sha256": "60557738c2d70b5b63fbe12eb9da73b4681270fd9c5c7d4a1719dcfc078ccc54",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/tool-acquisition-tests.log",
+      "bytes": 103,
+      "sha256": "066e59ff53d8680048582c601c09802b778015caee17e68370ff254fb1deba6a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/coloring-red.log",
+      "bytes": 11126,
+      "sha256": "dcd84d0aa7004afcd8df7ef9e21d79253752bfcb1a5c3d1644e9f666c7f7b291",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/compiled-preview/1793389502377189000-1/compiler-output.log",
+      "bytes": 8521,
+      "sha256": "330697838a16ab74c94f39c4193395f88e69e84c5ebbdfb48f233beadfb4e58b",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/compiled-preview/1793389502377189000-1/main.aux",
+      "bytes": 329,
+      "sha256": "8c0d90494ca0f8f8c3481189b58c6d56729ac881ac8449091b5439875e7c9ab1",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/compiled-preview/1793389502377189000-1/main.fdb_latexmk",
+      "bytes": 6168,
+      "sha256": "2ff77576842d9d85ed3afee7eda179b159efdfb5c3e3d4192471430e9c21ed32",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/compiled-preview/1793389502377189000-1/main.fls",
+      "bytes": 5632,
+      "sha256": "cb55af3e99efa6317ef1f1087d1a4cc19df22b452e10c21efa76d94b63a9c7ef",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/compiled-preview/1793389502377189000-1/main.log",
+      "bytes": 11861,
+      "sha256": "582a89d231c92c6a24d90a5f543188b8cac7fbb2d1337e98ee0074c06eb98699",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/compiled-preview/1793389502377189000-1/main.pdf",
+      "bytes": 16666,
+      "sha256": "8333d04062e3859c1be3daa7d6bb513ea0fd0c1dc49dde61041a345d889d7bb7",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/compiled-preview/1793389502377189000-1/main.synctex.gz",
+      "bytes": 2059,
+      "sha256": "6d1c6f3f4993096e05bddcdb31642176c7ecfaf02a87c43c8385266bfc2d1329",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/compiled-preview/1793389502377189000-1/main.xdv",
+      "bytes": 6088,
+      "sha256": "97fbaae282aa91748b7443d95972dd92c2dfa576d73d6ebe95ea325d963b65e9",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/compiler-tests.log",
+      "bytes": 263,
+      "sha256": "217a6fc8daceef3e44adf5b956a294f93e347ede1d4714d2ef47d9a50b4e855a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/demo-build.json",
+      "bytes": 9169,
+      "sha256": "59cf000cccbccb1a305c5c53ec717a37e344eae7e522287685901346497af584",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/demo-project/chapters/modell.tex",
+      "bytes": 256,
+      "sha256": "9dddd8acc2df08de2b5424ad0fce15f9b6e189da00fd916f0afa1cbbb5bebe00",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/demo-project/main.tex",
+      "bytes": 701,
+      "sha256": "2556b55df42349e45421b6014e07cf3ae028c93be01e3cf0c25ba4845d20ad21",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/demo-project/references.bib",
+      "bytes": 122,
+      "sha256": "143c7905038ecbe8d1f4e83f935d8c465c823a43bcf273213cbe3102add15823",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/ipc-tests.log",
+      "bytes": 104,
+      "sha256": "322a88989cfa362bb4b69a9c929c9075af3cf8bb192460fd8712799d0de7a9eb",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/macos-app-manifest.json",
+      "bytes": 1420,
+      "sha256": "9ff3e78919244954604593e0f97fa7c6b491e43e64219765f0fd76ed4cb0538f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/macos-build.log",
+      "bytes": 474,
+      "sha256": "52e2ddddd93bfd5f6a8bfe5772256e94da72868f4b830f3c7bc3eddf48fc40b8",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/macos-linked-libraries.log",
+      "bytes": 2962,
+      "sha256": "cdf8978f5a035b4dc51d0bb79804c9c7b972f033ed03e10f69bf6086c33eb395",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/mcp-tests.log",
+      "bytes": 98,
+      "sha256": "060b56fed63490ba2eb3d287905588affd3c7be1e486e40021b1b8e007cde1d9",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/native-render.log",
+      "bytes": 884,
+      "sha256": "d13c248516fe9bea40c21ed027ae32cd6c1d8309d05e24d5157389de63738005",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/native-tests.log",
+      "bytes": 9219,
+      "sha256": "c189282cedcfd6c61d6a37fecb0cd0f9815a40426aec8eea6be4d113c9a40b37",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/pre-restart-state.json",
+      "bytes": 448,
+      "sha256": "6b5d22a2fcf9377cfbe0e018b5c43b6b519bd6a3623c0cb974897f1ff49645ff",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/prose-context-red.log",
+      "bytes": 1453,
+      "sha256": "a0481af97935d327803b57f017405b81f53d732300aa103cf6f3f5b09f37e935",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/render-scope.json",
+      "bytes": 494,
+      "sha256": "f3dbb73120069dfd1373827832809b02da74a0cf57d599f2e9b986b7ece2a6c2",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/resume-2026-10-31/baseline-source.txt",
+      "bytes": 701,
+      "sha256": "2556b55df42349e45421b6014e07cf3ae028c93be01e3cf0c25ba4845d20ad21",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/resume-2026-10-31/before-restart.json",
+      "bytes": 563,
+      "sha256": "159d3d89e6297364093562d70a38eeebb7fef14f13908618010c200073720f46",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/resume-2026-10-31/bundle-integrity.json",
+      "bytes": 731,
+      "sha256": "87cc8e69d49f25a6b0686118a62ecb6166d5fd6190aa6f7d880e2a5ce06f0bab",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/resume-2026-10-31/codesign.log",
+      "bytes": 89,
+      "sha256": "1a81f0ccc274104cc3bf93af4d08e6bf738fa41b27bceddc94de4cf435df6b90",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/resume-2026-10-31/live-build.json",
+      "bytes": 8187,
+      "sha256": "ca9d8038379afbbbe325e74ea6f33a4139d4820144e39cfe3ad5f1ef0ae82530",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/resume-2026-10-31/live-final-state.json",
+      "bytes": 312,
+      "sha256": "dd8bd3a2c135b7790784080ca941faf30509d5ad35604ab8b6e8405d70154885",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/resume-2026-10-31/live-mcp-edit.log",
+      "bytes": 78,
+      "sha256": "8c5a3f06b0e0530d1e709c01c72cb44f88bf528ae08641a3c33c759c41347983",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/resume-2026-10-31/live-session.json",
+      "bytes": 282,
+      "sha256": "2e49533c3b93aa0491ce54d6225f3e3f14890ed883a76c40988216b07933bba7",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/resume-2026-10-31/live-undo.json",
+      "bytes": 259,
+      "sha256": "49950802ec8399ce350e3702d517923c6dbacfe4a18d6b8d0af871272aaa5a13",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/resume-2026-10-31/markdown-links.json",
+      "bytes": 165,
+      "sha256": "1b8c46f87cacf2adb72fcbf4bfe840c33ece4e17bcd28e4a649198fb60802dfc",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/resume-2026-10-31/skill-validation.log",
+      "bytes": 16,
+      "sha256": "db349825903d66adffea3ecf1bd8e1803043e8a71cf1a051235dabc5371f5bb0",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/runtime-build.log",
+      "bytes": 169,
+      "sha256": "81f075988b70474fa74e1199383cd4c130baa7f0d7d6223d5a01f3594e48d08f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/rust-tests.log",
+      "bytes": 4672,
+      "sha256": "aa68b1ded8bf54f62b75b5bfc3eace4fbb1a3655d2dc7ce08aa09952e7f63533",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/syntax-red.log",
+      "bytes": 492,
+      "sha256": "971b6a486101db1c0044b4117aa8014a261fce5097026ea3c1db50ff3d306637",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/syntax-runtime-red.log",
+      "bytes": 1134,
+      "sha256": "cd340954be13b88eec8eab51773c23e81a3c367e734e5eb2c9b86a10adc6ddf2",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/tabs-red.log",
+      "bytes": 11628,
+      "sha256": "7b2b6af19ec4f9c2c52ceae6f13adaa5ab95872f8c1245762b8fb060bd48c8c2",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/themes-red.log",
+      "bytes": 13938,
+      "sha256": "e43b9fc62025b9f5045c03867d083c0359f180b2bc6910a24b02e9656693c406",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/themes-tests.log",
+      "bytes": 1609,
+      "sha256": "862f13ea350917511a7187818e18bf13361defdc7e52ddbedc733c99e5bcdd1a",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/viewport-behavior-red.log",
+      "bytes": 5611,
+      "sha256": "0fe414924e0d49ceb4b8560e578e02f0c99ee6995f37515fc99bce1a0a671989",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/viewport-red.log",
+      "bytes": 15753,
+      "sha256": "0af3ef4037a9770cfbc14acb8b60baf8954034c85cb7c5602d8081180ffa4cda",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/windows-editor-helpers.log",
+      "bytes": 110,
+      "sha256": "01ba19b6d5aca108e81be8b2c1a66c4c5f8e6ae5609dd39c7bdfc0aae98341d3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/windows-rust-check.log",
+      "bytes": 573,
+      "sha256": "50f2f7c4b1c0d9731895e3897a9a693a8faab288107a8c49ec1115764b9349d3",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/windows-text-adapter.log",
+      "bytes": 103,
+      "sha256": "945f6a425621abe2786b3530540080dcf4180450863be22f05c4df822f08ef02",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/windows-ui-source.log",
+      "bytes": 195,
+      "sha256": "9fff62b96e57684f7e1b3335033d26ad270a29d0f1db0a51ce5f7894631481e2",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/workspace-dune-light.png",
+      "bytes": 470319,
+      "sha256": "6aa8bce133e7199d5c8690c611e847156feecd0ccda909278d9c557b99c58f28",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/workspace-graphite-dark.png",
+      "bytes": 475942,
+      "sha256": "0460decffc117abcedba411e721dba791e384831e1d6775cf00fd23c13e1c24f",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/workspace-graphite-light.png",
+      "bytes": 472092,
+      "sha256": "f06a6ed8266c75093499631541aaa2a8df0b7de917034a21a47a6af2c45a750c",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/ui-redesign/workspace-ocean-dark.png",
+      "bytes": 474413,
+      "sha256": "c69d16579ec928df3e9a2925808d38c49feca558306b0b5add83cb8dba9191db",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/windows-rust-check.log",
+      "bytes": 270,
+      "sha256": "e75294e5ae4b0e37451d41243f941d2e0ca14939b01599cd19a96ebeb3570203",
+      "publication": "local-only; content not uploaded"
+    },
+    {
+      "path": "evidence/windows-text-adapter.log",
+      "bytes": 103,
+      "sha256": "945f6a425621abe2786b3530540080dcf4180450863be22f05c4df822f08ef02",
+      "publication": "local-only; content not uploaded"
+    }
+  ]
+}
