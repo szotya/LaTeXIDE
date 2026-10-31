@@ -241,3 +241,13 @@ A második távoli Mac-kör már lefordult, és az összes nem asszisztens natí
 
 
 Az asszisztensfixture javítása helyben a teljes érintett csoporton 17 futtatott / 16 PASS / 1 opt-in skip / 0 hiba. A CI pathfilter a `tests/fixtures/**` változásait is követi; a korábbi három render és a telepített CLI handshake továbbra opt-in, a történeti WorkspaceRender helyi demo-build függősége kifejezetten dokumentált unqualified kör.
+### Repository és tervek lezárása — 2026-10-31
+
+A végső `0ed9d70ac2f341db44c6b5d23ea3bc4220c5149d` CI-forrásverzión minden végrehajtott kör zöld: [Source and contract checks](https://github.com/szotya/LaTeXIDE/actions/runs/41226223214), [Rust and Mac checks](https://github.com/szotya/LaTeXIDE/actions/runs/41226223228). Friss jobnaplóból ellenőrzött számok: Mac Rust69, Ubuntu Rust69, Windows Server Rust57; natív Mac73 futtatott /69PASS /4opt-in skip /0hiba, Swift6.1.2; IPC10/MCP1. A Windows kisebb száma a Unix-only tesztekből ered. [Részletes scope és gépi összegzés](development/REMOTE_VERIFICATION.json), [importlezárás](development/IMPORT_VERIFICATION.md).
+
+A 44 GitHub-issue API-ból visszaellenőrzött:24core+20optional, mind planned,6P0-gazda. A repó private. A széles nyers-evidence feltöltés korábbi automatikus visszautasítását szűkített forráskészlet oldotta; a feltöltött történetben nincs azt tartalmazó korábbi commit. Nyers adatok helyben maradtak, csak relatív út/méret/hash és a kilenc pontos source/public-provenance kivétel került publikálásra a privát repóban. A mesterséges asszisztensfixture külön tesztforrás, nem nyers sessionadat.
+
+Frissült a handoff, Windows/Linux referencia és baseline-delta: GitHub Rust-execution már van, de Windows11WinUI/Intel+AMD eszközmátrix és Linuxdesktop/IPC továbbra unrun. Projekt-skill formális validátor ismét `Skill is valid!`; csomagvalidator mind226 követelmény/44terv egyedi gazdáját és a44issue-t ellenőrzi. A záró dokumentációs commit nem változtat product-/test-/workflowforrást; ezért a már zöld natív mátrix eredménye a rögzített forrásazonossággal marad érvényes.
+
+Átadott eredmény: teljes jelenlegi termékforrás,44 végrehajtható munkacsomag-terv,226-os kiosztás, saját GitHub-issue-k, CI és onboarding. A tervezett szolgáltatások/vertikumok implementációja külön munka. Nem indult új fejlesztési agent vagy termékfunkció-végrehajtás; nem történt élő user-app újraindítás, publikált release vagy globális memória-/skillmódosítás.
+

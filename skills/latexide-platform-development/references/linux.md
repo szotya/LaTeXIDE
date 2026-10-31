@@ -2,6 +2,8 @@
 
 Linux is a later platform direction, not an implemented or validated target. The user requested this reference so a later developer can continue from Mac work without repeating discoveries.
 
+The private repository's Ubuntu CI now executes 69 shared Rust tests successfully. This narrower core/compiler-supervisor result is not Linux desktop, local IPC/runtime-directory, TeX installation or native UI qualification. See `docs/development/REPOSITORY.md` and the current ledger for exact CI source identity; do not infer the remaining port below is complete.
+
 Start with the current handoff and the accepted Rust/native separation. A Linux task must select a native frontend technology and PDF/text adapters appropriate to the requested Linux environments; GTK/libadwaita or Qt have not been selected by the user. Do not imply that SwiftUI or WinUI is a Linux frontend.
 
 ## Concrete existing portability gaps

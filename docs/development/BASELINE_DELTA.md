@@ -19,3 +19,9 @@ Recovery, bufferéletciklus, atomi többfájlos edit, VFS/watcher, teljes buildf
 A 44 csomagban szereplő 226 ID **tervezett követelménylezárás**. A baseline-ban már részlegesen vagy konkrétan megvalósult inkrementum nem lesz újra hiányzónak nevezve; a teljes követelmény acceptance-e azonban külön teljesítendő. A GitHub-alap/CI beállítása nem egyenlő QA-08 teljes helyi/célplatformi releasekapujával, a repó létrehozása nem GIT-01 alkalmazáson belüli Git-funkció.
 
 Induláskor olvasd újra a handoffot és a legutóbbi ledgert, mert más csomag azóta is elkészülhetett. Új eredményt saját dátummal, commit- és scopeszinttel adj hozzá; a régi auditot ne alakítsd át élő igazságforrássá.
+
+## Repository és teszthordozhatóság
+
+Létrejött és privátként ellenőrzött a `szotya/LaTeXIDE` repo, forrása feltöltve, 44 planned csomagissue-val. A közös Rust CI első körében Mac69/Ubuntu69/Windows Server57 PASS. Ez nem Windows 11 WinUI vagy Linux desktop. A régebbi runner Swift-kompatibilitásához a child-process teszt `weak var` deklarációt használ; a mesterséges asszisztens-alfolyamat forrása a `tests/fixtures/assistant/` könyvtárba került. Production kód nem módosult. A végső natív/IPC/MCP CI eredményt a ledger és az importellenőrzés rögzíti.
+
+A nyers történeti evidence helyi; a repositorykiadás eredeti targetjeit és hashét a [helyi evidence-index](LOCAL_EVIDENCE.md) őrzi. Az opt-in történeti WorkspaceRender továbbra helyi demo-buildre támaszkodik; tiszta-clone vizuális kvalifikáció P23 feladata. P00/QA-08 és P21/OS-01 teljes lezárását a repó/CI létrehozása önmagában nem jelenti.

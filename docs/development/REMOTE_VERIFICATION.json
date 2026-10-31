@@ -1,0 +1,67 @@
+{
+  "schema": 1,
+  "verified_utc": "2026-10-31T17:52:54.537327+00:00",
+  "repository": "szotya/LaTeXIDE",
+  "visibility": "private",
+  "source_commit": "0ed9d70ac2f341db44c6b5d23ea3bc4220c5149d",
+  "runs": [
+    {
+      "id": 41226223214,
+      "name": "Source and contract checks",
+      "conclusion": "success",
+      "url": "https://github.com/szotya/LaTeXIDE/actions/runs/41226223214",
+      "head_sha": "0ed9d70ac2f341db44c6b5d23ea3bc4220c5149d"
+    },
+    {
+      "id": 41226223228,
+      "name": "Rust and Mac checks",
+      "conclusion": "success",
+      "url": "https://github.com/szotya/LaTeXIDE/actions/runs/41226223228",
+      "head_sha": "0ed9d70ac2f341db44c6b5d23ea3bc4220c5149d"
+    }
+  ],
+  "job_counts": {
+    "Rust contracts (windows-2025)": {
+      "job_id": 124610863886,
+      "conclusion": "success",
+      "rust_passed": 57,
+      "rust_failed": 0
+    },
+    "Rust contracts (macos-15)": {
+      "job_id": 124610864008,
+      "conclusion": "success",
+      "rust_passed": 69,
+      "native_executed": 73,
+      "native_skipped": 4,
+      "native_failed": 0,
+      "python_integration_test_counts": [
+        10,
+        1
+      ],
+      "swift_versions": [
+        "Apple Swift version 6.1.2 (swiftlang-6.1.2.1.2 clang-1700.0.13.5)"
+      ]
+    },
+    "Rust contracts (ubuntu-24.04)": {
+      "job_id": 124610864113,
+      "conclusion": "success",
+      "rust_passed": 69,
+      "rust_failed": 0
+    }
+  },
+  "package_issues": {
+    "total": 44,
+    "core": 24,
+    "optional": 20,
+    "p0_owners": 6
+  },
+  "scope": "shared Rust; Mac control tests and IPC/MCP; Python and planning/content checks; not Windows WinUI, Linux desktop, online model, TeX installation, signed release, AX or performance qualification",
+  "production_trees": {
+    "crates": "23c602e60c730732c459f1917f96627295c4611c",
+    "apps/macos/Sources": "0422bcdc6f3a6ce83da9999b4124f96a052b611c",
+    "apps/windows": "2e977206800ee72b6c2dcab25b545efde4918ad4",
+    "include": "a8fe45bbb57c54b5adb25180ba7a370c8f809536",
+    "shared": "767755675f07b06e04ddae25ea7a49a419b4b13d"
+  },
+  "raw_ci_logs": "local-only /private/tmp; not uploaded"
+}

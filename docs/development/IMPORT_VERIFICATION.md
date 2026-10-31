@@ -19,4 +19,21 @@ Tényleges helyi ellenőrzések:
 
 A nyers parancskimenetek az eredeti munkamappa `evidence/repository-2026-10-31/` könyvtárában maradnak. Ez az összegzés ellenőrzött állításokat közöl; nem a nyers adatok feltöltése. A távoli push/Actions/issue-lefedettség eredményét az implementációs ledger lezárása és a GitHub hivatkozások rögzítik.
 
-Mac appot nem indítottunk újra; új GUI/TeX/online-modell/performance/AX eredményt nem állítunk. Windows WinUI és Linux desktop továbbra külön, nem teljesített minősítés.
+Mac appot nem indítottunk újra; új élő csomagolt-app/TeX/online-modell/performance/AX eredményt nem állítunk. A távoli natív vezérlőteszt külön bizonyíték lent. Windows WinUI és Linux desktop továbbra külön, nem teljesített minősítés.
+
+## Távoli lezárás
+
+A `0ed9d70ac2f341db44c6b5d23ea3bc4220c5149d` forrásverzión a [terv/Python/tartalomellenőrzés](https://github.com/szotya/LaTeXIDE/actions/runs/41226223214) és a teljes [Rust/Mac CI](https://github.com/szotya/LaTeXIDE/actions/runs/41226223228) **success**. [Gépi eredmény és forrásfák](REMOTE_VERIFICATION.json).
+
+| Végső távoli kör | Tényleges eredmény |
+| --- | --- |
+| Rust macOS arm64 | 69 PASS. |
+| Rust Ubuntu | 69 PASS. |
+| Rust Windows Server runner | 57 PASS; Unix-only esetek különbsége, nem WinUI/Windows 11 workflow. |
+| Mac natív vezérlők, Swift 6.1.2 | 73 futtatott / 69 PASS / 4 opt-in skip / 0 failure. |
+| Mac tényleges IPC/MCP | 10 és 1 PASS. |
+| Privát repó és issue-k | Private ismét igazolt; 44 csomagissue, 24 core / 20 optional; 6 csomag birtokolja a 7 P0 követelményt. |
+
+Két reprodukálhatósági hiba javult: régebbi Swifthez `weak var` tesztdeklaráció, valamint a kontrollált asszisztensfixture forrásának `tests/fixtures` alá helyezése. Production kód nem módosult. A négy opt-in körből a történeti WorkspaceRender továbbra helyi régi demo-buildet igényel; az átment CI nem állítja e kör futtatását. A helyi célzott asszisztenscsoport 17 futtatott / 16 PASS / 1 skip / 0 failure.
+
+Az átadás későbbi dokumentációs commitja nem változtatja a fenti production forrásfákat vagy a CI/testforrást. A dokumentációs head saját könnyű terv/Python/tartalom CI-t kap; nem szükséges emiatt ismételni a már zöld natív mátrixot.

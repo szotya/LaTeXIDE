@@ -2,6 +2,8 @@
 
 2026-10-30: no Windows machine or runner is available, as confirmed by the user. This is source and handoff work, **not** a Windows app release.
 
+2026-10-31 repository update: shared Rust tests now execute on GitHub's `windows-2025` runner (initial import: 57 PASS; Unix-only tests differ). This is Windows Server shared-code CI, not WinUI restore/MSBuild/link/launch, Windows 11 or Intel+AMD hardware proof. The native checks below remain required; current repository/CI scope is in [REPOSITORY.md](development/REPOSITORY.md).
+
 Implemented source: `apps/windows/LaTeXIDE.sln` / `.vcxproj`, C++/WinRT App/MainWindow, C ABI ownership bridge, plain-text RichEditBox adapter, shared undo/redo and IME command mapping, local MCP configuration, compiler status and a bounded one-page Windows.Data.Pdf view with page navigation and native zoom.
 
 Pinned direct tools: Rust 1.99.1 MSVC, Microsoft.WindowsAppSDK 2.6.4, Microsoft.Windows.CppWinRT 3.0.260818.1. `tools/windows-nuget-lock.json` and `packages.config` pin 16 packages from official native/universal nuspec dependency groups. `NuGet.Native.props/targets` import their native build assets in dependency order. Metadata inspection is not a successful NuGet restore or MSBuild run.

@@ -2,7 +2,9 @@
 
 Frissítve: 2026-10-31. Ez élő fejlesztői dokumentum, nem késztermék-bejelentés.
 
-**Fejlesztésszervezési kiegészítés 2026-10-31:** [44 párhuzamos terv](development/README.md), [kizárólagos fájlhatárok és P00 szerződéskapu](superpowers/specs/2026-10-31-parallel-development-design.md), [privát GitHub-alap](development/REPOSITORY.md). A repó `szotya/LaTeXIDE`, private, létrehozva; a tényleges push/CI lezárást a ledger rögzíti. A 226 követelmény tervezett munka, a definíciós inkrementum utáni [baseline-delta](development/BASELINE_DELTA.md) megőrzésével. Új termékszolgáltatás ebben a fázisban nem készült.
+**Fejlesztésszervezési kiegészítés 2026-10-31:** [44 párhuzamos terv](development/README.md), [kizárólagos fájlhatárok és P00 szerződéskapu](superpowers/specs/2026-10-31-parallel-development-design.md), [privát GitHub-alap](development/REPOSITORY.md). A repó [szotya/LaTeXIDE](https://github.com/szotya/LaTeXIDE), private, forrása pusholva; [44 csomagissue](development/github-issues.json) létrejött. A tényleges CI-lezárást a ledger rögzíti. A 226 követelmény tervezett munka, a definíciós inkrementum utáni [baseline-delta](development/BASELINE_DELTA.md) megőrzésével. Új termékszolgáltatás ebben a fázisban nem készült; két teszthordozhatósági javítás igen. A [nyers evidence helyi határa](development/LOCAL_EVIDENCE.md) és a [szűkített import ellenőrzése](development/IMPORT_VERIFICATION.md) explicit.
+
+**Távoli lezárás:** [végső CI](https://github.com/szotya/LaTeXIDE/actions/runs/41226223228) success: közös Rust Mac69/Ubuntu69/Windows Server57; natív Mac73 futtatott /69PASS /4skip /0hiba; IPC10/MCP1. [Forrásazonosság és pontos scope](development/REMOTE_VERIFICATION.json). Nem WinUI/Windows11 vagy Linuxdesktop, nem új élő csomagolt-app kvalifikáció. A záró dokumentációs commit ugyanazokat a product/test/workflow fákat őrzi.
 
 **Folytatva 2026-10-31**, a felhasználó kifejezett kérésére. A [szüneti jegyzet](PAUSED-HANDOFF.md) történeti checkpoint. Legújabb fejlesztés: [Cmd+kattintásos definícióra ugrás](definition-navigation-verification.md), [review és javítások](definition-navigation-review.md). Az [Enter/popup](completion-enter-verification.md), [projektkiegészítés](project-completion-verification.md), [billentyűzet/Codex](intelligence-verification.md) és [UI](ui-verification.md) dokumentumai a saját korábbi fázisuk bizonyítékai.
 
@@ -18,7 +20,7 @@ A felhasználó kifejezetten kérte minden érdemi Macen végzett munka Markdown
 - Külső, helyben futó agent MCP-n csatlakozik. Közvetlenül szerkeszthet és menthet, szerkesztésenkénti felhasználói jóváhagyás nélkül. Az IDE-ben a változások visszavonhatók.
 - Natív asszisztenspanel meglévő helyi agenthez; elsőként a felhasználó által választott Codex CLI. Gépelés közbeni LaTeX-parancsjelöltek, személyre szabható, következetes kutatói/fejlesztői munkaterület. Részletes minőségi szerződés: [termékirány](IDE_PRODUCT_DIRECTION.md).
 - RAM-hatékonyság és natív rendszerintegráció fontos. A nyelvválasztás nem mérési eredmény; első debug RSS-pillanatkép: 170 MiB kis projekttel és egyoldalas PDF-fel, nem release-mérés.
-- A felhasználó megerősítette: jelenleg nincs Windows-tesztgép vagy runner. A Windows-futtatás hiánya ismert külső feltétel; emiatt ne állítsunk kész kétplatformos terméket.
+- A felhasználónál nincs Windows 11 natív tesztgép. A repository létrehozásával GitHub `windows-2025` runneren a közös Rust-réteg már futott (57 PASS), de ez Windows Server CI, nem WinUI/Windows 11 vagy Intel+AMD eszközmátrix. Emiatt továbbra sem állítunk kész kétplatformos terméket.
 
 A részletes szerződések és MVP-határok: [elfogadott rendszerterv](superpowers/specs/2026-10-30-native-latex-ide-design.md). Az alap lépései: [megvalósítási terv](superpowers/plans/2026-10-30-native-ide-foundation.md). A legújabb kért fejlesztői felület: [UI-design](superpowers/specs/2026-10-30-developer-ui-design.md), [UI-terv](superpowers/plans/2026-10-30-developer-ui.md). Több előkészített paletta, rendszerkövető/fix megjelenés és a saját szövegtől elkülönülő LaTeX-színezés kötelező. A legutóbbi felhasználói pontosítás elsőbbséget élvez régebbi tervszöveggel szemben.
 
@@ -41,7 +43,8 @@ A részletes szerződések és MVP-határok: [elfogadott rendszerterv](superpowe
 | Natív Codex-asszisztens | Valódi app-server subprocess, stream/eszközállapot/Stop; privát IDE-session, read-only nyers fájlrendszer, kilenc IDE-eszközre szűkített engedély. Kontrollált subprocess 16 aktív teszt PASS; tényleges modell olvasott/szerkesztett, billentyűzettel visszavonva. CLI 0.166.0-alpha.5.1, kísérleti integráció. | `apps/macos/Sources/LaTeXIDEKit/Assistant`, `docs/intelligence-verification.md` |
 | Natív Windows GUI | C++/WinRT–WinUI forrásprojekt, új UI/színezés/paletták és buildscript. Strukturális és hordozható helper ellenőrzés PASS. MSBuild/link/futtatás nincs igazolva. | `apps/windows`, `docs/windows-ui-port.md`, `docs/windows-validation.md` |
 | MCP stdio bridge | Hivatalos rmcp 3.8.0; tényleges stdio roundtrip és futó GUI-session szerkesztése/mentése átment. | `crates/latexide-mcp`, `tests/mcp_contract.py` |
-| Linux | Nincs build-/futtatási eredmény vagy felület. | Skill Linux-reference, alábbi hordozhatósági lista |
+| GitHub közös Rust CI | Első import: macOS 69, Ubuntu 69, Windows Server runner 57 PASS; Windows eltérő szám a Unix-only tesztekből ered. Nem natív frontend/IPC/platformminősítés. | [Első CI](https://github.com/szotya/LaTeXIDE/actions/runs/41225178555), ledger repository-rész |
+| Linux | Natív felület/desktop és IPC-port nincs. Ubuntu runneren a közös Rust 69 teszt PASS; ez nem oldja meg az XDG/runtime-dir hiányt. | Skill Linux-reference, alábbi hordozhatósági lista |
 
 A „check”, „build”, „teszt”, „GUI-futtatás”, „vizuális ellenőrzés” külön bizonyítéktípus. Egyiket ne nevezzük át másikká. A táblázatot minden megvalósítási fázis végén frissítsük.
 

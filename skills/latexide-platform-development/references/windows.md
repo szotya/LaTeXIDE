@@ -1,6 +1,6 @@
 # Windows 11 x64 development reference
 
-Read the repository's `docs/DEVELOPER_HANDOFF.md` first for the latest actual state. The supported target is one x64 release for Intel/AMD Windows 11. Separate x86 and Windows ARM64 products were not requested. There is currently no available Windows runner, so source or Mac-side cross-checks must not be called Windows execution.
+Read the repository's `docs/DEVELOPER_HANDOFF.md` first for the latest actual state. The supported target is one x64 release for Intel/AMD Windows 11. Separate x86 and Windows ARM64 products were not requested. The private repository now runs shared Rust tests on GitHub's `windows-2025` runner (57 PASS in the initial import). This Windows Server execution is separate from WinUI/MSBuild/launch and Windows 11 Intel/AMD qualification, which remain unrun. Mac-side cross-checks are still not Windows execution.
 
 ## Shared core and native boundary
 

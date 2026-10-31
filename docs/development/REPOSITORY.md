@@ -56,6 +56,8 @@ Runnercímkék az aktuális [GitHub runner-dokumentációból](https://docs.gith
 
 `python3 scripts/check_repository_content.py --staged` a tényleges indexben ellenőrzi a tiltott helyi útvonalakat, ismert credentialmintákat, nagy fájlokat és executable fejléceket. Ez korlátos higiene-ellenőrzés, nem teljes titokdetektor vagy malware-/biztonsági minősítés.
 
+A létrehozott repository végső [ellenőrzött CI-eredménye](REMOTE_VERIFICATION.json) és [átadási összegzése](IMPORT_VERIFICATION.md) külön rögzíti a pontos commitot, tesztszámokat és unrun határokat. A tervekhez [44 saját GitHub-issue](github-issues.json) tartozik.
+
 ## Tulajdon és licenc
 
 A CODEOWNERS `@szotya` gazdát jelöl; nem hív meg közreműködőt. A repó privát, projektlicenc nincs kiválasztva. Harmadik felek Rust/Swift/NuGet/TeX Live komponenseinek saját licencei és terjesztési feltételei külön érvényesek; kiadási SBOM/notice/minősítés P18/P20 feladata. Új projektlicencet külön döntés nélkül ne adj hozzá.
