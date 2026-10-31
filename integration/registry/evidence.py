@@ -168,6 +168,23 @@ def revalidate_report(root, report, current_source, expected_steps, artifact_roo
             known[row["name"]] = row
         if report.get("description_identity", []) != descriptions:
             return result("invalid_report", "Top-level description identity differs")
+        for row in records:
+            try:
+                if any(digest(output(a["path"])) != a["sha256"] for a in row.get("artifacts", [])):
+                    raise ValueError("Late artifact change")
+            except (OSError, ValueError):
+                identities["artifacts"] = "stale_artifact"
+                return result("stale_artifact", row["name"])
+            if row.get("log"):
+                try:
+                    if digest(output(row["log"]["path"])) != row["log"]["sha256"]:
+                        raise ValueError("Late log change")
+                except (OSError, ValueError):
+                    identities["logs"] = "stale_log"
+                    return result("stale_log", row["name"])
+        if any(digest(root / f["path"]) != f["sha256"] for f in current_source["files"]):
+            identities["source"] = "stale_source"
+            return result("stale_source", "Input bytes changed during revalidation")
         identities["selection"] = "current"
         return result("current")
     except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:

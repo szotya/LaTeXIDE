@@ -65,6 +65,12 @@ class ReadinessContract(unittest.TestCase):
             self.assertTrue(data["external_package_blockers"][0]["manifest_present"])
             self.assertEqual(data["acceptance"], "partial")
 
+    def test_external_blocker_preserves_direct_and_transitive_consumers(self):
+        data = self.module().p00_readiness(ROOT, self.report(), {"status": "current"})
+        blocker = data["external_package_blockers"][0]
+        self.assertEqual({r["requirement_id"]: r["direct"] for r in blocker["blocks_requirements"]},
+                         {"QA-08": True, "QA-14": False, "OS-10": False})
+
     def test_structure_shared_and_stale_evidence_do_not_claim_native_execution(self):
         module = self.module()
         for profile in ["structure", "shared"]:
@@ -119,6 +125,13 @@ class ReadinessContract(unittest.TestCase):
                 else: criteria[0]["checks"] = []
                 path.write_text(json.dumps(data))
                 with self.assertRaises(ValueError): self.module().p00_readiness(root, self.report(), {"status": "current"})
+
+    def test_mac_criterion_cannot_be_relabelled_as_a_shared_check(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d); self.fixture(root); path = root / "integration/registry/p00-acceptance.v1.json"; data = json.loads(path.read_text())
+            native = next(c for c in data["requirements"]["QA-08"]["criteria"] if c["id"] == "mac-adapter-regression")
+            native.update(profiles=["shared"], checks=["coordinator-contracts"]); path.write_text(json.dumps(data))
+            with self.assertRaises(ValueError): self.module().p00_readiness(root, self.report(), {"status": "current"})
 
     def fixture_reset_owner(self, root):
         shutil.copyfile(ROOT / "integration/registry/owners.v1.json", root / "integration/registry/owners.v1.json")

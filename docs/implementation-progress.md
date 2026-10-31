@@ -373,3 +373,21 @@ A felhasználó a review átnézését, a szükséges javításokat és sikeres 
 `python3 integration/registry/verify.py --profile structure` PASS,40Python,73generált contractartifact/44csomag/308vektor,47tervartifact/226egyedi requirementgazda. Source019987bd19d4ddb87f6409a591d965a45ca4dc667bbcd45047eb290809e59889 előtte/utána azonos. `python3 -m unittest discover -s tests -p 'test_*.py'`:6PASS. Célzott JSON- és handoffellenőrzés, az egyetlen megmaradt ledgerblokk és main byte-egyezése PASS; `git diff --check` tiszta.
 
 Ez alacsony hatású szöveg-/státuszkorrekció, új unit teszt vagy runtime-módosítás nélkül. A gépi statusfájl verifierbemenet, ezért az új commit teljes required CI-jét megvárjuk. A tényleges tesztszámokat/friss SHA-t és a squash merge eredményét a PR és az issue aktualizálja. Új hordozható szerződés vagy platformeljárás nincs; a projekt-skill meglévő státusz-/bizonyítékhatára érvényben marad. A teljes P00/QA-08/14/OS-10 acceptance ettől továbbra részleges, MCP-03/P03 és natív célplatformok hiánya nem tűnik el.
+
+### Issue1 önálló readiness/frissesség szelet — 2026-10-31
+
+Kiinduló friss main37eeeea, korábbi PR47 teljesen merge-ölve, főági CI41245528715 success. A felhasználó a még önálló P00-feladatokat és a pontos csomag/natív várakozási határt kérte; külön `feature/p00-acceptance-readiness`, ugyanaz a tiszta managed worktree. Az aktuális nyitott PR-lista üres, a helyi queue csakP00.
+
+Task1: új evidence modul és read-only `--recheck-report`. A trusted checkválasztás, teljes sourcehalmaz/artifact/resource/log/tesztszámláló/leírás újraellenőrzött; nincs report-parancs-végrehajtás vagy inputfelülírás. Eredeti9teszt hiányzó API/CLI miatt RED17; booleanként hamisított exit/sequence külön RED2→GREEN. Task1 teljes50Python GREEN. A summary/Rust-parser megosztott helper, nem két eltérő szabály.
+
+Task2: a226történeti baseline és44csomag tervezett service/test/manifest forrása külön source-only megfigyelés. LANG-06partial megmarad. A gráf/tulajdon/sidecar egyezését ellenőrzi, a fájl/manifest nem provideracceptance.8hiányzó API RED után, majd üres/dupla/vakuus feltétel RED3→GREEN; teljes59Python GREEN. A Task1 staged EOF-figyelmeztetései javítva; a Task2 strict guard egy új EOF-sort megfogott, commit előtt korrigálva. Nem lett hibás guard vagy teszt PASS-ként elszámolva.
+
+Task3: a valódi reporthoz és a recheck stdoutjához kötött evidence_validation/capability_inventory/p00_readiness. Három endpointteszt hiányzó API-RED után GREEN; a leltár/számláló olvasása közbeni késői resourcecsere két külön hamis PASS-a RED→GREEN, végső artifact/log/source-ellenőrzéssel. A Mac adapterfeltétel sharedtesztre átnevezésének külön RED-je is javított. Normál structure körben a binary/native mező unrun, saját teljes integrated státusz nem állítható. A gépi sidecar és a relatív Windows/POSIX contributor guide külön kezeli a hard DAG-ot és a validation/program scope-okat.
+
+A teljes helyi integrated és a változatlan report read-only újraellenőrzése a következő kapu; tényleges eredmény külön bejegyzés. Nincs új Rust DTO/C ABI/MCP/kvóta/produktprovider vagy natív frontendmódosítás, nincs user-app restart. A teljesP00 még részleges, valódi MCP-03/P03 és megfelelő natív acceptance nélkül nincs teljes requirement-lezárás. Nem43tervezett csomag elkészülte az általános P00-kapu.
+
+### Önálló szelet első integrált bizonyítéka
+
+Teljes `verify.py --profile integrated --offline` helyben PASS, source78917d8c6cbe274ebcfdb05f6accc6a75c1a61e8229b0cd30c647a288f104abd előtte/utána azonos.65Python, Rust101, seam3, acquisition6, IPC10/MCP1, natív73futtatott/69PASS/4név szerinti opt-in skip/0hiba, schema1program/5család;16kötelező kör PASS. Minden source/selection/artifact/log/test/description identity current; p00_readiness.independent_status passed, acceptance partial, külső blocker MCP-03/P03. Ez a consumer-pontosítás előtti checkpoint, nem a záró forrás bizonyítéka.
+
+A közvetlen/transzitív consumerjelöléshez további regresszió hiányzó mező RED→GREEN: MCP-03 külön mutatja QA-08direct, QA-14transitive, OS-10transitive kapcsolatát. Teljes66Python GREEN. A végső forrás/terv/handoff a saját következő teljes integrated/recheck és CI köréhez kötött; a nyers log/report ignorált marad.

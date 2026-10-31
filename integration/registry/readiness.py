@@ -114,6 +114,8 @@ def p00_readiness(root, report, validation):
             checks = criterion["checks"]
             if not isinstance(checks, list) or any(not isinstance(c, str) or not c for c in checks) or len(set(checks)) != len(checks) or (not checks and criterion["id"] != "stored-evidence"):
                 raise ValueError("Invalid independent check list")
+            if criterion["id"] == "mac-adapter-regression" and (criterion.get("profiles") != ["integrated"] or set(checks) != {"runtime-build", "ipc-roundtrip", "mcp-roundtrip", "native-build", "native-controls"}):
+                raise ValueError("Mac adapter evidence cannot be replaced by a shared check")
     rows = unique(report["checks"], "name")
     current = report.get("status") == "passed" and validation.get("status") == "current"
     requirements = {}; external = {}
@@ -136,8 +138,12 @@ def p00_readiness(root, report, validation):
             item = {"requirement_id": parent, "package_id": package, "direct": direct, "acceptance": "unqualified"}
             dependencies.append(item)
             if package != "P00":
-                external[parent] = {**item, "manifest_present": observe(root, f"integration/requests/{package}.json")["state"] == "source_only",
-                                    "required_evidence": audit[parent]["acceptance"], "provider_paths": audit[parent]["paths"]}
+                if parent not in external:
+                    external[parent] = {"requirement_id": parent, "package_id": package, "acceptance": "unqualified",
+                                        "manifest_present": observe(root, f"integration/requests/{package}.json")["state"] == "source_only",
+                                        "required_evidence": audit[parent]["acceptance"], "provider_paths": audit[parent]["paths"],
+                                        "blocks_requirements": []}
+                external[parent]["blocks_requirements"].append({"requirement_id": key, "direct": direct})
             for next_parent in owners[parent]["prerequisites"]:
                 collect(next_parent, False)
 

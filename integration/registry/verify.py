@@ -26,6 +26,9 @@ ROOT = Path(__file__).resolve().parents[2]
 _support = importlib.util.spec_from_file_location("latexide_evidence", Path(__file__).with_name("evidence.py"))
 evidence = importlib.util.module_from_spec(_support)
 _support.loader.exec_module(evidence)
+_readiness = importlib.util.spec_from_file_location("latexide_readiness", Path(__file__).with_name("readiness.py"))
+readiness = importlib.util.module_from_spec(_readiness)
+_readiness.loader.exec_module(readiness)
 
 
 def digest(path):
@@ -352,7 +355,9 @@ def recheck_report(path):
         current = source_identity(ROOT, lambda: discover_sources(ROOT))
         # A stale source set takes precedence over interpreting old metadata.
         if report.get("source_sha256") != current["sha256"]:
-            return evidence.revalidate_report(ROOT, report, current, [])
+            validation = evidence.revalidate_report(ROOT, report, current, [])
+            return {**validation, "capability_inventory": readiness.capability_inventory(ROOT),
+                    "p00_readiness": readiness.p00_readiness(ROOT, report, validation)}
         selection = report["selection"]
         if report["profile"] not in {"structure", "contracts", "shared", "integrated"} or type(selection["native_schema"]) is not bool:
             raise ValueError("Unknown check selection")
@@ -363,9 +368,56 @@ def recheck_report(path):
             raise ValueError("Invalid run directory")
         args = argparse.Namespace(profile=report["profile"], native_schema=selection["native_schema"], cargo_executable=None, offline=False, run_dir=ROOT / relative)
         steps = build_steps(ROOT, args, selection["platform"], selection["machine"])
-        return evidence.revalidate_report(ROOT, report, current, steps, artifact_roots=[ROOT / "target", ROOT / ".local/p00-native-build"])
+        updated = finalize_report(ROOT, report, steps, artifact_roots=[ROOT / "target", ROOT / ".local/p00-native-build"])
+        return {**updated["evidence_validation"], "capability_inventory": updated.get("capability_inventory", {}),
+                "p00_readiness": updated.get("p00_readiness", {})}
     except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
         return {"schema": 1, "status": "invalid_report", "reason": str(error), "scope": "read-only freshness; rerun verification"}
+
+
+def finalize_report(root, report, steps, artifact_roots=()):
+    """Derive progress from freshly checked bytes, then guard late input changes."""
+    try:
+        current = source_identity(root, lambda: discover_sources(root))
+        validation = evidence.revalidate_report(root, report, current, steps, artifact_roots)
+        report["evidence_validation"] = validation
+        report["capability_inventory"] = readiness.capability_inventory(root)
+        report["p00_readiness"] = readiness.p00_readiness(root, report, validation)
+        if report["status"] == "passed" and validation["status"] != "current":
+            report["status"] = "failed"
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
+        report["status"] = "failed"; report["readiness_error"] = str(error)
+        report["evidence_validation"] = {"schema": 1, "status": "invalid_report", "reason": str(error)}
+        report["capability_inventory"] = {}; report["p00_readiness"] = {}
+    try: after = source_identity(root, lambda: discover_sources(root))["sha256"]
+    except (OSError, ValueError): after = None
+    if report.get("source_sha256") is not None and after != report["source_sha256"]:
+        report["status"] = "source_changed"; report["source_sha256_after"] = after
+        report["evidence_validation"]["status"] = "stale_source"
+        report["evidence_validation"]["reason"] = "Source changed during report finalization"
+        report["capability_inventory"]["freshness"] = "stale_source"
+        progress = report.get("p00_readiness", {})
+        progress["evidence_status"] = "stale_source"; progress["independent_status"] = "partial"
+        for row in progress.get("requirements", {}).values():
+            for criterion in row["criteria"]:
+                if criterion["status"] == "passed": criterion["status"] = "stale_source"
+    elif report["status"] == "passed":
+        # Inventory construction is read-only but may overlap another build.
+        validation = evidence.revalidate_report(root, report, source_identity(root, lambda: discover_sources(root)), steps, artifact_roots)
+        report["evidence_validation"] = validation
+        if validation["status"] != "current":
+            report["status"] = "failed"
+            progress = report.get("p00_readiness", {})
+            progress["evidence_status"] = validation["status"]; progress["independent_status"] = "partial"
+            for row in progress.get("requirements", {}).values():
+                for criterion in row["criteria"]:
+                    if criterion["status"] == "passed": criterion["status"] = validation["status"]
+    if report["status"] != "passed":
+        for requirement in report.get("requirements", {}).values():
+            if requirement["current_verification"]["checks"]:
+                requirement["current_verification"]["status"] = "stale_source" if report["status"] == "source_changed" else "failed"
+    for record in report["checks"]: record["report_status"] = report["status"]
+    return report
 
 
 def main():
@@ -403,13 +455,7 @@ def main():
     except (OSError, ValueError, KeyError, TypeError) as error:
         report["status"] = "failed"; report["requirements"] = {}; report["inventory_error"] = str(error)
     report["description_identity"] = [r["description_identity"] for r in report["checks"] if r.get("description_identity")]
-    try: after = source_identity(ROOT, lambda: discover_sources(ROOT))["sha256"]
-    except (OSError, ValueError): after = None
-    if report["source_sha256"] is not None and after != report["source_sha256"]:
-        report["status"] = "source_changed"; report["source_sha256_after"] = after
-        for requirement in report["requirements"].values():
-            if requirement["current_verification"]["checks"]: requirement["current_verification"]["status"] = "stale_source"
-    for record in report["checks"]: record["report_status"] = report["status"]
+    report = finalize_report(ROOT, report, steps, artifact_roots=[ROOT / "target", ROOT / ".local/p00-native-build"])
     write_report(args.output, report)
     print(json.dumps({"profile": args.profile, "status": report["status"], "source_sha256": report["source_sha256"],
                       "checks": [{"name": r["name"], "status": r["status"], "kind": r["kind"], "tests": r.get("test_summary")} for r in report["checks"]]}, ensure_ascii=False))

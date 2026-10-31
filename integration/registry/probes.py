@@ -13,7 +13,8 @@ import sys
 import unittest
 
 ROOT = Path(__file__).resolve().parents[2]
-DOCUMENTS = ["docs/development/contracts/v1.md", "docs/development/contracts/p00-integrations-plan.md",
+DOCUMENTS = ["docs/development/contracts/p00-closure.md", "docs/development/contracts/p00-readiness-spec.md",
+             "docs/development/contracts/p00-readiness-plan.md", "docs/development/contracts/v1.md", "docs/development/contracts/p00-integrations-plan.md",
              "skills/latexide-platform-development/SKILL.md",
              "skills/latexide-platform-development/references/parallel-development.md"]
 

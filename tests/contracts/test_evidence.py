@@ -4,6 +4,7 @@ import importlib.util
 import io
 import json
 from pathlib import Path
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -26,6 +27,9 @@ class EvidenceContract(unittest.TestCase):
     def fixture(self, root):
         for name in ["Cargo.toml", "Cargo.lock", "rust-toolchain.toml", "crates/source.rs", "docs/development/contracts/guide.md"]:
             path = root / name; path.parent.mkdir(parents=True, exist_ok=True); path.write_text("fixture", encoding="utf-8")
+        for name in ["docs/ide-audit-2026-10-31/backlog.json", "docs/development/package-specs.json",
+                     "integration/registry/owners.v1.json", "integration/registry/ports.v1.json", "integration/registry/p00-acceptance.v1.json"]:
+            path = root / name; path.parent.mkdir(parents=True, exist_ok=True); shutil.copyfile(ROOT / name, path)
         def command(code): return [sys.executable, "-c", code]
         program = (
             "import importlib.util,unittest;from pathlib import Path;"
@@ -105,6 +109,15 @@ class EvidenceContract(unittest.TestCase):
             for key, value in [("exit_code", False), ("sequence", True)]:
                 data = copy.deepcopy(report); data["checks"][0][key] = value
                 with self.subTest(key=key): self.assertNotEqual(self.check(root, data, steps)["status"], "current")
+
+    def test_resource_changed_during_summary_inspection_is_not_current(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d); steps, report = self.fixture(root); module = self.evidence(); original = module.read_json
+            def late_change(path, *args):
+                value = original(path, *args); (root / "palette").write_bytes(b"late replacement"); return value
+            with patch.object(module, "read_json", side_effect=late_change):
+                result = module.revalidate_report(root, report, self.source(root), steps)
+            self.assertEqual(result["status"], "stale_artifact")
 
     def test_failed_report_and_false_description_cannot_pass(self):
         with tempfile.TemporaryDirectory() as d:
