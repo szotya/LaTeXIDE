@@ -74,7 +74,7 @@ A csomagtervek megadják saját portjaikat és DTO-mezőiket; P00 ezekből csoma
 
 1. `cargo +1.99.1 test -p latexide-contracts --test compatibility --locked` zöld; régi és új v1 JSON roundtrip, ismeretlen major explicit hiba.
 2. Minden induló csomag első portjához legalább happy-path, stale, quota, cancellation/timeout és malformed fixture; nem alkalmazható állapothoz dokumentált explicit hiba.
-3. P00 modulregisztrációt ad a saját fájlokhoz, így a munkás nem módosít `lib.rs`/`Cargo.toml` közös fájlt. A nem Rust adapter megkapja az azonos DTO fixture-t és natív decode-tesztet.
+3. P00 contracts-függőséget és működő path-importos tesztseam-et ad a saját modulfájlokhoz, így a munkás izolált teszteléshez nem módosít közös `lib.rs`/`Cargo.toml` fájlt. A production-modulregisztrációt P00 a valódi implementáció bekötésekor végzi, nem hiányzó fájlra mutató üres feature-ökkel. A nem Rust adapter azonos DTO fixture-t és natív decode-tesztet kap. A [v1 indulási leírás](../../development/contracts/v1.md) és [P00 eredmény](../../development/results/P00.md) rögzíti a döntést és költségét.
 4. A saját útvonalak és manifest a gépi jegyzékben; `python3 scripts/validate_development_packages.py` zöld.
 5. A határ a `docs/development/contracts/v1.md` fájlba kerül; nincs produkciós service vagy új MCP-tool pusztán a DTO-k miatt.
 

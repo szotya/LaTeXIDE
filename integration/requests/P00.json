@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "package_id": "P00",
+  "contract_version": 1,
+  "requirement_ids": ["QA-08", "QA-14", "OS-10"],
+  "source_paths": [
+    "crates/latexide-contracts/src/lib.rs",
+    "integration/registry/generate_contracts.py",
+    "integration/registry/verify.py",
+    "tests/contracts/main.swift",
+    "docs/development/contracts/v1.md"
+  ],
+  "hook_targets": ["Cargo.toml", "Cargo.lock", "crates/latexide-core/src/lib.rs", "crates/latexide-protocol/src/lib.rs", "crates/latexide-build/src/lib.rs", "crates/latexide-ffi/src/lib.rs"],
+  "test_commands": [
+    "cargo +1.99.1 test --workspace --locked",
+    "python3 integration/registry/verify.py --profile shared --native-schema"
+  ],
+  "compatibility": "Additive contract-v1 start gate. Legacy IPC v1, C ABI, agent direct edit/save/undo unchanged. Listed requirement IDs are partial work, not completed acceptance."
+}

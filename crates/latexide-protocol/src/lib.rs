@@ -1,5 +1,7 @@
 //! Versioned commands shared by the native frontends and local agent bridge.
 
+pub use latexide_contracts as contracts;
+
 pub mod ipc;
 use latexide_core::{CoreError, TextEdit};
 use serde::{Deserialize, Serialize};

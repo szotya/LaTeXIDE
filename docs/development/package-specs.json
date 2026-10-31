@@ -13,7 +13,7 @@
     "architecture": "Új, függőségi kört nem alkotó latexide-contracts crate; csak P00 módosít közös regisztrációt, lockfile-t, protokoll-dispatchot és handoffot. Minden más csomag saját mappából ad adaptert és integration-manifestet.",
     "entry_path": "crates/latexide-contracts/src/lib.rs",
     "test_path": "crates/latexide-contracts/tests/compatibility.rs",
-    "interface": "pub fn validate_manifest(manifest: IntegrationManifest, contract: ContractVersion, ownership: &OwnershipRegistry) -> Result<IntegrationOrder, ContractError>;\n// IntegrationManifest { schema:u32, package_id:String, contract_version:u32, requirement_ids:Vec<String>, source_paths:Vec<String>, hook_targets:Vec<String>, test_commands:Vec<String>, compatibility:String }\n// ContractVersion { major:u32, minor:u32 }; OwnershipRegistry { paths:Vec<OwnedPath>, requirements:Vec<OwnedRequirement> }; OwnedPath { package_id:String, path:String }; OwnedRequirement { package_id:String, requirement_id:String }; IntegrationOrder { requirement_ids:Vec<String> }; ContractError::{UnknownRequirement,ForeignPath,IncompatibleVersion,CyclicRequirement}",
+    "interface": "pub fn validate_manifest(manifest: IntegrationManifest, contract: ContractVersion, ownership: &OwnershipRegistry) -> Result<IntegrationOrder, ContractError>;\n// IntegrationManifest { schema:u32, package_id:String, contract_version:u32, requirement_ids:Vec<String>, source_paths:Vec<String>, hook_targets:Vec<String>, test_commands:Vec<String>, compatibility:String }\n// ContractVersion { major:u32, minor:u32 }; OwnershipRegistry { paths:Vec<OwnedPath>, requirements:Vec<OwnedRequirement> }; OwnedPath { package_id:String, path:String }; OwnedRequirement { package_id:String, requirement_id:String, prerequisites:Vec<String> }; IntegrationOrder { requirement_ids:Vec<String> }; ContractError::{UnknownRequirement,ForeignPath,IncompatibleVersion,CyclicRequirement}",
     "first_assertion": "Idegen csomag fájlútvonalát tartalmazó manifest ForeignPath hibával elutasított, a v1 fixture oda-vissza veszteségmentes.",
     "read_paths": [
       "Cargo.toml",
@@ -54,7 +54,13 @@
       "scripts/{build_macos.sh,build_windows.ps1}",
       ".github/workflows/",
       "docs/{DEVELOPER_HANDOFF,implementation-progress}.md",
-      "skills/latexide-platform-development/"
+      "skills/latexide-platform-development/",
+      "docs/development/package-specs.json",
+      "docs/development/packages.json",
+      "docs/development/README.md",
+      "docs/development/requirement-map.csv",
+      "docs/superpowers/specs/2026-10-31-parallel-development-design.md",
+      "docs/superpowers/plans/2026-10-31-parallel/"
     ]
   },
   {

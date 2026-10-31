@@ -1,0 +1,351 @@
+{
+  "schema": 1,
+  "package_id": "P02",
+  "scope": "serialization and common boundary vectors; no service invoked; response examples are not behavior oracles",
+  "cases": [
+    {
+      "name": "roundtrip",
+      "context": {
+        "active_snapshot": "snapshot-7",
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P02",
+        "request_id": "p02-fixture",
+        "snapshot_id": "snapshot-7",
+        "payload": {
+          "snapshot": {
+            "id": "snapshot-7",
+            "epoch": 7,
+            "files": [
+              {
+                "path": "main.tex",
+                "revision": 9007199254740993,
+                "content_sha256": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+                "utf8": [
+                  65,
+                  240,
+                  159,
+                  152,
+                  128,
+                  10,
+                  195,
+                  169
+                ],
+                "dirty": true
+              }
+            ]
+          },
+          "edits": [
+            {
+              "document_id": "main.tex",
+              "expected_revision": 9007199254740993,
+              "start_utf16": 0,
+              "length_utf16": 1,
+              "replacement": "ő"
+            }
+          ]
+        }
+      },
+      "expect_boundary": "ok",
+      "response_example": {
+        "transaction_id": "fixture",
+        "edits": [
+          {
+            "document_id": "main.tex",
+            "expected_revision": 9007199254740993,
+            "start_utf16": 0,
+            "length_utf16": 1,
+            "replacement": "ő"
+          }
+        ],
+        "base_snapshot": "snapshot-7"
+      },
+      "service_error_example": "stale_revision"
+    },
+    {
+      "name": "stale",
+      "context": {
+        "active_snapshot": "snapshot-new",
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P02",
+        "request_id": "p02-fixture",
+        "snapshot_id": "snapshot-7",
+        "payload": {
+          "snapshot": {
+            "id": "snapshot-7",
+            "epoch": 7,
+            "files": [
+              {
+                "path": "main.tex",
+                "revision": 9007199254740993,
+                "content_sha256": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+                "utf8": [
+                  65,
+                  240,
+                  159,
+                  152,
+                  128,
+                  10,
+                  195,
+                  169
+                ],
+                "dirty": true
+              }
+            ]
+          },
+          "edits": [
+            {
+              "document_id": "main.tex",
+              "expected_revision": 9007199254740993,
+              "start_utf16": 0,
+              "length_utf16": 1,
+              "replacement": "ő"
+            }
+          ]
+        }
+      },
+      "expect_boundary": "stale_snapshot"
+    },
+    {
+      "name": "quota",
+      "context": {
+        "active_snapshot": "snapshot-7",
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P02",
+        "request_id": "p02-fixture",
+        "snapshot_id": "snapshot-7",
+        "payload": {
+          "snapshot": {
+            "id": "snapshot-7",
+            "epoch": 7,
+            "files": [
+              {
+                "path": "main.tex",
+                "revision": 9007199254740993,
+                "content_sha256": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+                "utf8": [
+                  65,
+                  240,
+                  159,
+                  152,
+                  128,
+                  10,
+                  195,
+                  169
+                ],
+                "dirty": true
+              }
+            ]
+          },
+          "edits": [
+            {
+              "document_id": "main.tex",
+              "expected_revision": 9007199254740993,
+              "start_utf16": 0,
+              "length_utf16": 1,
+              "replacement": "ő"
+            }
+          ]
+        }
+      },
+      "expect_boundary": "payload_too_large"
+    },
+    {
+      "name": "cancel",
+      "context": {
+        "active_snapshot": "snapshot-7",
+        "cancelled": true,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P02",
+        "request_id": "p02-fixture",
+        "snapshot_id": "snapshot-7",
+        "payload": {
+          "snapshot": {
+            "id": "snapshot-7",
+            "epoch": 7,
+            "files": [
+              {
+                "path": "main.tex",
+                "revision": 9007199254740993,
+                "content_sha256": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+                "utf8": [
+                  65,
+                  240,
+                  159,
+                  152,
+                  128,
+                  10,
+                  195,
+                  169
+                ],
+                "dirty": true
+              }
+            ]
+          },
+          "edits": [
+            {
+              "document_id": "main.tex",
+              "expected_revision": 9007199254740993,
+              "start_utf16": 0,
+              "length_utf16": 1,
+              "replacement": "ő"
+            }
+          ]
+        }
+      },
+      "expect_boundary": "cancelled"
+    },
+    {
+      "name": "deadline",
+      "context": {
+        "active_snapshot": "snapshot-7",
+        "cancelled": false,
+        "elapsed_ms": 10,
+        "deadline_ms": 10,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P02",
+        "request_id": "p02-fixture",
+        "snapshot_id": "snapshot-7",
+        "payload": {
+          "snapshot": {
+            "id": "snapshot-7",
+            "epoch": 7,
+            "files": [
+              {
+                "path": "main.tex",
+                "revision": 9007199254740993,
+                "content_sha256": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+                "utf8": [
+                  65,
+                  240,
+                  159,
+                  152,
+                  128,
+                  10,
+                  195,
+                  169
+                ],
+                "dirty": true
+              }
+            ]
+          },
+          "edits": [
+            {
+              "document_id": "main.tex",
+              "expected_revision": 9007199254740993,
+              "start_utf16": 0,
+              "length_utf16": 1,
+              "replacement": "ő"
+            }
+          ]
+        }
+      },
+      "expect_boundary": "deadline"
+    },
+    {
+      "name": "malformed",
+      "context": {
+        "active_snapshot": "snapshot-7",
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "raw": "{",
+      "expect_boundary": "malformed_json"
+    },
+    {
+      "name": "future_version",
+      "context": {
+        "active_snapshot": "snapshot-7",
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 2,
+          "minor": 0
+        },
+        "package_id": "P02",
+        "request_id": "p02-fixture",
+        "snapshot_id": "snapshot-7",
+        "payload": {
+          "snapshot": {
+            "id": "snapshot-7",
+            "epoch": 7,
+            "files": [
+              {
+                "path": "main.tex",
+                "revision": 9007199254740993,
+                "content_sha256": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+                "utf8": [
+                  65,
+                  240,
+                  159,
+                  152,
+                  128,
+                  10,
+                  195,
+                  169
+                ],
+                "dirty": true
+              }
+            ]
+          },
+          "edits": [
+            {
+              "document_id": "main.tex",
+              "expected_revision": 9007199254740993,
+              "start_utf16": 0,
+              "length_utf16": 1,
+              "replacement": "ő"
+            }
+          ]
+        }
+      },
+      "expect_boundary": "incompatible_version"
+    }
+  ]
+}

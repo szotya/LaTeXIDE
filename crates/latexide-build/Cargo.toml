@@ -5,6 +5,7 @@ edition.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+latexide-contracts.workspace = true
 latexide-core = { path = "../latexide-core" }
 serde.workspace = true
 

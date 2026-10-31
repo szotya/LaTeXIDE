@@ -1,0 +1,234 @@
+{
+  "schema": 1,
+  "package_id": "P18",
+  "scope": "serialization and common boundary vectors; no service invoked; response examples are not behavior oracles",
+  "cases": [
+    {
+      "name": "roundtrip",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P18",
+        "request_id": "p18-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "policy": {
+            "project_root": ".",
+            "writable_roots": [
+              "."
+            ],
+            "network": false,
+            "trusted": true
+          },
+          "request": {
+            "path": "main.tex",
+            "write": false,
+            "network": false
+          }
+        }
+      },
+      "expect_boundary": "ok",
+      "response_example": {
+        "canonical_path": "main.tex"
+      },
+      "service_error_example": "outside_root"
+    },
+    {
+      "name": "stale",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P18",
+        "request_id": "p18-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "policy": {
+            "project_root": ".",
+            "writable_roots": [
+              "."
+            ],
+            "network": false,
+            "trusted": true
+          },
+          "request": {
+            "path": "main.tex",
+            "write": false,
+            "network": false
+          }
+        }
+      },
+      "expect_boundary": "not_applicable",
+      "reason": "pure port has no snapshot binding; owner tests service-specific state"
+    },
+    {
+      "name": "quota",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P18",
+        "request_id": "p18-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "policy": {
+            "project_root": ".",
+            "writable_roots": [
+              "."
+            ],
+            "network": false,
+            "trusted": true
+          },
+          "request": {
+            "path": "main.tex",
+            "write": false,
+            "network": false
+          }
+        }
+      },
+      "expect_boundary": "payload_too_large"
+    },
+    {
+      "name": "cancel",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": true,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P18",
+        "request_id": "p18-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "policy": {
+            "project_root": ".",
+            "writable_roots": [
+              "."
+            ],
+            "network": false,
+            "trusted": true
+          },
+          "request": {
+            "path": "main.tex",
+            "write": false,
+            "network": false
+          }
+        }
+      },
+      "expect_boundary": "cancelled"
+    },
+    {
+      "name": "deadline",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 10,
+        "deadline_ms": 10,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P18",
+        "request_id": "p18-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "policy": {
+            "project_root": ".",
+            "writable_roots": [
+              "."
+            ],
+            "network": false,
+            "trusted": true
+          },
+          "request": {
+            "path": "main.tex",
+            "write": false,
+            "network": false
+          }
+        }
+      },
+      "expect_boundary": "deadline"
+    },
+    {
+      "name": "malformed",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "raw": "{",
+      "expect_boundary": "malformed_json"
+    },
+    {
+      "name": "future_version",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 2,
+          "minor": 0
+        },
+        "package_id": "P18",
+        "request_id": "p18-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "policy": {
+            "project_root": ".",
+            "writable_roots": [
+              "."
+            ],
+            "network": false,
+            "trusted": true
+          },
+          "request": {
+            "path": "main.tex",
+            "write": false,
+            "network": false
+          }
+        }
+      },
+      "expect_boundary": "incompatible_version"
+    }
+  ]
+}

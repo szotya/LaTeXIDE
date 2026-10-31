@@ -1,0 +1,243 @@
+{
+  "schema": 1,
+  "package_id": "P15",
+  "scope": "serialization and common boundary vectors; no service invoked; response examples are not behavior oracles",
+  "cases": [
+    {
+      "name": "roundtrip",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P15",
+        "request_id": "p15-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "host": {
+            "api_major": 1,
+            "commands": [
+              "fixture"
+            ]
+          },
+          "plugin": {
+            "id": "fixture-id",
+            "api_major": 1,
+            "requested_capabilities": [
+              "fixture"
+            ],
+            "executable": "fixture-tool"
+          }
+        }
+      },
+      "expect_boundary": "ok",
+      "response_example": {
+        "id": "fixture-id",
+        "granted_capabilities": [
+          "fixture"
+        ]
+      },
+      "service_error_example": "incompatible_version"
+    },
+    {
+      "name": "stale",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P15",
+        "request_id": "p15-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "host": {
+            "api_major": 1,
+            "commands": [
+              "fixture"
+            ]
+          },
+          "plugin": {
+            "id": "fixture-id",
+            "api_major": 1,
+            "requested_capabilities": [
+              "fixture"
+            ],
+            "executable": "fixture-tool"
+          }
+        }
+      },
+      "expect_boundary": "not_applicable",
+      "reason": "pure port has no snapshot binding; owner tests service-specific state"
+    },
+    {
+      "name": "quota",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P15",
+        "request_id": "p15-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "host": {
+            "api_major": 1,
+            "commands": [
+              "fixture"
+            ]
+          },
+          "plugin": {
+            "id": "fixture-id",
+            "api_major": 1,
+            "requested_capabilities": [
+              "fixture"
+            ],
+            "executable": "fixture-tool"
+          }
+        }
+      },
+      "expect_boundary": "payload_too_large"
+    },
+    {
+      "name": "cancel",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": true,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P15",
+        "request_id": "p15-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "host": {
+            "api_major": 1,
+            "commands": [
+              "fixture"
+            ]
+          },
+          "plugin": {
+            "id": "fixture-id",
+            "api_major": 1,
+            "requested_capabilities": [
+              "fixture"
+            ],
+            "executable": "fixture-tool"
+          }
+        }
+      },
+      "expect_boundary": "cancelled"
+    },
+    {
+      "name": "deadline",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 10,
+        "deadline_ms": 10,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P15",
+        "request_id": "p15-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "host": {
+            "api_major": 1,
+            "commands": [
+              "fixture"
+            ]
+          },
+          "plugin": {
+            "id": "fixture-id",
+            "api_major": 1,
+            "requested_capabilities": [
+              "fixture"
+            ],
+            "executable": "fixture-tool"
+          }
+        }
+      },
+      "expect_boundary": "deadline"
+    },
+    {
+      "name": "malformed",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "raw": "{",
+      "expect_boundary": "malformed_json"
+    },
+    {
+      "name": "future_version",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 2,
+          "minor": 0
+        },
+        "package_id": "P15",
+        "request_id": "p15-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "host": {
+            "api_major": 1,
+            "commands": [
+              "fixture"
+            ]
+          },
+          "plugin": {
+            "id": "fixture-id",
+            "api_major": 1,
+            "requested_capabilities": [
+              "fixture"
+            ],
+            "executable": "fixture-tool"
+          }
+        }
+      },
+      "expect_boundary": "incompatible_version"
+    }
+  ]
+}

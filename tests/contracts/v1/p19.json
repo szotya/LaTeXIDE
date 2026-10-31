@@ -1,0 +1,170 @@
+{
+  "schema": 1,
+  "package_id": "P19",
+  "scope": "serialization and common boundary vectors; no service invoked; response examples are not behavior oracles",
+  "cases": [
+    {
+      "name": "roundtrip",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P19",
+        "request_id": "p19-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "point": "before_journal_sync",
+          "acknowledged_revision": 1
+        }
+      },
+      "expect_boundary": "ok",
+      "response_example": {
+        "minimum_recovered_revision": 1,
+        "disk_may_change": true,
+        "partial_edit_allowed": false
+      },
+      "service_error_example": "invalid_payload"
+    },
+    {
+      "name": "stale",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P19",
+        "request_id": "p19-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "point": "before_journal_sync",
+          "acknowledged_revision": 1
+        }
+      },
+      "expect_boundary": "not_applicable",
+      "reason": "pure port has no snapshot binding; owner tests service-specific state"
+    },
+    {
+      "name": "quota",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P19",
+        "request_id": "p19-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "point": "before_journal_sync",
+          "acknowledged_revision": 1
+        }
+      },
+      "expect_boundary": "payload_too_large"
+    },
+    {
+      "name": "cancel",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": true,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P19",
+        "request_id": "p19-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "point": "before_journal_sync",
+          "acknowledged_revision": 1
+        }
+      },
+      "expect_boundary": "cancelled"
+    },
+    {
+      "name": "deadline",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 10,
+        "deadline_ms": 10,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P19",
+        "request_id": "p19-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "point": "before_journal_sync",
+          "acknowledged_revision": 1
+        }
+      },
+      "expect_boundary": "deadline"
+    },
+    {
+      "name": "malformed",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "raw": "{",
+      "expect_boundary": "malformed_json"
+    },
+    {
+      "name": "future_version",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 2,
+          "minor": 0
+        },
+        "package_id": "P19",
+        "request_id": "p19-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "point": "before_journal_sync",
+          "acknowledged_revision": 1
+        }
+      },
+      "expect_boundary": "incompatible_version"
+    }
+  ]
+}

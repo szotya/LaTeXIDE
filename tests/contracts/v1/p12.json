@@ -1,0 +1,179 @@
+{
+  "schema": 1,
+  "package_id": "P12",
+  "scope": "serialization and common boundary vectors; no service invoked; response examples are not behavior oracles",
+  "cases": [
+    {
+      "name": "roundtrip",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P12",
+        "request_id": "p12-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "source": "@article{k1,title={Fixture}}"
+        }
+      },
+      "expect_boundary": "ok",
+      "response_example": {
+        "entries": [
+          {
+            "key": "k1",
+            "entry_type": "fixture",
+            "fields": [
+              {
+                "name": "fixture",
+                "raw_value": "fixture"
+              }
+            ],
+            "range": {
+              "start": 0,
+              "length": 1
+            }
+          }
+        ],
+        "diagnostics": [],
+        "duplicate_keys": []
+      },
+      "service_error_example": "invalid_payload"
+    },
+    {
+      "name": "stale",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P12",
+        "request_id": "p12-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "source": "@article{k1,title={Fixture}}"
+        }
+      },
+      "expect_boundary": "not_applicable",
+      "reason": "pure port has no snapshot binding; owner tests service-specific state"
+    },
+    {
+      "name": "quota",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P12",
+        "request_id": "p12-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "source": "@article{k1,title={Fixture}}"
+        }
+      },
+      "expect_boundary": "payload_too_large"
+    },
+    {
+      "name": "cancel",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": true,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P12",
+        "request_id": "p12-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "source": "@article{k1,title={Fixture}}"
+        }
+      },
+      "expect_boundary": "cancelled"
+    },
+    {
+      "name": "deadline",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 10,
+        "deadline_ms": 10,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P12",
+        "request_id": "p12-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "source": "@article{k1,title={Fixture}}"
+        }
+      },
+      "expect_boundary": "deadline"
+    },
+    {
+      "name": "malformed",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "raw": "{",
+      "expect_boundary": "malformed_json"
+    },
+    {
+      "name": "future_version",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 2,
+          "minor": 0
+        },
+        "package_id": "P12",
+        "request_id": "p12-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "source": "@article{k1,title={Fixture}}"
+        }
+      },
+      "expect_boundary": "incompatible_version"
+    }
+  ]
+}

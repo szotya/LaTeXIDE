@@ -1,0 +1,262 @@
+{
+  "schema": 1,
+  "package_id": "P10",
+  "scope": "serialization and common boundary vectors; no service invoked; response examples are not behavior oracles",
+  "cases": [
+    {
+      "name": "roundtrip",
+      "context": {
+        "active_snapshot": "snapshot-7",
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P10",
+        "request_id": "p10-fixture",
+        "snapshot_id": "snapshot-7",
+        "payload": {
+          "bundle": {
+            "generation": "generation-1",
+            "snapshot_id": "snapshot-7",
+            "pdf_path": "preview.pdf",
+            "synctex_path": "preview.synctex.gz"
+          },
+          "source": {
+            "document_id": "main.tex",
+            "revision": 9007199254740993,
+            "content_sha256": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+            "line": 0,
+            "character": 0,
+            "range": {
+              "start": 0,
+              "length": 1
+            }
+          }
+        }
+      },
+      "expect_boundary": "ok",
+      "response_example": {
+        "page": 1,
+        "x": 1.0,
+        "y": 1.0,
+        "width": 1.0,
+        "height": 1.0,
+        "generation": "generation-1"
+      },
+      "service_error_example": "stale_generation"
+    },
+    {
+      "name": "stale",
+      "context": {
+        "active_snapshot": "snapshot-new",
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P10",
+        "request_id": "p10-fixture",
+        "snapshot_id": "snapshot-7",
+        "payload": {
+          "bundle": {
+            "generation": "generation-1",
+            "snapshot_id": "snapshot-7",
+            "pdf_path": "preview.pdf",
+            "synctex_path": "preview.synctex.gz"
+          },
+          "source": {
+            "document_id": "main.tex",
+            "revision": 9007199254740993,
+            "content_sha256": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+            "line": 0,
+            "character": 0,
+            "range": {
+              "start": 0,
+              "length": 1
+            }
+          }
+        }
+      },
+      "expect_boundary": "stale_snapshot"
+    },
+    {
+      "name": "quota",
+      "context": {
+        "active_snapshot": "snapshot-7",
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P10",
+        "request_id": "p10-fixture",
+        "snapshot_id": "snapshot-7",
+        "payload": {
+          "bundle": {
+            "generation": "generation-1",
+            "snapshot_id": "snapshot-7",
+            "pdf_path": "preview.pdf",
+            "synctex_path": "preview.synctex.gz"
+          },
+          "source": {
+            "document_id": "main.tex",
+            "revision": 9007199254740993,
+            "content_sha256": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+            "line": 0,
+            "character": 0,
+            "range": {
+              "start": 0,
+              "length": 1
+            }
+          }
+        }
+      },
+      "expect_boundary": "payload_too_large"
+    },
+    {
+      "name": "cancel",
+      "context": {
+        "active_snapshot": "snapshot-7",
+        "cancelled": true,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P10",
+        "request_id": "p10-fixture",
+        "snapshot_id": "snapshot-7",
+        "payload": {
+          "bundle": {
+            "generation": "generation-1",
+            "snapshot_id": "snapshot-7",
+            "pdf_path": "preview.pdf",
+            "synctex_path": "preview.synctex.gz"
+          },
+          "source": {
+            "document_id": "main.tex",
+            "revision": 9007199254740993,
+            "content_sha256": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+            "line": 0,
+            "character": 0,
+            "range": {
+              "start": 0,
+              "length": 1
+            }
+          }
+        }
+      },
+      "expect_boundary": "cancelled"
+    },
+    {
+      "name": "deadline",
+      "context": {
+        "active_snapshot": "snapshot-7",
+        "cancelled": false,
+        "elapsed_ms": 10,
+        "deadline_ms": 10,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P10",
+        "request_id": "p10-fixture",
+        "snapshot_id": "snapshot-7",
+        "payload": {
+          "bundle": {
+            "generation": "generation-1",
+            "snapshot_id": "snapshot-7",
+            "pdf_path": "preview.pdf",
+            "synctex_path": "preview.synctex.gz"
+          },
+          "source": {
+            "document_id": "main.tex",
+            "revision": 9007199254740993,
+            "content_sha256": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+            "line": 0,
+            "character": 0,
+            "range": {
+              "start": 0,
+              "length": 1
+            }
+          }
+        }
+      },
+      "expect_boundary": "deadline"
+    },
+    {
+      "name": "malformed",
+      "context": {
+        "active_snapshot": "snapshot-7",
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "raw": "{",
+      "expect_boundary": "malformed_json"
+    },
+    {
+      "name": "future_version",
+      "context": {
+        "active_snapshot": "snapshot-7",
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 2,
+          "minor": 0
+        },
+        "package_id": "P10",
+        "request_id": "p10-fixture",
+        "snapshot_id": "snapshot-7",
+        "payload": {
+          "bundle": {
+            "generation": "generation-1",
+            "snapshot_id": "snapshot-7",
+            "pdf_path": "preview.pdf",
+            "synctex_path": "preview.synctex.gz"
+          },
+          "source": {
+            "document_id": "main.tex",
+            "revision": 9007199254740993,
+            "content_sha256": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+            "line": 0,
+            "character": 0,
+            "range": {
+              "start": 0,
+              "length": 1
+            }
+          }
+        }
+      },
+      "expect_boundary": "incompatible_version"
+    }
+  ]
+}

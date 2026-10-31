@@ -1,5 +1,8 @@
 //! Supervised local compiler processes and immutable PDF generations.
 
+extern crate self as latexide_build;
+pub use latexide_contracts as contracts;
+
 mod process;
 use latexide_core::{CoreError, Result};
 use serde::Serialize;

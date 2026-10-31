@@ -1,5 +1,8 @@
 //! Native C ABI to the shared Rust workspace runtime.
 
+extern crate self as latexide_ffi;
+pub use latexide_contracts as contracts;
+
 mod runtime;
 mod session;
 use latexide_core::{CoreError, Workspace};

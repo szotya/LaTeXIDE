@@ -5,4 +5,5 @@ edition.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+latexide-contracts.workspace = true
 serde.workspace = true

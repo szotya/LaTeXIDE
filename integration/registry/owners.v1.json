@@ -1,0 +1,2572 @@
+{
+  "paths": [
+    {
+      "package_id": "P00",
+      "path": ".github/workflows/"
+    },
+    {
+      "package_id": "P00",
+      "path": "Cargo.lock"
+    },
+    {
+      "package_id": "P00",
+      "path": "Cargo.toml"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/macos/Package.swift"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/macos/Sources/LaTeXIDEKit/Editor/SourceTextView.swift"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/macos/Sources/LaTeXIDEKit/NativeEditor.swift"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/macos/Sources/LaTeXIDEKit/NativeRuntime.swift"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/macos/Sources/LaTeXIDEKit/WorkspaceStore.swift"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/macos/Sources/LaTeXIDEKit/WorkspaceView.swift"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/windows/LaTeXIDE.vcxproj"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/windows/MainWindow.Editor.cpp"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/windows/MainWindow.Presentation.cpp"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/windows/MainWindow.idl"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/windows/MainWindow.xaml"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/windows/MainWindow.xaml.cpp"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/windows/MainWindow.xaml.h"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/windows/NativeCore.cpp"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/windows/NativeCore.h"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/windows/NuGet.Native.props"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/windows/NuGet.Native.targets"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/windows/packages.config"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-build/Cargo.toml"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-build/src/lib.rs"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-contracts/"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-contracts/Cargo.toml"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-contracts/src/lib.rs"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-core/Cargo.toml"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-core/src/completion.rs"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-core/src/definition.rs"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-core/src/document.rs"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-core/src/lib.rs"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-core/src/project_index.rs"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-core/src/tex_scan.rs"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-core/src/workspace.rs"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-ffi/Cargo.toml"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-ffi/src/lib.rs"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-ffi/src/runtime.rs"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-ffi/src/session.rs"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-mcp/Cargo.toml"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-mcp/src/main.rs"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-protocol/Cargo.toml"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-protocol/src/ipc.rs"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-protocol/src/lib.rs"
+    },
+    {
+      "package_id": "P00",
+      "path": "docs/DEVELOPER_HANDOFF.md"
+    },
+    {
+      "package_id": "P00",
+      "path": "docs/development/README.md"
+    },
+    {
+      "package_id": "P00",
+      "path": "docs/development/contracts/"
+    },
+    {
+      "package_id": "P00",
+      "path": "docs/development/package-specs.json"
+    },
+    {
+      "package_id": "P00",
+      "path": "docs/development/packages.json"
+    },
+    {
+      "package_id": "P00",
+      "path": "docs/development/requirement-map.csv"
+    },
+    {
+      "package_id": "P00",
+      "path": "docs/development/results/P00.md"
+    },
+    {
+      "package_id": "P00",
+      "path": "docs/implementation-progress.md"
+    },
+    {
+      "package_id": "P00",
+      "path": "docs/superpowers/plans/2026-10-31-parallel/"
+    },
+    {
+      "package_id": "P00",
+      "path": "docs/superpowers/specs/2026-10-31-parallel-development-design.md"
+    },
+    {
+      "package_id": "P00",
+      "path": "include/latexide_core.h"
+    },
+    {
+      "package_id": "P00",
+      "path": "integration/registry/"
+    },
+    {
+      "package_id": "P00",
+      "path": "integration/requests/P00.json"
+    },
+    {
+      "package_id": "P00",
+      "path": "rust-toolchain.toml"
+    },
+    {
+      "package_id": "P00",
+      "path": "scripts/build_macos.sh"
+    },
+    {
+      "package_id": "P00",
+      "path": "scripts/build_windows.ps1"
+    },
+    {
+      "package_id": "P00",
+      "path": "skills/latexide-platform-development/"
+    },
+    {
+      "package_id": "P00",
+      "path": "tests/contracts/"
+    },
+    {
+      "package_id": "P01",
+      "path": "crates/latexide-core/src/services/recovery/"
+    },
+    {
+      "package_id": "P01",
+      "path": "crates/latexide-core/tests/recovery_contract.rs"
+    },
+    {
+      "package_id": "P01",
+      "path": "docs/development/results/P01.md"
+    },
+    {
+      "package_id": "P01",
+      "path": "integration/requests/P01.json"
+    },
+    {
+      "package_id": "P02",
+      "path": "crates/latexide-core/src/services/transactions/"
+    },
+    {
+      "package_id": "P02",
+      "path": "crates/latexide-core/tests/transaction_contract.rs"
+    },
+    {
+      "package_id": "P02",
+      "path": "docs/development/results/P02.md"
+    },
+    {
+      "package_id": "P02",
+      "path": "integration/requests/P02.json"
+    },
+    {
+      "package_id": "P03",
+      "path": "crates/latexide-ffi/src/dispatch/"
+    },
+    {
+      "package_id": "P03",
+      "path": "docs/development/results/P03.md"
+    },
+    {
+      "package_id": "P03",
+      "path": "integration/requests/P03.json"
+    },
+    {
+      "package_id": "P03",
+      "path": "tests/runtime_v2_contract.py"
+    },
+    {
+      "package_id": "P04",
+      "path": "crates/latexide-core/src/services/vfs/"
+    },
+    {
+      "package_id": "P04",
+      "path": "crates/latexide-core/tests/vfs_contract.rs"
+    },
+    {
+      "package_id": "P04",
+      "path": "docs/development/results/P04.md"
+    },
+    {
+      "package_id": "P04",
+      "path": "integration/requests/P04.json"
+    },
+    {
+      "package_id": "P05",
+      "path": "crates/latexide-core/src/services/language/"
+    },
+    {
+      "package_id": "P05",
+      "path": "crates/latexide-core/tests/language_service_contract.rs"
+    },
+    {
+      "package_id": "P05",
+      "path": "docs/development/results/P05.md"
+    },
+    {
+      "package_id": "P05",
+      "path": "integration/requests/P05.json"
+    },
+    {
+      "package_id": "P06",
+      "path": "crates/latexide-core/src/services/navigation/"
+    },
+    {
+      "package_id": "P06",
+      "path": "crates/latexide-core/tests/navigation_service_contract.rs"
+    },
+    {
+      "package_id": "P06",
+      "path": "docs/development/results/P06.md"
+    },
+    {
+      "package_id": "P06",
+      "path": "integration/requests/P06.json"
+    },
+    {
+      "package_id": "P07",
+      "path": "apps/macos/Sources/LaTeXIDEKit/Features/Editor/"
+    },
+    {
+      "package_id": "P07",
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/EditorFeatureTests.swift"
+    },
+    {
+      "package_id": "P07",
+      "path": "docs/development/results/P07.md"
+    },
+    {
+      "package_id": "P07",
+      "path": "integration/requests/P07.json"
+    },
+    {
+      "package_id": "P08",
+      "path": "crates/latexide-core/src/services/workspace_settings/"
+    },
+    {
+      "package_id": "P08",
+      "path": "crates/latexide-core/tests/workspace_settings_contract.rs"
+    },
+    {
+      "package_id": "P08",
+      "path": "docs/development/results/P08.md"
+    },
+    {
+      "package_id": "P08",
+      "path": "integration/requests/P08.json"
+    },
+    {
+      "package_id": "P09",
+      "path": "crates/latexide-build/src/pipeline/"
+    },
+    {
+      "package_id": "P09",
+      "path": "crates/latexide-build/tests/pipeline_contract.rs"
+    },
+    {
+      "package_id": "P09",
+      "path": "docs/development/results/P09.md"
+    },
+    {
+      "package_id": "P09",
+      "path": "integration/requests/P09.json"
+    },
+    {
+      "package_id": "P10",
+      "path": "crates/latexide-core/src/services/pdf/"
+    },
+    {
+      "package_id": "P10",
+      "path": "crates/latexide-core/tests/pdf_service_contract.rs"
+    },
+    {
+      "package_id": "P10",
+      "path": "docs/development/results/P10.md"
+    },
+    {
+      "package_id": "P10",
+      "path": "integration/requests/P10.json"
+    },
+    {
+      "package_id": "P11",
+      "path": "crates/latexide-core/src/services/research/"
+    },
+    {
+      "package_id": "P11",
+      "path": "crates/latexide-core/tests/research_contract.rs"
+    },
+    {
+      "package_id": "P11",
+      "path": "docs/development/results/P11.md"
+    },
+    {
+      "package_id": "P11",
+      "path": "integration/requests/P11.json"
+    },
+    {
+      "package_id": "P12",
+      "path": "crates/latexide-core/src/services/bibliography/"
+    },
+    {
+      "package_id": "P12",
+      "path": "crates/latexide-core/tests/bibliography_contract.rs"
+    },
+    {
+      "package_id": "P12",
+      "path": "docs/development/results/P12.md"
+    },
+    {
+      "package_id": "P12",
+      "path": "integration/requests/P12.json"
+    },
+    {
+      "package_id": "P13",
+      "path": "crates/latexide-core/src/services/git/"
+    },
+    {
+      "package_id": "P13",
+      "path": "crates/latexide-core/tests/git_service_contract.rs"
+    },
+    {
+      "package_id": "P13",
+      "path": "docs/development/results/P13.md"
+    },
+    {
+      "package_id": "P13",
+      "path": "integration/requests/P13.json"
+    },
+    {
+      "package_id": "P14",
+      "path": "apps/macos/Sources/LaTeXIDEKit/Features/AssistantHistory/"
+    },
+    {
+      "package_id": "P14",
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/AssistantHistoryTests.swift"
+    },
+    {
+      "package_id": "P14",
+      "path": "docs/development/results/P14.md"
+    },
+    {
+      "package_id": "P14",
+      "path": "integration/requests/P14.json"
+    },
+    {
+      "package_id": "P15",
+      "path": "crates/latexide-core/src/services/extensions/"
+    },
+    {
+      "package_id": "P15",
+      "path": "crates/latexide-core/tests/extension_host_contract.rs"
+    },
+    {
+      "package_id": "P15",
+      "path": "docs/development/results/P15.md"
+    },
+    {
+      "package_id": "P15",
+      "path": "integration/requests/P15.json"
+    },
+    {
+      "package_id": "P16",
+      "path": "crates/latexide-core/src/services/terminal/"
+    },
+    {
+      "package_id": "P16",
+      "path": "crates/latexide-core/tests/terminal_contract.rs"
+    },
+    {
+      "package_id": "P16",
+      "path": "docs/development/results/P16.md"
+    },
+    {
+      "package_id": "P16",
+      "path": "integration/requests/P16.json"
+    },
+    {
+      "package_id": "P17",
+      "path": "crates/latexide-core/src/services/developer_tools/"
+    },
+    {
+      "package_id": "P17",
+      "path": "crates/latexide-core/tests/developer_tools_contract.rs"
+    },
+    {
+      "package_id": "P17",
+      "path": "docs/development/results/P17.md"
+    },
+    {
+      "package_id": "P17",
+      "path": "integration/requests/P17.json"
+    },
+    {
+      "package_id": "P18",
+      "path": "crates/latexide-core/src/services/security/"
+    },
+    {
+      "package_id": "P18",
+      "path": "crates/latexide-core/tests/security_policy_contract.rs"
+    },
+    {
+      "package_id": "P18",
+      "path": "docs/development/results/P18.md"
+    },
+    {
+      "package_id": "P18",
+      "path": "integration/requests/P18.json"
+    },
+    {
+      "package_id": "P19",
+      "path": "docs/development/results/P19.md"
+    },
+    {
+      "package_id": "P19",
+      "path": "integration/requests/P19.json"
+    },
+    {
+      "package_id": "P19",
+      "path": "tests/quality_corpus/"
+    },
+    {
+      "package_id": "P19",
+      "path": "tests/quality_corpus/test_harness.py"
+    },
+    {
+      "package_id": "P20",
+      "path": "docs/development/results/P20.md"
+    },
+    {
+      "package_id": "P20",
+      "path": "integration/requests/P20.json"
+    },
+    {
+      "package_id": "P20",
+      "path": "tools/release/"
+    },
+    {
+      "package_id": "P20",
+      "path": "tools/release/test_qualification.py"
+    },
+    {
+      "package_id": "P21",
+      "path": "apps/windows/Features/PlatformParity/"
+    },
+    {
+      "package_id": "P21",
+      "path": "docs/development/results/P21.md"
+    },
+    {
+      "package_id": "P21",
+      "path": "integration/requests/P21.json"
+    },
+    {
+      "package_id": "P21",
+      "path": "tests/windows_native/qualification.ps1"
+    },
+    {
+      "package_id": "P22",
+      "path": "apps/linux/platform_probe/"
+    },
+    {
+      "package_id": "P22",
+      "path": "apps/linux/platform_probe/Cargo.toml"
+    },
+    {
+      "package_id": "P22",
+      "path": "docs/development/results/P22.md"
+    },
+    {
+      "package_id": "P22",
+      "path": "integration/requests/P22.json"
+    },
+    {
+      "package_id": "P22",
+      "path": "tests/linux_native/test_runtime_dir.py"
+    },
+    {
+      "package_id": "P23",
+      "path": "docs/development/results/P23.md"
+    },
+    {
+      "package_id": "P23",
+      "path": "integration/requests/P23.json"
+    },
+    {
+      "package_id": "P23",
+      "path": "tools/benchmarks/"
+    },
+    {
+      "package_id": "P23",
+      "path": "tools/benchmarks/test_report.py"
+    },
+    {
+      "package_id": "U01",
+      "path": "docs/development/results/U01.md"
+    },
+    {
+      "package_id": "U01",
+      "path": "extensions/verticals/u01-jvm/"
+    },
+    {
+      "package_id": "U01",
+      "path": "integration/requests/U01.json"
+    },
+    {
+      "package_id": "U02",
+      "path": "docs/development/results/U02.md"
+    },
+    {
+      "package_id": "U02",
+      "path": "extensions/verticals/u02-python-data/"
+    },
+    {
+      "package_id": "U02",
+      "path": "integration/requests/U02.json"
+    },
+    {
+      "package_id": "U03",
+      "path": "docs/development/results/U03.md"
+    },
+    {
+      "package_id": "U03",
+      "path": "extensions/verticals/u03-web/"
+    },
+    {
+      "package_id": "U03",
+      "path": "integration/requests/U03.json"
+    },
+    {
+      "package_id": "U04",
+      "path": "docs/development/results/U04.md"
+    },
+    {
+      "package_id": "U04",
+      "path": "extensions/verticals/u04-php/"
+    },
+    {
+      "package_id": "U04",
+      "path": "integration/requests/U04.json"
+    },
+    {
+      "package_id": "U05",
+      "path": "docs/development/results/U05.md"
+    },
+    {
+      "package_id": "U05",
+      "path": "extensions/verticals/u05-dotnet/"
+    },
+    {
+      "package_id": "U05",
+      "path": "integration/requests/U05.json"
+    },
+    {
+      "package_id": "U06",
+      "path": "docs/development/results/U06.md"
+    },
+    {
+      "package_id": "U06",
+      "path": "extensions/verticals/u06-cpp/"
+    },
+    {
+      "package_id": "U06",
+      "path": "integration/requests/U06.json"
+    },
+    {
+      "package_id": "U07",
+      "path": "docs/development/results/U07.md"
+    },
+    {
+      "package_id": "U07",
+      "path": "extensions/verticals/u07-go/"
+    },
+    {
+      "package_id": "U07",
+      "path": "integration/requests/U07.json"
+    },
+    {
+      "package_id": "U08",
+      "path": "docs/development/results/U08.md"
+    },
+    {
+      "package_id": "U08",
+      "path": "extensions/verticals/u08-rust/"
+    },
+    {
+      "package_id": "U08",
+      "path": "integration/requests/U08.json"
+    },
+    {
+      "package_id": "U09",
+      "path": "docs/development/results/U09.md"
+    },
+    {
+      "package_id": "U09",
+      "path": "extensions/verticals/u09-ruby/"
+    },
+    {
+      "package_id": "U09",
+      "path": "integration/requests/U09.json"
+    },
+    {
+      "package_id": "U10",
+      "path": "docs/development/results/U10.md"
+    },
+    {
+      "package_id": "U10",
+      "path": "extensions/verticals/u10-database/"
+    },
+    {
+      "package_id": "U10",
+      "path": "integration/requests/U10.json"
+    },
+    {
+      "package_id": "U11",
+      "path": "docs/development/results/U11.md"
+    },
+    {
+      "package_id": "U11",
+      "path": "extensions/verticals/u11-embedded/"
+    },
+    {
+      "package_id": "U11",
+      "path": "integration/requests/U11.json"
+    },
+    {
+      "package_id": "U12",
+      "path": "docs/development/results/U12.md"
+    },
+    {
+      "package_id": "U12",
+      "path": "extensions/verticals/u12-games/"
+    },
+    {
+      "package_id": "U12",
+      "path": "integration/requests/U12.json"
+    },
+    {
+      "package_id": "U13",
+      "path": "docs/development/results/U13.md"
+    },
+    {
+      "package_id": "U13",
+      "path": "extensions/verticals/u13-mobile/"
+    },
+    {
+      "package_id": "U13",
+      "path": "integration/requests/U13.json"
+    },
+    {
+      "package_id": "U14",
+      "path": "docs/development/results/U14.md"
+    },
+    {
+      "package_id": "U14",
+      "path": "extensions/verticals/u14-dsl/"
+    },
+    {
+      "package_id": "U14",
+      "path": "integration/requests/U14.json"
+    },
+    {
+      "package_id": "U15",
+      "path": "docs/development/results/U15.md"
+    },
+    {
+      "package_id": "U15",
+      "path": "extensions/verticals/u15-docs-as-code/"
+    },
+    {
+      "package_id": "U15",
+      "path": "integration/requests/U15.json"
+    },
+    {
+      "package_id": "U16",
+      "path": "docs/development/results/U16.md"
+    },
+    {
+      "package_id": "U16",
+      "path": "extensions/verticals/u16-qa-automation/"
+    },
+    {
+      "package_id": "U16",
+      "path": "integration/requests/U16.json"
+    },
+    {
+      "package_id": "U17",
+      "path": "docs/development/results/U17.md"
+    },
+    {
+      "package_id": "U17",
+      "path": "extensions/verticals/u17-remote/"
+    },
+    {
+      "package_id": "U17",
+      "path": "integration/requests/U17.json"
+    },
+    {
+      "package_id": "U18",
+      "path": "docs/development/results/U18.md"
+    },
+    {
+      "package_id": "U18",
+      "path": "extensions/verticals/u18-collaboration/"
+    },
+    {
+      "package_id": "U18",
+      "path": "integration/requests/U18.json"
+    },
+    {
+      "package_id": "U19",
+      "path": "docs/development/results/U19.md"
+    },
+    {
+      "package_id": "U19",
+      "path": "extensions/verticals/u19-enterprise/"
+    },
+    {
+      "package_id": "U19",
+      "path": "integration/requests/U19.json"
+    },
+    {
+      "package_id": "U20",
+      "path": "docs/development/results/U20.md"
+    },
+    {
+      "package_id": "U20",
+      "path": "extensions/verticals/u20-cloud/"
+    },
+    {
+      "package_id": "U20",
+      "path": "integration/requests/U20.json"
+    }
+  ],
+  "requirements": [
+    {
+      "package_id": "P01",
+      "requirement_id": "DOC-01",
+      "prerequisites": []
+    },
+    {
+      "package_id": "P01",
+      "requirement_id": "DOC-02",
+      "prerequisites": [
+        "DOC-01"
+      ]
+    },
+    {
+      "package_id": "P01",
+      "requirement_id": "DOC-03",
+      "prerequisites": [
+        "DOC-02"
+      ]
+    },
+    {
+      "package_id": "P02",
+      "requirement_id": "DOC-04",
+      "prerequisites": []
+    },
+    {
+      "package_id": "P01",
+      "requirement_id": "DOC-05",
+      "prerequisites": [
+        "DOC-01"
+      ]
+    },
+    {
+      "package_id": "P02",
+      "requirement_id": "DOC-06",
+      "prerequisites": [
+        "MCP-03"
+      ]
+    },
+    {
+      "package_id": "P01",
+      "requirement_id": "DOC-07",
+      "prerequisites": [
+        "DOC-01"
+      ]
+    },
+    {
+      "package_id": "P02",
+      "requirement_id": "DOC-08",
+      "prerequisites": [
+        "MCP-03",
+        "DOC-02"
+      ]
+    },
+    {
+      "package_id": "P02",
+      "requirement_id": "DOC-09",
+      "prerequisites": [
+        "DOC-06",
+        "DOC-08",
+        "DOC-05"
+      ]
+    },
+    {
+      "package_id": "P02",
+      "requirement_id": "DOC-10",
+      "prerequisites": [
+        "QA-01"
+      ]
+    },
+    {
+      "package_id": "P02",
+      "requirement_id": "DOC-11",
+      "prerequisites": [
+        "DOC-08"
+      ]
+    },
+    {
+      "package_id": "P02",
+      "requirement_id": "DOC-12",
+      "prerequisites": [
+        "QA-03",
+        "MCP-02"
+      ]
+    },
+    {
+      "package_id": "P01",
+      "requirement_id": "DOC-13",
+      "prerequisites": [
+        "DOC-01",
+        "DOC-06"
+      ]
+    },
+    {
+      "package_id": "P01",
+      "requirement_id": "DOC-14",
+      "prerequisites": [
+        "DOC-07"
+      ]
+    },
+    {
+      "package_id": "P01",
+      "requirement_id": "DOC-15",
+      "prerequisites": [
+        "DOC-01",
+        "DOC-14"
+      ]
+    },
+    {
+      "package_id": "P01",
+      "requirement_id": "DOC-16",
+      "prerequisites": [
+        "DOC-07"
+      ]
+    },
+    {
+      "package_id": "P07",
+      "requirement_id": "EDT-01",
+      "prerequisites": [
+        "DOC-08"
+      ]
+    },
+    {
+      "package_id": "P07",
+      "requirement_id": "EDT-02",
+      "prerequisites": []
+    },
+    {
+      "package_id": "P07",
+      "requirement_id": "EDT-03",
+      "prerequisites": [
+        "LANG-01"
+      ]
+    },
+    {
+      "package_id": "P07",
+      "requirement_id": "EDT-04",
+      "prerequisites": [
+        "EDT-03"
+      ]
+    },
+    {
+      "package_id": "P07",
+      "requirement_id": "EDT-05",
+      "prerequisites": [
+        "LANG-01"
+      ]
+    },
+    {
+      "package_id": "P07",
+      "requirement_id": "EDT-06",
+      "prerequisites": [
+        "WS-06"
+      ]
+    },
+    {
+      "package_id": "P07",
+      "requirement_id": "EDT-07",
+      "prerequisites": [
+        "DOC-08",
+        "EXT-01"
+      ]
+    },
+    {
+      "package_id": "P07",
+      "requirement_id": "EDT-08",
+      "prerequisites": [
+        "LANG-01"
+      ]
+    },
+    {
+      "package_id": "P07",
+      "requirement_id": "EDT-09",
+      "prerequisites": [
+        "DOC-08"
+      ]
+    },
+    {
+      "package_id": "P07",
+      "requirement_id": "EDT-10",
+      "prerequisites": [
+        "BLD-05",
+        "LANG-05"
+      ]
+    },
+    {
+      "package_id": "P07",
+      "requirement_id": "EDT-11",
+      "prerequisites": [
+        "WS-04"
+      ]
+    },
+    {
+      "package_id": "P07",
+      "requirement_id": "EDT-12",
+      "prerequisites": [
+        "LANG-01"
+      ]
+    },
+    {
+      "package_id": "P13",
+      "requirement_id": "EDT-13",
+      "prerequisites": [
+        "DOC-08",
+        "DOC-01"
+      ]
+    },
+    {
+      "package_id": "P07",
+      "requirement_id": "EDT-14",
+      "prerequisites": [
+        "WS-06"
+      ]
+    },
+    {
+      "package_id": "P07",
+      "requirement_id": "EDT-15",
+      "prerequisites": [
+        "QA-06"
+      ]
+    },
+    {
+      "package_id": "P07",
+      "requirement_id": "EDT-16",
+      "prerequisites": [
+        "LANG-01",
+        "QA-03"
+      ]
+    },
+    {
+      "package_id": "P05",
+      "requirement_id": "LANG-01",
+      "prerequisites": [
+        "MCP-02"
+      ]
+    },
+    {
+      "package_id": "P05",
+      "requirement_id": "LANG-02",
+      "prerequisites": [
+        "LANG-01",
+        "WS-08"
+      ]
+    },
+    {
+      "package_id": "P05",
+      "requirement_id": "LANG-03",
+      "prerequisites": [
+        "LANG-02"
+      ]
+    },
+    {
+      "package_id": "P05",
+      "requirement_id": "LANG-04",
+      "prerequisites": [
+        "LANG-02"
+      ]
+    },
+    {
+      "package_id": "P05",
+      "requirement_id": "LANG-05",
+      "prerequisites": [
+        "LANG-01",
+        "EXT-01"
+      ]
+    },
+    {
+      "package_id": "P06",
+      "requirement_id": "LANG-06",
+      "prerequisites": [
+        "LANG-02",
+        "NAV-04"
+      ]
+    },
+    {
+      "package_id": "P05",
+      "requirement_id": "LANG-07",
+      "prerequisites": [
+        "LANG-02"
+      ]
+    },
+    {
+      "package_id": "P05",
+      "requirement_id": "LANG-08",
+      "prerequisites": [
+        "LANG-07",
+        "DOC-08"
+      ]
+    },
+    {
+      "package_id": "P05",
+      "requirement_id": "LANG-09",
+      "prerequisites": [
+        "LANG-05",
+        "DOC-08"
+      ]
+    },
+    {
+      "package_id": "P05",
+      "requirement_id": "LANG-10",
+      "prerequisites": [
+        "LANG-03"
+      ]
+    },
+    {
+      "package_id": "P12",
+      "requirement_id": "LANG-11",
+      "prerequisites": [
+        "LANG-01"
+      ]
+    },
+    {
+      "package_id": "P05",
+      "requirement_id": "LANG-12",
+      "prerequisites": [
+        "WS-01"
+      ]
+    },
+    {
+      "package_id": "P05",
+      "requirement_id": "LANG-13",
+      "prerequisites": [
+        "MCP-02",
+        "WS-01"
+      ]
+    },
+    {
+      "package_id": "P05",
+      "requirement_id": "LANG-14",
+      "prerequisites": [
+        "LANG-02"
+      ]
+    },
+    {
+      "package_id": "P05",
+      "requirement_id": "LANG-15",
+      "prerequisites": [
+        "DOC-08",
+        "LANG-02"
+      ]
+    },
+    {
+      "package_id": "P05",
+      "requirement_id": "LANG-16",
+      "prerequisites": [
+        "LANG-03",
+        "EDT-04"
+      ]
+    },
+    {
+      "package_id": "P05",
+      "requirement_id": "LANG-17",
+      "prerequisites": [
+        "EXT-01",
+        "DOC-08"
+      ]
+    },
+    {
+      "package_id": "P05",
+      "requirement_id": "LANG-18",
+      "prerequisites": [
+        "QA-02"
+      ]
+    },
+    {
+      "package_id": "P06",
+      "requirement_id": "NAV-01",
+      "prerequisites": [
+        "WS-01",
+        "MCP-02"
+      ]
+    },
+    {
+      "package_id": "P06",
+      "requirement_id": "NAV-02",
+      "prerequisites": [
+        "NAV-01",
+        "DOC-08"
+      ]
+    },
+    {
+      "package_id": "P06",
+      "requirement_id": "NAV-03",
+      "prerequisites": [
+        "LANG-01",
+        "LANG-02"
+      ]
+    },
+    {
+      "package_id": "P06",
+      "requirement_id": "NAV-04",
+      "prerequisites": [
+        "WS-06"
+      ]
+    },
+    {
+      "package_id": "P06",
+      "requirement_id": "NAV-05",
+      "prerequisites": [
+        "WS-06",
+        "LANG-06"
+      ]
+    },
+    {
+      "package_id": "P06",
+      "requirement_id": "NAV-06",
+      "prerequisites": [
+        "WS-01",
+        "DOC-09"
+      ]
+    },
+    {
+      "package_id": "P06",
+      "requirement_id": "NAV-07",
+      "prerequisites": [
+        "NAV-03"
+      ]
+    },
+    {
+      "package_id": "P06",
+      "requirement_id": "NAV-08",
+      "prerequisites": [
+        "BLD-05",
+        "EDT-10"
+      ]
+    },
+    {
+      "package_id": "P06",
+      "requirement_id": "NAV-09",
+      "prerequisites": [
+        "LANG-11"
+      ]
+    },
+    {
+      "package_id": "P06",
+      "requirement_id": "NAV-10",
+      "prerequisites": [
+        "DOC-09",
+        "WS-01"
+      ]
+    },
+    {
+      "package_id": "P06",
+      "requirement_id": "NAV-11",
+      "prerequisites": [
+        "NAV-01",
+        "LANG-02"
+      ]
+    },
+    {
+      "package_id": "P04",
+      "requirement_id": "NAV-12",
+      "prerequisites": [
+        "WS-01",
+        "DOC-07"
+      ]
+    },
+    {
+      "package_id": "P09",
+      "requirement_id": "BLD-01",
+      "prerequisites": [
+        "WS-01"
+      ]
+    },
+    {
+      "package_id": "P09",
+      "requirement_id": "BLD-02",
+      "prerequisites": [
+        "BLD-01"
+      ]
+    },
+    {
+      "package_id": "P09",
+      "requirement_id": "BLD-03",
+      "prerequisites": []
+    },
+    {
+      "package_id": "P09",
+      "requirement_id": "BLD-04",
+      "prerequisites": [
+        "WS-08"
+      ]
+    },
+    {
+      "package_id": "P09",
+      "requirement_id": "BLD-05",
+      "prerequisites": [
+        "BLD-01"
+      ]
+    },
+    {
+      "package_id": "P09",
+      "requirement_id": "BLD-06",
+      "prerequisites": [
+        "BLD-01",
+        "BLD-04"
+      ]
+    },
+    {
+      "package_id": "P09",
+      "requirement_id": "BLD-07",
+      "prerequisites": [
+        "BLD-04",
+        "QA-02"
+      ]
+    },
+    {
+      "package_id": "P09",
+      "requirement_id": "BLD-08",
+      "prerequisites": [
+        "BLD-05"
+      ]
+    },
+    {
+      "package_id": "P09",
+      "requirement_id": "BLD-09",
+      "prerequisites": [
+        "BLD-07",
+        "SEC-04"
+      ]
+    },
+    {
+      "package_id": "P09",
+      "requirement_id": "BLD-10",
+      "prerequisites": [
+        "PDF-03"
+      ]
+    },
+    {
+      "package_id": "P09",
+      "requirement_id": "BLD-11",
+      "prerequisites": [
+        "MCP-02"
+      ]
+    },
+    {
+      "package_id": "P09",
+      "requirement_id": "BLD-12",
+      "prerequisites": [
+        "OS-01",
+        "QA-01"
+      ]
+    },
+    {
+      "package_id": "P09",
+      "requirement_id": "BLD-13",
+      "prerequisites": [
+        "BLD-04"
+      ]
+    },
+    {
+      "package_id": "P09",
+      "requirement_id": "BLD-14",
+      "prerequisites": [
+        "SEC-01",
+        "WS-08"
+      ]
+    },
+    {
+      "package_id": "P09",
+      "requirement_id": "BLD-15",
+      "prerequisites": [
+        "BLD-09",
+        "PDF-03"
+      ]
+    },
+    {
+      "package_id": "P09",
+      "requirement_id": "BLD-16",
+      "prerequisites": [
+        "QA-02",
+        "OS-01"
+      ]
+    },
+    {
+      "package_id": "P10",
+      "requirement_id": "PDF-01",
+      "prerequisites": [
+        "BLD-01",
+        "PDF-03"
+      ]
+    },
+    {
+      "package_id": "P10",
+      "requirement_id": "PDF-02",
+      "prerequisites": [
+        "PDF-01",
+        "NAV-04"
+      ]
+    },
+    {
+      "package_id": "P10",
+      "requirement_id": "PDF-03",
+      "prerequisites": [
+        "BLD-01"
+      ]
+    },
+    {
+      "package_id": "P10",
+      "requirement_id": "PDF-04",
+      "prerequisites": [
+        "PDF-03"
+      ]
+    },
+    {
+      "package_id": "P10",
+      "requirement_id": "PDF-05",
+      "prerequisites": [
+        "PDF-03"
+      ]
+    },
+    {
+      "package_id": "P10",
+      "requirement_id": "PDF-06",
+      "prerequisites": [
+        "PDF-03"
+      ]
+    },
+    {
+      "package_id": "P10",
+      "requirement_id": "PDF-07",
+      "prerequisites": [
+        "PDF-01"
+      ]
+    },
+    {
+      "package_id": "P10",
+      "requirement_id": "PDF-08",
+      "prerequisites": [
+        "OS-01",
+        "PDF-04"
+      ]
+    },
+    {
+      "package_id": "P10",
+      "requirement_id": "PDF-09",
+      "prerequisites": [
+        "PDF-03",
+        "BLD-15"
+      ]
+    },
+    {
+      "package_id": "P10",
+      "requirement_id": "PDF-10",
+      "prerequisites": [
+        "PDF-03"
+      ]
+    },
+    {
+      "package_id": "P10",
+      "requirement_id": "PDF-11",
+      "prerequisites": [
+        "QA-03",
+        "BLD-03"
+      ]
+    },
+    {
+      "package_id": "P10",
+      "requirement_id": "PDF-12",
+      "prerequisites": [
+        "PDF-03",
+        "LANG-10"
+      ]
+    },
+    {
+      "package_id": "P11",
+      "requirement_id": "RES-01",
+      "prerequisites": [
+        "LANG-02"
+      ]
+    },
+    {
+      "package_id": "P11",
+      "requirement_id": "RES-02",
+      "prerequisites": [
+        "DOC-06",
+        "BLD-09"
+      ]
+    },
+    {
+      "package_id": "P12",
+      "requirement_id": "RES-03",
+      "prerequisites": [
+        "LANG-11"
+      ]
+    },
+    {
+      "package_id": "P12",
+      "requirement_id": "RES-04",
+      "prerequisites": [
+        "RES-03",
+        "SEC-06"
+      ]
+    },
+    {
+      "package_id": "P11",
+      "requirement_id": "RES-05",
+      "prerequisites": [
+        "LANG-12",
+        "DOC-09"
+      ]
+    },
+    {
+      "package_id": "P11",
+      "requirement_id": "RES-06",
+      "prerequisites": [
+        "EDT-04",
+        "EDT-12"
+      ]
+    },
+    {
+      "package_id": "P11",
+      "requirement_id": "RES-07",
+      "prerequisites": [
+        "BLD-14",
+        "DOC-05"
+      ]
+    },
+    {
+      "package_id": "P11",
+      "requirement_id": "RES-08",
+      "prerequisites": [
+        "BLD-09",
+        "SEC-06"
+      ]
+    },
+    {
+      "package_id": "P11",
+      "requirement_id": "RES-09",
+      "prerequisites": [
+        "DEV-03",
+        "BLD-14"
+      ]
+    },
+    {
+      "package_id": "P11",
+      "requirement_id": "RES-10",
+      "prerequisites": [
+        "WS-05"
+      ]
+    },
+    {
+      "package_id": "P11",
+      "requirement_id": "RES-11",
+      "prerequisites": [
+        "LANG-03",
+        "BLD-07"
+      ]
+    },
+    {
+      "package_id": "P11",
+      "requirement_id": "RES-12",
+      "prerequisites": [
+        "RES-08",
+        "BLD-05"
+      ]
+    },
+    {
+      "package_id": "P13",
+      "requirement_id": "GIT-01",
+      "prerequisites": [
+        "WS-01",
+        "MCP-02"
+      ]
+    },
+    {
+      "package_id": "P13",
+      "requirement_id": "GIT-02",
+      "prerequisites": [
+        "GIT-01",
+        "EDT-13"
+      ]
+    },
+    {
+      "package_id": "P13",
+      "requirement_id": "GIT-03",
+      "prerequisites": [
+        "GIT-02"
+      ]
+    },
+    {
+      "package_id": "P13",
+      "requirement_id": "GIT-04",
+      "prerequisites": [
+        "GIT-01",
+        "DOC-07"
+      ]
+    },
+    {
+      "package_id": "P13",
+      "requirement_id": "GIT-05",
+      "prerequisites": [
+        "GIT-02",
+        "EDT-13",
+        "DOC-01"
+      ]
+    },
+    {
+      "package_id": "P13",
+      "requirement_id": "GIT-06",
+      "prerequisites": [
+        "GIT-01",
+        "DOC-05"
+      ]
+    },
+    {
+      "package_id": "P13",
+      "requirement_id": "GIT-07",
+      "prerequisites": [
+        "GIT-03",
+        "GIT-05"
+      ]
+    },
+    {
+      "package_id": "P13",
+      "requirement_id": "GIT-08",
+      "prerequisites": [
+        "GIT-04",
+        "DOC-08"
+      ]
+    },
+    {
+      "package_id": "P13",
+      "requirement_id": "GIT-09",
+      "prerequisites": [
+        "GIT-02",
+        "SEC-06"
+      ]
+    },
+    {
+      "package_id": "P13",
+      "requirement_id": "GIT-10",
+      "prerequisites": [
+        "GIT-01",
+        "RES-02"
+      ]
+    },
+    {
+      "package_id": "P13",
+      "requirement_id": "GIT-11",
+      "prerequisites": [
+        "GIT-05",
+        "DOC-01"
+      ]
+    },
+    {
+      "package_id": "P13",
+      "requirement_id": "GIT-12",
+      "prerequisites": [
+        "DOC-08",
+        "EDT-13"
+      ]
+    },
+    {
+      "package_id": "P04",
+      "requirement_id": "WS-01",
+      "prerequisites": [
+        "MCP-02"
+      ]
+    },
+    {
+      "package_id": "P01",
+      "requirement_id": "WS-02",
+      "prerequisites": [
+        "DOC-01",
+        "DOC-02"
+      ]
+    },
+    {
+      "package_id": "P08",
+      "requirement_id": "WS-03",
+      "prerequisites": [
+        "WS-02",
+        "DOC-02"
+      ]
+    },
+    {
+      "package_id": "P08",
+      "requirement_id": "WS-04",
+      "prerequisites": [
+        "MCP-03"
+      ]
+    },
+    {
+      "package_id": "P08",
+      "requirement_id": "WS-05",
+      "prerequisites": [
+        "WS-04",
+        "WS-02"
+      ]
+    },
+    {
+      "package_id": "P08",
+      "requirement_id": "WS-06",
+      "prerequisites": []
+    },
+    {
+      "package_id": "P08",
+      "requirement_id": "WS-07",
+      "prerequisites": [
+        "WS-06",
+        "QA-06"
+      ]
+    },
+    {
+      "package_id": "P08",
+      "requirement_id": "WS-08",
+      "prerequisites": [
+        "WS-04"
+      ]
+    },
+    {
+      "package_id": "P08",
+      "requirement_id": "WS-09",
+      "prerequisites": [
+        "DOC-06",
+        "RES-02"
+      ]
+    },
+    {
+      "package_id": "P04",
+      "requirement_id": "WS-10",
+      "prerequisites": [
+        "WS-01",
+        "MCP-03"
+      ]
+    },
+    {
+      "package_id": "P08",
+      "requirement_id": "WS-11",
+      "prerequisites": [
+        "WS-06",
+        "QA-06"
+      ]
+    },
+    {
+      "package_id": "P08",
+      "requirement_id": "WS-12",
+      "prerequisites": [
+        "QA-07"
+      ]
+    },
+    {
+      "package_id": "P08",
+      "requirement_id": "WS-13",
+      "prerequisites": [
+        "MCP-02",
+        "WS-06"
+      ]
+    },
+    {
+      "package_id": "P08",
+      "requirement_id": "WS-14",
+      "prerequisites": [
+        "WS-04",
+        "QA-06"
+      ]
+    },
+    {
+      "package_id": "P14",
+      "requirement_id": "AI-01",
+      "prerequisites": [
+        "WS-02",
+        "SEC-06"
+      ]
+    },
+    {
+      "package_id": "P14",
+      "requirement_id": "AI-02",
+      "prerequisites": [
+        "MCP-03"
+      ]
+    },
+    {
+      "package_id": "P14",
+      "requirement_id": "AI-03",
+      "prerequisites": [
+        "MCP-04"
+      ]
+    },
+    {
+      "package_id": "P14",
+      "requirement_id": "AI-04",
+      "prerequisites": [
+        "GIT-12",
+        "MCP-04"
+      ]
+    },
+    {
+      "package_id": "P14",
+      "requirement_id": "AI-05",
+      "prerequisites": [
+        "AI-02"
+      ]
+    },
+    {
+      "package_id": "P14",
+      "requirement_id": "AI-06",
+      "prerequisites": [
+        "LANG-06",
+        "BLD-01"
+      ]
+    },
+    {
+      "package_id": "P14",
+      "requirement_id": "AI-07",
+      "prerequisites": [
+        "AI-01",
+        "AI-02"
+      ]
+    },
+    {
+      "package_id": "P14",
+      "requirement_id": "AI-08",
+      "prerequisites": [
+        "AI-02",
+        "EXT-04"
+      ]
+    },
+    {
+      "package_id": "P14",
+      "requirement_id": "AI-09",
+      "prerequisites": [
+        "AI-01",
+        "MCP-05"
+      ]
+    },
+    {
+      "package_id": "P14",
+      "requirement_id": "AI-10",
+      "prerequisites": [
+        "QA-05",
+        "AI-02"
+      ]
+    },
+    {
+      "package_id": "P14",
+      "requirement_id": "AI-11",
+      "prerequisites": [
+        "AI-04",
+        "WS-06"
+      ]
+    },
+    {
+      "package_id": "P14",
+      "requirement_id": "AI-12",
+      "prerequisites": [
+        "WS-04",
+        "SEC-06"
+      ]
+    },
+    {
+      "package_id": "P14",
+      "requirement_id": "AI-13",
+      "prerequisites": [
+        "DEV-05",
+        "BLD-11",
+        "MCP-04"
+      ]
+    },
+    {
+      "package_id": "P14",
+      "requirement_id": "AI-14",
+      "prerequisites": [
+        "AI-07",
+        "DOC-08",
+        "MCP-05"
+      ]
+    },
+    {
+      "package_id": "P03",
+      "requirement_id": "MCP-01",
+      "prerequisites": []
+    },
+    {
+      "package_id": "P03",
+      "requirement_id": "MCP-02",
+      "prerequisites": []
+    },
+    {
+      "package_id": "P03",
+      "requirement_id": "MCP-03",
+      "prerequisites": []
+    },
+    {
+      "package_id": "P03",
+      "requirement_id": "MCP-04",
+      "prerequisites": [
+        "MCP-03"
+      ]
+    },
+    {
+      "package_id": "P03",
+      "requirement_id": "MCP-05",
+      "prerequisites": [
+        "MCP-03"
+      ]
+    },
+    {
+      "package_id": "P03",
+      "requirement_id": "MCP-06",
+      "prerequisites": [
+        "MCP-03",
+        "SEC-03"
+      ]
+    },
+    {
+      "package_id": "P03",
+      "requirement_id": "MCP-07",
+      "prerequisites": [
+        "MCP-02",
+        "MCP-03"
+      ]
+    },
+    {
+      "package_id": "P03",
+      "requirement_id": "MCP-08",
+      "prerequisites": [
+        "DOC-12",
+        "MCP-03"
+      ]
+    },
+    {
+      "package_id": "P03",
+      "requirement_id": "MCP-09",
+      "prerequisites": [
+        "DOC-08",
+        "DOC-05",
+        "MCP-04"
+      ]
+    },
+    {
+      "package_id": "P03",
+      "requirement_id": "MCP-10",
+      "prerequisites": [
+        "OS-01",
+        "SEC-03"
+      ]
+    },
+    {
+      "package_id": "P15",
+      "requirement_id": "EXT-01",
+      "prerequisites": [
+        "MCP-02",
+        "MCP-03"
+      ]
+    },
+    {
+      "package_id": "P15",
+      "requirement_id": "EXT-02",
+      "prerequisites": [
+        "MCP-03",
+        "WS-06"
+      ]
+    },
+    {
+      "package_id": "P15",
+      "requirement_id": "EXT-03",
+      "prerequisites": [
+        "EXT-02",
+        "SEC-04"
+      ]
+    },
+    {
+      "package_id": "P15",
+      "requirement_id": "EXT-04",
+      "prerequisites": [
+        "MCP-02",
+        "SEC-02"
+      ]
+    },
+    {
+      "package_id": "P15",
+      "requirement_id": "EXT-05",
+      "prerequisites": [
+        "EXT-03",
+        "QA-03"
+      ]
+    },
+    {
+      "package_id": "P15",
+      "requirement_id": "EXT-06",
+      "prerequisites": [
+        "EXT-02"
+      ]
+    },
+    {
+      "package_id": "P15",
+      "requirement_id": "EXT-07",
+      "prerequisites": [
+        "EXT-03",
+        "SEC-04"
+      ]
+    },
+    {
+      "package_id": "P15",
+      "requirement_id": "EXT-08",
+      "prerequisites": [
+        "EXT-02",
+        "OS-01"
+      ]
+    },
+    {
+      "package_id": "P16",
+      "requirement_id": "DEV-01",
+      "prerequisites": [
+        "SEC-01",
+        "EXT-04"
+      ]
+    },
+    {
+      "package_id": "P16",
+      "requirement_id": "DEV-02",
+      "prerequisites": [
+        "DEV-01"
+      ]
+    },
+    {
+      "package_id": "P17",
+      "requirement_id": "DEV-03",
+      "prerequisites": [
+        "SEC-01",
+        "EXT-04"
+      ]
+    },
+    {
+      "package_id": "P17",
+      "requirement_id": "DEV-04",
+      "prerequisites": [
+        "DEV-03",
+        "EXT-01"
+      ]
+    },
+    {
+      "package_id": "P17",
+      "requirement_id": "DEV-05",
+      "prerequisites": [
+        "DEV-03",
+        "EXT-02"
+      ]
+    },
+    {
+      "package_id": "P17",
+      "requirement_id": "DEV-06",
+      "prerequisites": [
+        "DEV-05"
+      ]
+    },
+    {
+      "package_id": "P17",
+      "requirement_id": "DEV-07",
+      "prerequisites": [
+        "DEV-03",
+        "SEC-06"
+      ]
+    },
+    {
+      "package_id": "P15",
+      "requirement_id": "DEV-08",
+      "prerequisites": [
+        "EXT-01",
+        "WS-04"
+      ]
+    },
+    {
+      "package_id": "P17",
+      "requirement_id": "DEV-09",
+      "prerequisites": [
+        "DEV-03",
+        "EXT-02"
+      ]
+    },
+    {
+      "package_id": "P15",
+      "requirement_id": "DEV-10",
+      "prerequisites": [
+        "EXT-02",
+        "DOC-12"
+      ]
+    },
+    {
+      "package_id": "P18",
+      "requirement_id": "SEC-01",
+      "prerequisites": [
+        "BLD-04"
+      ]
+    },
+    {
+      "package_id": "P18",
+      "requirement_id": "SEC-02",
+      "prerequisites": [
+        "MCP-03"
+      ]
+    },
+    {
+      "package_id": "P18",
+      "requirement_id": "SEC-03",
+      "prerequisites": [
+        "OS-01",
+        "MCP-01"
+      ]
+    },
+    {
+      "package_id": "P18",
+      "requirement_id": "SEC-04",
+      "prerequisites": [
+        "QA-10"
+      ]
+    },
+    {
+      "package_id": "P18",
+      "requirement_id": "SEC-05",
+      "prerequisites": [
+        "DOC-10"
+      ]
+    },
+    {
+      "package_id": "P18",
+      "requirement_id": "SEC-06",
+      "prerequisites": [
+        "MCP-03"
+      ]
+    },
+    {
+      "package_id": "P18",
+      "requirement_id": "SEC-07",
+      "prerequisites": [
+        "SEC-02"
+      ]
+    },
+    {
+      "package_id": "P18",
+      "requirement_id": "SEC-08",
+      "prerequisites": [
+        "MCP-01",
+        "QA-09"
+      ]
+    },
+    {
+      "package_id": "P18",
+      "requirement_id": "SEC-09",
+      "prerequisites": [
+        "DOC-05",
+        "AI-01"
+      ]
+    },
+    {
+      "package_id": "P18",
+      "requirement_id": "SEC-10",
+      "prerequisites": [
+        "OS-01",
+        "BLD-12"
+      ]
+    },
+    {
+      "package_id": "P19",
+      "requirement_id": "QA-01",
+      "prerequisites": [
+        "DOC-01"
+      ]
+    },
+    {
+      "package_id": "P19",
+      "requirement_id": "QA-02",
+      "prerequisites": []
+    },
+    {
+      "package_id": "P23",
+      "requirement_id": "QA-03",
+      "prerequisites": []
+    },
+    {
+      "package_id": "P23",
+      "requirement_id": "QA-04",
+      "prerequisites": [
+        "QA-03",
+        "QA-02"
+      ]
+    },
+    {
+      "package_id": "P19",
+      "requirement_id": "QA-05",
+      "prerequisites": [
+        "DOC-02",
+        "MCP-02"
+      ]
+    },
+    {
+      "package_id": "P23",
+      "requirement_id": "QA-06",
+      "prerequisites": []
+    },
+    {
+      "package_id": "P23",
+      "requirement_id": "QA-07",
+      "prerequisites": []
+    },
+    {
+      "package_id": "P00",
+      "requirement_id": "QA-08",
+      "prerequisites": [
+        "MCP-03"
+      ]
+    },
+    {
+      "package_id": "P19",
+      "requirement_id": "QA-09",
+      "prerequisites": []
+    },
+    {
+      "package_id": "P20",
+      "requirement_id": "QA-10",
+      "prerequisites": []
+    },
+    {
+      "package_id": "P20",
+      "requirement_id": "QA-11",
+      "prerequisites": [
+        "QA-10",
+        "OS-01"
+      ]
+    },
+    {
+      "package_id": "P20",
+      "requirement_id": "QA-12",
+      "prerequisites": [
+        "QA-10",
+        "DOC-01",
+        "WS-04"
+      ]
+    },
+    {
+      "package_id": "P20",
+      "requirement_id": "QA-13",
+      "prerequisites": [
+        "SEC-06",
+        "MCP-03"
+      ]
+    },
+    {
+      "package_id": "P00",
+      "requirement_id": "QA-14",
+      "prerequisites": [
+        "QA-08"
+      ]
+    },
+    {
+      "package_id": "P23",
+      "requirement_id": "QA-15",
+      "prerequisites": [
+        "RES-02",
+        "RES-08"
+      ]
+    },
+    {
+      "package_id": "P20",
+      "requirement_id": "QA-16",
+      "prerequisites": [
+        "QA-10",
+        "QA-08"
+      ]
+    },
+    {
+      "package_id": "P21",
+      "requirement_id": "OS-01",
+      "prerequisites": []
+    },
+    {
+      "package_id": "P21",
+      "requirement_id": "OS-02",
+      "prerequisites": [
+        "OS-01",
+        "AI-02"
+      ]
+    },
+    {
+      "package_id": "P21",
+      "requirement_id": "OS-03",
+      "prerequisites": [
+        "OS-01",
+        "WS-04",
+        "PDF-08"
+      ]
+    },
+    {
+      "package_id": "P22",
+      "requirement_id": "OS-04",
+      "prerequisites": [
+        "MCP-03"
+      ]
+    },
+    {
+      "package_id": "P22",
+      "requirement_id": "OS-05",
+      "prerequisites": [
+        "OS-04",
+        "EXT-08"
+      ]
+    },
+    {
+      "package_id": "P20",
+      "requirement_id": "OS-06",
+      "prerequisites": [
+        "QA-10"
+      ]
+    },
+    {
+      "package_id": "P04",
+      "requirement_id": "OS-07",
+      "prerequisites": [
+        "DOC-07",
+        "DOC-10"
+      ]
+    },
+    {
+      "package_id": "P08",
+      "requirement_id": "OS-08",
+      "prerequisites": [
+        "WS-09",
+        "NAV-04"
+      ]
+    },
+    {
+      "package_id": "P21",
+      "requirement_id": "OS-09",
+      "prerequisites": [
+        "OS-01",
+        "QA-06",
+        "QA-07"
+      ]
+    },
+    {
+      "package_id": "P00",
+      "requirement_id": "OS-10",
+      "prerequisites": [
+        "QA-14"
+      ]
+    },
+    {
+      "package_id": "U01",
+      "requirement_id": "UNI-01",
+      "prerequisites": [
+        "EXT-02",
+        "DEV-04",
+        "DEV-05"
+      ]
+    },
+    {
+      "package_id": "U02",
+      "requirement_id": "UNI-02",
+      "prerequisites": [
+        "EXT-02",
+        "DEV-04",
+        "DEV-05"
+      ]
+    },
+    {
+      "package_id": "U03",
+      "requirement_id": "UNI-03",
+      "prerequisites": [
+        "EXT-02",
+        "DEV-04",
+        "DEV-05"
+      ]
+    },
+    {
+      "package_id": "U04",
+      "requirement_id": "UNI-04",
+      "prerequisites": [
+        "EXT-02",
+        "DEV-04",
+        "DEV-05"
+      ]
+    },
+    {
+      "package_id": "U05",
+      "requirement_id": "UNI-05",
+      "prerequisites": [
+        "EXT-02",
+        "DEV-04",
+        "DEV-05"
+      ]
+    },
+    {
+      "package_id": "U06",
+      "requirement_id": "UNI-06",
+      "prerequisites": [
+        "EXT-02",
+        "DEV-04",
+        "DEV-05"
+      ]
+    },
+    {
+      "package_id": "U07",
+      "requirement_id": "UNI-07",
+      "prerequisites": [
+        "EXT-02",
+        "DEV-04",
+        "DEV-05"
+      ]
+    },
+    {
+      "package_id": "U08",
+      "requirement_id": "UNI-08",
+      "prerequisites": [
+        "EXT-02",
+        "DEV-04",
+        "DEV-05"
+      ]
+    },
+    {
+      "package_id": "U09",
+      "requirement_id": "UNI-09",
+      "prerequisites": [
+        "EXT-02",
+        "DEV-04",
+        "DEV-05"
+      ]
+    },
+    {
+      "package_id": "U10",
+      "requirement_id": "UNI-10",
+      "prerequisites": [
+        "EXT-02",
+        "SEC-06"
+      ]
+    },
+    {
+      "package_id": "U11",
+      "requirement_id": "UNI-11",
+      "prerequisites": [
+        "UNI-06"
+      ]
+    },
+    {
+      "package_id": "U12",
+      "requirement_id": "UNI-12",
+      "prerequisites": [
+        "UNI-05",
+        "UNI-06"
+      ]
+    },
+    {
+      "package_id": "U13",
+      "requirement_id": "UNI-13",
+      "prerequisites": [
+        "EXT-02",
+        "DEV-04",
+        "DEV-05"
+      ]
+    },
+    {
+      "package_id": "U14",
+      "requirement_id": "UNI-14",
+      "prerequisites": [
+        "EXT-02",
+        "DOC-08"
+      ]
+    },
+    {
+      "package_id": "U15",
+      "requirement_id": "UNI-15",
+      "prerequisites": [
+        "DEV-08",
+        "DEV-03"
+      ]
+    },
+    {
+      "package_id": "U16",
+      "requirement_id": "UNI-16",
+      "prerequisites": [
+        "UNI-03",
+        "DEV-05"
+      ]
+    },
+    {
+      "package_id": "U17",
+      "requirement_id": "UNI-17",
+      "prerequisites": [
+        "EXT-08",
+        "WS-10",
+        "MCP-05"
+      ]
+    },
+    {
+      "package_id": "U18",
+      "requirement_id": "UNI-18",
+      "prerequisites": [
+        "DOC-08",
+        "MCP-05"
+      ]
+    },
+    {
+      "package_id": "U19",
+      "requirement_id": "UNI-19",
+      "prerequisites": [
+        "WS-04",
+        "EXT-03",
+        "SEC-07",
+        "QA-12"
+      ]
+    },
+    {
+      "package_id": "U20",
+      "requirement_id": "UNI-20",
+      "prerequisites": [
+        "DEV-09",
+        "UNI-17",
+        "SEC-06"
+      ]
+    }
+  ]
+}

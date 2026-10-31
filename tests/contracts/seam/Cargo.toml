@@ -1,0 +1,12 @@
+[package]
+name = "latexide-contract-seam-test"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.99"
+publish = false
+
+[workspace]
+
+[dependencies]
+latexide-core = { path = "../../../crates/latexide-core" }
+latexide-contracts = { path = "../../../crates/latexide-contracts" }

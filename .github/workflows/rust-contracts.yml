@@ -13,6 +13,8 @@ on:
       - 'tests/ipc_contract.py'
       - 'tests/mcp_contract.py'
       - 'tests/fixtures/**'
+      - 'tests/contracts/**'
+      - 'integration/registry/**'
       - '.github/workflows/rust-contracts.yml'
   pull_request:
     paths:
@@ -25,6 +27,8 @@ on:
       - 'tests/ipc_contract.py'
       - 'tests/mcp_contract.py'
       - 'tests/fixtures/**'
+      - 'tests/contracts/**'
+      - 'integration/registry/**'
       - '.github/workflows/rust-contracts.yml'
   workflow_dispatch:
 
@@ -52,6 +56,8 @@ jobs:
         run: rustup toolchain install 1.99.1 --profile minimal
       - name: Test the existing shared workspace
         run: cargo +1.99.1 test --workspace --locked
+      - name: Test independent module seam
+        run: cargo +1.99.1 test --manifest-path tests/contracts/seam/Cargo.toml --locked
       - name: Build Mac FFI and MCP test dependencies
         if: runner.os == 'macOS'
         run: cargo +1.99.1 build -p latexide-ffi -p latexide-mcp --locked
@@ -61,6 +67,12 @@ jobs:
           test "$(uname -m)" = arm64
           swift --version
           swift test --package-path apps/macos --disable-sandbox
+      - name: Mac native contract decoder
+        if: runner.os == 'macOS'
+        run: |
+          mkdir -p .local/clang-module-cache
+          swiftc -module-cache-path "$PWD/.local/clang-module-cache" tests/contracts/NativeModels.swift tests/contracts/main.swift -o .local/contract-native
+          .local/contract-native "$PWD/tests/contracts/v1"
       - name: Mac IPC and MCP roundtrips
         if: runner.os == 'macOS'
         run: |
