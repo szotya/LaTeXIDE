@@ -2,6 +2,8 @@
 
 Kért hely: [szotya/LaTeXIDE](https://github.com/szotya/LaTeXIDE), **private**. Alapág: `main`. A távoli létrehozás és ellenőrzés tényleges eredményét a handoff és a ledger rögzíti; ez az oldal az új clone használati szerződése.
 
+A `main` ágon [aktív branchvédelmi ruleset](BRANCH_PROTECTION.md) működik: saját branch és PR, kötelező source/Python check aktuális alapággal, lezárt beszélgetések és squash/rebase merge; nincs force push, törlés vagy adminbypass. Jelenleg 0 kötelező approval az egyetlen közreműködő miatt. A Rust/Mac path-filteres workflow külön ellenőrzés, nem kikényszerített required check; a policy ezt a korlátot is rögzíti.
+
 ## Mi van verziózva?
 
 - Öt Rust crate és lockfile, Mac SwiftPM és Windows WinUI forrás, közös C header és paletták.
