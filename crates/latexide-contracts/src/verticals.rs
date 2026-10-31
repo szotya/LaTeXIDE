@@ -39,7 +39,7 @@ pub struct QualifyVerticalRequest {
 }
 
 impl ContractRequest for QualifyVerticalRequest {
-    fn package_id(&self) -> &str { &self.manifest.id }
+    fn package_id(&self) -> &str { if self.manifest.id.starts_with('U') { &self.manifest.id } else { "" } }
 }
 
 pub trait VerticalPort {
