@@ -19,8 +19,8 @@ AUDIT = ROOT / "docs/ide-audit-2026-10-31/backlog.json"
 
 
 def render() -> dict[Path, str]:
-    backlog = json.loads(AUDIT.read_text())
-    specs = json.loads((DATA / "package-specs.json").read_text())
+    backlog = json.loads(AUDIT.read_text(encoding="utf-8"))
+    specs = json.loads((DATA / "package-specs.json").read_text(encoding="utf-8"))
     ids = {item["id"] for item in backlog}
     ownership: dict[str, str] = {}
     for package in specs:
@@ -74,7 +74,7 @@ def render() -> dict[Path, str]:
         body += "Indulás: " + ("már most elindítható környezet-/tesztfeltárással; a termékbekötéshez P00 contract-v1 kell." if not entry["start_requires"] else "P00 contract-v1 után, fagyasztott fixture-ökkel és fake portokkal; a többi csomag teljes elkészülte nem indulási feltétel.") + "\n\n"
         body += "Integrációs szomszédok: " + (", ".join(dependencies) or "nincs más követelménygazda") + ". Ezek **nem csomagszintű topologikus sorrend**: az egyedi követelményfüggőségek maradnak irányadók. A kölcsönös portfüggést fixture és fokozatos bekötés oldja, nem két teljes csomag egymásra várása.\n\n"
         if p["tier"] == "optional":
-            folder = str(Path(p["entry_path"]).parents[1])
+            folder = Path(p["entry_path"]).parents[1].as_posix()
             body += "## Task 0: Vertikumszerződés és önálló tesztcsomag\n\n"
             body += f"- [ ] Hozd létre `{folder}/CAPABILITIES.md` fájlt a fenti Goal technológiai területeire: capability-ID, projektprofil, toolverzió, natív platform, elvárt workflow és teszt. A három állapot: required/optional/unsupported; unsupported tétel mellett nincs teljes-paritás állítás.\n"
             body += f"- [ ] `{folder}/Cargo.toml`: package `latexide-{p['id'].lower()}-{p['slug']}`, version `0.1.0`, edition `2024`, rust-version `1.99`, külön üres `[workspace]` és `latexide-contracts = {{ path = \"../../../crates/latexide-contracts\" }}` dependency. Így külön tesztelhető, nem módosít közös workspace-t.\n"
@@ -148,7 +148,7 @@ def main() -> None:
     stale = []
     for path, content in outputs.items():
         if args.check:
-            if not path.exists() or path.read_text(encoding="utf-8") != content:
+            if not path.exists() or path.read_bytes() != content.encode("utf-8"):
                 stale.append(path.relative_to(ROOT).as_posix())
         else:
             path.parent.mkdir(parents=True, exist_ok=True)

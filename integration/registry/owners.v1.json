@@ -2,6 +2,10 @@
   "paths": [
     {
       "package_id": "P00",
+      "path": ".gitattributes"
+    },
+    {
+      "package_id": "P00",
       "path": ".github/workflows/"
     },
     {
@@ -230,11 +234,19 @@
     },
     {
       "package_id": "P00",
+      "path": "scripts/build_development_packages.py"
+    },
+    {
+      "package_id": "P00",
       "path": "scripts/build_macos.sh"
     },
     {
       "package_id": "P00",
       "path": "scripts/build_windows.ps1"
+    },
+    {
+      "package_id": "P00",
+      "path": "scripts/validate_development_packages.py"
     },
     {
       "package_id": "P00",

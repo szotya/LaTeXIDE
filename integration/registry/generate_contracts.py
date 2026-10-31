@@ -113,8 +113,8 @@ def expand_braces(pattern):
 
 
 def render():
-    packages = json.loads((ROOT / "docs/development/package-specs.json").read_text())
-    backlog = json.loads((ROOT / "docs/ide-audit-2026-10-31/backlog.json").read_text())
+    packages = json.loads((ROOT / "docs/development/package-specs.json").read_text(encoding="utf-8"))
+    backlog = json.loads((ROOT / "docs/ide-audit-2026-10-31/backlog.json").read_text(encoding="utf-8"))
     owner = {req: p["id"] for p in packages for req in p["requirements"]}
     outputs = {}; modules = []; descriptors = []; vector_manifest = []
     for p in packages:
@@ -183,7 +183,7 @@ def render():
             "service_entry": p["entry_path"], "test_path": p["test_path"], "test_command": p["test_command"],
             "contract_state": "defined-v1", "service_state": "not implemented by P00"})
     marker = "// BEGIN GENERATED PORTS"
-    prefix = (SRC / "lib.rs").read_text().split(marker)[0].rstrip() + "\n\n"
+    prefix = (SRC / "lib.rs").read_text(encoding="utf-8").split(marker)[0].rstrip() + "\n\n"
     outputs[SRC / "lib.rs"] = prefix + marker + "\n" + "".join(f"pub mod {m};\n" for m in modules) + "// END GENERATED PORTS\n"
     paths = []
     for p in packages:
@@ -210,7 +210,7 @@ def main():
     for path, content in outputs.items():
         assert path.resolve().is_relative_to(ROOT)
         if args.check:
-            if not path.exists() or path.read_text() != content: changed.append(path.relative_to(ROOT).as_posix())
+            if not path.exists() or path.read_bytes() != content.encode("utf-8"): changed.append(path.relative_to(ROOT).as_posix())
         else:
             path.parent.mkdir(parents=True, exist_ok=True); path.write_text(content, encoding="utf-8", newline="")
     if changed: raise SystemExit("Stale contract artifacts: " + ", ".join(changed))

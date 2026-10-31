@@ -114,12 +114,22 @@ def resolve_evidence(records, source_sha256, platform, kind, *, artifact_sha256=
 
 
 def discover_sources(root):
+    root = Path(root)
     paths = {"Cargo.toml", "Cargo.lock", "rust-toolchain.toml"}
+    if (root / ".gitattributes").is_file(): paths.add(".gitattributes")
     for name in ["docs/development/package-specs.json", "docs/development/packages.json",
                  "docs/ide-audit-2026-10-31/backlog.json", "scripts/build_development_packages.py",
                  "scripts/validate_development_packages.py"]:
         if (root / name).is_file(): paths.add(name)
-    for folder in ["crates", "integration/registry", "tests/contracts"]:
+    # The planning validator consumes these outputs/docs as well as its JSON
+    # inputs. Keep result journals separate: they report a run, not feed it.
+    for folder, pattern in [("docs/development", "*.json"), ("docs/development", "*.csv"),
+                            ("docs/development", "*.md"),
+                            ("docs/superpowers/plans/2026-10-31-parallel", "*.md")]:
+        paths.update(path.relative_to(root).as_posix() for path in (root / folder).glob(pattern) if path.is_file())
+    spec = root / "docs/superpowers/specs/2026-10-31-parallel-development-design.md"
+    if spec.is_file(): paths.add(spec.relative_to(root).as_posix())
+    for folder in ["crates", "integration/registry", "integration/requests", "tests/contracts"]:
         for path in (root / folder).rglob("*"):
             if path.is_file() and not {"target", ".local", "__pycache__"}.intersection(path.relative_to(root).parts) and path.suffix in {".rs", ".py", ".swift", ".toml", ".json", ".lock"}:
                 paths.add(path.relative_to(root).as_posix())
@@ -165,7 +175,7 @@ def main():
     args.output.parent.mkdir(parents=True, exist_ok=True)
     report = run_checks(ROOT, lambda: discover_sources(ROOT), steps, args.output.parent, args.timeout)
     report["profile"] = args.profile
-    args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n")
+    args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
     print(json.dumps({"profile": args.profile, "status": report["status"], "source_sha256": report["source_sha256"],
                       "checks": [{"name": r["name"], "status": r["status"], "kind": r["kind"]} for r in report["checks"]]}, ensure_ascii=False))
     return 0 if report["status"] == "passed" else 1

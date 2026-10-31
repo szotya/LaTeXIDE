@@ -31,7 +31,7 @@ fn a_snapshot_can_include_more_files_than_the_ten_retained_editor_buffers() {
 
 #[test]
 fn snapshot_rejects_noncanonical_utf8_duplicates_and_unrevisioned_dirty_content() {
-    for content in [vec![0xff], b"a\r\nb".to_vec(), b"a\0b".to_vec(), vec![0xef, 0xbb, 0xbf, b'a']] {
+    for content in [vec![0xff], b"a\r\nb".to_vec(), b"a\0b".to_vec()] {
         let mut value = snapshot(); value.files[0].utf8 = content;
         assert_eq!(value.validate(&limits()), Err(ContractError::InvalidPayload));
     }

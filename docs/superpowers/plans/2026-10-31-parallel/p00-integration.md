@@ -48,6 +48,7 @@
 - `Cargo.toml`
 - `Cargo.lock`
 - `rust-toolchain.toml`
+- `.gitattributes`
 - `crates/*/Cargo.toml`
 - `crates/*/src/lib.rs`
 - `crates/latexide-core/src/{workspace,document,project_index,tex_scan,completion,definition}.rs`
@@ -60,6 +61,7 @@
 - `apps/macos/Sources/LaTeXIDEKit/Editor/SourceTextView.swift`
 - `apps/windows/{MainWindow*,NativeCore*,LaTeXIDE.vcxproj,packages.config,NuGet.Native.*}`
 - `scripts/{build_macos.sh,build_windows.ps1}`
+- `scripts/{build_development_packages.py,validate_development_packages.py}`
 - `.github/workflows/`
 - `docs/{DEVELOPER_HANDOFF,implementation-progress}.md`
 - `skills/latexide-platform-development/`

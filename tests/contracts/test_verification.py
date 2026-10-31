@@ -1,6 +1,9 @@
 import importlib.util
 import json
-from pathlib import Path
+import os
+from pathlib import Path, PureWindowsPath
+import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -46,6 +49,61 @@ class VerificationContract(unittest.TestCase):
             steps = [{"name": "change-spec", "argv": [sys.executable, "-c", "from pathlib import Path;Path('docs/development/package-specs.json').write_text('{\"changed\":true}')"], "kind": "source"}]
             report = verify.run_checks(root, lambda: verify.discover_sources(root), steps, root / "logs", 3)
             self.assertEqual(report["status"], "source_changed")
+
+    def test_manifest_and_planning_inputs_cannot_change_after_their_check(self):
+        inputs = ["integration/requests/P00.json", "docs/development/requirement-map.csv",
+                  "docs/development/github-issues.json", "docs/development/README.md",
+                  "docs/superpowers/plans/2026-10-31-parallel/p00-integration.md",
+                  "docs/superpowers/specs/2026-10-31-parallel-development-design.md"]
+        for name in inputs:
+            with self.subTest(name=name), tempfile.TemporaryDirectory() as d:
+                root = Path(d)
+                for base in ["Cargo.toml", "Cargo.lock", "rust-toolchain.toml"]: (root / base).write_bytes(b"fixture")
+                path = root / name; path.parent.mkdir(parents=True); path.write_bytes(b"before")
+                steps = [
+                    {"name": "checked", "argv": [sys.executable, "-c", "pass"], "kind": "source"},
+                    {"name": "late-change", "argv": [sys.executable, "-c", "import sys;from pathlib import Path;Path(sys.argv[1]).write_bytes(b'after')", name], "kind": "source"},
+                ]
+                report = verify.run_checks(root, lambda: verify.discover_sources(root), steps, root / "logs", 3)
+                self.assertEqual(report["status"], "source_changed")
+
+    def test_repository_generators_and_validator_do_not_depend_on_default_encoding(self):
+        env = dict(os.environ, PYTHONUTF8="0", PYTHONCOERCECLOCALE="0", LC_ALL="C")
+        for argv in [["integration/registry/generate_contracts.py", "--check"],
+                     ["scripts/build_development_packages.py", "--check"],
+                     ["scripts/validate_development_packages.py"]]:
+            with self.subTest(command=argv[0]):
+                result = subprocess.run([sys.executable, *argv], cwd=ROOT, env=env, capture_output=True, timeout=30)
+                self.assertEqual(result.returncode, 0, result.stderr.decode("utf-8", errors="replace"))
+
+    def test_planning_output_does_not_inherit_host_path_separators(self):
+        spec = importlib.util.spec_from_file_location("p00_plans", ROOT / "scripts/build_development_packages.py")
+        module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module)
+        expected = module.render()
+        module.Path = PureWindowsPath
+        self.assertEqual(module.render(), expected)
+
+    def test_emitted_artifacts_are_deterministic_and_crlf_corruption_is_stale(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            inputs = ["docs/development/package-specs.json", "docs/development/packages.json",
+                      "docs/ide-audit-2026-10-31/backlog.json", "crates/latexide-contracts/src/lib.rs",
+                      "integration/registry/generate_contracts.py", "scripts/build_development_packages.py"]
+            for name in inputs:
+                target = root / name; target.parent.mkdir(parents=True, exist_ok=True); shutil.copyfile(ROOT / name, target)
+            scripts = ["scripts/build_development_packages.py", "integration/registry/generate_contracts.py"]
+            def run(script, *args):
+                return subprocess.run([sys.executable, script, *args], cwd=root, capture_output=True, timeout=30)
+            for script in scripts: self.assertEqual(run(script).returncode, 0)
+            emitted = {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()}
+            for script in scripts: self.assertEqual(run(script).returncode, 0)
+            self.assertEqual(emitted, {p.relative_to(root): p.read_bytes() for p in root.rglob("*") if p.is_file()})
+            for script, name in [(scripts[0], "docs/superpowers/plans/2026-10-31-parallel/p00-integration.md"),
+                                 (scripts[1], "tests/contracts/v1/p07.json")]:
+                with self.subTest(script=script):
+                    path = root / name; original = path.read_bytes(); path.write_bytes(original.replace(b"\n", b"\r\n"))
+                    self.assertNotEqual(run(script, "--check").returncode, 0, "CRLF bytes differ from the canonical LF artifact")
+                    path.write_bytes(original)
 
     def test_failed_build_cannot_run_a_previous_binary_as_current_evidence(self):
         with tempfile.TemporaryDirectory() as d:

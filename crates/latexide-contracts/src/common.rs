@@ -102,7 +102,9 @@ impl SnapshotFile {
         { return Err(ContractError::InvalidPayload); }
         if self.utf8.len() > MAX_FILE_BYTES { return Err(ContractError::Quota); }
         let text = std::str::from_utf8(&self.utf8).map_err(|_| ContractError::InvalidPayload)?;
-        if text.starts_with('\u{feff}') || text.contains(['\r', '\0']) { return Err(ContractError::InvalidPayload); }
+        // A physical encoding BOM is removed by the producer. A logical FEFF
+        // scalar can still be document content, including at offset zero.
+        if text.contains(['\r', '\0']) { return Err(ContractError::InvalidPayload); }
         Ok(text)
     }
 }
