@@ -159,8 +159,12 @@ def build_native(args):
     result = subprocess.run(["swift", "build", *options, "--show-bin-path"], cwd=ROOT, check=True, capture_output=True, text=True, encoding="utf-8")
     directory = Path(result.stdout.strip())
     binary = directory / "LaTeXIDEPackageTests.xctest/Contents/MacOS/LaTeXIDEPackageTests"
-    if not binary.is_file(): raise ValueError("SwiftPM did not emit the test executable")
-    write_json(args.result, {"schema": 1, "artifacts": [{"path": output_reference(binary, [ROOT / ".local/p00-native-build"]), "kind": "native_test_binary"}]})
+    # Bundle.module reads this copied resource at runtime, outside the image.
+    artifacts = {"native_test_binary": binary,
+                 "native_theme_resource": directory / "IDEThemeAssets_IDEThemeAssets.bundle/editor-themes.json"}
+    if not all(path.is_file() for path in artifacts.values()): raise ValueError("SwiftPM did not emit every required test artifact")
+    write_json(args.result, {"schema": 1, "artifacts": [
+        {"path": output_reference(path, [ROOT / ".local/p00-native-build"]), "kind": kind} for kind, path in artifacts.items()]})
 
 
 def main():

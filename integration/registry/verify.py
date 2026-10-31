@@ -295,7 +295,7 @@ def build_steps(root, args, platform, machine):
             suite("ipc-roundtrip", "ipc", "ipc-runtime", depends_on=["runtime-build"], consumes_artifacts=["runtime-build"]),
             suite("mcp-roundtrip", "mcp", "mcp-runtime", depends_on=["runtime-build"], consumes_artifacts=["runtime-build"]),
             {"name": "native-build", "kind": "native-control-build", "depends_on": ["runtime-build"], "consumes_artifacts": ["runtime-build"],
-             "argv": probe("native-build", "--result", native_index), "artifact_index": ref(native_index), "required_artifact_kinds": ["native_test_binary"]},
+             "argv": probe("native-build", "--result", native_index), "artifact_index": ref(native_index), "required_artifact_kinds": ["native_test_binary", "native_theme_resource"]},
         ]
         native_summary = run_dir / "native-controls.json"
         steps.append({"name": "native-controls", "kind": "native-controls", "depends_on": ["native-build"], "consumes_artifacts": ["runtime-build", "native-build"],

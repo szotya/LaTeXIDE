@@ -25,6 +25,40 @@ class IntegratedVerificationContract(unittest.TestCase):
         spec = importlib.util.spec_from_file_location("p00_probe_contract", path)
         module = importlib.util.module_from_spec(spec); spec.loader.exec_module(module); return module
 
+    def native_fixture(self, root):
+        directory = root / ".local/p00-native-build/debug"
+        binary = directory / "LaTeXIDEPackageTests.xctest/Contents/MacOS/LaTeXIDEPackageTests"
+        resource = directory / "IDEThemeAssets_IDEThemeAssets.bundle/editor-themes.json"
+        for path in [binary, resource]:
+            path.parent.mkdir(parents=True, exist_ok=True); path.write_bytes(b"current fixture")
+        return directory, resource
+
+    def test_native_build_binds_the_generated_resource_beside_the_test_binary(self):
+        module = self.probes()
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d).resolve(); directory, resource = self.native_fixture(root)
+            with patch.object(module, "ROOT", root), patch.object(module, "mac_required"), patch.object(module, "command"), \
+                 patch.object(module.subprocess, "run", return_value=SimpleNamespace(stdout=str(directory))), \
+                 patch.dict(module.os.environ, {"P00_VERIFICATION_RUN_ID": "fixture"}):
+                module.build_native(SimpleNamespace(result=root / "index.json"))
+            artifacts = verify.capture_artifacts(root, {"artifact_index": "index.json"}, "fixture", [root])
+            self.assertTrue(verify.artifacts_current(root, artifacts, [root]))
+            resource.write_bytes(b"replacement palette")
+            self.assertFalse(verify.artifacts_current(root, artifacts, [root]), "A copied resource replacement must invalidate native evidence")
+            self.assertEqual({a["kind"] for a in artifacts}, {"native_test_binary", "native_theme_resource"})
+
+    def test_native_resource_is_mandatory_in_the_builder_and_profile(self):
+        module = self.probes()
+        args = SimpleNamespace(profile="integrated", cargo_executable=None, offline=True, native_schema=False, run_dir=ROOT / ".local/fixture-run")
+        step = next(s for s in verify.build_steps(ROOT, args, "darwin", "arm64") if s["name"] == "native-build")
+        with self.subTest(boundary="profile"):
+            self.assertIn("native_theme_resource", step["required_artifact_kinds"])
+        with self.subTest(boundary="builder"), tempfile.TemporaryDirectory() as d:
+            root = Path(d).resolve(); directory, resource = self.native_fixture(root); resource.unlink()
+            with patch.object(module, "ROOT", root), patch.object(module, "mac_required"), patch.object(module, "command"), \
+                 patch.object(module.subprocess, "run", return_value=SimpleNamespace(stdout=str(directory))):
+                with self.assertRaises(ValueError): module.build_native(SimpleNamespace(result=root / "index.json"))
+
     def test_every_declared_binary_is_bound_and_one_swapped_file_blocks_use(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d); (root / "source").write_bytes(b"fixture")
