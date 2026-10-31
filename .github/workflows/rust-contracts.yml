@@ -26,30 +26,11 @@ jobs:
           persist-credentials: false
       - name: Install pinned Rust
         run: rustup toolchain install 1.99.1 --profile minimal
-      - name: Test the existing shared workspace
-        run: cargo +1.99.1 test --workspace --locked
-      - name: Test independent module seam
-        run: cargo +1.99.1 test --manifest-path tests/contracts/seam/Cargo.toml --locked
-      - name: Build Mac FFI and MCP test dependencies
-        if: runner.os == 'macOS'
-        run: cargo +1.99.1 build -p latexide-ffi -p latexide-mcp --locked
-      - name: Mac native control tests
-        if: runner.os == 'macOS'
-        run: |
-          test "$(uname -m)" = arm64
-          swift --version
-          swift test --package-path apps/macos --disable-sandbox
-      - name: Mac native contract decoder
-        if: runner.os == 'macOS'
-        run: |
-          mkdir -p .local/clang-module-cache
-          swiftc -module-cache-path "$PWD/.local/clang-module-cache" tests/contracts/NativeModels.swift tests/contracts/main.swift -o .local/contract-native
-          .local/contract-native "$PWD/tests/contracts/v1"
-      - name: Mac IPC and MCP roundtrips
-        if: runner.os == 'macOS'
-        run: |
-          python3 tests/ipc_contract.py
-          python3 tests/mcp_contract.py
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
+        with:
+          python-version: '3.13'
+      - name: Verify selected common and provider profile
+        run: python integration/registry/verify.py --profile ${{ runner.os == 'macOS' && 'integrated' || 'shared' }}
 
 
   # Shared Rust tests are not Windows WinUI/Linux desktop qualification.

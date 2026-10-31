@@ -10,6 +10,10 @@
     },
     {
       "package_id": "P00",
+      "path": ".gitignore"
+    },
+    {
+      "package_id": "P00",
       "path": "Cargo.lock"
     },
     {
@@ -182,7 +186,15 @@
     },
     {
       "package_id": "P00",
+      "path": "docs/development/BRANCH_PROTECTION.md"
+    },
+    {
+      "package_id": "P00",
       "path": "docs/development/README.md"
+    },
+    {
+      "package_id": "P00",
+      "path": "docs/development/REPOSITORY.md"
     },
     {
       "package_id": "P00",

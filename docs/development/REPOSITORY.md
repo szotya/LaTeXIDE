@@ -2,11 +2,11 @@
 
 Kért hely: [szotya/LaTeXIDE](https://github.com/szotya/LaTeXIDE), **private**. Alapág: `main`. A távoli létrehozás és ellenőrzés tényleges eredményét a handoff és a ledger rögzíti; ez az oldal az új clone használati szerződése.
 
-A `main` ágon [aktív branchvédelmi ruleset](BRANCH_PROTECTION.md) működik: saját branch és PR, kötelező source-összesítő aktuális alapággal, lezárt beszélgetések és squash/rebase merge; nincs force push, törlés vagy adminbypass. Jelenleg 0 kötelező approval az egyetlen közreműködő miatt. Az állandó összesítő a planning és scope-választó mellett a Git-diff alapján szükséges Rust/Mac futások sikerét is kéri; az ismert Markdown-only változás runtime-köre kihagyható.
+A `main` ágon [aktív branchvédelmi ruleset](BRANCH_PROTECTION.md) működik: saját branch és PR, kötelező összesítő check aktuális alapággal, lezárt beszélgetések és squash/rebase merge; nincs force push, törlés vagy adminbypass. Jelenleg 0 kötelező approval az egyetlen közreműködő miatt. A `Planning and Python contracts` összesítő a tervezési/Python mátrix mellett a forrásváltozásokhoz kiválasztott Rust/Mac kör sikerét is megköveteli.
 
 ## Mi van verziózva?
 
-- Öt Rust crate és lockfile, Mac SwiftPM és Windows WinUI forrás, közös C header és paletták.
+- Hat Rust crate és lockfile, Mac SwiftPM és Windows WinUI forrás, közös C header és paletták.
 - Beszerzési/buildscriptek, hivatalos toolchain URL-/hash-rögzítések, TeX Live profilok és eredetmetaadat.
 - Automatizált tesztek és kontrollált fixture-ök; a történeti helyi eredmények tartalom helyett [hashjegyzékkel](LOCAL_EVIDENCE.md).
 - Audit, 44 terv, 226 soros kiosztás, handoff, ledger és hordozható projekt-skill.
@@ -50,7 +50,7 @@ Linuxon a CI közös Rust-réteget ellenőrizhet, de nincs kész natív felület
 
 ## CI és források
 
-A `Source and contract checks` workflow push/PR/manual eseményre Ubuntu és Windows Server strukturális/Python ellenőrzést és állandó `Planning and Python contracts` összesítőt futtat. A Git-diff selector az ismert Markdown-only változásoknál elhagyhatja a runtime-kört; forrás-, workflow-, manifest- és ismeretlen útvonalnál teljes kört kér. A `Rust and Mac checks` reusable workflow ilyenkor Rust Ubuntu/Mac/Windows, Mac natív vezérlőteszt és IPC/MCP ellenőrzést végez, és kézzel is indítható. A szükséges kör hibája, megszakítása vagy hiánya megbuktatja az összesítőt. Nincs online modellkérés, compilertelepítés, aláírt release vagy deployment. A workflow végrehajtott eredménye a GitHub Actions lapon olvasható; a workflowfájl létezése még nem PASS.
+A `Source and contract checks` workflow main-push/PR/manual eseményre Ubuntu és Windows tervezési/Python ellenőrzést és állandó nevű összesítőt futtat. A Git-diff alapján szükséges `Rust and Mac checks` újrahasználható workflow Macen az integrált profilt, Ubuntu/Windowson a közös Rust-profilt futtatja; ismert docs-only változás kihagyhatja ezt a mátrixot. Hiányzó Git-bázis nem adhat lazább kaput; kézi indítás teljes kört kér. Nincs online modellkérés, compilertelepítés, aláírt release vagy deployment. A workflow végrehajtott eredménye a GitHub Actions lapon olvasható; a workflowfájl létezése még nem PASS. Az új profilok és report parancsai a [v1 útmutatóban](contracts/v1.md), tényleges eredményei a [P00 naplóban](results/P00.md) találhatók.
 
 A kontrollált asszisztens-alfolyamat forrása `tests/fixtures/assistant/assistant_fixture.py`; ezt a natív teszt maga csomagolja privát ideiglenes fixture-ré, valódi modell vagy credential nélkül. Fixture-változás is indítja a natív CI-t. A négy opt-in skip külön marad: telepített Codex handshake és három render. A történeti `WorkspaceRenderTests` opt-in kör a helyi korábbi demo-build/evidence inputot igényli; ez a nyers input nincs Gitben, és ez a kör nem minősített tiszta-clone teszt. Új önálló renderfixture és teljes vizuális kvalifikáció P23/QA-07 feladata.
 

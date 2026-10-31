@@ -15,7 +15,7 @@ spec.loader.exec_module(verify)
 
 
 def copy_generator_fixture(root):
-    for name in ["Cargo.toml", "Cargo.lock", "rust-toolchain.toml", ".gitattributes", "README.md", "AGENTS.md", "CONTRIBUTING.md"]:
+    for name in ["Cargo.toml", "Cargo.lock", "rust-toolchain.toml", ".gitattributes", ".gitignore", "README.md", "AGENTS.md", "CONTRIBUTING.md"]:
         shutil.copyfile(ROOT / name, root / name)
     for folder in ["crates", "apps", "include", "scripts", ".github", "docs", "skills", "integration", "tests/contracts"]:
         shutil.copytree(ROOT / folder, root / folder,
