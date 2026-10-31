@@ -2,7 +2,7 @@
 
 A [main-protection ruleset](https://github.com/szotya/LaTeXIDE/rules/26284711) **aktív**, API-ból visszaellenőrizve 2026-10-31-én. A `~DEFAULT_BRANCH` célzás jelenleg a `main` ágat védi; alapágváltáskor az új alapágat követi. A munkabranchekre nem vonatkozik.
 
-Az alkalmazott [JSON-konfiguráció](../../.github/rulesets/main-protection.json) újra felhasználható API-input. A [visszaellenőrzési összegzés](BRANCH_PROTECTION_VERIFICATION.json) dátumozott pillanatkép, nem folyamatos állapotfigyelő. A helyi JSON szerkesztése önmagában nem módosítja a GitHub-beállítást.
+Az alkalmazott [JSON-konfiguráció](../../.github/rulesets/main-protection.json) újra felhasználható API-input. A [visszaellenőrzési összegzés](BRANCH_PROTECTION_VERIFICATION.json) a ruleset létrehozásakor készült történeti pillanatkép; megelőzi a P00 összesítő kapuját, nem folyamatos állapotfigyelő. A helyi JSON szerkesztése önmagában nem módosítja a GitHub-beállítást.
 
 | Szabály | Beállítás és indok |
 | --- | --- |
@@ -20,11 +20,11 @@ Az admin továbbra is módosíthatja magát a rulesetet a repositorybeállítás
 
 ## A kötelező CI pontos határa
 
-A [Source and contract checks](../../.github/workflows/ci.yml) minden PR-on elindul. A kötelező job a csomag-/követelménykiosztás validátorát, a Python-szerződésteszteket és a korlátos repositorytartalom-ellenőrzést futtatja. Ez nem teljes biztonsági scan és nem Rust-/natív termékteszt.
+A [Source and contract checks](../../.github/workflows/ci.yml) minden PR-on elindul. Ubuntu és Windows Server planning jobjai a strukturális kontraktus-/tervvalidálást és a korlátos repositorytartalom-ellenőrzést futtatják; a korábbi gyökér-Python-tesztek Ubuntu alatt futnak. A kötelező, pontosan `Planning and Python contracts` nevű összesítő `always()` mellett megvárja a scope-választót, a planning mátrixot és az előírt runtime-kört. A hiányzó, sikertelen vagy megszakított kötelező munka nem adhat sikeres kaput. Ez nem teljes biztonsági scan.
 
-A [Rust and Mac checks](../../.github/workflows/rust-contracts.yml) útvonalszűrt. A három `Rust contracts (...)` job ezért **nem kötelező ruleset-check**: pusztán dokumentációs PR-on nem is jönnének létre, így állandó required checkként a merge függőben maradna. A releváns forrásváltozások továbbra is elindítják a meglévő workflow-t, de annak eredményét ez a ruleset nem kényszeríti ki. Forrás-PR áttekintésekor a megfelelő Rust/Mac eredményt külön ellenőrizni kell.
+A [Rust and Mac checks](../../.github/workflows/rust-contracts.yml) a source workflow-ból hívott reusable workflow. Az [ellenőrzött Git-diff alapján működő selector](../../integration/registry/ci_gate.py) forrás-, workflow-, manifest- vagy ismeretlen útvonal változásakor teljes Rust/Mac kört kér. Az ismert Markdown-dokumentációs útvonalak változásakor a runtime kihagyható, miközben a planning és az állandó összesítő továbbra is lefut. A szükséges Ubuntu/Mac/Windows runtime-eredmények sikerét **közvetve a kötelező összesítő kényszeríti ki**; az egyes matrix-jobok nevei nem külön required checkek.
 
-Tervezett szigorítás: minden PR-on létrejövő, útvonal szerint feltételesen futó Rust/Mac jobokat összesítő, hiba esetén blokkoló kapu. Csak sikeres forrás- és docs-only távoli próba után kerüljön a required checkek közé. Ez a kapu most nincs implementálva. Az első független aktív reviewer belépésekor a kötelező approval számát érdemes 1-re emelni.
+A [P00 CI-kapu távoli forráspróbája](https://github.com/szotya/LaTeXIDE/actions/runs/41238541732) mind a hét jobon sikeres volt, és a PR merge-állapota `CLEAN` lett. A docs-only döntés és a hibás/hiányzó/megszakított eredmények elutasítása [helyi kontraktusteszttel](../../tests/contracts/test_ci_gate.py) ellenőrzött; a külön docs-only távoli próba még nincs dokumentáltan lefuttatva. A ruleset checkneve és alkalmazásazonosítója változatlan maradt. Az első független aktív reviewer belépésekor a kötelező approval számát érdemes 1-re emelni.
 
 ## Alkalmazás és visszaellenőrzés
 
@@ -52,7 +52,7 @@ gh api repos/szotya/LaTeXIDE/rules/branches/feature/p00-integration
 gh api repos/szotya/LaTeXIDE/commits/main/check-runs
 ```
 
-A létrehozás utáni Python-összehasonlítás minden kért konfigurációs mezőt egyeztetett a visszaolvasott rulesettel, a GitHub által hozzáadott alapértelmezett mezők megtartásával. Eredmény: 5 aktív szabály a `main` ágon, `protected: true`, 0 szabály a meglévő P00 munkabranchre; az előírt check a megfigyelt main SHA-n `success`. Az adminbypass tiltott. A `main`, a munkabranch és a meglévő #45 draft PR headje nem változott.
+A létrehozás utáni történeti Python-összehasonlítás minden kért konfigurációs mezőt egyeztetett a visszaolvasott rulesettel, a GitHub által hozzáadott alapértelmezett mezők megtartásával. Akkori eredmény: 5 aktív szabály a `main` ágon, `protected: true`, 0 szabály a meglévő P00 munkabranchre; az előírt check a megfigyelt main SHA-n `success`. Az adminbypass tiltott. Az akkori `main`, munkabranch és #45 draft PR headje a ruleset létrehozásától nem változott; a későbbi commitokat/ready/merge állapotot ez a pillanatkép nem követi.
 
 Ez API-konfigurációs és hatókör-ellenőrzés. A ruleset létrehozásakor tiltott push, törlés vagy merge kísérletét nem futtattuk, és távoli commit nem változott. A konfiguráció és az átadás külön dokumentációs PR-ba kerül a `szotya/branch-protection` branchről. Workflow és termékkód nem változik; új natív Mac/Windows/Linux kvalifikáció nem történt.
 

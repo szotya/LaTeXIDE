@@ -14,9 +14,30 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  planning:
-    name: Planning and Python contracts
+  changes:
+    name: Select verification scope
     runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    outputs:
+      runtime: ${{ steps.scope.outputs.runtime }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: scope
+        env:
+          P00_CI_BASE: ${{ github.event.pull_request.base.sha || github.event.before || '' }}
+          P00_CI_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: python3 integration/registry/ci_gate.py changes
+
+  planning:
+    name: Planning and Python contracts (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-2025]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
@@ -25,7 +46,29 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: '3.13'
-      - run: python3 scripts/validate_development_packages.py
-      - run: python3 -m unittest discover -s tests -p 'test_*.py'
-      - run: python3 scripts/check_repository_content.py --tracked
+      - run: python integration/registry/verify.py --profile structure
+      - if: runner.os == 'Linux'
+        run: python -m unittest discover -s tests -p 'test_*.py'
+      - run: python scripts/check_repository_content.py --tracked
+
+  runtime:
+    name: Runtime verification
+    needs: changes
+    if: needs.changes.outputs.runtime == 'true'
+    uses: ./.github/workflows/rust-contracts.yml
+
+  aggregate:
+    # Matches the active main-protection ruleset's required GitHub Actions check.
+    name: Planning and Python contracts
+    needs: [changes, planning, runtime]
+    if: ${{ always() }}
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+        with:
+          persist-credentials: false
+      - env:
+          P00_CI_NEEDS: ${{ toJSON(needs) }}
+        run: python3 integration/registry/ci_gate.py aggregate
 

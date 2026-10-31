@@ -1,0 +1,267 @@
+{
+  "schema": 1,
+  "package_id": "U05",
+  "scope": "serialization and common boundary vectors; no service invoked; response examples are not behavior oracles",
+  "cases": [
+    {
+      "name": "roundtrip",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "U05",
+        "request_id": "u05-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "manifest": {
+            "id": "U05",
+            "sdk_major": 1,
+            "tool_versions": [
+              "fixture/1.0"
+            ],
+            "required_capabilities": [
+              "fixture"
+            ]
+          },
+          "results": [
+            {
+              "capability": "fixture",
+              "source_sha": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+              "platform": "fixture",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expect_boundary": "ok",
+      "response_example": {
+        "id": "fixture-id",
+        "verified_capabilities": [
+          "fixture"
+        ]
+      },
+      "service_error_example": "incompatible_sdk"
+    },
+    {
+      "name": "stale",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "U05",
+        "request_id": "u05-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "manifest": {
+            "id": "U05",
+            "sdk_major": 1,
+            "tool_versions": [
+              "fixture/1.0"
+            ],
+            "required_capabilities": [
+              "fixture"
+            ]
+          },
+          "results": [
+            {
+              "capability": "fixture",
+              "source_sha": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+              "platform": "fixture",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expect_boundary": "not_applicable",
+      "reason": "pure port has no snapshot binding; owner tests service-specific state"
+    },
+    {
+      "name": "quota",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "U05",
+        "request_id": "u05-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "manifest": {
+            "id": "U05",
+            "sdk_major": 1,
+            "tool_versions": [
+              "fixture/1.0"
+            ],
+            "required_capabilities": [
+              "fixture"
+            ]
+          },
+          "results": [
+            {
+              "capability": "fixture",
+              "source_sha": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+              "platform": "fixture",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expect_boundary": "payload_too_large"
+    },
+    {
+      "name": "cancel",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": true,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "U05",
+        "request_id": "u05-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "manifest": {
+            "id": "U05",
+            "sdk_major": 1,
+            "tool_versions": [
+              "fixture/1.0"
+            ],
+            "required_capabilities": [
+              "fixture"
+            ]
+          },
+          "results": [
+            {
+              "capability": "fixture",
+              "source_sha": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+              "platform": "fixture",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expect_boundary": "cancelled"
+    },
+    {
+      "name": "deadline",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 10,
+        "deadline_ms": 10,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "U05",
+        "request_id": "u05-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "manifest": {
+            "id": "U05",
+            "sdk_major": 1,
+            "tool_versions": [
+              "fixture/1.0"
+            ],
+            "required_capabilities": [
+              "fixture"
+            ]
+          },
+          "results": [
+            {
+              "capability": "fixture",
+              "source_sha": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+              "platform": "fixture",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expect_boundary": "deadline"
+    },
+    {
+      "name": "malformed",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "raw": "{",
+      "expect_boundary": "malformed_json"
+    },
+    {
+      "name": "future_version",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 2,
+          "minor": 0
+        },
+        "package_id": "U05",
+        "request_id": "u05-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "manifest": {
+            "id": "U05",
+            "sdk_major": 1,
+            "tool_versions": [
+              "fixture/1.0"
+            ],
+            "required_capabilities": [
+              "fixture"
+            ]
+          },
+          "results": [
+            {
+              "capability": "fixture",
+              "source_sha": "876017fac775308826a116a1000ee72ad64f2423b9d72b4fe68a3476d70a3589",
+              "platform": "fixture",
+              "passed": true
+            }
+          ]
+        }
+      },
+      "expect_boundary": "incompatible_version"
+    }
+  ]
+}

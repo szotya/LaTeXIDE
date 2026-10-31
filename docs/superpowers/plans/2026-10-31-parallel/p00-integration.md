@@ -48,6 +48,7 @@
 - `Cargo.toml`
 - `Cargo.lock`
 - `rust-toolchain.toml`
+- `.gitattributes`
 - `crates/*/Cargo.toml`
 - `crates/*/src/lib.rs`
 - `crates/latexide-core/src/{workspace,document,project_index,tex_scan,completion,definition}.rs`
@@ -60,9 +61,16 @@
 - `apps/macos/Sources/LaTeXIDEKit/Editor/SourceTextView.swift`
 - `apps/windows/{MainWindow*,NativeCore*,LaTeXIDE.vcxproj,packages.config,NuGet.Native.*}`
 - `scripts/{build_macos.sh,build_windows.ps1}`
+- `scripts/{build_development_packages.py,validate_development_packages.py}`
 - `.github/workflows/`
 - `docs/{DEVELOPER_HANDOFF,implementation-progress}.md`
 - `skills/latexide-platform-development/`
+- `docs/development/package-specs.json`
+- `docs/development/packages.json`
+- `docs/development/README.md`
+- `docs/development/requirement-map.csv`
+- `docs/superpowers/specs/2026-10-31-parallel-development-design.md`
+- `docs/superpowers/plans/2026-10-31-parallel/`
 
 **Teszt:** `crates/latexide-contracts/tests/compatibility.rs`. **Eredménynapló:** `docs/development/results/P00.md`.
 
@@ -79,7 +87,7 @@ Integrációs szomszédok: P03. Ezek **nem csomagszintű topologikus sorrend**: 
 ```rust
 pub fn validate_manifest(manifest: IntegrationManifest, contract: ContractVersion, ownership: &OwnershipRegistry) -> Result<IntegrationOrder, ContractError>;
 // IntegrationManifest { schema:u32, package_id:String, contract_version:u32, requirement_ids:Vec<String>, source_paths:Vec<String>, hook_targets:Vec<String>, test_commands:Vec<String>, compatibility:String }
-// ContractVersion { major:u32, minor:u32 }; OwnershipRegistry { paths:Vec<OwnedPath>, requirements:Vec<OwnedRequirement> }; OwnedPath { package_id:String, path:String }; OwnedRequirement { package_id:String, requirement_id:String }; IntegrationOrder { requirement_ids:Vec<String> }; ContractError::{UnknownRequirement,ForeignPath,IncompatibleVersion,CyclicRequirement}
+// ContractVersion { major:u32, minor:u32 }; OwnershipRegistry { paths:Vec<OwnedPath>, requirements:Vec<OwnedRequirement> }; OwnedPath { package_id:String, path:String }; OwnedRequirement { package_id:String, requirement_id:String, prerequisites:Vec<String> }; IntegrationOrder { requirement_ids:Vec<String> }; ContractError::{UnknownRequirement,ForeignPath,IncompatibleVersion,CyclicRequirement}
 ```
 
 Az itt felsorolt DTO-mezőket P00 helyezi a `crates/latexide-contracts/src/` moduljaiba, serde serialize/deserialize és egyértelmű hiba-enummal. A szolgáltatás a saját modulban marad; ne hozz létre protocol→core→protocol függőségi kört. A port v1 helyi Rust-határ, nem automatikus új IPC-eszköz.

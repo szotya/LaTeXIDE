@@ -1,0 +1,273 @@
+{
+  "schema": 1,
+  "version": {
+    "major": 1,
+    "minor": 0
+  },
+  "vectors": [
+    {
+      "package_id": "P00",
+      "file": "tests/contracts/v1/p00.json",
+      "case_count": 7,
+      "sha256": "759c4a64ae0ec0b9747d2c7d8b470befeaf44442d20e1b3db79e9a781b54b1f0"
+    },
+    {
+      "package_id": "P01",
+      "file": "tests/contracts/v1/p01.json",
+      "case_count": 7,
+      "sha256": "aa56f16cb6db4dcf8fb4977ffbae51ce1b0466363c68e6d6557201e94a18072c"
+    },
+    {
+      "package_id": "P02",
+      "file": "tests/contracts/v1/p02.json",
+      "case_count": 7,
+      "sha256": "bbec0b98b2635e7588995cc56b59e67d96120daa89337082337510309b929606"
+    },
+    {
+      "package_id": "P03",
+      "file": "tests/contracts/v1/p03.json",
+      "case_count": 7,
+      "sha256": "3509d0f02385ac74adb4b85b116fa98dbbc269a655104588d3cc5e5a65da61ad"
+    },
+    {
+      "package_id": "P04",
+      "file": "tests/contracts/v1/p04.json",
+      "case_count": 7,
+      "sha256": "38eee429460d61c44c8b2dd816438f32ba167915c141573ed3c0d8015accd275"
+    },
+    {
+      "package_id": "P05",
+      "file": "tests/contracts/v1/p05.json",
+      "case_count": 7,
+      "sha256": "90b098a91560b841582a795381db7e66d6a35f1d559dcc0983903db20cf55952"
+    },
+    {
+      "package_id": "P06",
+      "file": "tests/contracts/v1/p06.json",
+      "case_count": 7,
+      "sha256": "5410f5ec69ad884ee27abc57aa935b31bc9d89d88ea210c0a1902edf67354578"
+    },
+    {
+      "package_id": "P07",
+      "file": "tests/contracts/v1/p07.json",
+      "case_count": 7,
+      "sha256": "e727afa7dc19976857e3cac09bb4299843577c2a227d90ffd803349a939d1d3c"
+    },
+    {
+      "package_id": "P08",
+      "file": "tests/contracts/v1/p08.json",
+      "case_count": 7,
+      "sha256": "3a6ee559ee17c9835ad3ba15ba03e103220f7f76d0502e2c412d14690f1f4e66"
+    },
+    {
+      "package_id": "P09",
+      "file": "tests/contracts/v1/p09.json",
+      "case_count": 7,
+      "sha256": "dde0ecfe390b3abe0ae707348166361970acde2279ee2245950fb5e4a138dccf"
+    },
+    {
+      "package_id": "P10",
+      "file": "tests/contracts/v1/p10.json",
+      "case_count": 7,
+      "sha256": "c0e50e958e7e854cd3feede996fda0d1e5f17914e41ea4913fe95d4aeeb610d7"
+    },
+    {
+      "package_id": "P11",
+      "file": "tests/contracts/v1/p11.json",
+      "case_count": 7,
+      "sha256": "9f18eea7a1f98afe0062763009271edba25d481ef61f176a0bb163a80cd29fc5"
+    },
+    {
+      "package_id": "P12",
+      "file": "tests/contracts/v1/p12.json",
+      "case_count": 7,
+      "sha256": "596ef42377658a3f24bb29f37f1e3acc80e2cac0fb042abeb13e280bed31ec16"
+    },
+    {
+      "package_id": "P13",
+      "file": "tests/contracts/v1/p13.json",
+      "case_count": 7,
+      "sha256": "7f28a1e21a3cb74838f9e0f0624da4e2371f09e262cdecd5d34df68052da63e4"
+    },
+    {
+      "package_id": "P14",
+      "file": "tests/contracts/v1/p14.json",
+      "case_count": 7,
+      "sha256": "6bc3829c9d524402288c69a86813c6718c8380ff84004818bf22f6a80713c3c4"
+    },
+    {
+      "package_id": "P15",
+      "file": "tests/contracts/v1/p15.json",
+      "case_count": 7,
+      "sha256": "1af7f5df278da2a9e5d0de5e26e5194669a2303b9b75e623f890cf92cf70124b"
+    },
+    {
+      "package_id": "P16",
+      "file": "tests/contracts/v1/p16.json",
+      "case_count": 7,
+      "sha256": "b431ef6cc01de22752229ad76b07c70b73820e1ebfbf945ac1ed5c63eadb223d"
+    },
+    {
+      "package_id": "P17",
+      "file": "tests/contracts/v1/p17.json",
+      "case_count": 7,
+      "sha256": "83337a79e4fd09c00c679f523f12f9efbaeaaaed580f0f0fac639fb68810d718"
+    },
+    {
+      "package_id": "P18",
+      "file": "tests/contracts/v1/p18.json",
+      "case_count": 7,
+      "sha256": "0986a2738601885f73b2c9a374a745555a13ca9fee62461513d42889bff7e6fa"
+    },
+    {
+      "package_id": "P19",
+      "file": "tests/contracts/v1/p19.json",
+      "case_count": 7,
+      "sha256": "b3378d8243135d1ec134db009a4ae3de39d8af4732460634c776a0dffcfa6e37"
+    },
+    {
+      "package_id": "P20",
+      "file": "tests/contracts/v1/p20.json",
+      "case_count": 7,
+      "sha256": "becc3feb10d336d29ef6ab3fe6220e35314bf8eee6fadbdb691d6b1d9d0b3528"
+    },
+    {
+      "package_id": "P21",
+      "file": "tests/contracts/v1/p21.json",
+      "case_count": 7,
+      "sha256": "9df9522441beff65dd2cb35cee3df01c8b38c76aa1f91ba74b6ddd8608873a6b"
+    },
+    {
+      "package_id": "P22",
+      "file": "tests/contracts/v1/p22.json",
+      "case_count": 7,
+      "sha256": "d87b8dd1f805ad9b7672a14e1d3df4c9e1f749d9a2e5f31d1c78a654af4c2835"
+    },
+    {
+      "package_id": "P23",
+      "file": "tests/contracts/v1/p23.json",
+      "case_count": 7,
+      "sha256": "d56940e3895150b10ce422a1fa5bb5414a8c98fd534eb9e9486a7327375daf21"
+    },
+    {
+      "package_id": "U01",
+      "file": "tests/contracts/v1/u01.json",
+      "case_count": 7,
+      "sha256": "07385adf128adaa9e30a80ec77cfb9aa7081bd368681d7e58dc98fa60289e0f1"
+    },
+    {
+      "package_id": "U02",
+      "file": "tests/contracts/v1/u02.json",
+      "case_count": 7,
+      "sha256": "cf2902e59ee2ecec7d9952eb714c55428c49bbf402ee0a3d2ae646d342042b86"
+    },
+    {
+      "package_id": "U03",
+      "file": "tests/contracts/v1/u03.json",
+      "case_count": 7,
+      "sha256": "adf18d1424efeacf9bddaa4393d3f961d51fcef76bcaee96c1560dab8fae0dec"
+    },
+    {
+      "package_id": "U04",
+      "file": "tests/contracts/v1/u04.json",
+      "case_count": 7,
+      "sha256": "57d53d204baafa87bd030661676295f4940643a872d0fda3ada64a0170a6990e"
+    },
+    {
+      "package_id": "U05",
+      "file": "tests/contracts/v1/u05.json",
+      "case_count": 7,
+      "sha256": "1f43e63cca808248799aea0b5e07caaead24a14d2115dde2c0585e05ccb33818"
+    },
+    {
+      "package_id": "U06",
+      "file": "tests/contracts/v1/u06.json",
+      "case_count": 7,
+      "sha256": "00228399e60ab13146bd4eaf160ca294eeb3098a4d1515fc152c6faade28cb8b"
+    },
+    {
+      "package_id": "U07",
+      "file": "tests/contracts/v1/u07.json",
+      "case_count": 7,
+      "sha256": "6a8d332b112736abff7f753a10655eb2840796e91080c6659f2f80f2b744c895"
+    },
+    {
+      "package_id": "U08",
+      "file": "tests/contracts/v1/u08.json",
+      "case_count": 7,
+      "sha256": "c704ec2a31b17bba1699f089900e54d02544d50882871c82458f8d9c6c254ff9"
+    },
+    {
+      "package_id": "U09",
+      "file": "tests/contracts/v1/u09.json",
+      "case_count": 7,
+      "sha256": "6a25ee9ae48588ba5d03bf1d428fae6a7aa39f3c08523c496874f5fb6f33515a"
+    },
+    {
+      "package_id": "U10",
+      "file": "tests/contracts/v1/u10.json",
+      "case_count": 7,
+      "sha256": "86b1fed09e20941acf5ed9c2462890974e7dfd5724c1dfc59bc5a10900dc082f"
+    },
+    {
+      "package_id": "U11",
+      "file": "tests/contracts/v1/u11.json",
+      "case_count": 7,
+      "sha256": "c3df11e9472437184e2db963ba3a9db9124e6f2dd4765c90ee6d3d3ccc50c0ea"
+    },
+    {
+      "package_id": "U12",
+      "file": "tests/contracts/v1/u12.json",
+      "case_count": 7,
+      "sha256": "9f7e52a770c2e029da16504fbe7c7c13140733e604146b1d5fc5181f651bb0f0"
+    },
+    {
+      "package_id": "U13",
+      "file": "tests/contracts/v1/u13.json",
+      "case_count": 7,
+      "sha256": "23be2fc992ac2b4dc712dbafd4131f6588a601991911bc0addb335f8d4e961e6"
+    },
+    {
+      "package_id": "U14",
+      "file": "tests/contracts/v1/u14.json",
+      "case_count": 7,
+      "sha256": "7ba16852679f0102efb9d4abe11447d5bd522c7741a575e945830f88b748c5bd"
+    },
+    {
+      "package_id": "U15",
+      "file": "tests/contracts/v1/u15.json",
+      "case_count": 7,
+      "sha256": "8f7b4efb33666b16ec564f42fbae3402dff33b1342f98e76b52c442e163808ca"
+    },
+    {
+      "package_id": "U16",
+      "file": "tests/contracts/v1/u16.json",
+      "case_count": 7,
+      "sha256": "2b821af246694eef9bc8ef836e90e7171f2161ee27708be1a82d96b6b49d474c"
+    },
+    {
+      "package_id": "U17",
+      "file": "tests/contracts/v1/u17.json",
+      "case_count": 7,
+      "sha256": "4c440995b605ddaec1a2935e41985ec264b45370becbb14f5e449505c7cd11f8"
+    },
+    {
+      "package_id": "U18",
+      "file": "tests/contracts/v1/u18.json",
+      "case_count": 7,
+      "sha256": "5c085463b59d65c2dcc855c74158365c7e8b019cfc1cf6b2e81c762198adb70e"
+    },
+    {
+      "package_id": "U19",
+      "file": "tests/contracts/v1/u19.json",
+      "case_count": 7,
+      "sha256": "03c55d99ae6a5d485b44180ca3638f9de35f4b77c8aa84421a06a2766414697a"
+    },
+    {
+      "package_id": "U20",
+      "file": "tests/contracts/v1/u20.json",
+      "case_count": 7,
+      "sha256": "a5b37017f990f0d17d6c2a31561afd09573cff2b7a32d5647df782848168f2a2"
+    }
+  ]
+}

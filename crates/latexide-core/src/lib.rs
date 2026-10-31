@@ -1,5 +1,8 @@
 //! Shared native IDE document and workspace contracts.
 
+extern crate self as latexide_core;
+pub use latexide_contracts as contracts;
+
 mod document;
 mod workspace;
 mod tex_scan;

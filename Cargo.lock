@@ -320,15 +320,25 @@ dependencies = [
 name = "latexide-build"
 version = "0.1.0"
 dependencies = [
+ "latexide-contracts",
  "latexide-core",
  "serde",
  "windows-sys",
 ]
 
 [[package]]
+name = "latexide-contracts"
+version = "0.1.0"
+dependencies = [
+ "serde",
+ "serde_json",
+]
+
+[[package]]
 name = "latexide-core"
 version = "0.1.0"
 dependencies = [
+ "latexide-contracts",
  "serde",
 ]
 
@@ -339,6 +349,7 @@ dependencies = [
  "getrandom 0.3.4",
  "interprocess",
  "latexide-build",
+ "latexide-contracts",
  "latexide-core",
  "latexide-protocol",
  "serde",
@@ -361,6 +372,7 @@ name = "latexide-protocol"
 version = "0.1.0"
 dependencies = [
  "interprocess",
+ "latexide-contracts",
  "latexide-core",
  "libc",
  "serde",

@@ -1,0 +1,404 @@
+{
+  "schema": 1,
+  "package_id": "P00",
+  "scope": "serialization and common boundary vectors; no service invoked; response examples are not behavior oracles",
+  "cases": [
+    {
+      "name": "roundtrip",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P00",
+        "request_id": "p00-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "manifest": {
+            "schema": 1,
+            "package_id": "P07",
+            "contract_version": 1,
+            "requirement_ids": [
+              "EDT-02"
+            ],
+            "source_paths": [
+              "apps/macos/Sources/LaTeXIDEKit/Features/Editor/Wrap.swift"
+            ],
+            "hook_targets": [
+              "Cargo.toml"
+            ],
+            "test_commands": [
+              "swift test --filter EditorFeatureTests"
+            ],
+            "compatibility": "contract-v1"
+          },
+          "contract": {
+            "major": 1,
+            "minor": 0
+          },
+          "ownership": {
+            "paths": [
+              {
+                "package_id": "P00",
+                "path": "Cargo.toml"
+              },
+              {
+                "package_id": "P07",
+                "path": "apps/macos/Sources/LaTeXIDEKit/Features/Editor/"
+              }
+            ],
+            "requirements": [
+              {
+                "package_id": "P07",
+                "requirement_id": "EDT-02",
+                "prerequisites": []
+              }
+            ]
+          }
+        }
+      },
+      "expect_boundary": "ok",
+      "response_example": {
+        "requirement_ids": [
+          "fixture"
+        ]
+      },
+      "service_error_example": "invalid_payload"
+    },
+    {
+      "name": "stale",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P00",
+        "request_id": "p00-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "manifest": {
+            "schema": 1,
+            "package_id": "P07",
+            "contract_version": 1,
+            "requirement_ids": [
+              "EDT-02"
+            ],
+            "source_paths": [
+              "apps/macos/Sources/LaTeXIDEKit/Features/Editor/Wrap.swift"
+            ],
+            "hook_targets": [
+              "Cargo.toml"
+            ],
+            "test_commands": [
+              "swift test --filter EditorFeatureTests"
+            ],
+            "compatibility": "contract-v1"
+          },
+          "contract": {
+            "major": 1,
+            "minor": 0
+          },
+          "ownership": {
+            "paths": [
+              {
+                "package_id": "P00",
+                "path": "Cargo.toml"
+              },
+              {
+                "package_id": "P07",
+                "path": "apps/macos/Sources/LaTeXIDEKit/Features/Editor/"
+              }
+            ],
+            "requirements": [
+              {
+                "package_id": "P07",
+                "requirement_id": "EDT-02",
+                "prerequisites": []
+              }
+            ]
+          }
+        }
+      },
+      "expect_boundary": "not_applicable",
+      "reason": "pure port has no snapshot binding; owner tests service-specific state"
+    },
+    {
+      "name": "quota",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P00",
+        "request_id": "p00-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "manifest": {
+            "schema": 1,
+            "package_id": "P07",
+            "contract_version": 1,
+            "requirement_ids": [
+              "EDT-02"
+            ],
+            "source_paths": [
+              "apps/macos/Sources/LaTeXIDEKit/Features/Editor/Wrap.swift"
+            ],
+            "hook_targets": [
+              "Cargo.toml"
+            ],
+            "test_commands": [
+              "swift test --filter EditorFeatureTests"
+            ],
+            "compatibility": "contract-v1"
+          },
+          "contract": {
+            "major": 1,
+            "minor": 0
+          },
+          "ownership": {
+            "paths": [
+              {
+                "package_id": "P00",
+                "path": "Cargo.toml"
+              },
+              {
+                "package_id": "P07",
+                "path": "apps/macos/Sources/LaTeXIDEKit/Features/Editor/"
+              }
+            ],
+            "requirements": [
+              {
+                "package_id": "P07",
+                "requirement_id": "EDT-02",
+                "prerequisites": []
+              }
+            ]
+          }
+        }
+      },
+      "expect_boundary": "payload_too_large"
+    },
+    {
+      "name": "cancel",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": true,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P00",
+        "request_id": "p00-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "manifest": {
+            "schema": 1,
+            "package_id": "P07",
+            "contract_version": 1,
+            "requirement_ids": [
+              "EDT-02"
+            ],
+            "source_paths": [
+              "apps/macos/Sources/LaTeXIDEKit/Features/Editor/Wrap.swift"
+            ],
+            "hook_targets": [
+              "Cargo.toml"
+            ],
+            "test_commands": [
+              "swift test --filter EditorFeatureTests"
+            ],
+            "compatibility": "contract-v1"
+          },
+          "contract": {
+            "major": 1,
+            "minor": 0
+          },
+          "ownership": {
+            "paths": [
+              {
+                "package_id": "P00",
+                "path": "Cargo.toml"
+              },
+              {
+                "package_id": "P07",
+                "path": "apps/macos/Sources/LaTeXIDEKit/Features/Editor/"
+              }
+            ],
+            "requirements": [
+              {
+                "package_id": "P07",
+                "requirement_id": "EDT-02",
+                "prerequisites": []
+              }
+            ]
+          }
+        }
+      },
+      "expect_boundary": "cancelled"
+    },
+    {
+      "name": "deadline",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 10,
+        "deadline_ms": 10,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 1,
+          "minor": 0
+        },
+        "package_id": "P00",
+        "request_id": "p00-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "manifest": {
+            "schema": 1,
+            "package_id": "P07",
+            "contract_version": 1,
+            "requirement_ids": [
+              "EDT-02"
+            ],
+            "source_paths": [
+              "apps/macos/Sources/LaTeXIDEKit/Features/Editor/Wrap.swift"
+            ],
+            "hook_targets": [
+              "Cargo.toml"
+            ],
+            "test_commands": [
+              "swift test --filter EditorFeatureTests"
+            ],
+            "compatibility": "contract-v1"
+          },
+          "contract": {
+            "major": 1,
+            "minor": 0
+          },
+          "ownership": {
+            "paths": [
+              {
+                "package_id": "P00",
+                "path": "Cargo.toml"
+              },
+              {
+                "package_id": "P07",
+                "path": "apps/macos/Sources/LaTeXIDEKit/Features/Editor/"
+              }
+            ],
+            "requirements": [
+              {
+                "package_id": "P07",
+                "requirement_id": "EDT-02",
+                "prerequisites": []
+              }
+            ]
+          }
+        }
+      },
+      "expect_boundary": "deadline"
+    },
+    {
+      "name": "malformed",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "raw": "{",
+      "expect_boundary": "malformed_json"
+    },
+    {
+      "name": "future_version",
+      "context": {
+        "active_snapshot": null,
+        "cancelled": false,
+        "elapsed_ms": 0,
+        "deadline_ms": null,
+        "max_payload_bytes": 1048576
+      },
+      "request": {
+        "version": {
+          "major": 2,
+          "minor": 0
+        },
+        "package_id": "P00",
+        "request_id": "p00-fixture",
+        "snapshot_id": null,
+        "payload": {
+          "manifest": {
+            "schema": 1,
+            "package_id": "P07",
+            "contract_version": 1,
+            "requirement_ids": [
+              "EDT-02"
+            ],
+            "source_paths": [
+              "apps/macos/Sources/LaTeXIDEKit/Features/Editor/Wrap.swift"
+            ],
+            "hook_targets": [
+              "Cargo.toml"
+            ],
+            "test_commands": [
+              "swift test --filter EditorFeatureTests"
+            ],
+            "compatibility": "contract-v1"
+          },
+          "contract": {
+            "major": 1,
+            "minor": 0
+          },
+          "ownership": {
+            "paths": [
+              {
+                "package_id": "P00",
+                "path": "Cargo.toml"
+              },
+              {
+                "package_id": "P07",
+                "path": "apps/macos/Sources/LaTeXIDEKit/Features/Editor/"
+              }
+            ],
+            "requirements": [
+              {
+                "package_id": "P07",
+                "requirement_id": "EDT-02",
+                "prerequisites": []
+              }
+            ]
+          }
+        }
+      },
+      "expect_boundary": "incompatible_version"
+    }
+  ]
+}

@@ -14,8 +14,8 @@ from build_development_packages import AUDIT, DATA, ROOT, render
 
 
 def main() -> None:
-    audit = json.loads(AUDIT.read_text())
-    manifest = json.loads((DATA / "packages.json").read_text())
+    audit = json.loads(AUDIT.read_text(encoding="utf-8"))
+    manifest = json.loads((DATA / "packages.json").read_text(encoding="utf-8"))
     packages = manifest["packages"]
     assert len(packages) == 44
     assert manifest["core_packages"] == 24 and manifest["optional_packages"] == 20
@@ -38,7 +38,7 @@ def main() -> None:
         for path in package["read_paths"]:
             assert (ROOT / path).exists(), (package["id"], "Missing baseline", path)
         plan = ROOT / package["plan"]
-        text = plan.read_text()
+        text = plan.read_text(encoding="utf-8")
         assert text.startswith("# ") and "## Global Constraints" in text and "## Review Focus" in text
         assert "- [ ]" in text and "**Spec:**" in text
         assert not re.search(r"\bTBD\b", text), f"Undecided placeholder: {package['id']}"
@@ -69,17 +69,17 @@ def main() -> None:
     assert all(owner[x["requirement_id"]] == x["package_id"] for x in rows)
     issue_path = DATA / "github-issues.json"
     if issue_path.exists():
-        issues = json.loads(issue_path.read_text())["issues"]
+        issues = json.loads(issue_path.read_text(encoding="utf-8"))["issues"]
         assert len(issues) == len({x["number"] for x in issues}) == 44
         assert {x["package_id"] for x in issues} == {x["id"] for x in packages}
         assert all(x["url"] == f"https://github.com/szotya/LaTeXIDE/issues/{x['number']}" for x in issues)
     for path, expected in render().items():
-        assert path.read_text(encoding="utf-8") == expected, f"Stale generated file: {path.relative_to(ROOT)}"
+        assert path.read_bytes() == expected.encode("utf-8"), f"Stale generated file: {path.relative_to(ROOT)}"
     links = 0
     docs = [ROOT / p["plan"] for p in packages]
     docs += list(DATA.glob("*.md")) + [ROOT / "docs/superpowers/specs/2026-10-31-parallel-development-design.md"]
     for path in docs:
-        text = re.sub(r"```.*?```", "", path.read_text(), flags=re.S)
+        text = re.sub(r"```.*?```", "", path.read_text(encoding="utf-8"), flags=re.S)
         for target in re.findall(r"\]\(([^)]+)\)", text):
             target = target.split("#")[0].strip("<>")
             if not target or re.match(r"[a-z]+:", target):
