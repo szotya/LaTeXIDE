@@ -235,3 +235,7 @@ Első távoli [terv/Python/tartalom CI](https://github.com/szotya/LaTeXIDE/actio
 
 Helyi célzott javítás-ellenőrzés: a kanonikus projektbeli cache-/scratch-/config-/security útvonalakkal, `CLANG_MODULE_CACHE_PATH="$PWD/.local/clang-module-cache" swift test ... --filter AssistantSessionTests.testDroppingSessionStopsOwnedChild`: **1 PASS / 0 failure**, Swift 6.4.2. Saját kontrollált subprocess-fixture; nincs modellkérés, élő appváltás vagy production kódmódosítás. Nyers kimenet `/private/tmp/latexide-assistant-weak-var-test.log`, nem feltöltött.
 
+### Tiszta clone tesztsegédje — 2026-10-31
+
+A második távoli Mac-kör már lefordult, és az összes nem asszisztens natív csoport átment; a 16 asszisztenseset mind ugyanazzal a hiányzó fájllal állt meg: a kontrollált `assistant-fixture.py` forrás korábban a nyers evidence fával együtt maradt helyi. Ez importhiba, nem 16 külön termékhiba. A teljes 136 soros, kizárólag mesterséges JSONL-stdin/stdout forgatókönyvet használó forrást elolvastuk és `tests/fixtures/assistant/assistant_fixture.py` alá másoltuk; a Swift teszt ezt a hordozható útvonalat használja. Nincs modellhívás, credential vagy valódi projektírás. Az eredeti helyi fájl megmaradt, nyers evidence nem került vissza az importba. A helyi evidence-index az új kanonikus forrást külön jelöli. A harmadik távoli kör ellenőrzi a tiszta clone teljes útvonalát.
+

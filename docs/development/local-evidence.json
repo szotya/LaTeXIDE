@@ -2586,7 +2586,8 @@
       "path": "evidence/intelligence-2026-10-31/assistant-fixture.py",
       "bytes": 7816,
       "sha256": "69e846e4ed5aa7e19c45e0f0cabf3baf6f6240a56742b044677afdfc9aa85b94",
-      "publication": "local-only; content not uploaded"
+      "publication": "reviewed synthetic test source republished at canonical test fixture path",
+      "canonical_source_path": "tests/fixtures/assistant/assistant_fixture.py"
     },
     {
       "path": "evidence/intelligence-2026-10-31/assistant-isolation-red.log",

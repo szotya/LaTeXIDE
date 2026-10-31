@@ -240,7 +240,7 @@ private struct AssistantFixture {
         let binding: [String: Any] = ["version": 1, "project_root": root.resolvingSymlinksInPath().path, "session_id": "controlled-fixture", "token": "not-a-real-session-token", "endpoint": root.appendingPathComponent("fixture.sock").path]
         try JSONSerialization.data(withJSONObject: binding).write(to: descriptor)
         try FileManager.default.setAttributes([.posixPermissions: 0o600], ofItemAtPath: descriptor.path)
-        let fixturePath = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("evidence/intelligence-2026-10-31/assistant-fixture.py")
+        let fixturePath = URL(fileURLWithPath: #filePath).deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().deletingLastPathComponent().appendingPathComponent("tests/fixtures/assistant/assistant_fixture.py")
         let source = try String(contentsOf: fixturePath, encoding: .utf8)
         try ("#!/usr/bin/python3\nSCENARIO = \"\(scenario)\"\n" + source).write(to: executable, atomically: true, encoding: .utf8)
         try FileManager.default.setAttributes([.posixPermissions: 0o700], ofItemAtPath: executable.path)
