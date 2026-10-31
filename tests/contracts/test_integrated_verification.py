@@ -189,6 +189,11 @@ class IntegratedVerificationContract(unittest.TestCase):
         self.assertIn("MCP-03", inventory["QA-08"]["unqualified_prerequisites"])
         self.assertNotEqual(inventory["QA-08"]["acceptance"], "implemented")
 
+    def test_inventory_without_any_bound_current_check_is_unrun(self):
+        inventory = verify.requirement_inventory(ROOT, {"status": "passed", "source_sha256": "a" * 64, "checks": []})
+        self.assertEqual(inventory["LANG-06"]["baseline"]["observed_status"], "partial")
+        self.assertEqual(inventory["LANG-06"]["current_verification"]["status"], "unrun")
+
     def test_nonfinite_timeout_does_not_launch_a_child(self):
         with tempfile.TemporaryDirectory() as d:
             for timeout in [float("nan"), float("inf")]:

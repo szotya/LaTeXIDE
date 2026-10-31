@@ -1,0 +1,91 @@
+{
+  "verified_at_utc": "2026-10-31T19:30:58+00:00",
+  "repository": "szotya/LaTeXIDE",
+  "requested_configuration": ".github/rulesets/main-protection.json",
+  "requested_fields_match_readback": true,
+  "ruleset": {
+    "id": 26284711,
+    "name": "main-protection",
+    "target": "branch",
+    "enforcement": "active",
+    "bypass_actors": [],
+    "conditions": {
+      "ref_name": {
+        "exclude": [],
+        "include": [
+          "~DEFAULT_BRANCH"
+        ]
+      }
+    },
+    "rules": [
+      {
+        "type": "deletion"
+      },
+      {
+        "type": "non_fast_forward"
+      },
+      {
+        "type": "required_linear_history"
+      },
+      {
+        "type": "pull_request",
+        "parameters": {
+          "required_approving_review_count": 0,
+          "dismiss_stale_reviews_on_push": true,
+          "required_reviewers": [],
+          "require_code_owner_review": false,
+          "require_last_push_approval": false,
+          "required_review_thread_resolution": true,
+          "require_extra_approval_for_unattributed_changes": true,
+          "allowed_merge_methods": [
+            "squash",
+            "rebase"
+          ]
+        }
+      },
+      {
+        "type": "required_status_checks",
+        "parameters": {
+          "strict_required_status_checks_policy": true,
+          "do_not_enforce_on_create": false,
+          "required_status_checks": [
+            {
+              "context": "Planning and Python contracts",
+              "integration_id": 15368
+            }
+          ]
+        }
+      }
+    ],
+    "current_user_can_bypass": "never"
+  },
+  "ruleset_url": "https://github.com/szotya/LaTeXIDE/rules/26284711",
+  "main": {
+    "protected": true,
+    "head_sha": "de9873848feec25499e9bba630010cfe4d7d0195",
+    "head_unchanged": true,
+    "effective_rule_count": 5
+  },
+  "work_branch": {
+    "name": "feature/p00-integration",
+    "protected": false,
+    "head_sha": "a0451d1e7be660c4c42dc8e77a4406ee48d250d3",
+    "head_unchanged": true,
+    "effective_rule_count": 0
+  },
+  "required_check_observed": {
+    "name": "Planning and Python contracts",
+    "app_id": 15368,
+    "conclusion": "success",
+    "head_sha": "de9873848feec25499e9bba630010cfe4d7d0195"
+  },
+  "existing_pull_request": {
+    "number": 45,
+    "state": "open",
+    "draft": true,
+    "head_unchanged": true
+  },
+  "verification_scope": "GitHub ruleset and effective branch-rule readback; no push/delete/merge probe; no new product or native platform tests",
+  "rust_mac_checks_required": false,
+  "rust_mac_limitation": "Path-filtered workflow; a stable conditional required gate is not implemented."
+}

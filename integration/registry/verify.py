@@ -335,7 +335,7 @@ def requirement_inventory(root, report):
     for item in audit:
         selected = [by_name.get(name) for name in bindings.get(item["id"], [])]
         current = "unrun"
-        if selected:
+        if any(selected):
             current = "passed" if report["status"] == "passed" and all(r and r["status"] == "passed" for r in selected) else "partial"
             if report["status"] == "source_changed": current = "stale_source"
         inventory[item["id"]] = {"owner": owners[item["id"]],

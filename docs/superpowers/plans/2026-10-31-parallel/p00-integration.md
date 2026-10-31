@@ -72,6 +72,8 @@
 - `docs/development/requirement-map.csv`
 - `docs/superpowers/specs/2026-10-31-parallel-development-design.md`
 - `docs/superpowers/plans/2026-10-31-parallel/`
+- `docs/development/REPOSITORY.md`
+- `docs/development/BRANCH_PROTECTION.md`
 
 **Teszt:** `crates/latexide-contracts/tests/compatibility.rs`. **Eredménynapló:** `docs/development/results/P00.md`.
 

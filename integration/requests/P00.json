@@ -27,7 +27,9 @@
     "crates/latexide-core/src/lib.rs",
     "crates/latexide-protocol/src/lib.rs",
     "crates/latexide-build/src/lib.rs",
-    "crates/latexide-ffi/src/lib.rs"
+    "crates/latexide-ffi/src/lib.rs",
+    "docs/development/REPOSITORY.md",
+    "docs/development/BRANCH_PROTECTION.md"
   ],
   "test_commands": [
     "cargo +1.99.1 test --workspace --locked",
