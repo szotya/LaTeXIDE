@@ -9,14 +9,17 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import os
 from pathlib import Path
 import platform as host_platform
+import re
 import signal
 import subprocess
 import sys
 import tempfile
 import time
+import uuid
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -25,20 +28,21 @@ def digest(path):
     with Path(path).open("rb") as stream: return hashlib.file_digest(stream, "sha256").hexdigest()
 
 
-def execute_step(name, argv, cwd, log, timeout):
-    if not argv or timeout <= 0: raise ValueError("Explicit argv and positive timeout required")
+def execute_step(name, argv, cwd, log, timeout, env=None):
+    if not argv or not math.isfinite(timeout) or timeout <= 0: raise ValueError("Explicit argv and finite positive timeout required")
     log = Path(log); log.parent.mkdir(parents=True, exist_ok=True)
     started = time.monotonic(); timed_out = False; reason = None; code = None
     with log.open("wb") as output:
         try:
-            child = subprocess.Popen(argv, cwd=cwd, stdout=output, stderr=subprocess.STDOUT,
+            child = subprocess.Popen(argv, cwd=cwd, stdout=output, stderr=subprocess.STDOUT, env=env,
                                      start_new_session=os.name != "nt")
             try:
                 code = child.wait(timeout=timeout)
             except subprocess.TimeoutExpired:
                 timed_out = True
                 if os.name == "nt":
-                    subprocess.run(["taskkill", "/PID", str(child.pid), "/T", "/F"], stdout=output, stderr=subprocess.STDOUT, check=False)
+                    try: subprocess.run(["taskkill", "/PID", str(child.pid), "/T", "/F"], stdout=output, stderr=subprocess.STDOUT, check=False, timeout=5)
+                    except (OSError, subprocess.TimeoutExpired): pass
                     if child.poll() is None: child.kill()
                 else:
                     try: os.killpg(child.pid, signal.SIGKILL)
@@ -65,38 +69,142 @@ def source_identity(root, paths):
     return {"sha256": hashlib.sha256(canonical).hexdigest(), "files": files}
 
 
-def run_checks(root, source_paths, steps, log_dir, timeout):
-    before = source_identity(root, source_paths); records = []
+def checked_output(root, name, allowed_roots):
+    path = Path(root) / name
+    if not any(path.resolve().is_relative_to(base) for base in allowed_roots): raise ValueError("Output outside declared directories")
+    if not path.is_file(): raise ValueError("Expected output is missing")
+    return path
+
+
+def bounded_json(path):
+    with Path(path).open("rb") as stream: raw = stream.read(1024 * 1024 + 1)
+    if len(raw) > 1024 * 1024: raise ValueError("Summary/index quota exceeded")
+    return json.loads(raw)
+
+
+def capture_artifacts(root, step, run_id, allowed_roots):
+    specs = list(step.get("artifact_paths", []))
+    if step.get("artifact_path"): specs.append({"path": step["artifact_path"], "kind": step.get("artifact_kind", "test_artifact")})
+    if step.get("artifact_index"):
+        index = bounded_json(checked_output(root, step["artifact_index"], allowed_roots))
+        if not isinstance(index, dict) or index.get("schema") != 1 or index.get("verification_run_id") != run_id: raise ValueError("Stale artifact index")
+        specs += index.get("artifacts", [])
+    if len(specs) > 32: raise ValueError("Artifact quota exceeded")
+    artifacts = []; seen = set()
+    for spec in specs:
+        if not isinstance(spec, dict) or not isinstance(spec.get("path"), str) or not isinstance(spec.get("kind"), str): raise ValueError("Malformed artifact")
+        path = checked_output(root, spec["path"], allowed_roots)
+        if path.resolve() in seen: raise ValueError("Duplicate artifact identity")
+        seen.add(path.resolve())
+        artifacts.append({"path": spec["path"], "kind": spec["kind"], "sha256": digest(path)})
+    if not set(step.get("required_artifact_kinds", [])).issubset({a["kind"] for a in artifacts}): raise ValueError("Missing required artifact kind")
+    return sorted(artifacts, key=lambda a: (a["path"], a["kind"]))
+
+
+def artifacts_current(root, artifacts, allowed_roots):
+    try: return all(digest(checked_output(root, a["path"], allowed_roots)) == a["sha256"] for a in artifacts)
+    except (OSError, ValueError): return False
+
+
+def validate_summary(data, suite, allowed_skips=(), run_id=None, allow_failures=False):
+    if not isinstance(data, dict) or data.get("schema") != 1 or data.get("suite") != suite: raise ValueError("Missing or wrong test summary")
+    if run_id is not None and data.get("verification_run_id") != run_id: raise ValueError("Stale test summary")
+    counts = [data.get(name) for name in ["tests", "passed", "skipped", "failures", "errors"]]
+    if any(type(n) is not int or n < 0 for n in counts): raise ValueError("Invalid test counts")
+    tests, passed, skipped, failures, errors = counts
+    failed_tests = data.get("failed_tests", failures + errors); skipped_tests = data.get("skipped_tests", skipped)
+    expected = data.get("expected_failures", 0); unexpected = data.get("unexpected_successes", 0)
+    if any(type(n) is not int or n < 0 for n in [failed_tests, skipped_tests, expected, unexpected]): raise ValueError("Invalid case outcome counts")
+    ids = data.get("skipped_ids")
+    if not isinstance(ids, list) or any(not isinstance(i, str) for i in ids) or len(ids) != skipped or len(set(ids)) != skipped: raise ValueError("Missing skipped identities")
+    if tests <= 0 or tests != passed + skipped_tests + failed_tests + expected: raise ValueError("Inconsistent test case outcomes")
+    if not allow_failures and (passed <= 0 or failures or errors or failed_tests or expected or unexpected): raise ValueError("Required tests did not pass")
+    if not allow_failures and not set(ids).issubset(set(allowed_skips)): raise ValueError("Unqualified test skip")
+    return data
+
+
+def rust_summary(log, suite, allow_failures=False):
+    if Path(log).stat().st_size > 16 * 1024 * 1024: raise ValueError("Test summary log quota exceeded")
+    text = Path(log).read_text(encoding="utf-8", errors="replace")
+    rows = re.findall(r"test result: (ok|FAILED)\. (\d+) passed; (\d+) failed; (\d+) ignored;", text)
+    if not rows: raise ValueError("Missing Rust test summary")
+    passed = sum(int(r[1]) for r in rows); failures = sum(int(r[2]) for r in rows); skipped = sum(int(r[3]) for r in rows)
+    ids = re.findall(r"^test (\S+) \.\.\. ignored", text, flags=re.M)
+    return validate_summary({"schema": 1, "suite": suite, "tests": passed + failures + skipped, "passed": passed,
+                             "skipped": skipped, "failures": failures, "errors": 0, "skipped_ids": ids}, suite, allow_failures=allow_failures)
+
+
+def run_checks(root, source_paths, steps, log_dir, timeout, artifact_roots=()):
+    root = Path(root).resolve()
+    # Only trusted caller-selected generated output roots may live outside the
+    # source checkout (e.g. an external build cache). Resolve the allowlist once.
+    allowed_roots = [root, *(Path(p).resolve() for p in artifact_roots)]
+    before = source_identity(root, source_paths); records = []; source_hashes = {p["path"]: p["sha256"] for p in before["files"]}
     for sequence, step in enumerate(steps, 1):
-        known = {r["name"]: r for r in records}
+        run_id = uuid.uuid4().hex; known = {r["name"]: r for r in records}
         blocked = any(known.get(name, {}).get("status") != "passed" for name in step.get("depends_on", []))
-        stale_artifact = False
-        if step.get("consumes_artifact") and not blocked:
-            artifact = step["consumes_artifact"]
-            producer = known.get(artifact["producer"], {})
-            path = Path(root) / artifact["path"]
-            stale_artifact = not path.is_file() or not producer.get("artifact_sha256") or digest(path) != producer["artifact_sha256"]
-        if blocked or stale_artifact or step.get("argv") is None:
-            record = {"name": step["name"], "status": "unrun", "exit_code": None, "timed_out": False,
-                      "reason": "Dependency did not pass" if blocked else "Artifact no longer matches its producer" if stale_artifact else step.get("reason", "Not in this profile"), "artifact_sha256": None}
-            if stale_artifact: record["status"] = "stale_artifact"
+        consumed = []; stale = False
+        producers = list(step.get("consumes_artifacts", []))
+        legacy = step.get("consumes_artifact")
+        if legacy: producers.append(legacy["producer"])
+        if not blocked:
+            for name in sorted(set(producers)):
+                producer = known.get(name, {}); selected = producer.get("artifacts", [])
+                if legacy and name == legacy["producer"]:
+                    selected = [a for a in selected if (root / a["path"]).resolve() == (root / legacy["path"]).resolve()]
+                if producer.get("status") != "passed" or not selected: stale = True
+                consumed.extend({**a, "producer": name} for a in selected)
+            stale = stale or not artifacts_current(root, consumed, allowed_roots)
+        if blocked or stale or step.get("argv") is None:
+            record = {"name": step["name"], "status": "stale_artifact" if stale and not blocked else "unrun", "exit_code": None, "timed_out": False,
+                      "reason": "Dependency did not pass" if blocked else "Artifact no longer matches its producer" if stale else step.get("reason", "Not in this profile"), "artifact_sha256": None}
         else:
-            record = execute_step(step["name"], step["argv"], root, Path(log_dir) / f"{sequence:02}-{step['name']}.log", timeout)
-            if step.get("artifact_path") and record["status"] == "passed":
-                path = Path(root) / step["artifact_path"]
-                if path.is_file() and path.resolve().is_relative_to(Path(root).resolve()):
-                    record["artifact_sha256"] = digest(path)
-                    record["artifact_kind"] = step.get("artifact_kind", "test_artifact")
-                else:
-                    record["status"] = "failed"; record["reason"] = "Expected artifact is missing or outside source root"
-        record.update({"source_sha256": before["sha256"], "platform": sys.platform + "/" + host_platform.machine(),
-                       "kind": step["kind"], "required": step.get("required", True), "sequence": sequence})
+            env = dict(os.environ)
+            for name, value in step.get("env", {}).items():
+                if value is None: env.pop(name, None)
+                else: env[name] = value
+            env["P00_VERIFICATION_RUN_ID"] = run_id
+            record = execute_step(step["name"], step["argv"], root, Path(log_dir) / f"{sequence:02}-{step['name']}.log", timeout, env=env)
+            if record["status"] == "passed":
+                try:
+                    artifacts = capture_artifacts(root, step, run_id, allowed_roots)
+                    if artifacts:
+                        record["artifacts"] = artifacts; record["artifact_status"] = "current"
+                        record["artifact_sha256"] = artifacts[0]["sha256"] if len(artifacts) == 1 else hashlib.sha256(json.dumps(artifacts, sort_keys=True).encode()).hexdigest()
+                        record["artifact_kind"] = artifacts[0]["kind"] if len(artifacts) == 1 else "artifact_set"
+                    if step.get("summary_path"):
+                        summary = bounded_json(checked_output(root, step["summary_path"], allowed_roots))
+                        record["test_summary"] = validate_summary(summary, step["summary_suite"], step.get("allowed_skips", []), run_id)
+                    if step.get("summary_format") == "rust": record["test_summary"] = rust_summary(record["log"]["path"], step["name"])
+                    if step.get("documentation_path"):
+                        data = bounded_json(checked_output(root, step["documentation_path"], allowed_roots))
+                        if not isinstance(data, dict) or data.get("verification_run_id") != run_id or not data.get("files"): raise ValueError("Stale or empty documentation identity")
+                        for file in data["files"]:
+                            if source_hashes.get(file["path"]) != file["sha256"]: raise ValueError("Description is not in the verified source set")
+                        record["description_identity"] = data
+                except (OSError, ValueError, KeyError, TypeError) as error:
+                    record["status"] = "failed"; record["reason"] = str(error)
+            if record["status"] != "passed" and record.get("exit_code") is not None:
+                try:
+                    if step.get("summary_path"):
+                        data = bounded_json(checked_output(root, step["summary_path"], allowed_roots))
+                        record["test_summary"] = validate_summary(data, step["summary_suite"], run_id=run_id, allow_failures=True)
+                    if step.get("summary_format") == "rust": record["test_summary"] = rust_summary(record["log"]["path"], step["name"], allow_failures=True)
+                except (OSError, ValueError, KeyError, TypeError) as error: record["summary_error"] = str(error)
+            if consumed and not artifacts_current(root, consumed, allowed_roots):
+                record["status"] = "stale_artifact"; record["reason"] = "Consumed artifact changed during execution"
+        if consumed: record["consumed_artifacts"] = consumed
+        record.update({"source_sha256": before["sha256"], "platform": step.get("platform", sys.platform + "/" + host_platform.machine()),
+                       "kind": step["kind"], "required": step.get("required", True), "sequence": sequence, "verification_run_id": run_id})
         records.append(record)
-    try:
-        after = source_identity(root, source_paths); after_sha = after["sha256"]
+    try: after_sha = source_identity(root, source_paths)["sha256"]
     except (OSError, ValueError): after_sha = None
-    status = "source_changed" if before["sha256"] != after_sha else "failed" if any(r["required"] and r["status"] != "passed" for r in records) else "passed"
-    return {"schema": 1, "scope": "P00 developer checks; no product/platform qualification", "status": status,
+    for record in records:
+        if record.get("artifacts") and not artifacts_current(root, record["artifacts"], allowed_roots): record["artifact_status"] = "stale_artifact"
+    failed = any(r["required"] and (r["status"] != "passed" or r.get("artifact_status") == "stale_artifact") for r in records)
+    status = "source_changed" if before["sha256"] != after_sha else "failed" if failed else "passed"
+    for record in records: record["report_status"] = status
+    return {"schema": 1, "scope": "P00 selected developer checks; no complete product/platform qualification", "status": status,
             "source_sha256": before["sha256"], "source_sha256_after": after_sha, "source_files": before["files"], "checks": records}
 
 
@@ -107,16 +215,19 @@ def resolve_evidence(records, source_sha256, platform, kind, *, artifact_sha256=
     latest = max(enumerate(candidates), key=lambda item: (item[1].get("sequence", 0), item[0]))[1]
     if latest.get("source_sha256") != source_sha256: return "stale_source"
     if artifact_sha256 is not None and latest.get("artifact_sha256") != artifact_sha256: return "stale_artifact"
+    if latest.get("artifact_status") == "stale_artifact": return "stale_artifact"
     if latest.get("timed_out") or latest.get("status") == "timed_out": return "timed_out"
     status = latest.get("status", "unrun")
     if status in {"unrun", "skipped", "planned", "missing", "partial", "implemented", "stale_artifact", "stale_source"}: return status
-    return "passed" if status == "passed" and latest.get("exit_code") == 0 else "failed"
+    if latest.get("report_status") == "source_changed": return "stale_source"
+    return "passed" if status == "passed" and latest.get("exit_code") == 0 and latest.get("report_status", "passed") == "passed" else "failed"
 
 
 def discover_sources(root):
     root = Path(root)
     paths = {"Cargo.toml", "Cargo.lock", "rust-toolchain.toml"}
-    if (root / ".gitattributes").is_file(): paths.add(".gitattributes")
+    for name in [".gitattributes", ".gitignore"]:
+        if (root / name).is_file(): paths.add(name)
     for name in ["docs/development/package-specs.json", "docs/development/packages.json",
                  "docs/ide-audit-2026-10-31/backlog.json", "scripts/build_development_packages.py",
                  "scripts/validate_development_packages.py"]:
@@ -129,56 +240,170 @@ def discover_sources(root):
         paths.update(path.relative_to(root).as_posix() for path in (root / folder).glob(pattern) if path.is_file())
     spec = root / "docs/superpowers/specs/2026-10-31-parallel-development-design.md"
     if spec.is_file(): paths.add(spec.relative_to(root).as_posix())
-    for folder in ["crates", "integration/registry", "integration/requests", "tests/contracts"]:
+    for folder in ["crates", "integration/registry", "integration/requests", "tests", "apps/macos", "shared/ide-theme",
+                   "include", ".github/workflows", "docs/development/contracts", "skills/latexide-platform-development", "scripts", "tools"]:
         for path in (root / folder).rglob("*"):
-            if path.is_file() and not {"target", ".local", "__pycache__"}.intersection(path.relative_to(root).parts) and path.suffix in {".rs", ".py", ".swift", ".toml", ".json", ".lock"}:
+            if path.is_file() and not {"target", ".local", "__pycache__", ".build", ".swiftpm"}.intersection(path.relative_to(root).parts) and path.name != ".DS_Store":
                 paths.add(path.relative_to(root).as_posix())
     return sorted(paths)
 
 
-def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--profile", choices=["structure", "contracts", "shared"], default="contracts")
-    parser.add_argument("--cargo-executable", help="Explicit local cargo binary; otherwise use rustup's pinned toolchain")
-    parser.add_argument("--offline", action="store_true")
-    parser.add_argument("--native-schema", action="store_true")
-    parser.add_argument("--timeout", type=float, default=600)
-    parser.add_argument("--output", type=Path, default=ROOT / ".local/p00-verification/report.json")
-    args = parser.parse_args()
+def build_steps(root, args, platform, machine):
+    root = Path(root); run_dir = Path(args.run_dir)
+    def ref(path): return path.relative_to(root).as_posix()
+    def probe(command, *tail): return [sys.executable, "integration/registry/probes.py", command, *map(str, tail)]
+    def suite(name, suite, kind, **fields):
+        output = run_dir / (name + ".json")
+        return {"name": name, "kind": kind, "argv": probe("unittest", "--suite", suite, "--result", output),
+                "summary_path": ref(output), "summary_suite": suite, **fields}
     cargo = [args.cargo_executable] if args.cargo_executable else ["cargo", "+1.99.1"]
-    offline = ["--offline"] if args.offline else []
+    offline = ["--offline"] if args.offline else []; target = ["--target-dir", str(root / "target")]
+    supported = platform == "darwin" and machine.lower() == "arm64"
+    integrated = args.profile == "integrated"
+    documentation = run_dir / "documentation.json"
     steps = [
         {"name": "generated-contracts", "argv": [sys.executable, "integration/registry/generate_contracts.py", "--check"], "kind": "source"},
         {"name": "development-plans", "argv": [sys.executable, "scripts/validate_development_packages.py"], "kind": "source"},
-        {"name": "coordinator-contracts", "argv": [sys.executable, "-m", "unittest", "discover", "-s", "tests/contracts", "-p", "test_*.py"], "kind": "python-unit"},
+        suite("coordinator-contracts", "coordinator", "python-unit"),
+        {"name": "documentation", "kind": "documentation", "argv": probe("docs", "--result", documentation), "documentation_path": ref(documentation)},
     ]
+    source_dependencies = [s["name"] for s in steps]
+    if integrated and supported:
+        packages = ["latexide-contracts", "latexide-core", "latexide-protocol", "latexide-build", "latexide-ffi", "latexide-mcp"]
+        steps.append({"name": "runtime-clean", "kind": "build-cache", "argv": cargo + ["clean", *target, *[a for p in packages for a in ["-p", p]]],
+                      "env": {"CARGO_BUILD_TARGET": None}, "depends_on": source_dependencies})
+    rust = "rust-contracts" if args.profile == "contracts" else "rust-workspace"
     if args.profile != "structure":
         steps += [
-            {"name": "rust-contracts" if args.profile == "contracts" else "rust-workspace", "kind": "rust-unit",
-             "argv": cargo + ["test"] + (["-p", "latexide-contracts"] if args.profile == "contracts" else ["--workspace"]) + ["--locked"] + offline},
-            {"name": "isolated-module-seam", "kind": "rust-unit", "argv": cargo + ["test", "--manifest-path", "tests/contracts/seam/Cargo.toml", "--locked"] + offline},
-            {"name": "integration-queue", "kind": "manifest-validation", "argv": cargo + ["run", "-p", "latexide-contracts", "--bin", "latexide-integration", "--locked"] + offline + ["--", "--root", "."]},
+            {"name": rust, "kind": "rust-unit", "summary_format": "rust", "env": {"CARGO_BUILD_TARGET": None},
+             "depends_on": source_dependencies + (["runtime-clean"] if integrated and supported else []),
+             "argv": cargo + ["test"] + (["-p", "latexide-contracts"] if args.profile == "contracts" else ["--workspace"]) + ["--locked"] + target + offline},
+            {"name": "isolated-module-seam", "kind": "rust-unit", "summary_format": "rust", "depends_on": [rust], "env": {"CARGO_BUILD_TARGET": None},
+             "argv": cargo + ["test", "--manifest-path", "tests/contracts/seam/Cargo.toml", "--locked"] + target + offline},
+            {"name": "integration-queue", "kind": "manifest-validation", "depends_on": [rust], "env": {"CARGO_BUILD_TARGET": None},
+             "argv": cargo + ["run", "-p", "latexide-contracts", "--bin", "latexide-integration", "--locked"] + target + offline + ["--", "--root", "."]},
         ]
     else: steps.append({"name": "rust-not-selected", "kind": "rust-unit", "argv": None, "required": False})
-    if args.native_schema and sys.platform == "darwin":
-        (ROOT / ".local/clang-module-cache").mkdir(parents=True, exist_ok=True)
-        (ROOT / ".local/p00-verification").mkdir(parents=True, exist_ok=True)
-        native = Path(tempfile.mkdtemp(prefix="native-schema-", dir=ROOT / ".local/p00-verification")) / "contract-native"
-        artifact_path = native.relative_to(ROOT).as_posix()
+    if integrated and supported:
+        runtime_index = run_dir / "runtime-artifacts.json"; native_index = run_dir / "native-artifacts.json"
+        runtime_args = (["--cargo-executable", args.cargo_executable] if args.cargo_executable else []) + offline
         steps += [
-            {"name": "native-schema-build", "kind": "native-schema-build", "artifact_path": artifact_path, "artifact_kind": "native_schema_test_binary", "argv": ["swiftc", "-module-cache-path", str(ROOT / ".local/clang-module-cache"), "tests/contracts/NativeModels.swift", "tests/contracts/main.swift", "-o", str(native)]},
-            {"name": "native-schema-decode", "kind": "native-schema", "depends_on": ["native-schema-build"], "consumes_artifact": {"producer": "native-schema-build", "path": artifact_path}, "argv": [str(native), str(ROOT / "tests/contracts/v1")]},
+            {"name": "runtime-build", "kind": "runtime-build", "depends_on": [rust, "isolated-module-seam", "integration-queue"],
+             "argv": probe("runtime-build", *runtime_args, "--result", runtime_index), "artifact_index": ref(runtime_index),
+             "required_artifact_kinds": ["ffi_static", "ffi_dynamic", "mcp_executable"]},
+            suite("tool-acquisition", "tools", "python-unit"),
+            suite("ipc-roundtrip", "ipc", "ipc-runtime", depends_on=["runtime-build"], consumes_artifacts=["runtime-build"]),
+            suite("mcp-roundtrip", "mcp", "mcp-runtime", depends_on=["runtime-build"], consumes_artifacts=["runtime-build"]),
+            {"name": "native-build", "kind": "native-control-build", "depends_on": ["runtime-build"], "consumes_artifacts": ["runtime-build"],
+             "argv": probe("native-build", "--result", native_index), "artifact_index": ref(native_index), "required_artifact_kinds": ["native_test_binary"]},
         ]
-    else: steps.append({"name": "native-schema-unavailable" if args.native_schema else "native-schema-not-selected", "kind": "native-schema", "argv": None,
-                       "required": args.native_schema, "reason": "Swift native schema check requires macOS" if args.native_schema else "Not requested"})
+        native_summary = run_dir / "native-controls.json"
+        steps.append({"name": "native-controls", "kind": "native-controls", "depends_on": ["native-build"], "consumes_artifacts": ["runtime-build", "native-build"],
+                      "argv": probe("native-controls", "--result", native_summary), "summary_path": ref(native_summary), "summary_suite": "native-controls",
+                      "allowed_skips": ["AssistantSessionTests.testInstalledCodexInitializeOnly", "IntelligenceRenderTests.testRenderAssistantAndCompletionControls",
+                                        "ProjectCompletionRenderTests.testRenderProjectMacroReferenceAndCitationCandidates", "WorkspaceRenderTests.testRenderPaletteWorkspaces"]})
+    elif integrated:
+        for name, kind in [("runtime-build", "runtime-build"), ("ipc-roundtrip", "ipc-runtime"), ("mcp-roundtrip", "mcp-runtime"),
+                           ("native-build", "native-control-build"), ("native-controls", "native-controls")]:
+            steps.append({"name": name, "kind": kind, "argv": None, "required": True, "platform": "darwin/arm64", "reason": "The integrated adapter requires macOS arm64; use shared for common Rust"})
+    schema_selected = args.native_schema or integrated
+    if schema_selected and supported:
+        native = run_dir / "contract-native"; summary = run_dir / "schema-summary.json"
+        steps += [
+            {"name": "native-schema-build", "kind": "native-schema-build", "depends_on": source_dependencies, "artifact_path": ref(native), "artifact_kind": "native_schema_test_binary",
+             "argv": ["swiftc", "-module-cache-path", str(root / ".local/clang-module-cache"), "tests/contracts/NativeModels.swift", "tests/contracts/main.swift", "-o", str(native)]},
+            {"name": "native-schema-decode", "kind": "native-schema", "depends_on": ["native-schema-build"], "consumes_artifacts": ["native-schema-build"],
+             "argv": probe("native-schema", "--binary", native, "--result", summary), "summary_path": ref(summary), "summary_suite": "native-schema"},
+        ]
+    else: steps.append({"name": "native-schema-unavailable" if schema_selected else "native-schema-not-selected", "kind": "native-schema", "argv": None,
+                       "required": schema_selected, "reason": "Requires macOS arm64" if schema_selected else "Not requested"})
     for name in ["windows11-winui", "linux-desktop", "live-packaged-app", "online-model", "texlive-runtime", "release-performance", "accessibility"]:
         steps.append({"name": name, "kind": name, "argv": None, "required": False, "reason": "Separate product/platform acceptance; not run by P00"})
+    return steps
+
+
+def requirement_inventory(root, report):
+    root = Path(root)
+    audit_path = root / "docs/ide-audit-2026-10-31/backlog.json"
+    audit = bounded_json(audit_path)
+    owners = {r["requirement_id"]: r["package_id"] for r in bounded_json(root / "integration/registry/owners.v1.json")["requirements"]}
+    by_name = {r["name"]: r for r in report["checks"]}; inventory = {}
+    bindings = {"QA-08": ["rust-workspace", "integration-queue", "runtime-build", "ipc-roundtrip", "mcp-roundtrip", "native-controls"],
+                "QA-14": ["documentation", "integration-queue"], "OS-10": ["documentation"],
+                "LANG-06": ["rust-workspace", "ipc-roundtrip", "native-controls"]}
+    audit_sha = digest(audit_path)
+    for item in audit:
+        selected = [by_name.get(name) for name in bindings.get(item["id"], [])]
+        current = "unrun"
+        if selected:
+            current = "passed" if report["status"] == "passed" and all(r and r["status"] == "passed" for r in selected) else "partial"
+            if report["status"] == "source_changed": current = "stale_source"
+        inventory[item["id"]] = {"owner": owners[item["id"]],
+            "baseline": {"observed_status": item["observed_status"], "audit_sha256": audit_sha, "scope": "historical audit; not fresh acceptance"},
+            "acceptance": "partial" if item["observed_status"] == "partial" or item["id"] in {"QA-08", "QA-14", "OS-10"} else "unqualified",
+            "unqualified_prerequisites": item["prerequisites"],
+            "current_verification": {"status": current, "source_sha256": report["source_sha256"],
+                                     "checks": [r["name"] for r in selected if r], "scope": "selected regressions; no provider/release acceptance"}}
+    return inventory
+
+
+def write_report(path, data):
+    path = Path(path); path.parent.mkdir(parents=True, exist_ok=True)
+    temporary = None
+    try:
+        with tempfile.NamedTemporaryFile(mode="w", encoding="utf-8", newline="\n", dir=path.parent, prefix=".report-", delete=False) as output:
+            temporary = Path(output.name); json.dump(data, output, ensure_ascii=False, indent=2); output.write("\n")
+        os.replace(temporary, path)
+    finally:
+        if temporary is not None and temporary.exists(): temporary.unlink()
+
+
+def repository_identity(root):
+    try:
+        head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, stderr=subprocess.DEVNULL, text=True, timeout=5).strip()
+        dirty = bool(subprocess.check_output(["git", "status", "--porcelain", "-z"], cwd=root, stderr=subprocess.DEVNULL, timeout=5))
+        return {"head": head, "dirty": dirty}
+    except (OSError, subprocess.SubprocessError): return {"head": None, "dirty": None}
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--profile", choices=["structure", "contracts", "shared", "integrated"], default="contracts")
+    parser.add_argument("--cargo-executable", help="Explicit local cargo binary; otherwise use pinned rustup toolchain")
+    parser.add_argument("--offline", action="store_true"); parser.add_argument("--native-schema", action="store_true")
+    parser.add_argument("--timeout", type=float, default=600)
+    parser.add_argument("--output", type=Path, default=ROOT / ".local/p00-verification/report.json")
+    args = parser.parse_args()
+    if not math.isfinite(args.timeout) or args.timeout <= 0: parser.error("timeout must be finite and positive")
+    verification_id = uuid.uuid4().hex
+    write_report(args.output, {"schema": 1, "status": "running", "profile": args.profile, "verification_id": verification_id})
+    cache = ROOT / ".local/p00-verification"; cache.mkdir(parents=True, exist_ok=True)
+    args.run_dir = Path(tempfile.mkdtemp(prefix="run-", dir=cache))
+    (ROOT / ".local/clang-module-cache").mkdir(parents=True, exist_ok=True)
+    steps = build_steps(ROOT, args, sys.platform, host_platform.machine())
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    report = run_checks(ROOT, lambda: discover_sources(ROOT), steps, args.output.parent, args.timeout)
+    try:
+        report = run_checks(ROOT, lambda: discover_sources(ROOT), steps, args.run_dir, args.timeout,
+                            artifact_roots=[ROOT / "target", ROOT / ".local/p00-native-build"])
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        report = {"schema": 1, "status": "failed", "reason": str(error), "source_sha256": None, "source_sha256_after": None, "source_files": [], "checks": []}
     report["profile"] = args.profile
-    args.output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8", newline="\n")
+    report["verification_id"] = verification_id
+    report["repository"] = repository_identity(ROOT)
+    try: report["requirements"] = requirement_inventory(ROOT, report)
+    except (OSError, ValueError, KeyError, TypeError) as error:
+        report["status"] = "failed"; report["requirements"] = {}; report["inventory_error"] = str(error)
+    report["description_identity"] = [r["description_identity"] for r in report["checks"] if r.get("description_identity")]
+    try: after = source_identity(ROOT, lambda: discover_sources(ROOT))["sha256"]
+    except (OSError, ValueError): after = None
+    if report["source_sha256"] is not None and after != report["source_sha256"]:
+        report["status"] = "source_changed"; report["source_sha256_after"] = after
+        for requirement in report["requirements"].values():
+            if requirement["current_verification"]["checks"]: requirement["current_verification"]["status"] = "stale_source"
+    for record in report["checks"]: record["report_status"] = report["status"]
+    write_report(args.output, report)
     print(json.dumps({"profile": args.profile, "status": report["status"], "source_sha256": report["source_sha256"],
-                      "checks": [{"name": r["name"], "status": r["status"], "kind": r["kind"]} for r in report["checks"]]}, ensure_ascii=False))
+                      "checks": [{"name": r["name"], "status": r["status"], "kind": r["kind"], "tests": r.get("test_summary")} for r in report["checks"]]}, ensure_ascii=False))
     return 0 if report["status"] == "passed" else 1
 
 
