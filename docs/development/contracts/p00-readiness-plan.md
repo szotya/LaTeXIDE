@@ -56,4 +56,4 @@
 - [x] RED: végponti reportban saját regresszió és külső várakozás külön, source-only és teljes acceptance nem mosódik össze; késői forrásváltozás minden derived saját állapotot érvénytelenít.
 - [x] GREEN: `verify.py --profile integrated --offline` Macen és read-only recheck ugyanazon source/artifacton; rootPython, generator, skill/link/source guard. CI Macintegrated, Windows/Linuxshared marad.
 - [x] Dokumentáld pontosan a P00 által még önállóan elvégezhető részek teljesítését, a P03igényt és a natív/egyéb scopehatárt. Commit `docs(p00): hand off explicit closure dependencies`.
-- [ ] Egyetlen friss teljes-szelet reviewer; Important/Critical egy TDD-fix pass, minor ledger. Saját feature-PR és friss CI; Issue1 marad nyitott. Új main-merge nem része ennek a folytatásnak.
+**Átadási kapu** (az aktuális állapot a P00 eredménynaplóban és a PR Checksben): egyetlen friss teljes-szelet reviewer; Important/Critical egy TDD-fix pass, minor ledger. Saját feature-PR és friss CI; Issue1 marad nyitott. Új main-merge nem része ennek a folytatásnak.

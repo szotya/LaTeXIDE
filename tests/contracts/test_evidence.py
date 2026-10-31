@@ -3,6 +3,7 @@ import copy
 import importlib.util
 import io
 import json
+import os
 from pathlib import Path
 import shutil
 import subprocess
@@ -147,3 +148,13 @@ class EvidenceContract(unittest.TestCase):
                  patch.object(verify, "run_checks", side_effect=AssertionError("Recheck must not execute")), patch("sys.stdout", new_callable=io.StringIO):
                 self.assertEqual(verify.main(), 0)
             self.assertEqual(path.read_bytes(), original)
+
+    def test_recheck_stdout_is_utf8_json_under_non_utf8_output_encodings(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d); steps, report = self.fixture(root); path = root / "report.json"; path.write_text(json.dumps(report), encoding="utf-8")
+            for encoding in ["cp1252", "ascii"]:
+                with self.subTest(encoding=encoding):
+                    env = {**os.environ, "PYTHONIOENCODING": encoding, "PYTHONUTF8": "0"}
+                    child = subprocess.run([sys.executable, str(ROOT / "integration/registry/verify.py"), "--recheck-report", str(path)], env=env, capture_output=True, timeout=15)
+                    self.assertEqual(child.returncode, 1)
+                    self.assertEqual(json.loads(child.stdout.decode("utf-8"))["status"], "stale_source")

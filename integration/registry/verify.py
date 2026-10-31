@@ -391,17 +391,7 @@ def finalize_report(root, report, steps, artifact_roots=()):
         report["capability_inventory"] = {}; report["p00_readiness"] = {}
     try: after = source_identity(root, lambda: discover_sources(root))["sha256"]
     except (OSError, ValueError): after = None
-    if report.get("source_sha256") is not None and after != report["source_sha256"]:
-        report["status"] = "source_changed"; report["source_sha256_after"] = after
-        report["evidence_validation"]["status"] = "stale_source"
-        report["evidence_validation"]["reason"] = "Source changed during report finalization"
-        report["capability_inventory"]["freshness"] = "stale_source"
-        progress = report.get("p00_readiness", {})
-        progress["evidence_status"] = "stale_source"; progress["independent_status"] = "partial"
-        for row in progress.get("requirements", {}).values():
-            for criterion in row["criteria"]:
-                if criterion["status"] == "passed": criterion["status"] = "stale_source"
-    elif report["status"] == "passed":
+    if report["status"] == "passed" and after == report.get("source_sha256"):
         # Inventory construction is read-only but may overlap another build.
         validation = evidence.revalidate_report(root, report, source_identity(root, lambda: discover_sources(root)), steps, artifact_roots)
         report["evidence_validation"] = validation
@@ -412,12 +402,43 @@ def finalize_report(root, report, steps, artifact_roots=()):
             for row in progress.get("requirements", {}).values():
                 for criterion in row["criteria"]:
                     if criterion["status"] == "passed": criterion["status"] = validation["status"]
+    # Rehashing the earlier list cannot detect additions during that last pass.
+    try: after = source_identity(root, lambda: discover_sources(root))["sha256"]
+    except (OSError, ValueError): after = None
+    if report.get("source_sha256") is not None and after != report["source_sha256"]:
+        report["status"] = "source_changed"; report["source_sha256_after"] = after
+        validation = report["evidence_validation"]
+        validation.update(status="stale_source", source_sha256=after, reason="Source set changed during report finalization")
+        validation.setdefault("identities", {})["source"] = "stale_source"
+        report["capability_inventory"]["freshness"] = "stale_source"
+        progress = report.get("p00_readiness", {})
+        progress["evidence_status"] = "stale_source"; progress["independent_status"] = "partial"
+        for row in progress.get("requirements", {}).values():
+            for criterion in row["criteria"]:
+                if criterion["status"] == "passed": criterion["status"] = "stale_source"
     if report["status"] != "passed":
         for requirement in report.get("requirements", {}).values():
             if requirement["current_verification"]["checks"]:
                 requirement["current_verification"]["status"] = "stale_source" if report["status"] == "source_changed" else "failed"
     for record in report["checks"]: record["report_status"] = report["status"]
     return report
+
+
+def failure_diagnostics(records):
+    """Bounded synthetic Python-test tails for actionable CI failure output."""
+    details = []
+    for row in records:
+        if row.get("name") not in {"coordinator-contracts", "tool-acquisition"} or row.get("status") == "passed" or not row.get("log"):
+            continue
+        try:
+            path = Path(row["log"]["path"])
+            with path.open("rb") as stream:
+                stream.seek(max(0, path.stat().st_size - 8192))
+                tail = stream.read(8192).decode("utf-8", errors="replace")
+            details.append({"name": row["name"], "tail": tail})
+        except OSError as error:
+            details.append({"name": row["name"], "reason": str(error)})
+    return details
 
 
 def main():
@@ -432,7 +453,8 @@ def main():
     if not math.isfinite(args.timeout) or args.timeout <= 0: parser.error("timeout must be finite and positive")
     if args.recheck_report:
         result = recheck_report(args.recheck_report)
-        print(json.dumps(result, ensure_ascii=False))
+        # JSON stdout stays UTF-8-compatible even on redirected Windows cp1252.
+        print(json.dumps(result, ensure_ascii=True))
         return 0 if result["status"] == "current" else 1
     verification_id = uuid.uuid4().hex
     write_report(args.output, {"schema": 1, "status": "running", "profile": args.profile, "verification_id": verification_id})
@@ -458,7 +480,8 @@ def main():
     report = finalize_report(ROOT, report, steps, artifact_roots=[ROOT / "target", ROOT / ".local/p00-native-build"])
     write_report(args.output, report)
     print(json.dumps({"profile": args.profile, "status": report["status"], "source_sha256": report["source_sha256"],
-                      "checks": [{"name": r["name"], "status": r["status"], "kind": r["kind"], "tests": r.get("test_summary")} for r in report["checks"]]}, ensure_ascii=False))
+                      "checks": [{"name": r["name"], "status": r["status"], "kind": r["kind"], "tests": r.get("test_summary")} for r in report["checks"]],
+                      "failure_diagnostics": failure_diagnostics(report["checks"])}, ensure_ascii=True))
     return 0 if report["status"] == "passed" else 1
 
 
