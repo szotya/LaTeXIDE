@@ -172,4 +172,3 @@ def revalidate_report(root, report, current_source, expected_steps, artifact_roo
         return result("current")
     except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
         return result("invalid_report", str(error))
-

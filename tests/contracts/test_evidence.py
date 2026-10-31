@@ -1,6 +1,7 @@
 """Stored verification evidence must stay bound to the current checkout."""
 import copy
 import importlib.util
+import io
 import json
 from pathlib import Path
 import subprocess
@@ -130,7 +131,6 @@ class EvidenceContract(unittest.TestCase):
             path = root / "report.json"; original = json.dumps(report).encode(); path.write_bytes(original)
             with patch.object(verify, "ROOT", root), patch.object(verify, "build_steps", return_value=steps), \
                  patch.object(sys, "argv", ["verify.py", "--recheck-report", str(path)]), \
-                 patch.object(verify, "run_checks", side_effect=AssertionError("Recheck must not execute")):
+                 patch.object(verify, "run_checks", side_effect=AssertionError("Recheck must not execute")), patch("sys.stdout", new_callable=io.StringIO):
                 self.assertEqual(verify.main(), 0)
             self.assertEqual(path.read_bytes(), original)
-
