@@ -1,0 +1,227 @@
+{
+  "schema": 1,
+  "repository": "szotya/LaTeXIDE",
+  "visibility": "private",
+  "issues": [
+    {
+      "package_id": "P00",
+      "number": 1,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/1"
+    },
+    {
+      "package_id": "P01",
+      "number": 2,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/2"
+    },
+    {
+      "package_id": "P02",
+      "number": 3,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/3"
+    },
+    {
+      "package_id": "P03",
+      "number": 4,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/4"
+    },
+    {
+      "package_id": "P04",
+      "number": 5,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/5"
+    },
+    {
+      "package_id": "P05",
+      "number": 6,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/6"
+    },
+    {
+      "package_id": "P06",
+      "number": 7,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/7"
+    },
+    {
+      "package_id": "P07",
+      "number": 8,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/8"
+    },
+    {
+      "package_id": "P08",
+      "number": 9,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/9"
+    },
+    {
+      "package_id": "P09",
+      "number": 10,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/10"
+    },
+    {
+      "package_id": "P10",
+      "number": 11,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/11"
+    },
+    {
+      "package_id": "P11",
+      "number": 12,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/12"
+    },
+    {
+      "package_id": "P12",
+      "number": 13,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/13"
+    },
+    {
+      "package_id": "P13",
+      "number": 14,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/14"
+    },
+    {
+      "package_id": "P14",
+      "number": 15,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/15"
+    },
+    {
+      "package_id": "P15",
+      "number": 16,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/16"
+    },
+    {
+      "package_id": "P16",
+      "number": 17,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/17"
+    },
+    {
+      "package_id": "P17",
+      "number": 18,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/18"
+    },
+    {
+      "package_id": "P18",
+      "number": 19,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/19"
+    },
+    {
+      "package_id": "P19",
+      "number": 20,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/20"
+    },
+    {
+      "package_id": "P20",
+      "number": 21,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/21"
+    },
+    {
+      "package_id": "P21",
+      "number": 22,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/22"
+    },
+    {
+      "package_id": "P22",
+      "number": 23,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/23"
+    },
+    {
+      "package_id": "P23",
+      "number": 24,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/24"
+    },
+    {
+      "package_id": "U01",
+      "number": 25,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/25"
+    },
+    {
+      "package_id": "U02",
+      "number": 26,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/26"
+    },
+    {
+      "package_id": "U03",
+      "number": 27,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/27"
+    },
+    {
+      "package_id": "U04",
+      "number": 28,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/28"
+    },
+    {
+      "package_id": "U05",
+      "number": 29,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/29"
+    },
+    {
+      "package_id": "U06",
+      "number": 30,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/30"
+    },
+    {
+      "package_id": "U07",
+      "number": 31,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/31"
+    },
+    {
+      "package_id": "U08",
+      "number": 32,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/32"
+    },
+    {
+      "package_id": "U09",
+      "number": 33,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/33"
+    },
+    {
+      "package_id": "U10",
+      "number": 34,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/34"
+    },
+    {
+      "package_id": "U11",
+      "number": 35,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/35"
+    },
+    {
+      "package_id": "U12",
+      "number": 36,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/36"
+    },
+    {
+      "package_id": "U13",
+      "number": 37,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/37"
+    },
+    {
+      "package_id": "U14",
+      "number": 38,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/38"
+    },
+    {
+      "package_id": "U15",
+      "number": 39,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/39"
+    },
+    {
+      "package_id": "U16",
+      "number": 40,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/40"
+    },
+    {
+      "package_id": "U17",
+      "number": 41,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/41"
+    },
+    {
+      "package_id": "U18",
+      "number": 42,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/42"
+    },
+    {
+      "package_id": "U19",
+      "number": 43,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/43"
+    },
+    {
+      "package_id": "U20",
+      "number": 44,
+      "url": "https://github.com/szotya/LaTeXIDE/issues/44"
+    }
+  ]
+}

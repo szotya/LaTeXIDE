@@ -185,7 +185,7 @@ final class AssistantSessionTests: XCTestCase {
         try await eventually { session?.state == .ready }
         let pid = try XCTUnwrap(Int32(try XCTUnwrap(session?.serverVersion?.split(separator: "=").last).description))
         defer { if kill(pid, 0) == 0 { _ = kill(pid, SIGKILL) } }
-        weak let released = session
+        weak var released = session
         session = nil
         XCTAssertNil(released)
         try await eventually { kill(pid, 0) != 0 }

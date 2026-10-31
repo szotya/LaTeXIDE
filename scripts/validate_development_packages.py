@@ -67,6 +67,12 @@ def main() -> None:
     rows = list(csv.DictReader(io.StringIO((DATA / "requirement-map.csv").read_text(encoding="utf-8-sig"))))
     assert len(rows) == len({x["requirement_id"] for x in rows}) == 226
     assert all(owner[x["requirement_id"]] == x["package_id"] for x in rows)
+    issue_path = DATA / "github-issues.json"
+    if issue_path.exists():
+        issues = json.loads(issue_path.read_text())["issues"]
+        assert len(issues) == len({x["number"] for x in issues}) == 44
+        assert {x["package_id"] for x in issues} == {x["id"] for x in packages}
+        assert all(x["url"] == f"https://github.com/szotya/LaTeXIDE/issues/{x['number']}" for x in issues)
     for path, expected in render().items():
         assert path.read_text(encoding="utf-8") == expected, f"Stale generated file: {path.relative_to(ROOT)}"
     links = 0

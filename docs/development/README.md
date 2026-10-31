@@ -2,7 +2,7 @@
 
 **24 fő csomag + 20 választható technológiai csomag; mind a 226 auditkövetelménynek pontosan egy elsődleges gazdája van.** Minden termékfejlesztési csomag planned; a jelen munka a terveket és a GitHub-fejlesztési alapot készíti el.
 
-[Közös szerződés és integráció](../superpowers/specs/2026-10-31-parallel-development-design.md) · [Állapotfrissítés](BASELINE_DELTA.md) · [Gépi csomagjegyzék](packages.json) · [226 soros kiosztás](requirement-map.csv) · [Repo/onboarding](REPOSITORY.md)
+[Közös szerződés és integráció](../superpowers/specs/2026-10-31-parallel-development-design.md) · [Állapotfrissítés](BASELINE_DELTA.md) · [Gépi csomagjegyzék](packages.json) · [226 soros kiosztás](requirement-map.csv) · [Repo/onboarding](REPOSITORY.md) · [44 GitHub-issue](github-issues.json)
 
 ## Párhuzamos indítás
 
