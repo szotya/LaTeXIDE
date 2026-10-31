@@ -12,6 +12,7 @@ on:
       - 'rust-toolchain.toml'
       - 'tests/ipc_contract.py'
       - 'tests/mcp_contract.py'
+      - 'tests/fixtures/**'
       - '.github/workflows/rust-contracts.yml'
   pull_request:
     paths:
@@ -23,6 +24,7 @@ on:
       - 'rust-toolchain.toml'
       - 'tests/ipc_contract.py'
       - 'tests/mcp_contract.py'
+      - 'tests/fixtures/**'
       - '.github/workflows/rust-contracts.yml'
   workflow_dispatch:
 
