@@ -70,3 +70,13 @@ pub fn decode_request<T: ContractRequest>(
     { return Err(ContractError::StaleSnapshot); }
     Ok(request)
 }
+
+/// Bind a decoded request to the handler's own trusted package identity.
+/// In particular, a shared vertical DTO cannot supply its own dispatch target.
+pub fn decode_request_for<T: ContractRequest>(
+    expected_package_id: &str, bytes: &[u8], context: &CallContext,
+) -> Result<ContractEnvelope<T>, ContractError> {
+    let request = decode_request::<T>(bytes, context)?;
+    if request.package_id != expected_package_id { return Err(ContractError::WrongPackage); }
+    Ok(request)
+}

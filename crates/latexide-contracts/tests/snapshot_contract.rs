@@ -81,3 +81,27 @@ fn edit_batches_validate_all_inputs_without_mutating_the_snapshot() {
     assert_eq!(validate_edits(&value, &[oversized]), Err(ContractError::Quota));
     assert_eq!(value, before);
 }
+
+#[test]
+fn largest_reverse_order_batch_preserves_unicode_ranges_and_error_precedence() {
+    let mut value = snapshot();
+    let blocks = 1024 * 1024 / 8;
+    value.files[0].utf8 = "a😀é\n".repeat(blocks).into_bytes();
+    let edits: Vec<_> = (0..1000).map(|index| RevisionedEdit {
+        document_id: "main.tex".into(), expected_revision: 7,
+        start_utf16: ((blocks - index - 1) * 5) as u32,
+        length_utf16: 1, replacement: "b".into(),
+    }).collect();
+    let before = value.clone();
+    let started = std::time::Instant::now();
+    assert_eq!(validate_edits(&value, &edits), Ok(()));
+    eprintln!("1 MiB / 1000 reverse edits validation: {:?}", started.elapsed());
+    let mut split_scalar = edits[..2].to_vec();
+    split_scalar[1].start_utf16 += 2;
+    assert_eq!(validate_edits(&value, &split_scalar), Err(ContractError::InvalidRange));
+    let mut first_invalid = edits[..2].to_vec();
+    first_invalid[0].start_utf16 = u32::MAX;
+    first_invalid[1].expected_revision = 6;
+    assert_eq!(validate_edits(&value, &first_invalid), Err(ContractError::InvalidRange));
+    assert_eq!(value, before);
+}

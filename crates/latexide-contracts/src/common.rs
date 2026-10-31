@@ -87,11 +87,14 @@ impl WorkspaceSnapshot {
     }
 
     fn file(&self, id: &str) -> Result<&SnapshotFile, ContractError> {
+        self.file_and_text(id).map(|(file, _)| file)
+    }
+
+    fn file_and_text(&self, id: &str) -> Result<(&SnapshotFile, &str), ContractError> {
         let mut matches = self.files.iter().filter(|file| file.path == id);
         let file = matches.next().ok_or(ContractError::InvalidPayload)?;
         if matches.next().is_some() { return Err(ContractError::InvalidPayload); }
-        file.text()?;
-        Ok(file)
+        Ok((file, file.text()?))
     }
 }
 
@@ -129,15 +132,33 @@ impl SourceAnchor {
 
 pub fn validate_edits(snapshot: &WorkspaceSnapshot, edits: &[RevisionedEdit]) -> Result<(), ContractError> {
     if edits.len() > MAX_EDIT_COUNT { return Err(ContractError::Quota); }
+    let mut positions: BTreeMap<&str, BTreeSet<u32>> = BTreeMap::new();
+    for edit in edits {
+        let needed = positions.entry(&edit.document_id).or_default();
+        needed.insert(edit.start_utf16);
+        if let Some(end) = edit.start_utf16.checked_add(edit.length_utf16) { needed.insert(end); }
+    }
+    let mut texts: BTreeMap<&str, (&SnapshotFile, &str)> = BTreeMap::new();
+    let mut offsets: BTreeMap<&str, BTreeMap<u32, usize>> = BTreeMap::new();
     let mut ranges: BTreeMap<&str, Vec<(u32, u32)>> = BTreeMap::new();
     let mut sizes: BTreeMap<&str, i64> = BTreeMap::new();
     for edit in edits {
-        let file = snapshot.file(&edit.document_id)?;
+        let id = edit.document_id.as_str();
+        let (file, text) = match texts.get(id) {
+            Some(entry) => *entry,
+            None => {
+                let entry = snapshot.file_and_text(id)?;
+                texts.insert(id, entry);
+                entry
+            }
+        };
         if file.revision != Some(edit.expected_revision) { return Err(ContractError::StaleRevision); }
         if edit.replacement.contains(['\r', '\0']) { return Err(ContractError::InvalidPayload); }
         if edit.replacement.len() > MAX_FILE_BYTES { return Err(ContractError::Quota); }
-        let (start, end) = byte_range(file.text()?, edit.start_utf16, edit.length_utf16)?;
         let after = edit.start_utf16.checked_add(edit.length_utf16).ok_or(ContractError::InvalidRange)?;
+        let mapped = offsets.entry(id).or_insert_with(|| scalar_offsets(text, &positions[id]));
+        let start = *mapped.get(&edit.start_utf16).ok_or(ContractError::InvalidRange)?;
+        let end = *mapped.get(&after).ok_or(ContractError::InvalidRange)?;
         ranges.entry(&edit.document_id).or_default().push((edit.start_utf16, after));
         let size = sizes.entry(&edit.document_id).or_insert(file.utf8.len() as i64);
         *size += edit.replacement.len() as i64 - (end - start) as i64;
@@ -150,6 +171,26 @@ pub fn validate_edits(snapshot: &WorkspaceSnapshot, edits: &[RevisionedEdit]) ->
     }
     if sizes.values().any(|size| *size < 0 || *size > MAX_FILE_BYTES as i64) { return Err(ContractError::Quota); }
     Ok(())
+}
+
+// Only requested endpoints are retained; each document is traversed once rather
+// than once per edit. Missing entries preserve surrogate/out-of-range rejection.
+fn scalar_offsets(text: &str, positions: &BTreeSet<u32>) -> BTreeMap<u32, usize> {
+    let mut offsets = BTreeMap::new();
+    let mut wanted = positions.iter().copied().peekable();
+    let mut units = 0u32;
+    for (byte, character) in text.char_indices() {
+        while wanted.peek().is_some_and(|target| *target < units) { wanted.next(); }
+        if wanted.peek() == Some(&units) {
+            offsets.insert(units, byte);
+            wanted.next();
+        }
+        if wanted.peek().is_none() { return offsets; }
+        units += character.len_utf16() as u32;
+    }
+    while wanted.peek().is_some_and(|target| *target < units) { wanted.next(); }
+    if wanted.peek() == Some(&units) { offsets.insert(units, text.len()); }
+    offsets
 }
 
 /// Format check only. The trusted VFS/build producer must compute the digest;

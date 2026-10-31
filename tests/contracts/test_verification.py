@@ -14,6 +14,14 @@ verify = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(verify)
 
 
+def copy_generator_fixture(root):
+    for name in ["Cargo.toml", "Cargo.lock", "rust-toolchain.toml", ".gitattributes", "README.md", "AGENTS.md", "CONTRIBUTING.md"]:
+        shutil.copyfile(ROOT / name, root / name)
+    for folder in ["crates", "apps", "include", "scripts", ".github", "docs", "skills", "integration", "tests/contracts"]:
+        shutil.copytree(ROOT / folder, root / folder,
+                        ignore=shutil.ignore_patterns(".local", "target", ".build", "__pycache__", ".vs", "x64", "packages"))
+
+
 class VerificationContract(unittest.TestCase):
     def test_exit_codes_and_log_artifact_hashes_are_real(self):
         with tempfile.TemporaryDirectory(prefix="p00 fixture ") as d:
@@ -86,11 +94,7 @@ class VerificationContract(unittest.TestCase):
     def test_emitted_artifacts_are_deterministic_and_crlf_corruption_is_stale(self):
         with tempfile.TemporaryDirectory() as d:
             root = Path(d)
-            inputs = ["docs/development/package-specs.json", "docs/development/packages.json",
-                      "docs/ide-audit-2026-10-31/backlog.json", "crates/latexide-contracts/src/lib.rs",
-                      "integration/registry/generate_contracts.py", "scripts/build_development_packages.py"]
-            for name in inputs:
-                target = root / name; target.parent.mkdir(parents=True, exist_ok=True); shutil.copyfile(ROOT / name, target)
+            copy_generator_fixture(root)
             scripts = ["scripts/build_development_packages.py", "integration/registry/generate_contracts.py"]
             def run(script, *args):
                 return subprocess.run([sys.executable, script, *args], cwd=root, capture_output=True, timeout=30)
@@ -104,6 +108,26 @@ class VerificationContract(unittest.TestCase):
                     path = root / name; original = path.read_bytes(); path.write_bytes(original.replace(b"\n", b"\r\n"))
                     self.assertNotEqual(run(script, "--check").returncode, 0, "CRLF bytes differ from the canonical LF artifact")
                     path.write_bytes(original)
+
+    def test_checkout_glob_characters_do_not_change_generated_ownership(self):
+        with tempfile.TemporaryDirectory(prefix="p00 [literal] ") as d:
+            root = Path(d)
+            copy_generator_fixture(root)
+            result = subprocess.run([sys.executable, "integration/registry/generate_contracts.py", "--check"], cwd=root, capture_output=True, timeout=30)
+            self.assertEqual(result.returncode, 0, result.stderr.decode("utf-8", errors="replace"))
+
+    def test_unmatched_integration_file_is_reported_instead_of_losing_ownership(self):
+        with tempfile.TemporaryDirectory() as d:
+            root = Path(d)
+            copy_generator_fixture(root)
+            path = root / "docs/development/package-specs.json"
+            data = json.loads(path.read_text(encoding="utf-8"))
+            package = next(item for item in data if item["id"] == "P00")
+            package["integration_only_paths"].append("crates/latexide-core/src/does-not-exist.rs")
+            path.write_text(json.dumps(data), encoding="utf-8")
+            result = subprocess.run([sys.executable, "integration/registry/generate_contracts.py"], cwd=root, capture_output=True, timeout=30)
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("does-not-exist.rs", result.stderr.decode("utf-8", errors="replace"))
 
     def test_failed_build_cannot_run_a_previous_binary_as_current_evidence(self):
         with tempfile.TemporaryDirectory() as d:

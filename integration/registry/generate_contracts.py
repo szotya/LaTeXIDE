@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import argparse
 import copy
-import glob
 import hashlib
 import json
 import re
@@ -151,7 +150,7 @@ def render():
             code += "#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]\n#[serde(deny_unknown_fields)]\n"
             code += f"pub struct {request_type} {{\n" + "".join(f"    pub {name}: {kind},\n" for name, kind in request_fields) + "}\n\n"
             code += f"impl ContractRequest for {request_type} {{\n"
-            code += ('    fn package_id(&self) -> &str { &self.manifest.id }\n' if identifier.startswith("U") else f'    fn package_id(&self) -> &str {{ "{identifier}" }}\n')
+            code += ('    fn package_id(&self) -> &str { if self.manifest.id.starts_with(\'U\') { &self.manifest.id } else { "" } }\n' if identifier.startswith("U") else f'    fn package_id(&self) -> &str {{ "{identifier}" }}\n')
             if snapshot_expression: code += f"    fn snapshot_id(&self) -> Option<&str> {{ {snapshot_expression} }}\n"
             code += "}\n\n" + f"pub trait {trait_name} {{\n    fn {function}(&self, {arguments}) -> {result};\n}}\n"
             outputs[SRC / (module + ".rs")] = code
@@ -193,8 +192,10 @@ def render():
                 for item in expand_braces(pattern):
                     if item.endswith("/"): paths.append({"package_id": "P00", "path": item})
                     else:
-                        paths.extend({"package_id": "P00", "path": Path(path).relative_to(ROOT).as_posix()}
-                                     for path in glob.glob(str(ROOT / item)) if Path(path).is_file())
+                        matches = [path for path in ROOT.glob(item) if path.is_file()]
+                        if not matches:
+                            raise ValueError(f"integration_only_paths entry matches no file: {item}")
+                        paths.extend({"package_id": "P00", "path": path.relative_to(ROOT).as_posix()} for path in matches)
     paths = [{"package_id": package, "path": path} for package, path in sorted({(p["package_id"], p["path"]) for p in paths})]
     outputs[ROOT / "integration/registry/owners.v1.json"] = encoded({"paths": paths,
         "requirements": [{"package_id": owner[x["id"]], "requirement_id": x["id"], "prerequisites": x["prerequisites"]} for x in backlog]})
