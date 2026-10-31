@@ -72,6 +72,6 @@
 ## Átadás és végső ellenőrzés
 
 - [x] Egyetlen friss reviewer e folytatás teljes tartományán, kiinduló `f9e050b01f33deb239f823283f9c7e5d84f2b5fa`; korábbi szelet review-ját nem ismételjük.
-- [ ] Fontos találat esetén egy RED→GREEN javítási kör, teljes kiválasztott suite; minor a ledgerbe. Nyitott requirement csak valódi provider/platform acceptance után zárható.
-- [ ] A PR45 időközbeni squash merge-e után külön folytatási PR a friss mainre, a teljes forrásmódosítás távoli CI-je success. Docs-only összesítő ágát külön valódi PR-futás vagy a megfelelő környezet hiányának explicit jelölése igazolja.
-- [ ] Főágvédelmi konfigurációt/API-pillanatképet nem módosítunk; a beolvasott PR46 elavult CI-leírásait az új összesítőhöz igazítjuk; a P00 handoff/ledger appendelve frissül, más csomag fájljai szabadok maradnak.
+- [x] Fontos találat esetén egy RED→GREEN javítási kör, teljes kiválasztott suite; minor a ledgerbe. Nyitott requirement csak valódi provider/platform acceptance után zárható.
+- [x] A PR45 időközbeni squash merge-e után külön folytatási PR a friss mainre, a teljes forrásmódosítás távoli CI-je success. Docs-only összesítő ágát külön valódi PR-futás vagy a megfelelő környezet hiányának explicit jelölése igazolja.
+- [x] Főágvédelmi konfigurációt/API-pillanatképet nem módosítunk; a beolvasott PR46 elavult CI-leírásait az új összesítőhöz igazítjuk; a P00 handoff/ledger appendelve frissül, más csomag fájljai szabadok maradnak.
