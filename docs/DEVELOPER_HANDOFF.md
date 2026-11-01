@@ -2,6 +2,8 @@
 
 Frissítve: 2026-11-01. Ez élő fejlesztői dokumentum, nem késztermék-bejelentés.
 
+**P18 publikálási CI jelenleg blokkolt:** [PR54](https://github.com/szotya/LaTeXIDE/pull/54), Mac15 Rust-kör 19 generation-capture/Storage hibával; a hét FD-kontroll ott is PASS, a függő natív kör unrun. A saját Mac27.2 diagnosztikai P18-kör 87 PASS, de ez nem a Mac15-hiba felmentése. A pontos I/O-stage/errno test-only diagnosztikája és a friss required CI külön folyamatban; merge nincs. [Tényszerű időrend és forráskötések](implementation-progress.md).
+
 **P18 standalone inherited-FD javítás:** a külön compiler-adapter most a szülőben előkészített Darwin `SETEXEC | CLOEXEC_DEFAULT` határral csak a 0/1/2 descriptort örökíti. A saját új macOS 27.2 arm64 publikálási kör 7 FD-kontrollja és az ezeket is tartalmazó 87 policy/generation/OS-teszt PASS; külön egy valódi offline TeX-teszt, két egyoldalas PDF parser-/szöveg-/renderellenőrzése PASS, változatlan read-only TeX-fával. A 7 és 87 átfedő kör, nem összeadandó. A [P18 eredménynapló](development/results/P18.md) külön őrzi a producer és a publikáló bizonyítékát. A közös Rust-tesztbinárisok friss soros köre 186 PASS / 5 név szerint megőrzött ignored / 191 felfedezett; Windows x64 type-check PASS, dokumentációs tesztek külön unrun. A friss PR-CI külön kapu; ez nem production Runtime/VFS/P09/BuildSupervisor-, natív Stop/Join- vagy platform-acceptance. P18/SEC-01/02/05 részleges; Windows 11/WinUI, Linux runtime/desktop és macOS 14 minimum runtime unrun. A P23 szigorú AX-FAIL ettől nem zárul le.
 
 

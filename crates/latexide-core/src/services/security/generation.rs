@@ -335,14 +335,19 @@ impl CapturedInputs {
             .map_err(|_| GenerationError::SourceChanged)?;
         let storage =
             capture_io::Directory::create_private(directory, &original).map_err(|error| {
+                #[cfg(test)]
+                eprintln!("P18_CAPTURE storage_create kind={:?} errno={:?}: {error}", error.kind(), error.raw_os_error());
                 if error.kind() == std::io::ErrorKind::InvalidInput {
                     GenerationError::InvalidInput
                 } else {
                     GenerationError::Storage
                 }
             })?;
-        let mut builder =
-            capture_io::Builder::new(&storage).map_err(|_| GenerationError::Storage)?;
+        let mut builder = capture_io::Builder::new(&storage).map_err(|error| {
+            #[cfg(test)]
+            eprintln!("P18_CAPTURE builder_new kind={:?} errno={:?}: {error}", error.kind(), error.raw_os_error());
+            GenerationError::Storage
+        })?;
         let mut sources = Vec::new();
         let mut seen = BTreeSet::new();
         for (index, input) in current.files.iter().enumerate() {
@@ -362,7 +367,9 @@ impl CapturedInputs {
             }
             builder
                 .write(Path::new(&input.relative), &input.bytes, cancel)
-                .map_err(|_| {
+                .map_err(|error| {
+                    #[cfg(test)]
+                    eprintln!("P18_CAPTURE snapshot_write kind={:?} errno={:?}: {error}", error.kind(), error.raw_os_error());
                     if cancel.load(Ordering::Acquire) {
                         GenerationError::Cancelled
                     } else {
@@ -387,11 +394,19 @@ impl CapturedInputs {
                 .revalidate(&original, MAX_INPUT_BYTES)
                 .map_err(|_| GenerationError::SourceChanged)?;
         }
-        builder.seal().map_err(|_| GenerationError::Storage)?;
+        builder.seal().map_err(|error| {
+            #[cfg(test)]
+            eprintln!("P18_CAPTURE snapshot_seal kind={:?} errno={:?}: {error}", error.kind(), error.raw_os_error());
+            GenerationError::Storage
+        })?;
         check_cancel(cancel)?;
         storage
             .publish_input()
-            .map_err(|_| GenerationError::Storage)?;
+            .map_err(|error| {
+                #[cfg(test)]
+                eprintln!("P18_CAPTURE snapshot_publish kind={:?} errno={:?}: {error}", error.kind(), error.raw_os_error());
+                GenerationError::Storage
+            })?;
         let input = directory.join("input");
         let mut snapshot = capture_io::Directory::open(&input, true)
             .map_err(|_| GenerationError::SnapshotChanged)?;
