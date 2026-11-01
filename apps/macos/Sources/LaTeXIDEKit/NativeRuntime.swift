@@ -231,8 +231,15 @@ enum RuntimeReply {
                 for span in spans { guard span.count == 3 else { throw invalid() }; for value in span { _ = try bounded(value) } }
             } else if operation == "get_completions" {
                 _ = try string(row["prefix"])
-                _ = try bounded(row["replace_start_utf16"]); _ = try bounded(row["replace_length_utf16"])
-                for item in try objects(row["items"]) {
+                let start = try bounded(row["replace_start_utf16"])
+                let length = try bounded(row["replace_length_utf16"])
+                let items = try objects(row["items"])
+                guard items.count <= 20 else { throw invalid() }
+                if let requested = arguments["caret_utf16"] {
+                    let caret = try bounded(requested)
+                    guard start <= caret, caret - start <= length else { throw invalid() }
+                }
+                for item in items {
                     for key in ["label", "detail", "insert_text"] { _ = try string(item[key]) }
                     for key in ["selection_start_utf16", "selection_length_utf16"] { _ = try bounded(item[key]) }
                 }

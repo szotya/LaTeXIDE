@@ -27,6 +27,16 @@ while representing literal raw `-0` as `NSNumber(value: -0.0)`. Existing unsigne
 validators must reject it in every typed field and nested syntax-span array;
 unknown signed extension fields are not globally forbidden.
 
+Completion replies enforce the existing Rust producer's 20-item cap. When the
+trusted request arguments include `caret_utf16`, require `start <= caret` and
+then `caret - start <= length`; a zero-length range accepts only that same caret.
+This subtraction order avoids overflow. The current `WorkspaceStore` already
+passes the context through `NativeRuntime.call`; no UI/caller/wire change is
+needed. An internal shape-only decode with no request context cannot invent a
+caret binding. Keep tests for 20/21 candidates, both range endpoints, outside
+carets, empty ranges and unsigned limits. UI document-length/scalar-boundary
+checks and the manual guard's incomplete-schema limits still apply.
+
 `NativeRuntime.readDocument` pins document ID, revision including zero, offsets
 and total byte count. Require forward progress, valid UTF-8 byte lengths, bounded
 chunks and consistent completion. Return no partial snapshot after failure.

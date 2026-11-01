@@ -97,6 +97,39 @@ final class RuntimeReplyTests: XCTestCase {
         let files = try RuntimeReply.objects(decode(fileMax, "list_project_files")["files"])
         XCTAssertEqual(try RuntimeReply.uint64(files[0]["size"]), UInt64.max)
     }
+    private func completion(_ count: Int = 1, start: UInt64 = 4, length: UInt64 = 8) -> [String: Any] {
+        let item: [String: Any] = ["label":"x", "detail":"x", "insert_text":"x", "selection_start_utf16":0, "selection_length_utf16":0]
+        return ["document_id":"main.tex", "revision":UInt64(0), "prefix":"x",
+                "replace_start_utf16":start, "replace_length_utf16":length,
+                "items":Array(repeating:item, count:count)]
+    }
+    func testCompletionReplyRejectsMoreThanTwentyCandidates() throws {
+        let arguments: [String: Any] = ["document_id":"main.tex", "expected_revision":UInt64(0), "caret_utf16":UInt64(8)]
+        for count in [0, 1, 20] {
+            let data = try JSONSerialization.data(withJSONObject: ["ok":true, "result":completion(count)])
+            _ = try RuntimeReply.decode(data, operation:"get_completions", arguments:arguments)
+        }
+        let oversized = try JSONSerialization.data(withJSONObject: ["ok":true, "result":completion(21)])
+        XCTAssertThrowsError(try RuntimeReply.decode(oversized, operation:"get_completions", arguments:arguments)) {
+            XCTAssertEqual(($0 as? RuntimeFailure)?.code, "invalid_reply")
+        }
+    }
+    func testCompletionReplacementContainsRequestedCaret() throws {
+        let data = try JSONSerialization.data(withJSONObject: ["ok":true, "result":completion()])
+        for caret in [UInt64(4), 8, 12] {
+            _ = try RuntimeReply.decode(data, operation:"get_completions", arguments:["caret_utf16":caret])
+        }
+        for caret in [UInt64(0), 3, 13, UInt64.max] {
+            XCTAssertThrowsError(try RuntimeReply.decode(data, operation:"get_completions", arguments:["caret_utf16":caret])) {
+                XCTAssertEqual(($0 as? RuntimeFailure)?.code, "invalid_reply")
+            }
+        }
+        let empty = try JSONSerialization.data(withJSONObject: ["ok":true, "result":completion(start:4, length:0)])
+        _ = try RuntimeReply.decode(empty, operation:"get_completions", arguments:["caret_utf16":UInt64(4)])
+        XCTAssertThrowsError(try RuntimeReply.decode(empty, operation:"get_completions", arguments:["caret_utf16":UInt64(5)]))
+        let large = try JSONSerialization.data(withJSONObject: ["ok":true, "result":completion(start:UInt64(UInt32.max), length:UInt64(UInt32.max))])
+        _ = try RuntimeReply.decode(large, operation:"get_completions", arguments:["caret_utf16":UInt64(UInt32.max)])
+    }
     func testActualNativeABIPreservesLeadingAndChunkBoundaryLogicalFEFF() throws {
         let root = FileManager.default.temporaryDirectory.appendingPathComponent(UUID().uuidString)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
