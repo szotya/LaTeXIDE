@@ -31,3 +31,24 @@ The integrated verifier profile runs the current macOS arm64 FFI/static/bridge, 
 Preserve frozen v1 wire shapes: byte fields remain JSON number arrays and the P21 `e` field keeps its name. The 1 MiB encoded-envelope limit is separate from in-process snapshot/file quotas; large valid Rust values need not fit one transport frame. Vertical handlers use `decode_request_for` with their own trusted U-package ID, never an identity copied from the incoming manifest. Edit validation caches text per document and maps only requested UTF-16 endpoints in one pass while preserving error precedence and nonmutation. Generator glob patterns are relative to a literal checkout root; unmatched integration file declarations fail explicitly. The review decisions, regression evidence and platform limits are in `docs/development/results/P00-REVIEW-2026-10-31.md`.
 
 For independent P00 closure work use `docs/development/contracts/p00-closure.md`. Stored evidence can be revalidated with `python3 integration/registry/verify.py --recheck-report .local/p00-verification/report.json` on its original platform; this runs no report command and never rewrites the input. The verifier compares the current source set, trusted check selection, all artifacts/resources, logs, counters and guide identities; late changes invalidate derived progress too. Preserve source-only package observations and the historical baseline separately from actual acceptance. Read the granular own criteria and canonical MCP-03/P03 → QA-08 → QA-14 → OS-10 dependency chain. WindowsP21 native validation, future LinuxP22 and separate P19/P20/P23 programs are scoped claims, not invented requirement edges or a43package gate. New provider receipts still need actual integration; this report does not promote file/manifest presence to acceptance.
+
+
+## P01 read-only recovery slice
+
+`crates/latexide-core/src/services/recovery/mod.rs` implements the frozen v1 `RecoveryPort` as a read-only checkpoint/replay validator. `crates/latexide-core/tests/recovery_contract.rs` imports it by path. It is not registered through `latexide-core::services` or wired into a runtime. The owned source and inert request are in `integration/requests/P01.json`; current evidence and partial acceptance are in `docs/development/results/P01.md`. Review this boundary before adding production registration.
+
+The acknowledgement watermark is trusted caller input. Checkpoint sequence plus a contiguous journal must reach it exactly; extra, missing or corrupt records fail as `Corrupt`, and per-document revisions increment without wrapping. An independently acknowledged complete prefix can be retried explicitly. The provider never infers acknowledgement from the last available record or silently salvages a damaged tail.
+
+Journal checksum is computed lowercase SHA-256 over exact logical UTF-8 bytes. It does not authenticate source, sequence or revision. Preserve a logical leading U+FEFF and LF; raw CR/CRLF, NUL and malformed UTF-8 are rejected. A v1 checkpoint has no checksum, physical BOM/EOL metadata, undo, saved baseline or trusted acknowledgement/scope fields. A future trusted producer must separately verify framing, checkpoint integrity, durable byte/sequence receipt and session ownership. Do not save decoded recovery text directly or treat matching disk-hash strings as permission to overwrite or clear dirty state. The source adapter checks caller-selected project/session labels and preserves `ErrorKind`; labels are not OS locks, and injected read errors are not write/sync/ENOSPC proof.
+
+Limits remain 1 MiB per logical file and 10 retained recovery documents. This in-memory replay additionally caps 1024 journal entries, 1024 disk identities, 16 MiB cumulative checkpoint/journal text (including superseded entries), and 4096 bytes per path. These are not new editor or transport quotas. Only documents already in the checkpoint can be updated; no create/delete/save event or undo restoration exists in this DTO.
+
+With an already installed pinned toolchain, run from the repository root:
+
+```sh
+cargo +1.99.1 test -p latexide-core --test recovery_contract --locked --offline -- --test-threads=1
+cargo +1.99.1 test --workspace --locked --offline -- --test-threads=1
+cargo +1.99.1 run -p latexide-contracts --bin latexide-integration --locked --offline -- --root .
+```
+
+The first command runs the scoped service suite; the workspace includes it, so counts overlap. Queue inspection returns `not_applied` and executes no manifest commands or patches. Runtime/store/native registration, durable writer/checkpoint sync, raw frame parser, real process-crash recovery, conflict/ownership handling, undo/eviction and native restore require separate integration and evidence. Mac Rust tests do not qualify the macOS 14 floor, Windows 11 WinUI/Intel+AMD or Linux desktop. Direct agent edits, explicit Save and undo after Save remain the existing runtime contract.

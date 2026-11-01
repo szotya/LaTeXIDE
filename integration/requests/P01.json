@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "package_id": "P01",
+  "contract_version": 1,
+  "requirement_ids": [
+    "DOC-01"
+  ],
+  "source_paths": [
+    "crates/latexide-core/src/services/recovery/mod.rs",
+    "crates/latexide-core/src/services/recovery/sha256.rs",
+    "crates/latexide-core/tests/recovery_contract.rs",
+    "docs/development/results/P01.md"
+  ],
+  "hook_targets": [
+    "crates/latexide-core/src/lib.rs",
+    "crates/latexide-core/src/workspace.rs",
+    "crates/latexide-ffi/src/runtime.rs",
+    "docs/DEVELOPER_HANDOFF.md",
+    "docs/implementation-progress.md",
+    "skills/latexide-platform-development/references/parallel-development.md"
+  ],
+  "test_commands": [
+    "cargo +1.99.1 test -p latexide-core --test recovery_contract --locked --offline"
+  ],
+  "compatibility": "Frozen v1 DTO/trait/wire unchanged. DOC-01 is partial: local read-only checkpoint validation, contiguous acknowledged replay and RecoverySet only; no full requirement closure. RecoveryService requires a trusted caller acknowledgement watermark. Journal checksum is actual SHA-256 of logical UTF-8, not raw disk bytes or source authentication. Invalid/incomplete/extra replay is Corrupt, with no automatic tail salvage. Checkpoint schema/text/path/quota validated; v1 checkpoint has no checksum, encoding metadata, undo, saved baseline or scope/ack fields. Trusted source must verify raw framing/checkpoint integrity/receipt/ownership before runtime use. RecoverySource adapter checks caller-selected project/session labels and preserves source errors; it does not implement durable producer, writer sync, OS locking or native restore. DiskIdentity is validated observation, not overwrite permission or dirty-clear evidence. Initial 1 MiB/file and 10 retained-document ceiling retained; replay capped at 1024 entries, 1024 disk identities, 16 MiB cumulative text and 4096 bytes/path. P00 registration plus trusted producer/checkpoint sidecar with raw hash, acknowledged byte/sequence boundary, BOM/line-ending metadata, disk baseline and session identity require separate integration/review. Do not wire this model directly to Save, create another authoritative runtime, or infer DOC-01/02/16, native Mac, Windows11/Linux or process-crash durability acceptance. Direct agent edit, explicit Save and undo-after-Save remain existing runtime contracts. Shared hooks/handoff/ledger/skill updates are requested as data only; no shared patch applied."
+}
