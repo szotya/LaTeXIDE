@@ -37,10 +37,38 @@ jobs:
         run: |
           python - <<'PY'
           import os
+          import ctypes
           from pathlib import Path
           root = Path(os.environ['LATEXIDE_P18_PHASE3_ROOT'])
           root.mkdir(mode=0o700, exist_ok=False)
           (root / 'fixtures').mkdir(mode=0o700)
+          # Diagnose the same Darwin primitive on fresh synthetic nodes only.
+          # These observations do not replace any Rust assertion or gate.
+          libc = ctypes.CDLL(None, use_errno=True)
+          rename = libc.renameatx_np
+          rename.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
+          rename.restype = ctypes.c_int
+          for mode in (0o700, 0o500):
+              parent = root / f'publisher-rename-control-{mode:o}'
+              parent.mkdir(mode=0o700)
+              child = parent / 'input.pending'
+              child.mkdir(mode=0o700)
+              (child / 'main.tex').write_bytes(b'own synthetic capture')
+              (child / 'main.tex').chmod(0o400)
+              child.chmod(mode)
+              fd = os.open(parent, os.O_RDONLY | 0x00100000 | 0x20000000 | 0x01000000 | 4)
+              try:
+                  ctypes.set_errno(0)
+                  result = rename(fd, b'input.pending', fd, b'input', 4)
+                  rename_errno = ctypes.get_errno()
+                  try:
+                      os.fsync(fd)
+                      sync_errno = 0
+                  except OSError as error:
+                      sync_errno = error.errno
+                  print(f'P18_RENAME_CONTROL mode={mode:o} result={result} errno={rename_errno} fsync_errno={sync_errno}', flush=True)
+              finally:
+                  os.close(fd)
           PY
       - name: Verify selected common and provider profile
         env:
