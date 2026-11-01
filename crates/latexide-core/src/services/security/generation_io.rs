@@ -413,6 +413,8 @@ impl Builder {
         file.set_permissions(Permissions::from_mode(0o400))?;
         file.sync_all()
     }
+    // Use retained descriptors: the private staging name may already have
+    // changed atomically, but no Ready token has been returned yet.
     pub(super) fn seal(self) -> io::Result<()> {
         for directory in self.directories.iter().rev() {
             directory.set_permissions(Permissions::from_mode(0o500))?;

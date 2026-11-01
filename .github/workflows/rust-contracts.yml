@@ -76,6 +76,7 @@ jobs:
         run: python integration/registry/verify.py --profile ${{ runner.os == 'macOS' && 'integrated' || 'shared' }}
       - name: Show bounded failed verification logs
         if: failure()
+        shell: bash
         run: |
           python - <<'PY'
           import json
@@ -84,7 +85,7 @@ jobs:
           report = root / '.local/p00-verification/report.json'
           if report.is_file():
               for check in json.loads(report.read_text()).get('checks', []):
-                  if check.get('status') != 'failed' or not check.get('log'):
+                  if check.get('status') not in ('failed', 'timed_out') or not check.get('log'):
                       continue
                   path = Path(check['log']['path']).resolve()
                   if not path.is_relative_to(root) or not path.is_file():

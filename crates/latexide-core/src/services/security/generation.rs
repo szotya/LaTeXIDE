@@ -270,6 +270,7 @@ pub struct CapturedInputs {
 enum CapturePoint {
     AfterInput(usize),
     BeforePublish,
+    AfterRenameBeforeSeal,
 }
 
 impl CapturedInputs {
@@ -336,7 +337,11 @@ impl CapturedInputs {
         let storage =
             capture_io::Directory::create_private(directory, &original).map_err(|error| {
                 #[cfg(test)]
-                eprintln!("P18_CAPTURE storage_create kind={:?} errno={:?}: {error}", error.kind(), error.raw_os_error());
+                eprintln!(
+                    "P18_CAPTURE storage_create kind={:?} errno={:?}: {error}",
+                    error.kind(),
+                    error.raw_os_error()
+                );
                 if error.kind() == std::io::ErrorKind::InvalidInput {
                     GenerationError::InvalidInput
                 } else {
@@ -345,7 +350,11 @@ impl CapturedInputs {
             })?;
         let mut builder = capture_io::Builder::new(&storage).map_err(|error| {
             #[cfg(test)]
-            eprintln!("P18_CAPTURE builder_new kind={:?} errno={:?}: {error}", error.kind(), error.raw_os_error());
+            eprintln!(
+                "P18_CAPTURE builder_new kind={:?} errno={:?}: {error}",
+                error.kind(),
+                error.raw_os_error()
+            );
             GenerationError::Storage
         })?;
         let mut sources = Vec::new();
@@ -369,7 +378,11 @@ impl CapturedInputs {
                 .write(Path::new(&input.relative), &input.bytes, cancel)
                 .map_err(|error| {
                     #[cfg(test)]
-                    eprintln!("P18_CAPTURE snapshot_write kind={:?} errno={:?}: {error}", error.kind(), error.raw_os_error());
+                    eprintln!(
+                        "P18_CAPTURE snapshot_write kind={:?} errno={:?}: {error}",
+                        error.kind(),
+                        error.raw_os_error()
+                    );
                     if cancel.load(Ordering::Acquire) {
                         GenerationError::Cancelled
                     } else {
@@ -394,19 +407,35 @@ impl CapturedInputs {
                 .revalidate(&original, MAX_INPUT_BYTES)
                 .map_err(|_| GenerationError::SourceChanged)?;
         }
+        check_cancel(cancel)?;
+        // Darwin may reject renaming a write-disabled directory. Rename only
+        // inside this private 0700 generation while retaining the host lease,
+        // then seal through the held descriptors before validating/returning a
+        // Ready token or allowing any compiler launch. A filesystem name alone
+        // is not a published capability, nor same-UID immutability.
+        storage.publish_input().map_err(|error| {
+            #[cfg(test)]
+            eprintln!(
+                "P18_CAPTURE snapshot_publish kind={:?} errno={:?}: {error}",
+                error.kind(),
+                error.raw_os_error()
+            );
+            GenerationError::Storage
+        })?;
+        #[cfg(test)]
+        if let Some(callback) = hook.as_mut() {
+            callback(CapturePoint::AfterRenameBeforeSeal);
+        }
         builder.seal().map_err(|error| {
             #[cfg(test)]
-            eprintln!("P18_CAPTURE snapshot_seal kind={:?} errno={:?}: {error}", error.kind(), error.raw_os_error());
+            eprintln!(
+                "P18_CAPTURE snapshot_seal kind={:?} errno={:?}: {error}",
+                error.kind(),
+                error.raw_os_error()
+            );
             GenerationError::Storage
         })?;
         check_cancel(cancel)?;
-        storage
-            .publish_input()
-            .map_err(|error| {
-                #[cfg(test)]
-                eprintln!("P18_CAPTURE snapshot_publish kind={:?} errno={:?}: {error}", error.kind(), error.raw_os_error());
-                GenerationError::Storage
-            })?;
         let input = directory.join("input");
         let mut snapshot = capture_io::Directory::open(&input, true)
             .map_err(|_| GenerationError::SnapshotChanged)?;

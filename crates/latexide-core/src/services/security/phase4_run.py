@@ -10,6 +10,7 @@ import subprocess
 import sys
 
 SUITES = {
+    "rename": ["rename_window", "--nocapture", "--test-threads=1"],
     "fd": ["security_service::execution::tests::inherited_fd_tests::", "--nocapture", "--test-threads=1"],
     "baseline": ["--exact", "security_service::execution::tests::phase2_adapter_alone_does_not_attest_content_freshness", "--nocapture"],
     "generation": ["security_service::generation::tests::", "--nocapture"],
@@ -133,6 +134,8 @@ def main(*, legacy_phase2: bool = False) -> None:
     identities = [line[:-6] for line in listed.stdout.decode("utf-8").splitlines() if line.endswith(": test")]
     if args.suite in ("tex", "baseline"):
         required = {selected_args[selected_args.index("--exact") + 1]}
+    elif args.suite == "rename":
+        required = {"security_service::generation::tests::rename_window_keeps_generation_private_and_host_locked_until_ready", "security_service::generation::tests::changed_snapshot_during_private_rename_window_never_returns_ready", "security_service::generation::tests::cancellation_during_private_rename_window_never_returns_ready"}
     elif args.suite == "fd":
         required = {"security_service::execution::tests::inherited_fd_tests::phase4_regular_non_cloexec_fd_is_not_inherited", "security_service::execution::tests::inherited_fd_tests::phase4_high_duplicated_non_cloexec_fd_is_not_inherited", "security_service::execution::tests::inherited_fd_tests::phase4_high_pipe_non_cloexec_fd_is_not_inherited", "security_service::execution::tests::inherited_fd_tests::phase4_existing_cloexec_fd_control", "security_service::execution::tests::inherited_fd_tests::phase4_standard_io_and_compiler_created_exec_pipe_work", "security_service::execution::tests::inherited_fd_tests::phase4_exec_failure_and_pre_exec_error_reach_parent_without_hanging", "security_service::execution::tests::inherited_fd_tests::phase4_unreaped_tree_drop_terminates_own_ordinary_descendant"}
     elif args.suite == "generation":
@@ -143,7 +146,7 @@ def main(*, legacy_phase2: bool = False) -> None:
             required.add("security_service::generation::tests::compiler_reads_only_its_captured_bytes_and_current_result_is_host_locked")
             required.add("security_service::execution::tests::inherited_fd_tests::phase4_high_pipe_non_cloexec_fd_is_not_inherited")
     selection_valid = listed.returncode == 0 and len(identities) == len(set(identities)) and bool(identities) and required <= set(identities)
-    if args.suite in ("tex", "baseline", "fd"):
+    if args.suite in ("tex", "baseline", "fd", "rename"):
         selection_valid = selection_valid and set(identities) == required
     if not selection_valid:
         save(destination / "failed-selection.json", {"status": "failed", "source_files": before, "source_unchanged": fingerprint() == before,

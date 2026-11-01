@@ -120,6 +120,110 @@ fn digest_binds_actual_bytes_against_independent_sha256_vectors() {
 }
 
 #[test]
+fn rename_window_keeps_generation_private_and_host_locked_until_ready() {
+    let f = Fixture::new();
+    let mut observed = false;
+    let captured = CapturedInputs::capture_with_hook(
+        &f.authority,
+        &f.binding(),
+        &f.generation,
+        &AtomicBool::new(false),
+        &mut |point| {
+            if matches!(point, CapturePoint::AfterRenameBeforeSeal) {
+                observed = true;
+                assert!(f.authority.try_lease_current().is_err());
+                assert_eq!(fs::metadata(&f.generation).unwrap().mode() & 0o777, 0o700);
+                assert_eq!(
+                    fs::metadata(f.generation.join("input")).unwrap().mode() & 0o777,
+                    0o700
+                );
+                assert_eq!(
+                    fs::metadata(f.generation.join("input/main.tex"))
+                        .unwrap()
+                        .mode()
+                        & 0o777,
+                    0o400
+                );
+                assert!(!f.generation.join("output").exists());
+            }
+        },
+    )
+    .unwrap();
+    assert!(
+        observed,
+        "rename/seal transaction boundary was not observed"
+    );
+    assert_eq!(
+        fs::metadata(captured.input_root()).unwrap().mode() & 0o777,
+        0o500
+    );
+    assert_eq!(
+        fs::read(captured.input_root().join("main.tex")).unwrap(),
+        b"own project"
+    );
+}
+
+#[test]
+fn changed_snapshot_during_private_rename_window_never_returns_ready() {
+    let f = Fixture::new();
+    let mut observed = false;
+    let result = CapturedInputs::capture_with_hook(
+        &f.authority,
+        &f.binding(),
+        &f.generation,
+        &AtomicBool::new(false),
+        &mut |point| {
+            if matches!(point, CapturePoint::AfterRenameBeforeSeal) {
+                observed = true;
+                let path = f.generation.join("input/main.tex");
+                fs::set_permissions(&path, fs::Permissions::from_mode(0o600)).unwrap();
+                overwrite_same_metadata(&path, b"own proJect");
+                fs::set_permissions(&path, fs::Permissions::from_mode(0o400)).unwrap();
+            }
+        },
+    );
+    assert!(
+        observed,
+        "rename/seal transaction boundary was not observed"
+    );
+    assert!(matches!(result, Err(GenerationError::SnapshotChanged)));
+    assert!(!f.generation.join("output").exists());
+    assert_eq!(
+        fs::read(f.project.join("main.tex")).unwrap(),
+        b"own project"
+    );
+}
+
+#[test]
+fn cancellation_during_private_rename_window_never_returns_ready() {
+    let f = Fixture::new();
+    let cancel = AtomicBool::new(false);
+    let mut observed = false;
+    let result = CapturedInputs::capture_with_hook(
+        &f.authority,
+        &f.binding(),
+        &f.generation,
+        &cancel,
+        &mut |point| {
+            if matches!(point, CapturePoint::AfterRenameBeforeSeal) {
+                observed = true;
+                cancel.store(true, Ordering::Release);
+            }
+        },
+    );
+    assert!(
+        observed,
+        "rename/seal transaction boundary was not observed"
+    );
+    assert!(matches!(result, Err(GenerationError::Cancelled)));
+    assert_eq!(
+        fs::metadata(f.generation.join("input")).unwrap().mode() & 0o777,
+        0o500
+    );
+    assert!(!f.generation.join("output").exists());
+}
+
+#[test]
 fn capture_preserves_raw_unicode_bom_crlf_and_nested_paths() {
     let f = Fixture::new();
     let bytes = "\u{feff}Árvíztűrő\r\nMásodik sor\r\n".as_bytes().to_vec();
