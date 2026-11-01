@@ -20,8 +20,6 @@ jobs:
         os: [ubuntu-24.04, macos-15, windows-2025]
     runs-on: ${{ matrix.os }}
     timeout-minutes: 25
-    env:
-      LATEXIDE_P18_PHASE3_ROOT: ${{ runner.temp }}/latexide-p18-standalone
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
@@ -34,6 +32,8 @@ jobs:
       - name: Prepare standalone P18 synthetic fixtures
         if: runner.os == 'macOS'
         shell: bash
+        env:
+          LATEXIDE_P18_PHASE3_ROOT: ${{ runner.temp }}/latexide-p18-standalone
         run: |
           python - <<'PY'
           import os
@@ -43,6 +43,8 @@ jobs:
           (root / 'fixtures').mkdir(mode=0o700)
           PY
       - name: Verify selected common and provider profile
+        env:
+          LATEXIDE_P18_PHASE3_ROOT: ${{ runner.temp }}/latexide-p18-standalone
         run: python integration/registry/verify.py --profile ${{ runner.os == 'macOS' && 'integrated' || 'shared' }}
 
 
