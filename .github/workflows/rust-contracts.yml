@@ -46,6 +46,27 @@ jobs:
         env:
           LATEXIDE_P18_PHASE3_ROOT: ${{ runner.temp }}/latexide-p18-standalone
         run: python integration/registry/verify.py --profile ${{ runner.os == 'macOS' && 'integrated' || 'shared' }}
+      - name: Show bounded failed verification logs
+        if: failure()
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path.cwd().resolve()
+          report = root / '.local/p00-verification/report.json'
+          if report.is_file():
+              for check in json.loads(report.read_text()).get('checks', []):
+                  if check.get('status') != 'failed' or not check.get('log'):
+                      continue
+                  path = Path(check['log']['path']).resolve()
+                  if not path.is_relative_to(root) or not path.is_file():
+                      raise SystemExit('Invalid verification log path')
+                  print(f"--- {check['name']} ({check.get('exit_code')}) ---", flush=True)
+                  with path.open('rb') as source:
+                      source.seek(0, 2)
+                      source.seek(max(0, source.tell() - 65536))
+                      print(source.read().decode('utf-8', errors='replace'), flush=True)
+          PY
 
 
   # Shared Rust tests are not Windows WinUI/Linux desktop qualification.
