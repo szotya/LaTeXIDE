@@ -1,0 +1,51 @@
+{
+  "schema": 1,
+  "package_id": "P18",
+  "contract_version": 1,
+  "requirement_ids": [
+    "SEC-01",
+    "SEC-02",
+    "SEC-05"
+  ],
+  "source_paths": [
+    "crates/latexide-core/src/services/security/mod.rs",
+    "crates/latexide-core/src/services/security/identity.rs",
+    "crates/latexide-core/src/services/security/execution.rs",
+    "crates/latexide-core/src/services/security/execution_tests.rs",
+    "crates/latexide-core/src/services/security/phase2_run.py",
+    "crates/latexide-core/src/services/security/phase2_evidence.py",
+    "crates/latexide-core/src/services/security/generation.rs",
+    "crates/latexide-core/src/services/security/generation_digest.rs",
+    "crates/latexide-core/src/services/security/generation_io.rs",
+    "crates/latexide-core/src/services/security/generation_tests.rs",
+    "crates/latexide-core/src/services/security/generation_tex_tests.rs",
+    "crates/latexide-core/src/services/security/phase3_run.py",
+    "crates/latexide-core/src/services/security/phase3_evidence.py",
+    "crates/latexide-core/tests/security_policy_contract.rs",
+    "docs/development/results/P18.md",
+    "crates/latexide-core/src/services/security/child_exec.rs",
+    "crates/latexide-core/src/services/security/inherited_fd_tests.rs",
+    "crates/latexide-core/src/services/security/phase4_run.py",
+    "crates/latexide-core/src/services/security/phase4_evidence.py"
+  ],
+  "hook_targets": [
+    "crates/latexide-core/src/lib.rs",
+    "crates/latexide-build/src/lib.rs",
+    "crates/latexide-ffi/src/runtime.rs",
+    "docs/DEVELOPER_HANDOFF.md",
+    "docs/implementation-progress.md",
+    "skills/latexide-platform-development/references/parallel-development.md"
+  ],
+  "test_commands": [
+    "python3 -B crates/latexide-core/src/services/security/phase4_run.py --root . --phase \"$P18_PHASE4\" --rust-bin \"$P18_RUST_BIN\" --tex-prefix \"$P18_TEX_PREFIX\" --label fresh-inherited-fd --suite fd",
+    "python3 -B crates/latexide-core/src/services/security/phase4_run.py --root . --phase \"$P18_PHASE4\" --rust-bin \"$P18_RUST_BIN\" --tex-prefix \"$P18_TEX_PREFIX\" --label fresh-policy-generation-os --suite all",
+    "python3 -B crates/latexide-core/src/services/security/phase4_evidence.py before --phase \"$P18_PHASE4\" --tex-prefix \"$P18_TEX_PREFIX\" --label fresh-generation-tex",
+    "python3 -B crates/latexide-core/src/services/security/phase4_run.py --root . --phase \"$P18_PHASE4\" --rust-bin \"$P18_RUST_BIN\" --tex-prefix \"$P18_TEX_PREFIX\" --label fresh-generation-tex --suite tex",
+    "python3 -B crates/latexide-core/src/services/security/phase4_evidence.py validate --phase \"$P18_PHASE4\" --tex-prefix \"$P18_TEX_PREFIX\" --label fresh-generation-tex --poppler \"$P18_POPPLER_BIN\"",
+    "cargo test --workspace --locked --offline --target-dir \"$P18_PHASE4/workspace-target\"",
+    "cargo check -p latexide-core --tests --target x86_64-pc-windows-msvc --locked --offline --target-dir \"$P18_PHASE4/windows-target\"",
+    "python3 -B scripts/validate_development_packages.py",
+    "python3 -B integration/registry/generate_contracts.py --check"
+  ],
+  "compatibility": "Consumes frozen latexide_contracts::security v1 without DTO/Cargo/legacy IPC/C ABI/MCP changes. Phase3 adds a host-only, non-serde input-generation API: HostInput carries raw serialized compiler bytes, revision and independent disk-baseline SHA-256; HostSnapshot/InputBinding binds workspace, monotonic host generation, main/input paths, input set, revisions and byte digests. HostInputAuthority::try_lease_current must nonblockingly lease the one authoritative Runtime (contention/teardown fails closed); client manifest/trusted flags are not authority. CapturedInputs uses Darwin descriptor-relative no-follow capture, private staging/exclusive atomic publish and physical descriptor-ancestry storage separation. It preserves raw Unicode/BOM/CRLF and can compile dirty host bytes without saving disk. PreparedGeneration routes only captured literal inputs through the preserved deny-default CompilerSandbox, fresh output/cache/temp, read-only disjoint runtime, cleared env and bounded ordinary process-group supervisor. A pre-spawn host-owned exclusive output inode slot and opaque consuming PendingOutput bind the run; with_current_result rechecks host generation, original/snapshot bytes/identities and output under the host lease before a short publication callback. Succeeded/current candidate does not mean PDF parser acceptance. Host must serialize VFS bytes correctly, advance generation for edits/input/trust/compiler-config changes, prohibit ABA rollback, avoid reentrant/long callbacks and mark later edits stale; no production VFS/app/compiler/session integration is supplied. Same-UID swap/restore and in-place output byte attribution, last-check races, extended ACLs, native runtime inherited-FD integration/reaper/Stop/Join ownership, setsid/controller death/aggregate quotas and platform qualification remain open. The bare lower CompilerSandbox still does not attest input freshness; P00/P09 must consume the generation path and a qualified backend without any old unrestricted fallback. macOS27.2 arm64 real offline generation-based multifile/fontspec/BOM/CRLF TeX/PDF and same-profile original-project/outside/loopback controls have actual local evidence; exact final counts and current source hashes are in the append-only Phase3 closure of docs/development/results/P18.md. Unsupported execution/capture/hash platforms fail closed; Windows x64 check is type-check only and Windows11/WinUI/Linux desktop/macOS14-floor runtime remains unrun. The hardened phase3 driver uses a new target per label, actual fresh Cargo artifacts, pre-run binary/source archives, mandatory selected test identities and positive exact counters; phase2_run.py is its legacy-suite wrapper. Both frozen phase2 helper findings were independently reproduced in own fault copies and locally addressed; old phase1/phase2 source/evidence remains preserved. Existing direct agent edit, explicit Save, post-Save undo, 1MiB file/encoded IPC,10editorbuffer,64KiB read/argv, UTF16/revision/atomic-error contracts stay unchanged; the non-wire generation has a separate conservative10input/10MiB total cap and does not open editor buffers. P18/SEC-01/02/05 remain partial, requirement_ids declare touched scope. All test_commands are inert examples; provision a fresh own p18-security/inherited-fd-phase4-<nonce> external scratch/cache/tmp with existing tools and new labels, never execute stored manifest/report commands. Phase4 fresh controls reproduced the non-CLOEXEC outside-file/pipe bypass in the phase3 adapter, including own duplicated FDs4096/8192 and ordinary fork/exec descendants. The standalone macOS adapter now preconstructs a Darwin SETEXEC|CLOEXEC_DEFAULT boundary in the parent with explicit addinherit actions for only0/1/2. Rust still owns the original child PID/group and exec-error pipe; existing pre-exec limits, host/output leases, paths/profile/environment and reaper remain. Successful SETEXEC never returns; every error returns through Rust without retry/fallthrough. Parent descriptors are not enumerated, closed or relabelled. It supports compiler-created pipes after exec, not extra inherited host pipes. See the Phase4 append-only result and new .local report for actual final source-bound counts and remaining qualification limits; old phase3 helpers/evidence remain historical and unchanged."
+}
