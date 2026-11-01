@@ -1,0 +1,163 @@
+{
+  "schema": 1,
+  "package_id": "P00",
+  "requirements": {
+    "QA-08": {
+      "prerequisites": [
+        "MCP-03"
+      ],
+      "criteria": [
+        {
+          "id": "contract-and-coordinator",
+          "title": "Source, allocation and coordinator regressions",
+          "checks": [
+            "generated-contracts",
+            "development-plans",
+            "coordinator-contracts"
+          ]
+        },
+        {
+          "id": "common-runtime",
+          "title": "Shared Rust workspace and isolated seam",
+          "checks": [
+            "rust-workspace",
+            "isolated-module-seam"
+          ]
+        },
+        {
+          "id": "manifest-queue",
+          "title": "Real Rust read-only queue",
+          "checks": [
+            "integration-queue"
+          ]
+        },
+        {
+          "id": "mac-adapter-regression",
+          "title": "Current Mac adapter control/IPC regressions; not live app acceptance",
+          "checks": [
+            "runtime-build",
+            "ipc-roundtrip",
+            "mcp-roundtrip",
+            "native-build",
+            "native-controls"
+          ],
+          "profiles": [
+            "integrated"
+          ]
+        }
+      ]
+    },
+    "QA-14": {
+      "prerequisites": [
+        "QA-08"
+      ],
+      "criteria": [
+        {
+          "id": "stored-evidence",
+          "title": "Fresh source/artifact/test/log/description observations",
+          "checks": []
+        },
+        {
+          "id": "inventory-regression",
+          "title": "Capability inventory regression and schema coverage",
+          "checks": [
+            "coordinator-contracts"
+          ]
+        },
+        {
+          "id": "guide-identity",
+          "title": "Bound guide bytes and relative links",
+          "checks": [
+            "documentation"
+          ]
+        }
+      ]
+    },
+    "OS-10": {
+      "prerequisites": [
+        "QA-14"
+      ],
+      "criteria": [
+        {
+          "id": "contributor-reference",
+          "title": "Portable source/reference checks; not native bootstrap qualification",
+          "checks": [
+            "documentation",
+            "development-plans"
+          ]
+        },
+        {
+          "id": "standalone-entry",
+          "title": "Isolated contributor module seam",
+          "checks": [
+            "isolated-module-seam"
+          ]
+        }
+      ]
+    }
+  },
+  "validation_scopes": [
+    {
+      "id": "mac-live-workflow",
+      "owners": [
+        "P07",
+        "P08",
+        "P14"
+      ],
+      "classification": "native_validation",
+      "blocks_current_mac_common_slice": false,
+      "claim": "Live packaged Mac workspace workflows",
+      "required_evidence": "Affected adapter owner: real focus/IME/direct edit/explicit Save/undo after Save and persistent unsent work in the packaged app. Owners depend on changed adapter; these are not added DAG prerequisites."
+    },
+    {
+      "id": "windows11-native",
+      "owners": [
+        "P21"
+      ],
+      "classification": "native_validation",
+      "blocks_current_mac_common_slice": false,
+      "claim": "Windows11 x64 Intel+AMD native qualification",
+      "required_evidence": "MSBuild and link, app launch, shared session/IPC, functional focus/IME/direct edit/Save/undo on Windows11 Intel and AMD; Windows Server Rust is insufficient."
+    },
+    {
+      "id": "linux-desktop",
+      "owners": [
+        "P22"
+      ],
+      "classification": "future_platform",
+      "blocks_current_mac_common_slice": false,
+      "claim": "Future native Linux desktop support",
+      "required_evidence": "Platform/UI decision, native build/launch, Unix IPC and XDG/runtime-dir behavior. Does not block the currently claimed Mac/common slice."
+    },
+    {
+      "id": "fault-corpus",
+      "owners": [
+        "P19"
+      ],
+      "classification": "separate_program",
+      "blocks_current_mac_common_slice": false,
+      "claim": "Expanded fault-injection and corpus qualification",
+      "required_evidence": "P19 owned corpus/protocol harness and actual results; no invented P00 DAG edge."
+    },
+    {
+      "id": "release-qualification",
+      "owners": [
+        "P20"
+      ],
+      "classification": "separate_program",
+      "blocks_current_mac_common_slice": false,
+      "claim": "Signed packaging, migration and release qualification",
+      "required_evidence": "P20 target-platform build/package/migration qualification; not implied by P00 current-runtime tests."
+    },
+    {
+      "id": "accessibility-performance",
+      "owners": [
+        "P23"
+      ],
+      "classification": "separate_program",
+      "blocks_current_mac_common_slice": false,
+      "claim": "Accessibility, render/usability and release performance",
+      "required_evidence": "P23 real AX/render/usability measurements and release benchmarks; not inferred from control XCTest."
+    }
+  ]
+}

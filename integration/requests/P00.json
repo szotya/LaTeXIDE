@@ -16,7 +16,11 @@
     "integration/registry/probes.py",
     "integration/registry/ci_gate.py",
     "tests/contracts/main.swift",
-    "docs/development/contracts/v1.md"
+    "docs/development/contracts/v1.md",
+    "integration/registry/evidence.py",
+    "integration/registry/readiness.py",
+    "integration/registry/p00-acceptance.v1.json",
+    "docs/development/contracts/p00-closure.md"
   ],
   "hook_targets": [
     "Cargo.toml",
@@ -35,7 +39,8 @@
     "cargo +1.99.1 test --workspace --locked",
     "cargo +1.99.1 run -p latexide-contracts --bin latexide-integration --locked -- --root .",
     "python3 integration/registry/verify.py --profile shared --native-schema",
-    "python3 integration/registry/verify.py --profile integrated"
+    "python3 integration/registry/verify.py --profile integrated",
+    "python3 integration/registry/verify.py --recheck-report .local/p00-verification/report.json"
   ],
   "compatibility": "Additive contract-v1 coordinator and verification tools. Legacy IPC v1, C ABI, agent direct edit/save/undo unchanged. Queue inspection is read-only; listed requirement IDs and provider dependencies remain unqualified until real acceptance."
 }

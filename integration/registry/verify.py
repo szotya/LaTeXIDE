@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import importlib.util
 import json
 import math
 import os
@@ -22,6 +23,12 @@ import time
 import uuid
 
 ROOT = Path(__file__).resolve().parents[2]
+_support = importlib.util.spec_from_file_location("latexide_evidence", Path(__file__).with_name("evidence.py"))
+evidence = importlib.util.module_from_spec(_support)
+_support.loader.exec_module(evidence)
+_readiness = importlib.util.spec_from_file_location("latexide_readiness", Path(__file__).with_name("readiness.py"))
+readiness = importlib.util.module_from_spec(_readiness)
+_readiness.loader.exec_module(readiness)
 
 
 def digest(path):
@@ -106,32 +113,8 @@ def artifacts_current(root, artifacts, allowed_roots):
     except (OSError, ValueError): return False
 
 
-def validate_summary(data, suite, allowed_skips=(), run_id=None, allow_failures=False):
-    if not isinstance(data, dict) or data.get("schema") != 1 or data.get("suite") != suite: raise ValueError("Missing or wrong test summary")
-    if run_id is not None and data.get("verification_run_id") != run_id: raise ValueError("Stale test summary")
-    counts = [data.get(name) for name in ["tests", "passed", "skipped", "failures", "errors"]]
-    if any(type(n) is not int or n < 0 for n in counts): raise ValueError("Invalid test counts")
-    tests, passed, skipped, failures, errors = counts
-    failed_tests = data.get("failed_tests", failures + errors); skipped_tests = data.get("skipped_tests", skipped)
-    expected = data.get("expected_failures", 0); unexpected = data.get("unexpected_successes", 0)
-    if any(type(n) is not int or n < 0 for n in [failed_tests, skipped_tests, expected, unexpected]): raise ValueError("Invalid case outcome counts")
-    ids = data.get("skipped_ids")
-    if not isinstance(ids, list) or any(not isinstance(i, str) for i in ids) or len(ids) != skipped or len(set(ids)) != skipped: raise ValueError("Missing skipped identities")
-    if tests <= 0 or tests != passed + skipped_tests + failed_tests + expected: raise ValueError("Inconsistent test case outcomes")
-    if not allow_failures and (passed <= 0 or failures or errors or failed_tests or expected or unexpected): raise ValueError("Required tests did not pass")
-    if not allow_failures and not set(ids).issubset(set(allowed_skips)): raise ValueError("Unqualified test skip")
-    return data
-
-
-def rust_summary(log, suite, allow_failures=False):
-    if Path(log).stat().st_size > 16 * 1024 * 1024: raise ValueError("Test summary log quota exceeded")
-    text = Path(log).read_text(encoding="utf-8", errors="replace")
-    rows = re.findall(r"test result: (ok|FAILED)\. (\d+) passed; (\d+) failed; (\d+) ignored;", text)
-    if not rows: raise ValueError("Missing Rust test summary")
-    passed = sum(int(r[1]) for r in rows); failures = sum(int(r[2]) for r in rows); skipped = sum(int(r[3]) for r in rows)
-    ids = re.findall(r"^test (\S+) \.\.\. ignored", text, flags=re.M)
-    return validate_summary({"schema": 1, "suite": suite, "tests": passed + failures + skipped, "passed": passed,
-                             "skipped": skipped, "failures": failures, "errors": 0, "skipped_ids": ids}, suite, allow_failures=allow_failures)
+validate_summary = evidence.validate_summary
+rust_summary = evidence.rust_summary
 
 
 def run_checks(root, source_paths, steps, log_dir, timeout, artifact_roots=()):
@@ -366,15 +349,113 @@ def repository_identity(root):
     except (OSError, subprocess.SubprocessError): return {"head": None, "dirty": None}
 
 
+def recheck_report(path):
+    try:
+        report = evidence.read_json(path)
+        current = source_identity(ROOT, lambda: discover_sources(ROOT))
+        # A stale source set takes precedence over interpreting old metadata.
+        if report.get("source_sha256") != current["sha256"]:
+            validation = evidence.revalidate_report(ROOT, report, current, [])
+            return {**validation, "capability_inventory": readiness.capability_inventory(ROOT),
+                    "p00_readiness": readiness.p00_readiness(ROOT, report, validation)}
+        selection = report["selection"]
+        if report["profile"] not in {"structure", "contracts", "shared", "integrated"} or type(selection["native_schema"]) is not bool:
+            raise ValueError("Unknown check selection")
+        if selection["platform"] != sys.platform or selection["machine"].lower() != host_platform.machine().lower():
+            raise ValueError("Recheck requires the original platform")
+        relative = report["run_directory"]
+        if not isinstance(relative, str) or "\\" in relative or Path(relative).is_absolute() or ".." in Path(relative).parts or not relative.startswith(".local/"):
+            raise ValueError("Invalid run directory")
+        args = argparse.Namespace(profile=report["profile"], native_schema=selection["native_schema"], cargo_executable=None, offline=False, run_dir=ROOT / relative)
+        steps = build_steps(ROOT, args, selection["platform"], selection["machine"])
+        updated = finalize_report(ROOT, report, steps, artifact_roots=[ROOT / "target", ROOT / ".local/p00-native-build"])
+        return {**updated["evidence_validation"], "capability_inventory": updated.get("capability_inventory", {}),
+                "p00_readiness": updated.get("p00_readiness", {})}
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
+        return {"schema": 1, "status": "invalid_report", "reason": str(error), "scope": "read-only freshness; rerun verification"}
+
+
+def finalize_report(root, report, steps, artifact_roots=()):
+    """Derive progress from freshly checked bytes, then guard late input changes."""
+    try:
+        current = source_identity(root, lambda: discover_sources(root))
+        validation = evidence.revalidate_report(root, report, current, steps, artifact_roots)
+        report["evidence_validation"] = validation
+        report["capability_inventory"] = readiness.capability_inventory(root)
+        report["p00_readiness"] = readiness.p00_readiness(root, report, validation)
+        if report["status"] == "passed" and validation["status"] != "current":
+            report["status"] = "failed"
+    except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:
+        report["status"] = "failed"; report["readiness_error"] = str(error)
+        report["evidence_validation"] = {"schema": 1, "status": "invalid_report", "reason": str(error)}
+        report["capability_inventory"] = {}; report["p00_readiness"] = {}
+    try: after = source_identity(root, lambda: discover_sources(root))["sha256"]
+    except (OSError, ValueError): after = None
+    if report["status"] == "passed" and after == report.get("source_sha256"):
+        # Inventory construction is read-only but may overlap another build.
+        validation = evidence.revalidate_report(root, report, source_identity(root, lambda: discover_sources(root)), steps, artifact_roots)
+        report["evidence_validation"] = validation
+        if validation["status"] != "current":
+            report["status"] = "failed"
+            progress = report.get("p00_readiness", {})
+            progress["evidence_status"] = validation["status"]; progress["independent_status"] = "partial"
+            for row in progress.get("requirements", {}).values():
+                for criterion in row["criteria"]:
+                    if criterion["status"] == "passed": criterion["status"] = validation["status"]
+    # Rehashing the earlier list cannot detect additions during that last pass.
+    try: after = source_identity(root, lambda: discover_sources(root))["sha256"]
+    except (OSError, ValueError): after = None
+    if report.get("source_sha256") is not None and after != report["source_sha256"]:
+        report["status"] = "source_changed"; report["source_sha256_after"] = after
+        validation = report["evidence_validation"]
+        validation.update(status="stale_source", source_sha256=after, reason="Source set changed during report finalization")
+        validation.setdefault("identities", {})["source"] = "stale_source"
+        report["capability_inventory"]["freshness"] = "stale_source"
+        progress = report.get("p00_readiness", {})
+        progress["evidence_status"] = "stale_source"; progress["independent_status"] = "partial"
+        for row in progress.get("requirements", {}).values():
+            for criterion in row["criteria"]:
+                if criterion["status"] == "passed": criterion["status"] = "stale_source"
+    if report["status"] != "passed":
+        for requirement in report.get("requirements", {}).values():
+            if requirement["current_verification"]["checks"]:
+                requirement["current_verification"]["status"] = "stale_source" if report["status"] == "source_changed" else "failed"
+    for record in report["checks"]: record["report_status"] = report["status"]
+    return report
+
+
+def failure_diagnostics(records):
+    """Bounded synthetic Python-test tails for actionable CI failure output."""
+    details = []
+    for row in records:
+        if row.get("name") not in {"coordinator-contracts", "tool-acquisition"} or row.get("status") == "passed" or not row.get("log"):
+            continue
+        try:
+            path = Path(row["log"]["path"])
+            with path.open("rb") as stream:
+                stream.seek(max(0, path.stat().st_size - 8192))
+                tail = stream.read(8192).decode("utf-8", errors="replace")
+            details.append({"name": row["name"], "tail": tail})
+        except OSError as error:
+            details.append({"name": row["name"], "reason": str(error)})
+    return details
+
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--profile", choices=["structure", "contracts", "shared", "integrated"], default="contracts")
+    parser.add_argument("--recheck-report", type=Path, help="Read-only revalidation of stored evidence; no commands run")
     parser.add_argument("--cargo-executable", help="Explicit local cargo binary; otherwise use pinned rustup toolchain")
     parser.add_argument("--offline", action="store_true"); parser.add_argument("--native-schema", action="store_true")
     parser.add_argument("--timeout", type=float, default=600)
     parser.add_argument("--output", type=Path, default=ROOT / ".local/p00-verification/report.json")
     args = parser.parse_args()
     if not math.isfinite(args.timeout) or args.timeout <= 0: parser.error("timeout must be finite and positive")
+    if args.recheck_report:
+        result = recheck_report(args.recheck_report)
+        # JSON stdout stays UTF-8-compatible even on redirected Windows cp1252.
+        print(json.dumps(result, ensure_ascii=True))
+        return 0 if result["status"] == "current" else 1
     verification_id = uuid.uuid4().hex
     write_report(args.output, {"schema": 1, "status": "running", "profile": args.profile, "verification_id": verification_id})
     cache = ROOT / ".local/p00-verification"; cache.mkdir(parents=True, exist_ok=True)
@@ -388,22 +469,19 @@ def main():
     except (OSError, ValueError, KeyError, TypeError) as error:
         report = {"schema": 1, "status": "failed", "reason": str(error), "source_sha256": None, "source_sha256_after": None, "source_files": [], "checks": []}
     report["profile"] = args.profile
+    report["selection"] = {"native_schema": args.native_schema, "platform": sys.platform, "machine": host_platform.machine()}
+    report["run_directory"] = args.run_dir.relative_to(ROOT).as_posix()
     report["verification_id"] = verification_id
     report["repository"] = repository_identity(ROOT)
     try: report["requirements"] = requirement_inventory(ROOT, report)
     except (OSError, ValueError, KeyError, TypeError) as error:
         report["status"] = "failed"; report["requirements"] = {}; report["inventory_error"] = str(error)
     report["description_identity"] = [r["description_identity"] for r in report["checks"] if r.get("description_identity")]
-    try: after = source_identity(ROOT, lambda: discover_sources(ROOT))["sha256"]
-    except (OSError, ValueError): after = None
-    if report["source_sha256"] is not None and after != report["source_sha256"]:
-        report["status"] = "source_changed"; report["source_sha256_after"] = after
-        for requirement in report["requirements"].values():
-            if requirement["current_verification"]["checks"]: requirement["current_verification"]["status"] = "stale_source"
-    for record in report["checks"]: record["report_status"] = report["status"]
+    report = finalize_report(ROOT, report, steps, artifact_roots=[ROOT / "target", ROOT / ".local/p00-native-build"])
     write_report(args.output, report)
     print(json.dumps({"profile": args.profile, "status": report["status"], "source_sha256": report["source_sha256"],
-                      "checks": [{"name": r["name"], "status": r["status"], "kind": r["kind"], "tests": r.get("test_summary")} for r in report["checks"]]}, ensure_ascii=False))
+                      "checks": [{"name": r["name"], "status": r["status"], "kind": r["kind"], "tests": r.get("test_summary")} for r in report["checks"]],
+                      "failure_diagnostics": failure_diagnostics(report["checks"])}, ensure_ascii=True))
     return 0 if report["status"] == "passed" else 1
 
 
