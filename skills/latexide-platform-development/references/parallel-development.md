@@ -52,3 +52,24 @@ cargo +1.99.1 run -p latexide-contracts --bin latexide-integration --locked --of
 ```
 
 The first command runs the scoped service suite; the workspace includes it, so counts overlap. Queue inspection returns `not_applied` and executes no manifest commands or patches. Runtime/store/native registration, durable writer/checkpoint sync, raw frame parser, real process-crash recovery, conflict/ownership handling, undo/eviction and native restore require separate integration and evidence. Mac Rust tests do not qualify the macOS 14 floor, Windows 11 WinUI/Intel+AMD or Linux desktop. Direct agent edits, explicit Save and undo after Save remain the existing runtime contract.
+
+
+## P04 explicit-observation VFS slice
+
+`crates/latexide-core/src/services/vfs/mod.rs` implements frozen v1 `VfsPort` over a trusted host `ObservationProducer`. The first slice is imported by `crates/latexide-core/tests/vfs_contract.rs`; it is not registered in the shared runtime. `integration/requests/P04.json` is inert integration data. Read `docs/development/results/P04.md` for the source/test cohort and acceptance boundaries; later filesystem-producer source and evidence are separate inputs.
+
+Every reconcile binds the caller's exact previous snapshot and disk/overlay claims to freshly computed logical UTF-8 hashes from a complete producer observation. Exact UTF-8 paths retain case and normalization distinctions. The derived atomic `Manifest` retains disk identity, overlay size/revision/baseline/conflict and its own `VfsSnapshot`; the frozen v1 wire reply omits those sidecar fields. Identity/revision/conflict changes advance the epoch even when visible hashes match. Future consumers must use the Manifest's snapshot binding or explicitly verify epochs when joining separate reads. Dirty overlay remains authoritative; the service does not save, discard edits, allocate editor buffers or keep a second editable document model.
+
+Incomplete, failed, stale, mismatched or over-limit observations do not publish partial state. Exact duplicates, identity aliases and unapproved symlink/outside-root/unknown classifications fail closed. Producer access/identity/completeness labels are host claims, not OS confinement or authentication. A client-decoded producer must never become an authority source. The host must bound capture before allocation/reading; post-read limits cannot contain an external producer's prior allocation, latency or blocked syscall. No watcher, full project walk/ignore, runtime authority, P18 security integration or consumer wiring is provided here.
+
+Preserve 1 MiB per logical file and at most 10 dirty overlays, with SnapshotLimits separately covering disk, overlay and visible totals. Metadata paths/identity labels are bounded at 4096/256 UTF-8 bytes. Canonical logical text preserves U+FEFF and LF; invalid UTF-8/NUL/CR is rejected. Empty logical text is valid. SHA-helper binary vectors establish hashing only, not support for arbitrary binary project assets or PDF validity. P09 parser preallocation/total-memory, valid-empty-stream handling and binary-input/provenance gaps require separate qualified producer/parser work; this VFS source merge neither fixes nor waives them.
+
+With the pinned toolchain already installed, from the repository root:
+
+```sh
+cargo +1.99.1 test -p latexide-core --test vfs_contract --locked --offline -- --test-threads=1
+cargo +1.99.1 test --workspace --locked --offline -- --test-threads=1
+cargo +1.99.1 run -p latexide-contracts --bin latexide-integration --locked --offline -- --root .
+```
+
+Counts overlap. Queue inspection remains `not_applied`; it executes no manifest commands or patches. Keep first-slice synthetic observations separate from later native filesystem cohorts. Full NAV-12/WS-01/OS-07/P04, multi-root WS-10, watcher/overflow/full discovery, APFS/NTFS/reparse/case/Unicode/network/volume matrix, native focus/IME/save/undo, Windows11 WinUI Intel+AMD, Linux desktop and production acceptance require their own integration and runtime evidence. Direct agent edits, explicit Save and undo after Save remain the existing common contract.
