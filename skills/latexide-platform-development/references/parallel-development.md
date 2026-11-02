@@ -73,3 +73,23 @@ cargo +1.99.1 run -p latexide-contracts --bin latexide-integration --locked --of
 ```
 
 Counts overlap. Queue inspection remains `not_applied`; it executes no manifest commands or patches. Keep first-slice synthetic observations separate from later native filesystem cohorts. Full NAV-12/WS-01/OS-07/P04, multi-root WS-10, watcher/overflow/full discovery, APFS/NTFS/reparse/case/Unicode/network/volume matrix, native focus/IME/save/undo, Windows11 WinUI Intel+AMD, Linux desktop and production acceptance require their own integration and runtime evidence. Direct agent edits, explicit Save and undo after Save remain the existing common contract.
+
+
+## P19 bounded synthetic fault harness
+
+`tests/quality_corpus/run.py` is the Python adapter for frozen v1 `QualityCorpusPort` / `FaultExpectation`; `test_harness.py` imports that exact source by path. `synthetic_helper.py` is the only registered executable provider. This first slice has no Rust trait implementation, runtime registration, actual P01/P03 provider, TeX invocation or new CI hook. `integration/requests/P19.json` is inert integration data; the coordinator reports `not_applied` and never executes its command strings. Read `docs/development/results/P19.md` for separate historical producer and fresh publisher evidence.
+
+Use an existing Python runtime and an existing private external `P19_SCRATCH` directory with a `tmp` child. From the repository root on a Unix host:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 TMPDIR="$P19_SCRATCH/tmp" python3 -B -W error::ResourceWarning tests/quality_corpus/test_harness.py
+PYTHONDONTWRITEBYTECODE=1 TMPDIR="$P19_SCRATCH/tmp" python3 -B -W error::ResourceWarning tests/quality_corpus/run.py --report "$P19_SCRATCH/synthetic-matrix.json"
+```
+
+An optional `P19_TEST_REPORT` output records selected unittest method IDs and actual fail/error/skip/filtered/subtest counts. Zero discovery exits nonzero. The standalone matrix covers two profiles and five points; the separate property model uses seed 1901 and 16 bounded cases. Method, fault, subtest and property counts overlap and must not be summed. A passing rejection test retains its producer's fail/skip/timeout/blocked outcome. Keep raw reports, generated private projects and artifacts outside version control; never refresh fixture hashes to hide a failure.
+
+The helper runs through the current interpreter with `-I -B`, explicit argv, a private cwd and a small environment. It self-exits 86 at a synthetic checkpoint; only its own launched child is killed and reaped on timeout. Prior acknowledged revision must survive, actual disk and recovered file bytes must be complete, and recovery cannot save implicitly. A fresh nonce, sequence, case/input/source/helper/interpreter identities and complete artifact set bind each result. Recheck the saved verdict and every artifact. These hashes provide integrity binding, not arbitrary producer authentication; cooperative time budgets on small owned inputs are not hard resource containment for untrusted providers.
+
+The two versioned profiles have five controlled text/SVG source fixtures with fixed raw/logical identities. Lossless JSON byte arrays materialize BOM+CRLF while retaining a separate logical leading FEFF. Compiler versions, fonts/emoji, SVG conversion policy, PDFs, reference resolution, SyncTeX and platform recipes stay unrun. The strict local request decoder is scoped to the P19 DTO, not the full production CallContext/authenticated IPC boundary.
+
+P00 must separately integrate real P01 checkpoint/recovery and P03 framed-runtime observation seams before product acceptance. The short edit/save/undo model is test-only and must not become another runtime authority. Preserve v1/C ABI/bytearray, existing quotas, expected revisions, scalar-safe UTF-16, logical FEFF/BOMCRLF, direct agent edits, explicit Save and undo after Save. P09 parser preallocation/total-memory, valid-empty-PDF-stream and binary-input/provenance gaps are separate, unqualified work; hashing controlled fixtures does not fix or waive them. Full QA-01/02/05/09/P19, physical power-loss/disk-full, long mixed sessions, macOS native workflows, Windows11 WinUI Intel+AMD, Linux desktop and production acceptance require their own evidence. The normal shared CI regression and this separately run P19 suite remain distinct.
