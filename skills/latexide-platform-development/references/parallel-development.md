@@ -42,6 +42,98 @@ Mac snapshot capture must rename the still-private0700 staging directory exclusi
 
 Mac generation tests require an explicit private `LATEXIDE_P18_PHASE3_ROOT` with an existing `fixtures` directory. The reusable CI prepares a fresh runner-owned directory before the selected shared/integrated verifier; it does not skip the tests or provide a sandbox fallback. Put `runner.temp` expressions in each consuming step's `env`: GitHub does not make the `runner` context available in a job-level `env`. For local phase4 evidence use the inspected `phase4_run.py`/`phase4_evidence.py` interfaces with fresh labels, caller-owned external scratch, a private offline Cargo cache and existing read-only Rust/TeX. The phase4 driver builds with one Cargo job and runs its full OS cohort serially. Keep its actual fresh binary, exact nonzero selected identities, source/tool hashes and failed attempts. Do not execute stored manifest/report commands. Separate the overlapping FD/rename subsets, full policy/generation/OS cohort, real TeX fixture and workspace regression counts. The bounded failure-only CI log step uses explicit Bash on every platform and handles failed/timed_out reports; it must not change verification exit status or follow outside-checkout paths.
 
-The current strict integrated verifier rejects the standalone P18 workspace's five named ignored opt-in/helper methods as `Unqualified test skip`, even when all executed Rust tests pass. Preserve that failed required gate and dependency-based unrun states; local opt-in OS/TeX evidence does not qualify runner prerequisites. Do not add a skip allowlist, remove required cases or provision a new runtime as publication administration. Keep the PR open until the CI cohort/prerequisites receive a separately authorized qualification.
+The historical 2026-11-01 strict integrated verifier rejected the standalone P18 workspace's five named ignored opt-in/helper methods as `Unqualified test skip`, even when all executed Rust tests pass. Preserve that failed required gate and dependency-based unrun states; local opt-in OS/TeX evidence does not qualify runner prerequisites. Do not add a skip allowlist, remove required cases or provision a new runtime as publication administration. Keep the PR open until the CI cohort/prerequisites receive a separately authorized qualification.
 
 The Darwin implementation and a Windows x64 type-check are not Windows HANDLE inheritance/WinUI or Linux execution qualification. Windows and Linux need their own fail-closed launch backends, descriptor/HANDLE allowlists, lifecycle ownership and runtime evidence. macOS 14 floor runtime, setsid/controller-death behavior and native integration remain unrun. P18/SEC-01/02/05 stay partial; P23 AX/speech and global workflow acceptance remain independent.
+
+## P01 read-only recovery slice
+
+`crates/latexide-core/src/services/recovery/mod.rs` implements the frozen v1 `RecoveryPort` as a read-only checkpoint/replay validator. `crates/latexide-core/tests/recovery_contract.rs` imports it by path. It is not registered through `latexide-core::services` or wired into a runtime. The owned source and inert request are in `integration/requests/P01.json`; current evidence and partial acceptance are in `docs/development/results/P01.md`. Review this boundary before adding production registration.
+
+The acknowledgement watermark is trusted caller input. Checkpoint sequence plus a contiguous journal must reach it exactly; extra, missing or corrupt records fail as `Corrupt`, and per-document revisions increment without wrapping. An independently acknowledged complete prefix can be retried explicitly. The provider never infers acknowledgement from the last available record or silently salvages a damaged tail.
+
+Journal checksum is computed lowercase SHA-256 over exact logical UTF-8 bytes. It does not authenticate source, sequence or revision. Preserve a logical leading U+FEFF and LF; raw CR/CRLF, NUL and malformed UTF-8 are rejected. A v1 checkpoint has no checksum, physical BOM/EOL metadata, undo, saved baseline or trusted acknowledgement/scope fields. A future trusted producer must separately verify framing, checkpoint integrity, durable byte/sequence receipt and session ownership. Do not save decoded recovery text directly or treat matching disk-hash strings as permission to overwrite or clear dirty state. The source adapter checks caller-selected project/session labels and preserves `ErrorKind`; labels are not OS locks, and injected read errors are not write/sync/ENOSPC proof.
+
+Limits remain 1 MiB per logical file and 10 retained recovery documents. This in-memory replay additionally caps 1024 journal entries, 1024 disk identities, 16 MiB cumulative checkpoint/journal text (including superseded entries), and 4096 bytes per path. These are not new editor or transport quotas. Only documents already in the checkpoint can be updated; no create/delete/save event or undo restoration exists in this DTO.
+
+With an already installed pinned toolchain, run from the repository root:
+
+```sh
+cargo +1.99.1 test -p latexide-core --test recovery_contract --locked --offline -- --test-threads=1
+cargo +1.99.1 test --workspace --locked --offline -- --test-threads=1
+cargo +1.99.1 run -p latexide-contracts --bin latexide-integration --locked --offline -- --root .
+```
+
+The first command runs the scoped service suite; the workspace includes it, so counts overlap. Queue inspection returns `not_applied` and executes no manifest commands or patches. Runtime/store/native registration, durable writer/checkpoint sync, raw frame parser, real process-crash recovery, conflict/ownership handling, undo/eviction and native restore require separate integration and evidence. Mac Rust tests do not qualify the macOS 14 floor, Windows 11 WinUI/Intel+AMD or Linux desktop. Direct agent edits, explicit Save and undo after Save remain the existing runtime contract.
+
+
+## P04 explicit-observation VFS slice
+
+`crates/latexide-core/src/services/vfs/mod.rs` implements frozen v1 `VfsPort` over a trusted host `ObservationProducer`. The first slice is imported by `crates/latexide-core/tests/vfs_contract.rs`; it is not registered in the shared runtime. `integration/requests/P04.json` is inert integration data. Read `docs/development/results/P04.md` for the source/test cohort and acceptance boundaries; later filesystem-producer source and evidence are separate inputs.
+
+Every reconcile binds the caller's exact previous snapshot and disk/overlay claims to freshly computed logical UTF-8 hashes from a complete producer observation. Exact UTF-8 paths retain case and normalization distinctions. The derived atomic `Manifest` retains disk identity, overlay size/revision/baseline/conflict and its own `VfsSnapshot`; the frozen v1 wire reply omits those sidecar fields. Identity/revision/conflict changes advance the epoch even when visible hashes match. Future consumers must use the Manifest's snapshot binding or explicitly verify epochs when joining separate reads. Dirty overlay remains authoritative; the service does not save, discard edits, allocate editor buffers or keep a second editable document model.
+
+Incomplete, failed, stale, mismatched or over-limit observations do not publish partial state. Exact duplicates, identity aliases and unapproved symlink/outside-root/unknown classifications fail closed. Producer access/identity/completeness labels are host claims, not OS confinement or authentication. A client-decoded producer must never become an authority source. The host must bound capture before allocation/reading; post-read limits cannot contain an external producer's prior allocation, latency or blocked syscall. No watcher, full project walk/ignore, runtime authority, P18 security integration or consumer wiring is provided here.
+
+Preserve 1 MiB per logical file and at most 10 dirty overlays, with SnapshotLimits separately covering disk, overlay and visible totals. Metadata paths/identity labels are bounded at 4096/256 UTF-8 bytes. Canonical logical text preserves U+FEFF and LF; invalid UTF-8/NUL/CR is rejected. Empty logical text is valid. SHA-helper binary vectors establish hashing only, not support for arbitrary binary project assets or PDF validity. P09 parser preallocation/total-memory, valid-empty-stream handling and binary-input/provenance gaps require separate qualified producer/parser work; this VFS source merge neither fixes nor waives them.
+
+With the pinned toolchain already installed, from the repository root:
+
+```sh
+cargo +1.99.1 test -p latexide-core --test vfs_contract --locked --offline -- --test-threads=1
+cargo +1.99.1 test --workspace --locked --offline -- --test-threads=1
+cargo +1.99.1 run -p latexide-contracts --bin latexide-integration --locked --offline -- --root .
+```
+
+Counts overlap. Queue inspection remains `not_applied`; it executes no manifest commands or patches. Keep first-slice synthetic observations separate from later native filesystem cohorts. Full NAV-12/WS-01/OS-07/P04, multi-root WS-10, watcher/overflow/full discovery, APFS/NTFS/reparse/case/Unicode/network/volume matrix, native focus/IME/save/undo, Windows11 WinUI Intel+AMD, Linux desktop and production acceptance require their own integration and runtime evidence. Direct agent edits, explicit Save and undo after Save remain the existing common contract.
+
+
+## P19 bounded synthetic fault harness
+
+`tests/quality_corpus/run.py` is the Python adapter for frozen v1 `QualityCorpusPort` / `FaultExpectation`; `test_harness.py` imports that exact source by path. `synthetic_helper.py` is the only registered executable provider. This first slice has no Rust trait implementation, runtime registration, actual P01/P03 provider, TeX invocation or new CI hook. `integration/requests/P19.json` is inert integration data; the coordinator reports `not_applied` and never executes its command strings. Read `docs/development/results/P19.md` for separate historical producer and fresh publisher evidence.
+
+Use an existing Python runtime and an existing private external `P19_SCRATCH` directory with a `tmp` child. From the repository root on a Unix host:
+
+```sh
+PYTHONDONTWRITEBYTECODE=1 TMPDIR="$P19_SCRATCH/tmp" python3 -B -W error::ResourceWarning tests/quality_corpus/test_harness.py
+PYTHONDONTWRITEBYTECODE=1 TMPDIR="$P19_SCRATCH/tmp" python3 -B -W error::ResourceWarning tests/quality_corpus/run.py --report "$P19_SCRATCH/synthetic-matrix.json"
+```
+
+An optional `P19_TEST_REPORT` output records selected unittest method IDs and actual fail/error/skip/filtered/subtest counts. Zero discovery exits nonzero. The standalone matrix covers two profiles and five points; the separate property model uses seed 1901 and 16 bounded cases. Method, fault, subtest and property counts overlap and must not be summed. A passing rejection test retains its producer's fail/skip/timeout/blocked outcome. Keep raw reports, generated private projects and artifacts outside version control; never refresh fixture hashes to hide a failure.
+
+The helper runs through the current interpreter with `-I -B`, explicit argv, a private cwd and a small environment. It self-exits 86 at a synthetic checkpoint; only its own launched child is killed and reaped on timeout. Prior acknowledged revision must survive, actual disk and recovered file bytes must be complete, and recovery cannot save implicitly. A fresh nonce, sequence, case/input/source/helper/interpreter identities and complete artifact set bind each result. Recheck the saved verdict and every artifact. These hashes provide integrity binding, not arbitrary producer authentication; cooperative time budgets on small owned inputs are not hard resource containment for untrusted providers.
+
+The two versioned profiles have five controlled text/SVG source fixtures with fixed raw/logical identities. Lossless JSON byte arrays materialize BOM+CRLF while retaining a separate logical leading FEFF. Compiler versions, fonts/emoji, SVG conversion policy, PDFs, reference resolution, SyncTeX and platform recipes stay unrun. The strict local request decoder is scoped to the P19 DTO, not the full production CallContext/authenticated IPC boundary.
+
+P00 must separately integrate real P01 checkpoint/recovery and P03 framed-runtime observation seams before product acceptance. The short edit/save/undo model is test-only and must not become another runtime authority. Preserve v1/C ABI/bytearray, existing quotas, expected revisions, scalar-safe UTF-16, logical FEFF/BOMCRLF, direct agent edits, explicit Save and undo after Save. P09 parser preallocation/total-memory, valid-empty-PDF-stream and binary-input/provenance gaps are separate, unqualified work; hashing controlled fixtures does not fix or waive them. Full QA-01/02/05/09/P19, physical power-loss/disk-full, long mixed sessions, macOS native workflows, Windows11 WinUI Intel+AMD, Linux desktop and production acceptance require their own evidence. The normal shared CI regression and this separately run P19 suite remain distinct.
+
+
+## P09 controlled offline artifact slice
+
+`crates/latexide-build/src/pipeline/mod.rs` implements frozen v1 `BuildPort` over a trusted host-owned `ArtifactRecord`, current compiler identity and immutable logical `WorkspaceSnapshot`. It is imported only by `crates/latexide-build/tests/pipeline_contract.rs`, not registered in the production lib/runtime. `integration/requests/P09.json` is inert. Queue inspection remains `not_applied`; it does not execute test command strings or hooks. Read `docs/development/results/P09.md` for exact source/cohort/acceptance boundaries before any later integration.
+
+`Current` means the supplied input map, generation/snapshot/epoch, compiler and PDF bytes match this limited parser policy. Host capture and completion provenance must be independently trusted, never copied from an incoming request. Missing inputs fail, changed identity/input/compiler becomes stale, reused snapshot IDs with changed content/epoch fail, and non-final/cancelled/timed-out/failed completions cannot accept. Rejection does not save, replace or remove the previous artifact; actual artifact storage/selection and OS process control are separate integrations. Preserve direct edits, explicit Save and undo after Save.
+
+On an already provisioned macOS arm64 host, use the pinned offline toolchain, a private cache/target/temp and serial execution:
+
+```sh
+cargo +1.99.1 test -p latexide-build --test pipeline_contract --locked --offline --jobs 1 -- --test-threads=1
+cargo +1.99.1 test -p latexide-contracts --locked --offline --jobs 1 -- --test-threads=1
+cargo +1.99.1 test --workspace --locked --offline --jobs 1 -- --test-threads=1
+cargo +1.99.1 run -p latexide-contracts --bin latexide-integration --locked --offline --jobs 1 -- --root .
+```
+
+Record actual nonzero method IDs/counts and freshly compiled source/fixture/binary/tool identities. The service and contracts suites are included in the workspace; do not add overlapping counts. Compiler depfiles identify the three Rust plus three PDF inputs; a wider source/documentation inventory must not be described as compiler consumption. Publisher-attempt nonces identify runs and do not add a new v1 protocol field. The P09 test module is macOS-only: zero discovered P09 cases on Windows/Linux are unrun, not a provider PASS. Shared CI Rust success does not qualify WinUI/Windows11, Linux desktop or a live native Mac workflow.
+
+The old `macos.rs` adapter uses CoreGraphics in process. It has no subprocess helper, FD allowlist or preflight module. Never treat findings/fixes on a later 408-source host/helper as approval of this older source. Its specific newer FD-inheritance path is absent; its lack of explicit Filter/DecodeParms policy leaves strict stream dictionaries unqualified. The decoded-size check runs after native allocation. CoreGraphics may repair malformed files; the conservative nonempty-encoded/zero-decoded rule also rejects valid compressed-empty streams. Page/stream/output caps do not establish total memory, decoder deadline, nested-font/image validation, ISO conformance or arbitrary untrusted-PDF safety.
+
+Use only the controlled supplied fixture set for this unregistered slice. A general parser/resource boundary, new helper/contract/dependency or product architecture needs separate scope and qualification; do not silently import later live fixes, weaken assertions or expose it through the runtime. Frozen logical UTF8 snapshots cannot supply real binary image/font inputs; a trusted raw-input binding seam is still required, without fake text placeholders or implicit v1/quota changes. TeX/compiler/BuildSupervisor capture, process-tree/race handling, SyncTeX/bibliography/index/missing-package producers, minimum macOS14 native runtime, Windows11 Intel/AMD, Linux desktop and production/release acceptance remain separate unrun work. PDF fixture provenance is historical controlled compiler output, not proof that synthetic test manifests produced it; raw render/log/binary/cache/archive outputs remain local.
+
+
+## Required P18 CI cohort
+
+The separately authorized PR54 continuation uses `tools/texlive/prepare_ci.py` to provision only a fresh private macOS arm64 prefix from the dated 2026-10-30 repository. The installer must match the captured signed SHA-512 metadata and pinned TUG key; upstream installer/tlmgr verification remains enabled. No daily endpoint, unverifiable fallback, global TeX/font registration or inherited TeX/Perl search tree is allowed. The prefix's entire file hashes/modes and symlink targets are bound after installation and rechecked after execution. Optional internal documentation links may be dangling because doc packages are disabled; links outside the selected prefix fail.
+
+On macOS arm64, shared/integrated profiles run the whole Rust workspace with `--include-ignored --test-threads=1`. All four exact P18 parent cases must pass once; no Rust skipped result is accepted. `latexide-p18-os-probe` is a separate `test=false` binary, built by Cargo, invoked only through its OS parents and bound as a required artifact. Never turn the private child back into an ignored test or introduce an allowlist for these cases. Supply distinct fresh phase2/phase3 roots with `artifacts` directories, a phase3 `fixtures` directory, the provisioned `LATEXIDE_P18_TEX_PREFIX`, and an alphanumeric/hyphen `LATEXIDE_P18_TEX_RUN` label. Reusing a label/root must fail rather than overwrite previous evidence.
+
+`integration/registry/p18_ci.py` checks the four raw executed IDs and compiles the current `tests/contracts/P18PDFCheck.swift` against the selected SDK. Four fresh control/protected compiler PDFs must each parse as one page, contain the expected Hungarian text and resolved `(1)` reference, and produce identical control/protected offscreen renders per phase. The checker, copied PDFs, renders and validation receipt are required artifacts. Runtime verification depends on this required step. This controlled PDFKit/CoreGraphics check does not qualify P09's generic/untrusted PDF parser, memory containment, production compiler provenance or Windows/Linux PDF behavior. Historical phase2/3/4 local helper receipts retain their original source/CLI scope; they do not independently qualify the new OS helper or current CI cohort.

@@ -29,11 +29,16 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: '3.13'
+      - name: Provision signed dated P18 TeX Live fixture
+        if: runner.os == 'macOS'
+        shell: bash
+        run: python tools/texlive/prepare_ci.py --destination "$RUNNER_TEMP/latexide-p18-toolchain"
       - name: Prepare standalone P18 synthetic fixtures
         if: runner.os == 'macOS'
         shell: bash
         env:
           LATEXIDE_P18_PHASE3_ROOT: ${{ runner.temp }}/latexide-p18-standalone
+          LATEXIDE_P18_PHASE2_ROOT: ${{ runner.temp }}/latexide-p18-phase2
         run: |
           python - <<'PY'
           import os
@@ -42,6 +47,10 @@ jobs:
           root = Path(os.environ['LATEXIDE_P18_PHASE3_ROOT'])
           root.mkdir(mode=0o700, exist_ok=False)
           (root / 'fixtures').mkdir(mode=0o700)
+          (root / 'artifacts').mkdir(mode=0o700)
+          phase2 = Path(os.environ['LATEXIDE_P18_PHASE2_ROOT'])
+          phase2.mkdir(mode=0o700, exist_ok=False)
+          (phase2 / 'artifacts').mkdir(mode=0o700)
           # Diagnose the same Darwin primitive on fresh synthetic nodes only.
           # These observations do not replace any Rust assertion or gate.
           libc = ctypes.CDLL(None, use_errno=True)
@@ -73,6 +82,9 @@ jobs:
       - name: Verify selected common and provider profile
         env:
           LATEXIDE_P18_PHASE3_ROOT: ${{ runner.temp }}/latexide-p18-standalone
+          LATEXIDE_P18_PHASE2_ROOT: ${{ runner.temp }}/latexide-p18-phase2
+          LATEXIDE_P18_TEX_PREFIX: ${{ runner.temp }}/latexide-p18-toolchain/texlive
+          LATEXIDE_P18_TEX_RUN: ci-${{ github.run_id }}-${{ github.run_attempt }}
         run: python integration/registry/verify.py --profile ${{ runner.os == 'macOS' && 'integrated' || 'shared' }}
       - name: Show bounded failed verification logs
         if: failure()

@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "package_id": "P04",
+  "contract_version": 1,
+  "requirement_ids": ["NAV-12", "WS-01", "OS-07"],
+  "source_paths": [
+    "crates/latexide-core/src/services/vfs/mod.rs",
+    "crates/latexide-core/src/services/vfs/digest.rs",
+    "crates/latexide-core/tests/vfs_contract.rs",
+    "integration/requests/P04.json",
+    "docs/development/results/P04.md"
+  ],
+  "hook_targets": [
+    "crates/latexide-core/src/lib.rs",
+    "crates/latexide-core/src/workspace.rs",
+    "crates/latexide-core/src/project_index.rs",
+    "crates/latexide-ffi/src/runtime.rs",
+    "docs/DEVELOPER_HANDOFF.md",
+    "docs/implementation-progress.md",
+    "skills/latexide-platform-development/references/parallel-development.md"
+  ],
+  "test_commands": [
+    "cargo +1.99.1 test -p latexide-core --test vfs_contract --locked --offline -j 1",
+    "cargo +1.99.1 test -p latexide-core --locked --offline -j 1",
+    "cargo +1.99.1 test -p latexide-contracts --locked --offline -j 1",
+    "python3 integration/registry/generate_contracts.py --check"
+  ],
+  "compatibility": "Local first slice only: real VfsPort adapter over explicit complete producer observations and authoritative dirty snapshot bytes. Frozen v1 DTO/trait/fixture/serializer/quotas remain unchanged. Request hashes, sizes and revisions must match independently computed producer bytes; SHA-256 format is not authentication or OS file-identity evidence. Exact UTF-8 paths are preserved without lowercase/NFC aliasing. All symlink, outside-root and unknown access decisions fail closed; there is no native capture, scan or watcher here. Manifest sidecar atomically retains producer identities, dirty revisions/sizes/baselines/conflicts; identity or revision changes advance the v1 epoch even when visible hashes are unchanged. One runtime remains authoritative; no edits, raw snapshot saves, undo changes, MCP tool registration or buffer allocation occur here. Requested future P00 work: register the owned module, supply a trusted bounded complete disk producer with native confinement/identity and a runtime-derived overlay producer under the single authority, and integrate atomic Manifest consumption into discovery/index/build/tree adapters. Do not wire a client-decoded ObservationProducer or treat complete=true as native capture proof. IdentityConflict conservatively covers stale/tampered snapshots, duplicate identity/path, malformed producer data, incomplete observations and claim mismatch because v1 has only three errors; Quota covers limits and epoch exhaustion. SnapshotLimits bound disk, overlay and visible bytes separately; per-file cap stays 1 MiB, dirty-overlay count stays at the existing ten retained-buffer ceiling. Paths/identity labels are bounded at 4096/256 UTF-8 bytes. Missing OS provider, full project discovery/ignore/watcher overflow, root authority/capture, multi-root WS-10, consumers, native macOS/Windows11/Linux and release acceptance remain unrun. Requirement IDs describe integration interest, not completed requirement acceptance. P00 must update the handoff/ledger/reference from P04's result after separate integration authorization. No Cargo/lib/runtime/header/registry/UI/CI/shared documentation changes are included."
+}

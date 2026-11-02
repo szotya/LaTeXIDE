@@ -1,0 +1,32 @@
+{
+  "schema": 1,
+  "package_id": "P09",
+  "contract_version": 1,
+  "requirement_ids": ["BLD-01", "BLD-02", "BLD-03"],
+  "source_paths": [
+    "crates/latexide-build/src/pipeline/mod.rs",
+    "crates/latexide-build/src/pipeline/macos.rs",
+    "crates/latexide-build/src/pipeline/fixtures/README.md",
+    "crates/latexide-build/src/pipeline/fixtures/known-good.pdf",
+    "crates/latexide-build/src/pipeline/fixtures/bad-page.pdf",
+    "crates/latexide-build/src/pipeline/fixtures/bad-stream.pdf",
+    "crates/latexide-build/tests/pipeline_contract.rs",
+    "docs/development/results/P09.md",
+    "integration/requests/P09.json"
+  ],
+  "hook_targets": [
+    "crates/latexide-build/src/lib.rs",
+    "crates/latexide-ffi/src/runtime.rs",
+    "docs/DEVELOPER_HANDOFF.md",
+    "docs/implementation-progress.md",
+    "skills/latexide-platform-development/references/parallel-development.md"
+  ],
+  "test_commands": [
+    "cargo +1.99.1 test -p latexide-build --test pipeline_contract --locked --offline -j 1",
+    "cargo +1.99.1 test -p latexide-contracts --locked --offline -j 1",
+    "cargo +1.99.1 run -p latexide-contracts --bin latexide-integration --locked --offline -j 1 -- --root .",
+    "python3 scripts/validate_development_packages.py",
+    "python3 integration/registry/generate_contracts.py --check"
+  ],
+  "compatibility": "First-slice local provider only; listed requirements remain PARTIAL and none is closed. Frozen BuildPort/DTO/enum/wire shapes, byte arrays, serializer quotas, revisions, UTF16/Unicode/logical FEFF, physical BOM/CRLF ownership, one Rust runtime and direct edit -> explicit save -> undo remain unchanged. P00: register pipeline only in a separately authorized integration; construct ArtifactRecord from trusted completion/input capture (never request data), bind its full manifest, PDF SHA256 and snapshot epoch, supply current compiler SHA256 independently, preserve the previous viewable PDF on rejection/cancel/timeout. Same snapshot ID with changed content/epoch is InconsistentSnapshot; changed ID/input/compiler is conservatively Stale; absent input is MissingInput. Non-final/failed/cancelled/timed-out completions and unavailable adapters map to InconsistentSnapshot because v1 has no more specific error. CoreGraphics/CommonCrypto backend is macOS-only; Windows/Linux adapter and workflow are unrun, and zero discovered tests elsewhere is NOT PASS. Current means the supplied logical UTF8 input set and the scoped parser policy match, not publication readiness. Binary image/font dependencies cannot be represented by canonical SnapshotFile.utf8; full raw-input capture/binding requires a separately reviewed trusted-provider seam, without reinterpreting raw bytes as text or changing v1 implicitly. Parser acceptance is partial: all pages/MediaBoxes and page streams are checked; zero-decoded non-empty streams are rejected (also rejects valid compressed-empty streams), while repair behavior, nested resources/fonts/images, strict conformance, allocation/time isolation and broad corpus qualification remain open. No new dependency/Cargo/lockfile, process launcher, supervisor, sandbox, runtime, store, UI, native bridge, header, registry or CI edit is included. Host P00 capture, P18 completion/process-tree control, actual OS races, TeX/multipass/SyncTeX, retention storage and native/production acceptance are unrun. Handoff/ledger/skill hooks above are requested follow-up documentation, not patches applied here."
+}

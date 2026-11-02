@@ -677,16 +677,6 @@ mod os_probe {
         command
     }
 
-    pub fn child_arguments(command: &mut Command) {
-        command.args([
-            "--exact",
-            "p18_os_probe_child",
-            "--ignored",
-            "--nocapture",
-            "--test-threads=1",
-        ]);
-    }
-
     pub fn run(mut command: Command) -> io::Result<Output> {
         let mut child = command
             .stdin(Stdio::null())
@@ -713,70 +703,6 @@ mod os_probe {
         assert!(!value.chars().any(char::is_control));
         format!("\"{}\"", value.replace('\\', "\\\\").replace('"', "\\\""))
     }
-
-    pub fn status<T>(result: io::Result<T>) -> &'static str {
-        match result {
-            Ok(_) => "allowed",
-            Err(error) if error.kind() == io::ErrorKind::PermissionDenied => "denied",
-            Err(error) => panic!("probe has an unexpected error kind: {:?}", error.kind()),
-        }
-    }
-}
-
-#[cfg(target_os = "macos")]
-#[test]
-#[ignore = "private subprocess entry; run only via os_subprocess_boundary_probe"]
-fn p18_os_probe_child() {
-    use std::{
-        io::Write,
-        net::{SocketAddr, TcpStream},
-        time::Duration,
-    };
-    let base = PathBuf::from(
-        std::env::var_os("LATEXIDE_P18_PROBE_BASE").expect("parent-owned fixture required"),
-    );
-    assert!(
-        base.file_name()
-            .unwrap()
-            .to_str()
-            .unwrap()
-            .starts_with("latexide-p18-")
-    );
-    let receipt = std::env::var("LATEXIDE_P18_PROBE_RECEIPT").unwrap();
-    assert!(["control", "sandbox", "invalid", "missing"].contains(&receipt.as_str()));
-    let address: SocketAddr = std::env::var("LATEXIDE_P18_PROBE_ADDRESS")
-        .unwrap()
-        .parse()
-        .unwrap();
-    assert!(
-        address.ip().is_loopback(),
-        "external network probes are forbidden"
-    );
-    let project_read = os_probe::status(fs::read(base.join("project/main.tex")));
-    let output_write = os_probe::status(fs::write(
-        base.join("project/output/allowed.txt"),
-        b"own output",
-    ));
-    let outside_read = os_probe::status(fs::read(base.join("project-neighbor/sentinel.txt")));
-    let outside_write = os_probe::status(
-        fs::OpenOptions::new()
-            .append(true)
-            .open(base.join("project-neighbor/sentinel.txt"))
-            .and_then(|mut file| file.write_all(b" own probe write")),
-    );
-    let network = os_probe::status(TcpStream::connect_timeout(
-        &address,
-        Duration::from_millis(250),
-    ));
-    let result = format!(
-        "project_read={project_read}\noutput_write={output_write}\noutside_read={outside_read}\noutside_write={outside_write}\nnetwork={network}\n"
-    );
-    let mut file = fs::OpenOptions::new()
-        .write(true)
-        .create_new(true)
-        .open(base.join(format!("project/output/{receipt}.receipt")))
-        .unwrap();
-    file.write_all(result.as_bytes()).unwrap();
 }
 
 #[cfg(target_os = "macos")]
@@ -803,10 +729,11 @@ fn os_subprocess_boundary_probe() {
     );
     let listener = TcpListener::bind((std::net::Ipv4Addr::LOCALHOST, 0)).unwrap();
     let address = listener.local_addr().unwrap();
-    let executable = std::env::current_exe().unwrap().canonicalize().unwrap();
+    let executable = PathBuf::from(env!("CARGO_BIN_EXE_latexide-p18-os-probe"))
+        .canonicalize()
+        .unwrap();
 
     let mut control = os_probe::command(&executable, &f, "control", address);
-    os_probe::child_arguments(&mut control);
     let control = os_probe::run(control).unwrap();
     assert!(
         control.status.success(),
@@ -843,7 +770,6 @@ fn os_subprocess_boundary_probe() {
         address,
     );
     isolated.args(["-p", &profile]).arg(&executable);
-    os_probe::child_arguments(&mut isolated);
     let isolated = os_probe::run(isolated).unwrap();
     assert!(
         isolated.status.success(),
@@ -874,7 +800,9 @@ fn os_subprocess_boundary_probe() {
 #[ignore = "opt-in: standalone OS startup refusal; production compiler hook absent"]
 fn review_focus_r2() {
     let f = Fixture::new();
-    let executable = std::env::current_exe().unwrap().canonicalize().unwrap();
+    let executable = PathBuf::from(env!("CARGO_BIN_EXE_latexide-p18-os-probe"))
+        .canonicalize()
+        .unwrap();
     // The child must not run at all, so this loopback port is never contacted.
     let address = std::net::SocketAddr::from((std::net::Ipv4Addr::LOCALHOST, 1));
     let mut invalid = os_probe::command(
@@ -886,7 +814,6 @@ fn review_focus_r2() {
     invalid
         .args(["-p", "(version 1) (invalid-p18-form)"])
         .arg(&executable);
-    os_probe::child_arguments(&mut invalid);
     assert!(!os_probe::run(invalid).unwrap().status.success());
     assert!(!f.project.join("output/invalid.receipt").exists());
     let mut missing = os_probe::command(
@@ -896,7 +823,6 @@ fn review_focus_r2() {
         address,
     );
     missing.arg(&executable);
-    os_probe::child_arguments(&mut missing);
     assert!(os_probe::run(missing).is_err());
     assert!(!f.project.join("output/missing.receipt").exists());
     assert_eq!(

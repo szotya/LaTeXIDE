@@ -260,18 +260,28 @@ def build_steps(root, args, platform, machine):
         steps += [
             {"name": rust, "kind": "rust-unit", "summary_format": "rust", "env": {"CARGO_BUILD_TARGET": None},
              "depends_on": source_dependencies + (["runtime-clean"] if integrated and supported else []),
-             "argv": cargo + ["test"] + (["-p", "latexide-contracts"] if args.profile == "contracts" else ["--workspace"]) + ["--locked"] + target + offline},
+             "argv": cargo + ["test"] + (["-p", "latexide-contracts"] if args.profile == "contracts" else ["--workspace"]) + ["--locked"] + target + offline + (["--", "--include-ignored", "--test-threads=1"] if supported and args.profile in {"shared", "integrated"} else [])},
             {"name": "isolated-module-seam", "kind": "rust-unit", "summary_format": "rust", "depends_on": [rust], "env": {"CARGO_BUILD_TARGET": None},
              "argv": cargo + ["test", "--manifest-path", "tests/contracts/seam/Cargo.toml", "--locked"] + target + offline},
             {"name": "integration-queue", "kind": "manifest-validation", "depends_on": [rust], "env": {"CARGO_BUILD_TARGET": None},
              "argv": cargo + ["run", "-p", "latexide-contracts", "--bin", "latexide-integration", "--locked"] + target + offline + ["--", "--root", "."]},
         ]
     else: steps.append({"name": "rust-not-selected", "kind": "rust-unit", "argv": None, "required": False})
+    if supported and args.profile in {"shared", "integrated"}:
+        rust_step = next(step for step in steps if step["name"] == rust)
+        rust_step.update(artifact_paths=[{"path": ref(root / "target/debug/latexide-p18-os-probe"), "kind": "p18_os_probe"}],
+                         required_artifact_kinds=["p18_os_probe"])
+        rust_log = run_dir / f"{next(i for i, step in enumerate(steps, 1) if step['name'] == rust):02}-{rust}.log"
+        p18_result = run_dir / "p18-pdfs.json"
+        steps.append({"name": "p18-compiler-pdfs", "kind": "p18-compiler-pdfs", "depends_on": [rust], "consumes_artifacts": [rust],
+                      "argv": [sys.executable, "integration/registry/p18_ci.py", "--rust-log", str(rust_log), "--result", str(p18_result)],
+                      "summary_path": ref(p18_result), "summary_suite": "p18-pdfs", "artifact_index": ref(p18_result),
+                      "required_artifact_kinds": ["p18_pdf_checker", "p18_compiler_pdf", "p18_pdf_render", "p18_pdf_validation"]})
     if integrated and supported:
         runtime_index = run_dir / "runtime-artifacts.json"; native_index = run_dir / "native-artifacts.json"
         runtime_args = (["--cargo-executable", args.cargo_executable] if args.cargo_executable else []) + offline
         steps += [
-            {"name": "runtime-build", "kind": "runtime-build", "depends_on": [rust, "isolated-module-seam", "integration-queue"],
+            {"name": "runtime-build", "kind": "runtime-build", "depends_on": [rust, "isolated-module-seam", "integration-queue", "p18-compiler-pdfs"],
              "argv": probe("runtime-build", *runtime_args, "--result", runtime_index), "artifact_index": ref(runtime_index),
              "required_artifact_kinds": ["ffi_static", "ffi_dynamic", "mcp_executable"]},
             suite("tool-acquisition", "tools", "python-unit"),
