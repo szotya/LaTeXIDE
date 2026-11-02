@@ -320,6 +320,35 @@ print $receipt "inside=$ir\nread=$read\nwrite=$write\nnetwork=$net\nsynthetic_en
 if ($role eq 'parent') { my $child=fork(); defined($child) or die $!; if (!$child) { exec('/usr/bin/perl','-e',$source,'--',$project,$outside,$output,$port,'child',$source); die $!; } waitpid($child,0); die 'child failed' if $?; }
 "#;
 
+fn descendant_case_succeeded(output: &std::process::Output) -> bool {
+    let text = String::from_utf8_lossy(&output.stdout);
+    output.status.success()
+        && text
+            .lines()
+            .filter(|line| line.starts_with("test result:"))
+            .count()
+            == 1
+        && text
+            .lines()
+            .any(|line| line.starts_with("test result: ok. 1 passed; 0 failed; 0 ignored;"))
+}
+
+#[test]
+fn zero_match_subprocess_cannot_attest_boundary() {
+    let output = std::process::Command::new(std::env::current_exe().unwrap())
+        .args(["--exact", "__p18_deliberately_absent_test__"])
+        .output()
+        .unwrap();
+    assert!(
+        output.status.success(),
+        "libtest's zero-match control must exit zero"
+    );
+    assert!(
+        !descendant_case_succeeded(&output),
+        "a zero-match success must not attest the boundary"
+    );
+}
+
 #[test]
 fn compiler_adapter_enforces_boundary_and_environment_in_exec_descendant() {
     use std::{
@@ -335,7 +364,7 @@ fn compiler_adapter_enforces_boundary_and_environment_in_exec_descendant() {
             .args(["--exact","security_service::execution::tests::compiler_adapter_enforces_boundary_and_environment_in_exec_descendant","--nocapture"]);
         let output = child.output().unwrap();
         assert!(
-            output.status.success(),
+            descendant_case_succeeded(&output),
             "synthetic-parent subprocess failed: {} {}",
             String::from_utf8_lossy(&output.stdout),
             String::from_utf8_lossy(&output.stderr)

@@ -43,10 +43,11 @@ fn open_witness(path: &Path) -> Result<File, SecurityError> {
         // kernel flag is an error, never a retry with weaker flags.
         #[cfg(target_os = "macos")]
         const FLAGS: i32 = 0x2000_0000 | 0x0000_0004;
-        // Linux O_NOFOLLOW | O_NONBLOCK. Ancestors are individually witnessed;
+        // Linux architecture-specific O_NOFOLLOW | O_NONBLOCK from libc.
+        // Ancestors are individually witnessed;
         // this does not claim Linux openat2/RESOLVE_BENEATH isolation.
         #[cfg(target_os = "linux")]
-        const FLAGS: i32 = 0o400000 | 0o4000;
+        const FLAGS: i32 = libc::O_NOFOLLOW | libc::O_NONBLOCK;
         OpenOptions::new()
             .read(true)
             .custom_flags(FLAGS)

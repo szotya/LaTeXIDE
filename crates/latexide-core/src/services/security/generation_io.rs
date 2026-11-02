@@ -104,7 +104,7 @@ impl Directory {
         root.revalidate()?;
         Ok(root)
     }
-    fn at_or_below(&self, other: &Self) -> io::Result<bool> {
+    pub(super) fn at_or_below(&self, other: &Self) -> io::Result<bool> {
         self.revalidate()?;
         other.revalidate()?;
         let mut current = self.file.try_clone()?;

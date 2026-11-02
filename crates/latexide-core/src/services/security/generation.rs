@@ -535,16 +535,17 @@ impl CapturedInputs {
             {
                 return Err(GenerationError::Configuration);
             }
-            let original = self
-                .original
-                .path
-                .canonicalize()
-                .map_err(|_| GenerationError::SourceChanged)?;
             for root in &config.read_only_roots {
-                let root = root
-                    .canonicalize()
+                let root = capture_io::Directory::open(root, false)
                     .map_err(|_| GenerationError::Configuration)?;
-                if root.starts_with(&original) || original.starts_with(&root) {
+                if root
+                    .at_or_below(&self.original)
+                    .map_err(|_| GenerationError::Configuration)?
+                    || self
+                        .original
+                        .at_or_below(&root)
+                        .map_err(|_| GenerationError::Configuration)?
+                {
                     return Err(GenerationError::Configuration);
                 }
             }
@@ -668,8 +669,8 @@ impl PreparedGeneration {
                 #[cfg(test)]
                 if let Some(callback) = hook.as_mut() {
                     callback(GenerationPoint::PrelaunchValidated);
+                    self.inputs.validate_files()?;
                 }
-                self.inputs.validate_files()?;
                 check_cancel(cancel)?;
                 reservation = Some(
                     self.output

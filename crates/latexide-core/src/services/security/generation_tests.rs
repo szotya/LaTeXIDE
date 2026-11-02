@@ -1139,3 +1139,34 @@ fn generation_storage_cannot_enter_the_original_project_through_an_os_case_alias
         assert!(!wrong.exists());
     }
 }
+
+#[test]
+fn read_only_grants_cannot_alias_original_project_by_case_or_unicode() {
+    for spelling in [
+        "ÁRVÍZTŰRŐ PROJEKT",
+        "A\u{301}rvi\u{301}ztu\u{30b}ro\u{30b} projekt",
+    ] {
+        for child in [false, true] {
+            let f = Fixture::new();
+            private_dir(&f.project.join("assets"));
+            let mut alias = f.base.join(spelling);
+            assert_eq!(
+                fs::metadata(&alias).unwrap().ino(),
+                fs::metadata(&f.project).unwrap().ino()
+            );
+            if child {
+                alias = alias.join("assets");
+            }
+            let captured = f.capture().unwrap();
+            let result = captured.prepare(&f.authority, &AtomicBool::new(false), |layout| {
+                let mut value = recipe(layout, COPY_INPUT)?;
+                value.read_only_roots.push(alias.clone());
+                Ok(value)
+            });
+            assert!(
+                matches!(result, Err(GenerationError::Configuration)),
+                "physical project alias became a read grant"
+            );
+        }
+    }
+}

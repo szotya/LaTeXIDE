@@ -29,6 +29,20 @@ def save(path: Path, value) -> None:
         output.write("\n")
 
 
+def discover_tests(program, destination, root, environment):
+    all_argv = [*program, "--list", "--format", "terse"]
+    all_list = subprocess.run(all_argv, cwd=root, env=environment, capture_output=True, timeout=30)
+    for suffix, body in (("stdout", all_list.stdout), ("stderr", all_list.stderr)):
+        with (destination / f"all-selection.{suffix}.log").open("xb") as output:
+            output.write(body)
+    if all_list.returncode:
+        raise ValueError("Full test identity discovery failed")
+    all_ids = [line[:-6] for line in all_list.stdout.decode("utf-8").splitlines() if line.endswith(": test")]
+    if not all_ids or len(all_ids) != len(set(all_ids)):
+        raise ValueError("Nonzero unique full discovery required")
+    return all_ids
+
+
 def main(*, legacy_phase2: bool = False) -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", type=Path, required=True)
@@ -114,15 +128,7 @@ def main(*, legacy_phase2: bool = False) -> None:
         output.write(binary.read_bytes())
     if sha(archived) != binary_hash or fingerprint() != before:
         raise ValueError("Source/binary changed before test")
-    all_argv = [str(binary), "--list", "--format", "terse"]
-    all_list = subprocess.run(all_argv, cwd=root, env=environment, capture_output=True, timeout=30)
-    if all_list.returncode:
-        raise ValueError("Full test identity discovery failed")
-    all_ids = [line[:-6] for line in all_list.stdout.decode("utf-8").splitlines() if line.endswith(": test")]
-    if not all_ids or len(all_ids) != len(set(all_ids)):
-        raise ValueError("Nonzero unique full discovery required")
-    (destination / "all-selection.stdout.log").write_bytes(all_list.stdout)
-    (destination / "all-selection.stderr.log").write_bytes(all_list.stderr)
+    all_ids = discover_tests([str(binary)], destination, root, environment)
     selected_args = SUITES[args.suite]
     if legacy_phase2 and args.suite == "tex":
         selected_args = ["--ignored", "--exact", "security_service::execution::tests::compiler_adapter_real_tex_offline", "--nocapture"]
