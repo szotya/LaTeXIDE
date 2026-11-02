@@ -1,0 +1,35 @@
+{
+  "schema": 1,
+  "package_id": "P19",
+  "contract_version": 1,
+  "requirement_ids": ["QA-01", "QA-02", "QA-05", "QA-09"],
+  "source_paths": [
+    "docs/development/results/P19.md",
+    "integration/requests/P19.json",
+    "tests/quality_corpus/README.md",
+    "tests/quality_corpus/run.py",
+    "tests/quality_corpus/synthetic_helper.py",
+    "tests/quality_corpus/test_harness.py",
+    "tests/quality_corpus/corpus/README.md",
+    "tests/quality_corpus/corpus/manifest.json",
+    "tests/quality_corpus/corpus/singlefile/main.tex",
+    "tests/quality_corpus/corpus/multifile-hu/main.tex",
+    "tests/quality_corpus/corpus/multifile-hu/fejezet.tex",
+    "tests/quality_corpus/corpus/multifile-hu/hivatkozasok.bib",
+    "tests/quality_corpus/corpus/multifile-hu/figures/abra.svg"
+  ],
+  "hook_targets": [
+    "integration/registry/verify.py",
+    "crates/latexide-ffi/src/runtime.rs",
+    "docs/DEVELOPER_HANDOFF.md",
+    "docs/implementation-progress.md",
+    "skills/latexide-platform-development/references/parallel-development.md"
+  ],
+  "test_commands": [
+    "python3 tests/quality_corpus/test_harness.py",
+    "python3 tests/quality_corpus/run.py --report <private-scratch>/synthetic-matrix.json",
+    "python3 scripts/validate_development_packages.py",
+    "python3 integration/registry/generate_contracts.py --check"
+  ],
+  "compatibility": "Additive owned Python adapter/self-check only; no Rust trait implementation or automatic product registration. Requirements listed here are touched, not closed. Frozen v1 snake_case FaultPoint/FaultExpectation, u64 numbers, byte arrays, 1 MiB encoded frame and logical-file limits remain unchanged. Real P01 DOC-01/DOC-02 checkpoint/journal recovery and P03 MCP-02 framed-runtime providers are missing; request a later P00-owned observation seam for ack revision, fault point, request/sequence/nonce/input/source/artifact identity and explicit unavailable/timeout/skip outcomes. The owned synthetic helper must never substitute for those providers. Registry selection, runtime seam, shared handoff/ledger and reusable skill updates are future integrator work only, not applied here. P19_SCRATCH must name an existing private external directory with tmp child; test_commands are inert descriptions, never shell input. No new MCP tool, Cargo/lib/header/NativeRuntime/WorkspaceStore/UI/CI change, serializer change, quota increase or platform qualification. One authoritative Rust runtime, expected revisions, scalar-safe UTF-16/Unicode/logical FEFF, BOM/CRLF, direct agent edit, explicit save and undo after save remain the product contract. macOS native, Windows11, Linux, actual TeX recipes, power-loss/disk-full and long soak acceptance remain unrun."
+}
