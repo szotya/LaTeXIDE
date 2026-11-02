@@ -12,10 +12,10 @@ runner = importlib.util.module_from_spec(spec); spec.loader.exec_module(runner)
 
 class P18DiscoveryContract(unittest.TestCase):
     def test_failed_zero_and_duplicate_discovery_preserve_both_raw_logs(self):
-        for output, code in [('failed output',2),('',0),('same: test\nsame: test\n',0)]:
+        for output, code in [('failed output',2),('',0),('same: test\nsame: test\n',0),('same: test\r\nsame: test\r\n',0)]:
             with self.subTest(code=code,output=output), tempfile.TemporaryDirectory() as d:
                 root=Path(d)
-                command=[sys.executable,'-c','import sys;sys.stdout.write(sys.argv[1]);sys.stderr.write("own diagnostic");raise SystemExit(int(sys.argv[2]))',output,str(code)]
+                command=[sys.executable,'-c','import sys;sys.stdout.buffer.write(sys.argv[1].encode("utf-8"));sys.stderr.buffer.write(b"own diagnostic");raise SystemExit(int(sys.argv[2]))',output,str(code)]
                 with self.assertRaises(ValueError): runner.discover_tests(command,root,root,os.environ.copy())
                 self.assertEqual((root/'all-selection.stdout.log').read_bytes(),output.encode())
                 self.assertEqual((root/'all-selection.stderr.log').read_bytes(),b'own diagnostic')
