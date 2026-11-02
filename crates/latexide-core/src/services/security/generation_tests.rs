@@ -1116,57 +1116,97 @@ fn contended_host_authority_refuses_without_waiting_or_creating_storage() {
     assert!(!f.generation.exists());
 }
 
+// Every spelling executes a denial or a real distinct-directory positive control.
+// No filesystem-dependent case is silently skipped.
+fn observed_alias_or_distinct_directory(f: &Fixture, spelling: &str) -> (PathBuf, bool) {
+    let path = f.base.join(spelling);
+    let original = fs::metadata(&f.project).unwrap();
+    match fs::metadata(&path) {
+        Ok(metadata) => {
+            assert_eq!(
+                (metadata.dev(), metadata.ino()),
+                (original.dev(), original.ino())
+            );
+            (path, true)
+        }
+        Err(error) if error.kind() == std::io::ErrorKind::NotFound => {
+            private_dir(&path);
+            let separate = fs::metadata(&path).unwrap();
+            assert_ne!(
+                (separate.dev(), separate.ino()),
+                (original.dev(), original.ino())
+            );
+            (path, false)
+        }
+        Err(error) => panic!("failed to resolve own alias {path:?}: {error}"),
+    }
+}
+
 #[test]
 fn generation_storage_cannot_enter_the_original_project_through_an_os_case_alias() {
     for spelling in [
+        "Árvíztűrő projekt",
         "ÁRVÍZTŰRŐ PROJEKT",
         "A\u{301}rvi\u{301}ztu\u{30b}ro\u{30b} projekt",
+        "own-distinct-storage",
     ] {
         let f = Fixture::new();
-        let alias = f.base.join(spelling);
-        assert_eq!(
-            fs::metadata(&alias).unwrap().ino(),
-            fs::metadata(&f.project).unwrap().ino(),
-            "this test requires the observed case-equivalent own volume route"
-        );
-        let wrong = alias.join("must-not-create");
+        let (directory, aliases_original) = observed_alias_or_distinct_directory(&f, spelling);
+        let target = directory.join("generation");
         let result =
-            CapturedInputs::capture(&f.authority, &f.binding(), &wrong, &AtomicBool::new(false));
-        assert!(
-            matches!(result, Err(GenerationError::InvalidInput)),
-            "physical project alias was accepted as separate generation storage"
-        );
-        assert!(!wrong.exists());
+            CapturedInputs::capture(&f.authority, &f.binding(), &target, &AtomicBool::new(false));
+        if aliases_original {
+            assert!(
+                matches!(result, Err(GenerationError::InvalidInput)),
+                "physical project alias was accepted as separate generation storage"
+            );
+            assert!(!target.exists());
+        } else {
+            assert!(
+                result.is_ok(),
+                "a distinct own external directory was rejected"
+            );
+            assert!(target.join("input/main.tex").is_file());
+        }
     }
 }
 
 #[test]
 fn read_only_grants_cannot_alias_original_project_by_case_or_unicode() {
     for spelling in [
+        "Árvíztűrő projekt",
         "ÁRVÍZTŰRŐ PROJEKT",
         "A\u{301}rvi\u{301}ztu\u{30b}ro\u{30b} projekt",
+        "own-distinct-read-only-root",
     ] {
         for child in [false, true] {
             let f = Fixture::new();
             private_dir(&f.project.join("assets"));
-            let mut alias = f.base.join(spelling);
-            assert_eq!(
-                fs::metadata(&alias).unwrap().ino(),
-                fs::metadata(&f.project).unwrap().ino()
-            );
+            let (mut directory, aliases_original) =
+                observed_alias_or_distinct_directory(&f, spelling);
+            if !aliases_original {
+                private_dir(&directory.join("assets"));
+            }
             if child {
-                alias = alias.join("assets");
+                directory = directory.join("assets");
             }
             let captured = f.capture().unwrap();
             let result = captured.prepare(&f.authority, &AtomicBool::new(false), |layout| {
                 let mut value = recipe(layout, COPY_INPUT)?;
-                value.read_only_roots.push(alias.clone());
+                value.read_only_roots.push(directory.clone());
                 Ok(value)
             });
-            assert!(
-                matches!(result, Err(GenerationError::Configuration)),
-                "physical project alias became a read grant"
-            );
+            if aliases_original {
+                assert!(
+                    matches!(result, Err(GenerationError::Configuration)),
+                    "physical project alias became a read grant"
+                );
+            } else {
+                assert!(
+                    result.is_ok(),
+                    "a physically distinct read-only root was rejected"
+                );
+            }
         }
     }
 }
