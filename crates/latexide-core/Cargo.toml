@@ -7,3 +7,13 @@ rust-version.workspace = true
 [dependencies]
 latexide-contracts.workspace = true
 serde.workspace = true
+
+# Synthetic subprocess entry, executed only by its OS parent contracts.
+[[bin]]
+name = "latexide-p18-os-probe"
+path = "tests/support/p18_os_probe.rs"
+test = false
+bench = false
+
+[target.'cfg(target_os = "linux")'.dependencies]
+libc = "=0.2.191"

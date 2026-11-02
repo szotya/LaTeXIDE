@@ -29,8 +29,85 @@ jobs:
       - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7
         with:
           python-version: '3.13'
+      - name: Provision signed dated P18 TeX Live fixture
+        if: runner.os == 'macOS'
+        shell: bash
+        run: python tools/texlive/prepare_ci.py --destination "$RUNNER_TEMP/latexide-p18-toolchain"
+      - name: Prepare standalone P18 synthetic fixtures
+        if: runner.os == 'macOS'
+        shell: bash
+        env:
+          LATEXIDE_P18_PHASE3_ROOT: ${{ runner.temp }}/latexide-p18-standalone
+          LATEXIDE_P18_PHASE2_ROOT: ${{ runner.temp }}/latexide-p18-phase2
+        run: |
+          python - <<'PY'
+          import os
+          import ctypes
+          from pathlib import Path
+          root = Path(os.environ['LATEXIDE_P18_PHASE3_ROOT'])
+          root.mkdir(mode=0o700, exist_ok=False)
+          (root / 'fixtures').mkdir(mode=0o700)
+          (root / 'artifacts').mkdir(mode=0o700)
+          phase2 = Path(os.environ['LATEXIDE_P18_PHASE2_ROOT'])
+          phase2.mkdir(mode=0o700, exist_ok=False)
+          (phase2 / 'artifacts').mkdir(mode=0o700)
+          # Diagnose the same Darwin primitive on fresh synthetic nodes only.
+          # These observations do not replace any Rust assertion or gate.
+          libc = ctypes.CDLL(None, use_errno=True)
+          rename = libc.renameatx_np
+          rename.argtypes = [ctypes.c_int, ctypes.c_char_p, ctypes.c_int, ctypes.c_char_p, ctypes.c_uint]
+          rename.restype = ctypes.c_int
+          for mode in (0o700, 0o500):
+              parent = root / f'publisher-rename-control-{mode:o}'
+              parent.mkdir(mode=0o700)
+              child = parent / 'input.pending'
+              child.mkdir(mode=0o700)
+              (child / 'main.tex').write_bytes(b'own synthetic capture')
+              (child / 'main.tex').chmod(0o400)
+              child.chmod(mode)
+              fd = os.open(parent, os.O_RDONLY | 0x00100000 | 0x20000000 | 0x01000000 | 4)
+              try:
+                  ctypes.set_errno(0)
+                  result = rename(fd, b'input.pending', fd, b'input', 4)
+                  rename_errno = ctypes.get_errno()
+                  try:
+                      os.fsync(fd)
+                      sync_errno = 0
+                  except OSError as error:
+                      sync_errno = error.errno
+                  print(f'P18_RENAME_CONTROL mode={mode:o} result={result} errno={rename_errno} fsync_errno={sync_errno}', flush=True)
+              finally:
+                  os.close(fd)
+          PY
       - name: Verify selected common and provider profile
+        env:
+          LATEXIDE_P18_PHASE3_ROOT: ${{ runner.temp }}/latexide-p18-standalone
+          LATEXIDE_P18_PHASE2_ROOT: ${{ runner.temp }}/latexide-p18-phase2
+          LATEXIDE_P18_TEX_PREFIX: ${{ runner.temp }}/latexide-p18-toolchain/texlive
+          LATEXIDE_P18_TEX_RUN: ci-${{ github.run_id }}-${{ github.run_attempt }}
         run: python integration/registry/verify.py --profile ${{ runner.os == 'macOS' && 'integrated' || 'shared' }}
+      - name: Show bounded failed verification logs
+        if: failure()
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          root = Path.cwd().resolve()
+          report = root / '.local/p00-verification/report.json'
+          if report.is_file():
+              for check in json.loads(report.read_text()).get('checks', []):
+                  if check.get('status') not in ('failed', 'timed_out') or not check.get('log'):
+                      continue
+                  path = Path(check['log']['path']).resolve()
+                  if not path.is_relative_to(root) or not path.is_file():
+                      raise SystemExit('Invalid verification log path')
+                  print(f"--- {check['name']} ({check.get('exit_code')}) ---", flush=True)
+                  with path.open('rb') as source:
+                      source.seek(0, 2)
+                      source.seek(max(0, source.tell() - 65536))
+                      print(source.read().decode('utf-8', errors='replace'), flush=True)
+          PY
 
 
   # Shared Rust tests are not Windows WinUI/Linux desktop qualification.
