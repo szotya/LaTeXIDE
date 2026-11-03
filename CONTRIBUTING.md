@@ -24,4 +24,10 @@ A jelenlegi Mac offline környezetben Cargo helyett `bash scripts/cargo-local.sh
 
 ## Adat és jogosultság
 
-Ne commitolj credentialt, `.latexide` sessiont, helyi `.codex` metaadatot, `.local` toolchaint, `target`/`dist` terméket vagy felhasználói privát projektet. A nyers `evidence` helyi; csak a [pontos source/provenance-kivételek](evidence/README.md) verziózottak. Új eredményhez redaktált összegzés és reprodukálható tesztforrás kell, nyers log ne kerüljön automatikusan Gitbe. A projektlicenc nincs kiválasztva; ne adj önállóan OSS-licencet a projektnek.
+Ne commitolj credentialt, `.latexide` sessiont, helyi `.codex` metaadatot, `.local` toolchaint, `target`/`dist` terméket vagy felhasználói privát projektet. A nyers `evidence` helyi; csak a [pontos source/provenance-kivételek](evidence/README.md) verziózottak. Új eredményhez redaktált összegzés és reprodukálható tesztforrás kell, nyers log ne kerüljön automatikusan Gitbe.
+
+## Licenc és közreműködés
+
+A projekt [PolyForm Perimeter 1.0.1](LICENSE) licencű; a [licenc- és hozzáférési összefoglaló](LICENSING.md) a teljes szöveghez ad eligazítást. Saját hozzájárulásodat ugyanezen licenc alatt küldd be, a szükséges jogok birtokában. Eltérő licencű anyagot előre jelezz, a meglévő notice-okat őrizd meg. A szerzőséged megmarad; ez nem általános újralicencelési felhatalmazás.
+
+A nyilvános olvasás, fork, issue vagy PR nem ad upstream push-/merge-jogot. Ehhez a tulajdonos külön jogosultságadása kell, és a main branchvédelmi szabályai akkor is érvényesek. Elfogadott commit miatt megjelenhetsz a contributor-listában; ez nem collaborator-meghívás.

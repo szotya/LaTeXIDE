@@ -1,8 +1,8 @@
-# Privát GitHub-fejlesztési alap
+# GitHub-fejlesztési alap és nyilvános forráslicenc
 
-Kért hely: [szotya/LaTeXIDE](https://github.com/szotya/LaTeXIDE), **private**. Alapág: `main`. A távoli létrehozás és ellenőrzés tényleges eredményét a handoff és a ledger rögzíti; ez az oldal az új clone használati szerződése.
+Repó: [szotya/LaTeXIDE](https://github.com/szotya/LaTeXIDE). Alapág: `main`. A választott közzétételi modell nyilvános, source available, [PolyForm Perimeter 1.0.1](../../LICENSE) licenccel. A tényleges közzétételi állapotot a handoff és a ledger rögzíti; ez az oldal az új clone használati szerződése.
 
-A `main` ágon [aktív branchvédelmi ruleset](BRANCH_PROTECTION.md) működik: saját branch és PR, kötelező összesítő check aktuális alapággal, lezárt beszélgetések és squash/rebase merge; nincs force push, törlés vagy adminbypass. Jelenleg 0 kötelező approval az egyetlen közreműködő miatt. A `Planning and Python contracts` összesítő a tervezési/Python mátrix mellett a forrásváltozásokhoz kiválasztott Rust/Mac kör sikerét is megköveteli.
+A `main` ágon [aktív branchvédelmi ruleset](BRANCH_PROTECTION.md) működik: saját branch és PR, kötelező összesítő check aktuális alapággal, lezárt beszélgetések és squash/rebase merge; nincs force push, törlés vagy adminbypass. Az ellenőrzött szabály jelenleg 0 kötelező approvalt kér; a collaborator-listát külön kell ellenőrizni, ez nem az egyetlen fejlesztőre vonatkozó garancia. A `Planning and Python contracts` összesítő a tervezési/Python mátrix mellett a forrásváltozásokhoz kiválasztott Rust/Mac kör sikerét is megköveteli.
 
 ## Mi van verziózva?
 
@@ -23,7 +23,7 @@ python3 scripts/validate_development_packages.py
 python3 -m unittest discover -s tests -p 'test_*.py'
 ```
 
-A privát clone-hoz GitHub-hozzáférés kell. Credential nem része a repónak.
+Nyilvános repónál az olvasáshoz és HTTPS-clone-hoz nem kell collaborator-meghívás. A push-/merge-/adminjog külön hozzáférés; a nyilvánosság és a licenc nem oszt ilyen jogosultságot. Credential nem része a repónak.
 
 ## Rust és Mac
 
@@ -62,4 +62,6 @@ A létrehozott repository végső [ellenőrzött CI-eredménye](REMOTE_VERIFICAT
 
 ## Tulajdon és licenc
 
-A CODEOWNERS `@szotya` gazdát jelöl; nem hív meg közreműködőt. A repó privát, projektlicenc nincs kiválasztva. Harmadik felek Rust/Swift/NuGet/TeX Live komponenseinek saját licencei és terjesztési feltételei külön érvényesek; kiadási SBOM/notice/minősítés P18/P20 feladata. Új projektlicencet külön döntés nélkül ne adj hozzá.
+A CODEOWNERS `@szotya` gazdát jelöl; nem hív meg közreműködőt. A felhasználó a [PolyForm Perimeter 1.0.1](../../LICENSE) licencet és az e melletti nyilvános közzétételt választotta. A [részletes összefoglaló](../../LICENSING.md) és a [kötelező notice](../../NOTICE) az eredeti projektanyagokra vonatkozik, az eltérően jelölt fájlok/komponensek kivételével. A licenc megengedett célú módosítást és terjesztést is enged, a versengő termék másoknak történő biztosítását kizárja; nem csak tesztelésre használható.
+
+Harmadik felek Rust/Swift/NuGet/TeX Live komponenseinek saját licencei és terjesztési feltételei külön érvényesek; kiadási SBOM/notice/minősítés P18/P20 feladata. A contributor-listás szerzőség nem írási jogosultság. A meglévő collaboratorokat és meghívásokat külön kell kezelni; a közzététel nem ad új write-jogot. Új licenc vagy szélesebb hozzájárulói/újralicencelési szerződés külön döntés.
