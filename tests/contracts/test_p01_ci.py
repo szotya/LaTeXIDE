@@ -105,15 +105,15 @@ class Model:
             for mode,phases in [('append',APPEND_FIXTURE),('checkpoint',CHECKPOINT_FIXTURE)]:
                 for phase in phases:
                     d=parent/f'child-{mode}-{phase}';d.mkdir(mode=0o700)
-                    (d/'child.log').write_text('running 1 test\ntest durable_contract::durable_crash_child ... ')
+                    (d/'child.log').write_text('running 1 test\ntest durable_contract::durable_crash_child ... ',encoding='utf-8',newline='\n')
                     trace=phases[:-1] if phase=='after_return' else phases[:phases.index(phase)+1]
-                    (d/'phases.log').write_text('\n'.join(trace)+'\n')
+                    (d/'phases.log').write_text('\n'.join(trace)+'\n',encoding='utf-8',newline='\n')
                     (d/'observed-r7.receipt').write_bytes(b'synthetic opaque ack bytes, not a real recovery receipt')
                     if phase=='after_return':(d/'observed-after-return.receipt').write_bytes(b'synthetic after-return bytes')
                     seq=8 if mode=='append' and phase=='after_return' else 7
                     rows.append(f'mode={mode} phase={phase} exit=73 observed_sequence={seq} recovered_sequence={seq} strict_rejected=false duration_ms=1 binary_sha256={self.binary_sha} nonce={nonce} fixture={d}\n')
             d=parent/'child-matrix-summary';d.mkdir(mode=0o700)
-            (d/'32-process-boundary-cases.txt').write_text(''.join(rows))
+            (d/'32-process-boundary-cases.txt').write_text(''.join(rows),encoding='utf-8',newline='\n')
             return f'P01_CHILD_CASES=32 PASS=32 FAIL=0 ERROR=0 SKIP=0 nonce={nonce} evidence={d}'
         parent=Path(env['P01_RUNTIME_SCRATCH'])/'tmp'
         nonce=hashlib.sha256((self.run_id+':independent-runtime-model-nonce').encode()).hexdigest()
@@ -121,9 +121,9 @@ class Model:
         for i,case in enumerate(RUNTIME_FIXTURE):
             d=parent/f'runtime-{i}';d.mkdir(mode=0o700)
             (d/'project').mkdir();(d/'recovery').mkdir(mode=0o700)
-            (d/'child.log').write_text('running 1 test\ntest runtime_contract::runtime_crash_child ... ')
+            (d/'child.log').write_text('running 1 test\ntest runtime_contract::runtime_crash_child ... ',encoding='utf-8',newline='\n')
             rows.append(f'case={case} exit=73 duration_ms=1 binary_sha256={self.binary_sha} nonce={nonce} project={d}/project\n')
-        summary=parent/'runtime-process-cases.txt';summary.write_text(''.join(rows))
+        summary=parent/'runtime-process-cases.txt';summary.write_text(''.join(rows),encoding='utf-8',newline='\n')
         return f'P01_RUNTIME_CHILD_CASES=5 PASS=5 FAIL=0 ERROR=0 nonce={nonce} evidence={summary}'
 
     def execute(self,name,argv,cwd,log,timeout,env=None):
@@ -161,7 +161,7 @@ class Model:
             self.child_log().write_text(self.child_log().read_text()+'\nsynthetic late mutation\n')
             text='synthetic file changed, no external provider executed\n'
         else:raise AssertionError('Unexpected model command: '+name)
-        with log.open('x') as f:f.write(text)
+        with log.open('x',encoding='utf-8',newline='\n') as f:f.write(text)
         row={'name':name,'command':list(argv),'status':'passed','exit_code':0,'timed_out':False,
              'duration_ms':1,'log':{'kind':'command_log','path':str(log),'sha256':hashlib.sha256(log.read_bytes()).hexdigest()},
              'fixture_execution_domain':'synthetic-Python-model'}
@@ -235,6 +235,16 @@ class Model:
         return report,steps
 
 class P01NamespaceTests(unittest.TestCase):
+    def test_synthetic_process_transcripts_keep_LF_under_windows_translation(self):
+        m=Model(self);actual=Path.open
+        def windows_text_open(path,mode='r',*args,**kwargs):
+            if 'b' not in mode and any(flag in mode for flag in 'wax') and kwargs.get('newline') is None:
+                kwargs['newline']='\r\n'
+            return actual(path,mode,*args,**kwargs)
+        with patch.object(Path,'open',windows_text_open):
+            m.capture();m.validate()
+        self.assertNotIn(b'\r\n',m.log.read_bytes())
+
     def test_inherited_cargo_scope_allows_captured_stdout_and_other_image_names(self):
         m=Model(self);m.enable_p18();m.ensure_record()
         raw=m.log.read_text()

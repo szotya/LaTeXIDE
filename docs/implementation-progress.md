@@ -787,3 +787,17 @@ Cargo/offline helyett default argv-t épít) megőrzött failed próba. A közve
 P01 validate PASS, az eredeti tényleges builderkonfigurációval teljes
 `evidence.revalidate_report` current; source/artifact/log/parent/namespace
 őrök változatlanok. E CLI-korlát külön marad a sikeres required helyi kaputól.
+
+### 2026-11-03 — PR68 Windows Python raw-LF regresszió, új source-4 PASS
+
+Az első2aaf968 PR-head Windows planning/runtime Python-kapuja failed:174tests,
+120PASS/54failed_tests;2failure/73error esemény/0skip. Szintetikus CRLF került
+a parent marker útvonalába és child raw headerbe; nem natív Windows eredmény.
+A naplók és failed körök megőrzöttek, CI-job retry nincs. Célzott platform-
+newline RED1ERROR, részleges LF-fix child-header1ERROR és failed source-3
+structure (Rust unrun), majd teljes fixture-only UTF-8/LF GREEN1PASS. Production
+parser/qualifier/core/security/CI/sandbox nem módosult e follow-upban.
+Új source-4/target/roots/label:175PythonPASS,286normal+2exact-parent=288RustPASS,
+külön32+5nested, childPASS0, seam3/P18PDF4PASS. Új source-bound C ABI19+ancestor5
+PASS47helper; selected a3dd3b06, shared cc552235, proof578af469; teljes hash-k
+és parancsok a P01 eredménynaplóban. Remote javított HEAD CI/review/merge függő.
