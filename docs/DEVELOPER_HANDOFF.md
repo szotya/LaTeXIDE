@@ -1,6 +1,8 @@
 # Fejlesztői átadás – közös Rust mag, macOS, Windows és későbbi Linux
 
-Frissítve: 2026-11-02. Ez élő fejlesztői dokumentum, nem késztermék-bejelentés.
+Frissítve: 2026-11-03. Ez élő fejlesztői dokumentum, nem késztermék-bejelentés.
+
+**Licenc és nyilvános közzététel előkészítése 2026-11-03:** a felhasználó a [PolyForm Perimeter 1.0.1](../LICENSE) licencet és az e melletti nyilvános repót választotta. A hivatalos licencszöveg változatlan, a [notice](../NOTICE), [licenc- és hozzáférési összefoglaló](../LICENSING.md), README, CONTRIBUTING és hordozható skill-reference igazodik hozzá. A licenc megengedett célú módosítást/terjesztést is enged, a másoknak kínált versengő terméket kizárja; a nyilvánosság nem ad push-/merge-jogot. Az előkészítés friss main-alapja `927ecf57dee3df48ec5f3076ed154e074156e0fe`; a régi fő checkout tíz helyi fájlja és indexe megőrzött, külön snapshot/index készül. A 12 távoli refből elérhető 712 egyedi blob korlátos credential-/útvonal-/méretellenőrzése PASS; ez nem teljes biztonsági audit. A meglévő hozzáférések és main-ruleset változatlanok. A tényleges GitHub-public állapot, friss PR-/main-CI és közzétételi readback külön záró lépés; eredménye a ledgerben rögzítendő. Nincs termékkód-, runtime- vagy platformkvalifikációs változás.
 
 **P18 alias-tesztek aktuális hordozhatósági kontrollja:** a88b420f hétjobos CI-je minden platformon sikeres. Az utólag jelzett case-sensitive fixture-feltételt skip nélkül kezeltük: tényleges inode-alias kötelező deny; nem feloldott névből saját, bizonyítottan külön könyvtár és kötelező allow-kontroll. A kanonikus eredeti és egy külön ASCII név mindig fut, uppercase/NFD külön fixture; a két pontos Rust-eset1-1PASS/0ignored. Product/gate/skip-szabály változatlan, új head teljes CI/review/squash állapota a [PR54](https://github.com/szotya/LaTeXIDE/pull/54) szerint.
 

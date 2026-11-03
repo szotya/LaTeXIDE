@@ -2,6 +2,8 @@
 
 Önálló LaTeX IDE egyetemi hallgatóknak, helyi projektekhez és helyi agentek MCP-kapcsolatához.
 
+**Licenc:** [PolyForm Perimeter 1.0.1](LICENSE). A projekt forrása megtekinthető, használható és módosítható a licenc feltételeivel; a kód másoknak kínált versengő termékben való felhasználásához külön engedély szükséges. Ez source-available licenc. A nyilvános repó nem ad írási vagy merge-jogot; issue és pull request beküldhető a GitHub beállításai szerint. [Licenc, közreműködés és hozzáférés](LICENSING.md).
+
 Választott architektúra:
 
 - Közös Rust alkalmazásmag.
@@ -33,7 +35,7 @@ A projektbe telepített TeX Live 2026 aláírt/hitelesített beszerzési útból
 ## Fejlesztői belépési pont
 
 - [Párhuzamos fejlesztési csomagok](docs/development/README.md): 24 fő + 20 választható terv, mind a 226 auditkövetelmény kizárólagos gazdával, fájlhatárral és elfogadási teszttel.
-- [Privát GitHub-repó és tiszta clone](docs/development/REPOSITORY.md), [közreműködés](CONTRIBUTING.md), [audit utáni állapot](docs/development/BASELINE_DELTA.md).
+- [GitHub-repó és tiszta clone](docs/development/REPOSITORY.md), [közreműködés](CONTRIBUTING.md), [audit utáni állapot](docs/development/BASELINE_DELTA.md).
 - [Aktuális fejlesztői átadás](docs/DEVELOPER_HANDOFF.md): tényleges állapot, parancsok, Mac-es tapasztalatok, Windows/Linux következmények.
 - [Folyamatos munkanapló](docs/implementation-progress.md): döntések, elvégzett és nyitott feladatok, ellenőrzési bizonyíték.
 - [Hordozható projekt-skill](skills/latexide-platform-development/SKILL.md): közös szerződések és célplatformi reference-ek.
