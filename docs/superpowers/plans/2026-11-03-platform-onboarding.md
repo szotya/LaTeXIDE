@@ -34,5 +34,5 @@
 - [x] Update ownership source and regenerate planning/registry views; preserve v1 vectors.
 - [x] Update handoff, ledger, contributor routing and Windows/Linux/project skill references.
 - [x] Run existing structure/Python/content/skill/link checks and read-only onboarding retrieval check.
-- [ ] Publish PR, inspect exact-head required CI/review, and integrate normally after passing checks.
-- [ ] Fast-forward untouched starting refs to the prepared shared main; verify remote files/refs and original user-state preservation.
+- [x] Publish PR, inspect exact-head required CI/review, and integrate normally after passing checks.
+- [x] Fast-forward untouched starting refs to the prepared shared main; verify remote files/refs and original user-state preservation.
