@@ -197,3 +197,6 @@ pub fn recover_from_source(
         .recover(input.checkpoint, &input.journal, disk)
         .map_err(SourceError::Recovery)
 }
+
+/// Private durable format; separate from frozen contract-v1.
+pub mod durable;

@@ -1,15 +1,30 @@
 """P18's required cases and compiler outputs must actually execute and validate."""
+import copy
+import hashlib
 import importlib.util
 import json
 from pathlib import Path
+import stat
 from types import SimpleNamespace
 import tempfile
 import unittest
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
 IDS = ["os_subprocess_boundary_probe", "review_focus_r2",
        "security_service::execution::tests::compiler_adapter_real_tex_offline",
        "security_service::generation::tex_tests::generation_real_tex_offline"]
+P01_NORMAL_EXCLUSIONS = [
+    "durable_contract::durable_crash_child",
+    "durable_contract::durable_own_child_exit_matrix_preserves_last_caller_observed_ack",
+    "runtime_contract::runtime_crash_child",
+    "runtime_contract::runtime_own_process_exit_restores_committed_state_save_intent_and_undo",
+]
+P01_SOURCE_FILES = [
+    "crates/latexide-core/tests/recovery_contract.rs",
+    "crates/latexide-core/src/services/recovery/durable_tests.rs",
+    "crates/latexide-core/src/services/recovery/runtime_tests.rs",
+]
 
 
 def load(name, path):
@@ -43,15 +58,64 @@ class P18CIContract(unittest.TestCase):
             with self.subTest(text=text), self.assertRaises(ValueError):
                 gate.validate_workspace_log(text)
 
-    def test_macos_runs_all_ignored_cases_and_pdf_check_blocks_runtime(self):
+    def macos_profile(self, p01_state="absent"):
         verify = load("p18_profile_contract", ROOT / "integration/registry/verify.py")
-        args = SimpleNamespace(profile="integrated", cargo_executable=None, offline=True,
-                               native_schema=False, run_dir=ROOT / ".local/fixture-run")
-        steps = {s["name"]: s for s in verify.build_steps(ROOT, args, "darwin", "arm64")}
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory).resolve()
+            pins = {}
+            if p01_state != "absent":
+                for name in P01_SOURCE_FILES:
+                    path = root / name
+                    path.parent.mkdir(parents=True, exist_ok=True)
+                    data = b"INERT PLAN FIXTURE, NOT RUST SOURCE: " + name.encode()
+                    path.write_bytes(data)
+                    pins[name] = {"sha256": hashlib.sha256(data).hexdigest(),
+                                  "bytes": len(data), "mode": stat.S_IMODE(path.stat().st_mode)}
+                if p01_state == "partial":
+                    (root / P01_SOURCE_FILES[-1]).unlink()
+                elif p01_state == "stale":
+                    (root / P01_SOURCE_FILES[-1]).write_bytes(b"changed plan fixture")
+            args = SimpleNamespace(profile="integrated", cargo_executable=None, offline=True,
+                                   native_schema=False, run_dir=root / ".local/fixture-run")
+            # Model the reviewed source version with inert, bounded files. The
+            # real catalog still verifies their bytes/modes; no Rust runs here.
+            # This also keeps a Darwin plan independent of Windows checkout EOL/modes.
+            with patch.object(verify.p01_ci, "SOURCE_PINS", pins):
+                steps = {s["name"]: s for s in verify.build_steps(root, args, "darwin", "arm64")}
+        return root, steps
+
+    def assert_macos_profile(self, root, steps, with_p01):
         rust = steps["rust-workspace"]
         self.assertIn("--include-ignored", rust["argv"])
         self.assertIn("--test-threads=1", rust["argv"])
-        self.assertNotIn("--skip", rust["argv"])
+        self.assertFalse(any(arg.startswith("--skip=") for arg in rust["argv"]))
+        if with_p01:
+            positions = [i for i, arg in enumerate(rust["argv"]) if arg == "--skip"]
+            self.assertTrue(all(i + 1 < len(rust["argv"]) for i in positions))
+            self.assertEqual([rust["argv"][i + 1] for i in positions], P01_NORMAL_EXCLUSIONS)
+            self.assertTrue(set(IDS).isdisjoint(P01_NORMAL_EXCLUSIONS))
+            self.assertIn("--message-format=json", rust["argv"])
+            self.assertEqual(rust.get("summary_format"), "rust")
+            self.assertTrue(rust.get("required", True))
+            self.assertEqual(rust.get("p01_cohort"),
+                             {"proof": ".local/fixture-run/p01-parent-cohorts.json"})
+            self.assertIn("p01_cohort_proof", rust["required_artifact_kinds"])
+            self.assertIn("p01_rust_build_log", rust["required_artifact_kinds"])
+            self.assertEqual([a["path"] for a in rust["artifact_paths"]
+                              if a["kind"] == "p01_cohort_proof"],
+                             [".local/fixture-run/p01-parent-cohorts.json"])
+            pdf = steps["p18-compiler-pdfs"]
+            log = Path(pdf["argv"][pdf["argv"].index("--rust-log") + 1])
+            self.assertEqual(log.parent, root / ".local/fixture-run")
+            self.assertRegex(log.name, r"^\d+-rust-workspace[.]log$")
+            self.assertEqual([a["path"] for a in rust["artifact_paths"]
+                              if a["kind"] == "p01_rust_build_log"],
+                             [log.relative_to(root).as_posix()])
+        else:
+            self.assertNotIn("--skip", rust["argv"])
+            self.assertNotIn("p01_cohort", rust)
+            self.assertNotIn("p01_cohort_proof", rust["required_artifact_kinds"])
+            self.assertNotIn("p01_rust_build_log", rust["required_artifact_kinds"])
         self.assertFalse(rust.get("allowed_skips"))
         self.assertIn("p18_os_probe", rust["required_artifact_kinds"])
         self.assertIn("rust-workspace", steps["p18-compiler-pdfs"]["consumes_artifacts"])
@@ -59,6 +123,63 @@ class P18CIContract(unittest.TestCase):
         self.assertIn("rust-workspace", steps["p18-compiler-pdfs"]["depends_on"])
         self.assertTrue(steps["p18-compiler-pdfs"].get("required", True))
         self.assertIn("p18_pdf_validation", steps["p18-compiler-pdfs"]["required_artifact_kinds"])
+
+    def test_macos_runs_all_ignored_cases_and_pdf_check_blocks_runtime(self):
+        for state in ("absent", "valid"):
+            with self.subTest(p01_source=state):
+                root, steps = self.macos_profile(state)
+                self.assert_macos_profile(root, steps, state == "valid")
+
+    def test_p01_normal_exclusions_reject_extra_missing_renamed_or_foreign_skips(self):
+        root, steps = self.macos_profile("valid")
+        self.assert_macos_profile(root, steps, True)
+        for change in ("fifth", "P18", "missing", "renamed", "alternate_spelling"):
+            with self.subTest(change=change):
+                altered = copy.deepcopy(steps)
+                argv = altered["rust-workspace"]["argv"]
+                if change == "fifth":
+                    argv.extend(["--skip", "unknown_contract"])
+                elif change == "P18":
+                    argv.extend(["--skip", IDS[0]])
+                elif change == "missing":
+                    at = argv.index("--skip")
+                    del argv[at:at + 2]
+                elif change == "renamed":
+                    argv[argv.index("--skip") + 1] += "_renamed"
+                else:
+                    argv.append("--skip=unknown_contract")
+                with self.assertRaises(AssertionError):
+                    self.assert_macos_profile(root, altered, True)
+
+    def test_p01_proof_artifacts_and_P18_dependencies_cannot_be_dropped_or_optional(self):
+        root, steps = self.macos_profile("valid")
+        self.assert_macos_profile(root, steps, True)
+        changes = {
+            "missing-proof": lambda p: p["rust-workspace"].pop("p01_cohort"),
+            "loose-proof": lambda p: p["rust-workspace"]["p01_cohort"].update(required=False),
+            "proof-not-required": lambda p: p["rust-workspace"]["required_artifact_kinds"].remove("p01_cohort_proof"),
+            "log-not-required": lambda p: p["rust-workspace"]["required_artifact_kinds"].remove("p01_rust_build_log"),
+            "proof-not-captured": lambda p: p["rust-workspace"].update(artifact_paths=[a for a in p["rust-workspace"]["artifact_paths"] if a["kind"] != "p01_cohort_proof"]),
+            "log-not-captured": lambda p: p["rust-workspace"].update(artifact_paths=[a for a in p["rust-workspace"]["artifact_paths"] if a["kind"] != "p01_rust_build_log"]),
+            "optional-workspace": lambda p: p["rust-workspace"].update(required=False),
+            "missing-runtime-PDF-dependency": lambda p: p["runtime-build"]["depends_on"].remove("p18-compiler-pdfs"),
+            "missing-PDF-Rust-dependency": lambda p: p["p18-compiler-pdfs"]["depends_on"].remove("rust-workspace"),
+            "missing-PDF-Rust-artifact": lambda p: p["p18-compiler-pdfs"]["consumes_artifacts"].remove("rust-workspace"),
+            "optional-PDF": lambda p: p["p18-compiler-pdfs"].update(required=False),
+        }
+        for name, mutate in changes.items():
+            with self.subTest(change=name):
+                altered = copy.deepcopy(steps)
+                mutate(altered)
+                with self.assertRaises(AssertionError):
+                    self.assert_macos_profile(root, altered, True)
+
+    def test_p01_source_must_be_complete_and_match_its_pins_before_plan_qualification(self):
+        root, steps = self.macos_profile("valid")
+        self.assert_macos_profile(root, steps, True)
+        for state in ("partial", "stale"):
+            with self.subTest(p01_source=state), self.assertRaises((OSError, ValueError)):
+                self.macos_profile(state)
 
     def test_pdf_content_requires_one_page_hungarian_text_and_resolved_reference(self):
         gate = self.gate()

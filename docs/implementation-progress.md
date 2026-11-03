@@ -699,3 +699,91 @@ Tényleges helyi ellenőrzések:
 - A böngészős `issues/new/choose` olvasás a GitHub bejelentkezési oldalára irányított. Bejelentkezett űrlapmegjelenítés, kitöltés, fájlcsatolás és tényleges beküldés **unrun**; nyilvános próbaissue nem készült. A helyi YAML-/linkegyezés nem élő GitHub-formpróba. A közzétételhez a pontos PR-head CI/review, normál védett merge és a nyilvános main fájljainak külön visszaolvasása tartozik.
 
 A gyökércheckout HEADje, indexe és kilenc helyi módosított/új fájljának hash-e a helyi validátor szerint változatlan. A korábbi részletes hibajegy-/feature-útmutatók, PDF-ek és helyi feature-űrlap megőrzöttek, nem kerülnek véletlenül e változtatásba. A reusable jelentési eljárás a projekt-skill parallel-development referenciájában szerepel. Ez dokumentáció és issue-űrlap: nincs termékkód-, CI-kapu-, licenc-, hozzáférés- vagy platformeljárás-változás; nincs új Mac-, Windows- vagy Linux-runtime-eredmény.
+
+
+## P01 kombinált qualifier/recovery publikálói integráció előkészítése — 2026-11-03
+
+Konkrét `p01-cohort-qualified-v2-20261103-b9a793d3-attempt2` READY input. A receipt `fa3d69ac4ef3b74f76c9715b41af14aced8c80b0aedfb089f6cc43c7a771bffa`; 17 qualifier/403 historical/22 kiválasztott és 11983 újraellenőrzött reused evidence-fájl integritása igazolt, új termékteszt nélkül. Friss remote/base `45f5824f3c3620d6802f2779c7f348d156c6b3c1`, tree16931a3e71af398e2e79f31ae50db174543d8dc4; ruleset26284711 aktív, bypass üres/never, required Actions15368 Planning and Python contracts. Saját új managed worktree, normál szotya/branch, meglévő munkafák HEAD/indexe nem módosult.
+
+Csak a négy qualifier-fájl és a korábbi28 P01 owned útvonal deltája került be. A közös Rust/FFI öt fájlja a friss mainen még a történeti d5ab alappal egyezett; a korábbi read-only recovery/teszt prefix megmarad. A shared handoff/ledger/skill a mainre épül, a korábbi P00/P04/P19/P09 és Windows/Linux contributor-policy bejegyzéseit megőrzi. A package-specs/owners régi kontextusát, script CRLF-reprezentációt és teljes17/403 fát nem importáljuk. Saját friss kombinált ellenőrzés és PR/CI/review/merge **unrun**; a következő bejegyzés csak tényleges eredményt rögzíthet. A régi blocked/report/source/failed/mutáns evidence megmarad.
+
+
+### P01 fresh-main integrációs tesztkontraktus: BLOCKED — 2026-11-03
+
+A saját friss structure-parancs (`python3 -B integration/registry/verify.py --profile structure --offline --output .local/p00-verification/structure.json`) exit1: generált szerződés/planning/documentation PASS, coordinator162/161PASS/1FAIL/0ERROR/0skip. A fail a main változatlan `tests/contracts/test_p18_ci.py:54` globális no-`--skip` assertionje, amely a source-pinned P01 négy külön-kohort kizárását is elutasítja. A qualifier canonical SHA32423f97a7c55f3a4e054352f12756dc784f85b387f803e3c739f3b6944a45d6 változatlan; allowed_skips nincs, P18 actual/PDF függőségek megmaradtak. Saját selected-source374 before/after SHA `8870de040bb80ee7e4ab0c1546939d7c1e9cd5c774a9694211819bd7168951b9`. Ezt nem nevezzük strict-gate PASS-nak.
+
+Az érintett P18 contractteszt a kapott qualifier4+P01-28 scope-on kívüli új útvonal, ezért nem módosítottuk vagy kerültük meg. Külön engedélyezett szűk tesztkontraktus-integráció és utána friss kombinált validáció szükséges. Rust/C ABI/cohort build/run, commit/push/PR/CI/review/merge0/unrun; saját managed worktree és minimális31-path változat megőrzött, issue-k nem változtak. Az első intake-reader relatív MAIN-source feloldási setup-hibája 0 termékművelettel megőrzött; az actual162-es failed kör külön nyers report/log/test-ID/nonce receipttel megmarad. Történeti P00149 és P03 split148+1 /46normal+2parent/32+5 nested nem új aktuális főági futás. Végállapot BLOCKED→idle.
+
+### P01/P18 no-skip contract szűk kompatibilitás — 2026-11-03
+
+Új konkrét27b7c2cf continuation a meglévő candidate-re, egyetlen hozzáadott
+`tests/contracts/test_p18_ci.py` útvonallal (33 felső scope). Az induló481
+source byteazonos a lezárt BLOCKED receipt mapjával; régi report/history megmarad.
+Friss exact main45f5824 és strict required-check/ruleset readback egyezett.
+Saját célzott original-method RED1FAIL, majd a szűk tesztjavítás után4PythonPASS;
+18 beágyazott skip/proof/dependency/partial-stale modellvariáns elutasított.
+Az eredeti method aktív, a négy P18 identity/PDF és no-allowed-skips őr megmarad;
+P01 csak a négy külön literal parent/helperID és kötelező friss proof/raw-log
+artifact mellett választható le. Nem készült új termék/verifier/workflow/séma
+módosítás; canonical qualifier és frozen403/17/inputok változatlanok.
+A modellfixture nem Rust/Windows/Linux acceptance. Teljes friss structure,
+Rust/C ABI/cohort/CI/merge még unrun; új eredmény csak tényleges futásból kerül ide.
+
+
+### P01/P18 continuation actual gate: BLOCKED — 2026-11-03
+
+A27b7c2cf test-compat javítás után full structure165/165PASS, 0skip/hiba.
+Canonical qualifier4 és P18 validator változatlan. A tényleges shared kör
+Cargo286normálPASS/4P01-filter után a saját logsymlink-realpath elrendezésen
+elakadt; a failed kohort megmarad. Új, byte/mód szerint egyező481-fájlos
+T9 source fixture valódi könyvtárain, külön target/label/roots mellett ismét
+165PythonPASS és Cargo286normálPASS. A canonical qualifier ezután ugyanazon
+P18artifact ROOT/TEX_RUN címkével újrafuttatja a23 normál testimage-et:284PASS
+és2P18 real-TeX AlreadyExists FAIL, exit101/timeoutfalse. Ez nem full-gate PASS.
+A P01 két exact-parent és32+5 nested eset nem indult; C ABI és remote kör unrun.
+
+A source-selected374 before/after82ef6dbc96b4a26743739db60efc74980ed078cfda9d10d96897b9f295413fd2
+egyezett; a forráskopi before/after byteazonos a managed checkouttal a futáskor.
+A saját snapshot nem kapott másolt Git-metaadatot; tested-base45f5824 a managed
+checkout nyugtájából külön származik. A TeX-provision before/after687f373f
+egyezett. A normal-replay hiba további canonical qualifier/fixture-invocation
+integrációt igényel; ezt a test-only continuation tiltja. Újabb termékscope
+vagy futtatási kerülőút nem indult. A szűk diff/negatívok és mindkét actual
+failed kör saját új continuation report/receipt alatt megőrzött, a korábbi
+a67e8a99 BLOCKED report változatlan. Commit/push/PR/CI/merge0; idle.
+
+### 2026-11-03 — P01 c8e147a9 normal-replay namespace: friss helyi kapu PASS
+
+Ugyanazon b9a793d3-attempt2 jelölt,45f5824 managed alap. Szűk qualifier/test és
+háromsoros Cargo-env observation javítás, reusable recovery-reference; P18
+production validator/core/security/workflow/ci_gate/sandbox változatlan.
+A schema3 proof mind23 normal-image-nek saját exclusive0700 namespace-t,
+46 külön phase-rootot/23 külön labelt és source/bináris/nonce/argv/provision
+kötésű0600 receiptet ad; read-only/final inventory újraellenőrzött.
+
+Actual célzott AlreadyExists RED1ERROR→GREEN;9 namespace-method PASS. A saját
+alias-path1ERROR és az első globális review_focus_r2-számolásnál FAILED teljes
+kör megőrzött (abban structure173PASS/Cargo286PASS). Külön Cargo-scope RED1ERROR
+után változatlan P18 target-validator + tényleges Cargo-env binding; új source-2,
+friss target/roots/label. Végső structure/shared Python174PASS; Cargo286normálPASS,
+46 discovery/23 normal-image286PASS/4P01-filter, exact-parent2PASS és32+5 nested,
+childPASS0. Kombinált Rust288PASS; seam3PASS, P18 PDF parser/render4PASS.
+Friss actual Cargo static/dynamic FFI-ből új public C helper, load-command pin;
+C ABI/IPC19PASS41helper, ancestor5PASS6helper,0FAIL/0ERROR/0unrun. Saját sandbox,
+9s helper-alarm/<=10s parent-wait, nincs GUI/live app vagy controller-kill.
+
+Parancsok: unittest namespace kontrollok, `verify.py --profile structure` és
+`--profile shared --offline --timeout 600`, meglévő Cargo/Rust/TeX, jobs1.
+481 fájl byte/mód before/after egyenlő; selected374 SHA dced8f22; full shared
+report f045ce13, schema3 proof3184c1bb. TeX before/after687f373f változatlan;
+letöltés/telepítés0. Részletek és teljes SHA-k: `docs/development/results/P01.md`.
+A három végső Markdown eredményfrissítés selected-source-on kívüli metadata.
+Távoli main45f5824, strict required Actions15368 változatlan/bypass0;
+exact-HEAD remote CI/review/protected publikálás még függő. Platform/GUI/
+power-loss/client-ACK/exactly-once/production acceptance nem következik ebből.
+
+Végső read-only: a default CLI recheck invalid_test_summary (a helyi explicit
+Cargo/offline helyett default argv-t épít) megőrzött failed próba. A közvetlen
+P01 validate PASS, az eredeti tényleges builderkonfigurációval teljes
+`evidence.revalidate_report` current; source/artifact/log/parent/namespace
+őrök változatlanok. E CLI-korlát külön marad a sikeres required helyi kaputól.
