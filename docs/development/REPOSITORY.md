@@ -44,6 +44,8 @@ Teljes Mac bundle a saját helyi toolchainnel és telepített TeX Live-val: `bas
 
 ## Windows és Linux
 
+A [Mac által vezetett platformbelépő](PLATFORM_DEVELOPMENT.md) tartalmazza a `szotya/p21-windows` és `szotya/p22-linux` kezdőágat, célplatformi checkoutot, a teljes saját natív mappák fájltulajdonát és a közös P00-integráció határát. A [paritásmátrix](PLATFORM_PARITY.md) a tényleges képességeltérések kiindulása. A branch/folder előkészítés nem új natív platformeredmény.
+
 Windows 11 x64, VS/MSVC/Windows SDK és rögzített NuGet-függőségek: [eljárás és korlát](../windows-validation.md), [P21 terv](../superpowers/plans/2026-10-31-parallel/p21-windows.md). A CI Windows Rust-tesztje nem WinUI MSBuild/link/launch vagy Intel+AMD gépmátrix. A teljes native bizonyítékot P21 adja.
 
 Linuxon a CI közös Rust-réteget ellenőrizhet, de nincs kész natív felület vagy támogatott desktopkiadás. A [P22 terv](../superpowers/plans/2026-10-31-parallel/p22-linux.md) külön kezeli az XDG/runtime-dir és UI/platformdöntést.

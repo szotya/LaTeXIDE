@@ -52,8 +52,7 @@
       "apps/macos/Package.swift",
       "apps/macos/Sources/LaTeXIDEKit/{WorkspaceStore,WorkspaceView,NativeRuntime,NativeEditor}.swift",
       "apps/macos/Sources/LaTeXIDEKit/Editor/SourceTextView.swift",
-      "apps/windows/{MainWindow*,NativeCore*,LaTeXIDE.vcxproj,packages.config,NuGet.Native.*}",
-      "scripts/{build_macos.sh,build_windows.ps1}",
+      "scripts/build_macos.sh",
       "scripts/{build_development_packages.py,validate_development_packages.py}",
       ".github/workflows/",
       "docs/{DEVELOPER_HANDOFF,implementation-progress}.md",
@@ -65,7 +64,15 @@
       "docs/superpowers/specs/2026-10-31-parallel-development-design.md",
       "docs/superpowers/plans/2026-10-31-parallel/",
       "docs/development/REPOSITORY.md",
-      "docs/development/BRANCH_PROTECTION.md"
+      "docs/development/BRANCH_PROTECTION.md",
+      "AGENTS.md",
+      "README.md",
+      "CONTRIBUTING.md",
+      "docs/development/PLATFORM_DEVELOPMENT.md",
+      "docs/development/PLATFORM_PARITY.md",
+      "docs/IDE_PRODUCT_DIRECTION.md",
+      "shared/ide-theme/",
+      "crates/latexide-build/src/process.rs"
     ]
   },
   {
@@ -950,14 +957,21 @@
       "Szóközös/Unicode/hosszú/UNC útvonal ne okozzon adatvesztést vagy hangtalan hibát."
     ],
     "owned_paths": [
-      "apps/windows/Features/PlatformParity/",
-      "tests/windows_native/qualification.ps1",
+      "apps/windows/",
+      "tests/windows_native/",
+      "tests/windows_text_adapter.cpp",
+      "scripts/build_windows.ps1",
+      "tools/windows-nuget-lock.json",
+      "docs/windows-validation.md",
+      "docs/windows-ui-port.md",
       "integration/requests/P21.json",
       "docs/development/results/P21.md"
     ],
     "test_command": "pwsh -File tests/windows_native/qualification.ps1",
     "adapter_language": "powershell",
-    "adapter_interface": "function Test-WindowsQualification { param([hashtable]$Evidence) }\n# Qualification.cpp: WindowsQualification evaluate_windows_evidence(const WindowsEvidence& evidence);"
+    "adapter_interface": "function Test-WindowsQualification { param([hashtable]$Evidence) }\n# Qualification.cpp: WindowsQualification evaluate_windows_evidence(const WindowsEvidence& evidence);",
+    "branch": "szotya/p21-windows",
+    "platform_guide": "../../../development/PLATFORM_DEVELOPMENT.md"
   },
   {
     "id": "P22",
@@ -986,15 +1000,17 @@
       "Linux Rust unit PASS ne legyen natív desktop támogatásként kommunikálva."
     ],
     "owned_paths": [
-      "apps/linux/platform_probe/",
-      "tests/linux_native/test_runtime_dir.py",
+      "apps/linux/",
+      "tests/linux_native/",
+      "scripts/build_linux.sh",
       "integration/requests/P22.json",
-      "docs/development/results/P22.md",
-      "apps/linux/platform_probe/Cargo.toml"
+      "docs/development/results/P22.md"
     ],
     "test_command": "python3 tests/linux_native/test_runtime_dir.py",
     "adapter_language": "rust",
-    "adapter_interface": "pub fn validate_runtime_directory(path:String, owner_uid:u32, mode:u32, current_uid:u32) -> Result<String,PlatformError>;\n// Python runtime-dir test launches the compiled probe in a disposable directory."
+    "adapter_interface": "pub fn validate_runtime_directory(path:String, owner_uid:u32, mode:u32, current_uid:u32) -> Result<String,PlatformError>;\n// Python runtime-dir test launches the compiled probe in a disposable directory.",
+    "branch": "szotya/p22-linux",
+    "platform_guide": "../../../development/PLATFORM_DEVELOPMENT.md"
   },
   {
     "id": "P23",

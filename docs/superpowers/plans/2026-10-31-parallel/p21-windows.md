@@ -32,12 +32,19 @@
 
 ## Tulajdon és indulás
 
-**Branch:** `feature/p21-windows`. **Profil:** core.
+**Branch:** `szotya/p21-windows`. **Profil:** core.
+
+**Platformbelépés és Mac-referencia:** [közzétett kezdőág, módosítási határok és paritás](../../../development/PLATFORM_DEVELOPMENT.md). A teljes saját natív fára az itt generált, friss owned_paths érvényes; a szolgáltatás és natív teszt továbbra külön megvalósítandó.
 
 **Kizárólagosan létrehozható/módosítható útvonalak:**
 
-- `apps/windows/Features/PlatformParity/`
-- `tests/windows_native/qualification.ps1`
+- `apps/windows/`
+- `tests/windows_native/`
+- `tests/windows_text_adapter.cpp`
+- `scripts/build_windows.ps1`
+- `tools/windows-nuget-lock.json`
+- `docs/windows-validation.md`
+- `docs/windows-ui-port.md`
 - `integration/requests/P21.json`
 - `docs/development/results/P21.md`
 

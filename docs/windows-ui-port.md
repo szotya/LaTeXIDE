@@ -1,5 +1,7 @@
 # Windows developer UI port — source and qualification boundary
 
+2026-11-03 ownership update: P21 may repair the complete native Windows tree under the [current platform policy](development/PLATFORM_DEVELOPMENT.md); the [Windows README](../apps/windows/README.md) gives checkout/build entrypoints. The dated source evidence below remains historical. Windows Server shared CI now exists, while native WinUI build/render/workflow qualification remains unrun.
+
 2026-10-30. This is implemented **Windows source**, with portable/structural checks run on Mac. No Windows runner exists. It is not a native Windows build, launch or rendered acceptance result. See [the foundation qualification procedure](windows-validation.md) and [the accepted UI design](superpowers/specs/2026-10-30-developer-ui-design.md).
 
 ## Implemented source

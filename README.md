@@ -34,6 +34,8 @@ A projektbe telepített TeX Live 2026 aláírt/hitelesített beszerzési útból
 
 ## Fejlesztői belépési pont
 
+- [Windows/Linux fejlesztői munkatér](docs/development/PLATFORM_DEVELOPMENT.md): közzétett kezdőágak, saját mappák, pontos módosítási határok és a Mac által vezetett [paritásmátrix](docs/development/PLATFORM_PARITY.md).
+
 - [Párhuzamos fejlesztési csomagok](docs/development/README.md): 24 fő + 20 választható terv, mind a 226 auditkövetelmény kizárólagos gazdával, fájlhatárral és elfogadási teszttel.
 - [GitHub-repó és tiszta clone](docs/development/REPOSITORY.md), [közreműködés](CONTRIBUTING.md), [audit utáni állapot](docs/development/BASELINE_DELTA.md).
 - [Aktuális fejlesztői átadás](docs/DEVELOPER_HANDOFF.md): tényleges állapot, parancsok, Mac-es tapasztalatok, Windows/Linux következmények.

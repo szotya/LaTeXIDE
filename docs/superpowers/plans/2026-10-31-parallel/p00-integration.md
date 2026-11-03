@@ -60,8 +60,7 @@
 - `apps/macos/Package.swift`
 - `apps/macos/Sources/LaTeXIDEKit/{WorkspaceStore,WorkspaceView,NativeRuntime,NativeEditor}.swift`
 - `apps/macos/Sources/LaTeXIDEKit/Editor/SourceTextView.swift`
-- `apps/windows/{MainWindow*,NativeCore*,LaTeXIDE.vcxproj,packages.config,NuGet.Native.*}`
-- `scripts/{build_macos.sh,build_windows.ps1}`
+- `scripts/build_macos.sh`
 - `scripts/{build_development_packages.py,validate_development_packages.py}`
 - `.github/workflows/`
 - `docs/{DEVELOPER_HANDOFF,implementation-progress}.md`
@@ -74,6 +73,14 @@
 - `docs/superpowers/plans/2026-10-31-parallel/`
 - `docs/development/REPOSITORY.md`
 - `docs/development/BRANCH_PROTECTION.md`
+- `AGENTS.md`
+- `README.md`
+- `CONTRIBUTING.md`
+- `docs/development/PLATFORM_DEVELOPMENT.md`
+- `docs/development/PLATFORM_PARITY.md`
+- `docs/IDE_PRODUCT_DIRECTION.md`
+- `shared/ide-theme/`
+- `crates/latexide-build/src/process.rs`
 
 **Teszt:** `crates/latexide-contracts/tests/compatibility.rs`. **Eredménynapló:** `docs/development/results/P00.md`.
 

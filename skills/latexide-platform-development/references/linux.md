@@ -2,9 +2,15 @@
 
 Linux is a later platform direction, not an implemented or validated target. The user requested this reference so a later developer can continue from Mac work without repeating discoveries.
 
-The private repository's Ubuntu CI now executes 69 shared Rust tests successfully. This narrower core/compiler-supervisor result is not Linux desktop, local IPC/runtime-directory, TeX installation or native UI qualification. See `docs/development/REPOSITORY.md` and the current ledger for exact CI source identity; do not infer the remaining port below is complete.
+The public repository's Ubuntu CI executes shared Rust tests successfully (150 PASS in full main CI41634714704 on 2026-11-03; older counts are historical). This narrower core/compiler-supervisor result is not Linux desktop, local IPC/runtime-directory, TeX installation or native UI qualification. See `docs/development/REPOSITORY.md` and the current ledger for exact CI source identity; do not infer the remaining port below is complete.
 
 Start with the current handoff and the accepted Rust/native separation. A Linux task must select a native frontend technology and PDF/text adapters appropriate to the requested Linux environments; GTK/libadwaita or Qt have not been selected by the user. Do not imply that SwiftUI or WinUI is a Linux frontend.
+
+## Contributor branch and write scope
+
+Start from `szotya/p22-linux`, issue #23, and read [the platform policy](https://github.com/szotya/LaTeXIDE/blob/main/docs/development/PLATFORM_DEVELOPMENT.md), `apps/linux/AGENTS.md` and `apps/linux/README.md`. P22 owns all of `apps/linux/`, including a later selected frontend beyond `platform_probe/`, self-contained Cargo manifest/lock, `tests/linux_native/`, future `scripts/build_linux.sh` and its own request/result journal. The previous probe-only path allocation is superseded; exact paths are generated from `docs/development/package-specs.json`.
+
+Changes to existing shared `crates/latexide-ffi/src/session.rs` and other runtime/IPC/ABI/MCP, root workspace/locks, themes/workflows and central guidance still go through a P22 integration request and P00. The app's own isolated `[workspace]` is distinct from root registration. Bind parity to an exact Mac reference document/test and base commit. The native test/probe/build files remain future implementations; folder READMEs do not create a Linux frontend or selected toolkit. Validate actual OS ownership/mode/symlink state, not client-supplied UID/mode claims.
 
 ## Concrete existing portability gaps
 
