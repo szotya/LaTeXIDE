@@ -1,21 +1,60 @@
 name: Hibajelentés
-description: Reprodukálható hiba, platform és megőrzendő munka
+description: Egy meglévő funkció hibásan működik, összeomlik vagy hibás eredményt ad.
+title: "[Hiba] "
 labels: [bug]
 body:
-  - type: textarea
-    id: reproduce
+  - type: markdown
     attributes:
-      label: Reprodukció és elvárt viselkedés
-      description: Konkrét lépések, tényleges eredmény, elvárt eredmény. Credentialt ne adj meg.
-    validations:
-      required: true
+      value: |
+        Egy önálló hibát írj le; nem kell ismerned a kódot vagy a hiba okát.
+        Előbb keress rá a korábbi issue-k között. Az ismeretlen adathoz írd: nem ismert / nem teszteltem.
+        Adatvesztésgyanúnál őrizd meg a munkát; az eredeti dokumentumon ne ismételd a veszélyes műveletet.
+        Ez nyilvános bejelentés: jelszót, API-kulcsot és privát projektet ne csatolj.
+        [Kitöltési útmutató és példa](https://github.com/szotya/LaTeXIDE/blob/main/docs/TESTING.hu.md)
   - type: input
     id: platform
     attributes:
-      label: Forrás-SHA, OS, architektúra, toolverzió
+      label: Tesztelt verzió és gép
+      description: Appverzió vagy kapott csomag pontos fájlneve; operációs rendszer és verzió; géptípus, ha ismert. SHA nem kötelező.
+      placeholder: "DEMO-001 csomag; macOS 15; Apple M2. Csak kitöltési példa."
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: A hiba megismétlésének lépései
+      description: Írd le a kiinduló állapotot és a számozott lépéseket. Melyik fájl, panel vagy beviteli mező volt aktív?
+      placeholder: |
+        Kiinduló állapot:
+        1.
+        2.
+        3.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Tapasztalt eredmény
+      description: Pontosan mi történt? Ha volt hibaüzenet, másold be a szükséges részét.
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Elvárt eredmény
+      description: Minek kellett volna történnie? Kapcsolódó tesztfeladatot is megadhatsz.
+    validations:
+      required: true
+  - type: textarea
+    id: impact
+    attributes:
+      label: Gyakoriság, hatás és kerülőút
+      description: Hányszor láttad, mit akadályoz, veszélybe került-e munka, és megkerülhető-e? Egyetlen megfigyelés is bejelenthető.
+      placeholder: "2 hibás eset / 3 próba; takarja a szöveget; Escape-pel bezárható. Csak kitöltési példa."
     validations:
       required: true
   - type: textarea
     id: evidence
     attributes:
-      label: Redaktált bizonyíték és érintett audit-ID
+      label: Melléklet vagy hivatkozás
+      description: Opcionális kép, rövid videó, kis mesterséges mintafájl vagy kapcsolódó issue. Melléklet és audit-ID nélkül is beküldhető.

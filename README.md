@@ -2,6 +2,8 @@
 
 Önálló LaTeX IDE egyetemi hallgatóknak, helyi projektekhez és helyi agentek MCP-kapcsolatához.
 
+**Tesztelőknek:** [magyar útmutató hibák, hiányzó funkciók és új ötletek bejelentéséhez](docs/TESTING.hu.md) · [új issue létrehozása](https://github.com/szotya/LaTeXIDE/issues/new/choose). Lépések, kitöltött példák és három külön űrlap; programozói ismeret vagy fejlesztői meghívás nem szükséges.
+
 **Licenc:** [PolyForm Perimeter 1.0.1](LICENSE). A projekt forrása megtekinthető, használható és módosítható a licenc feltételeivel; a kód másoknak kínált versengő termékben való felhasználásához külön engedély szükséges. Ez source-available licenc. A nyilvános repó nem ad írási vagy merge-jogot; issue és pull request beküldhető a GitHub beállításai szerint. [Licenc, közreműködés és hozzáférés](LICENSING.md).
 
 Választott architektúra:

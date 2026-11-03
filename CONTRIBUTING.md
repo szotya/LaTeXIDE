@@ -1,5 +1,7 @@
 # Fejlesztői belépés
 
+**Tesztelőként hibát, hiányzó funkciót vagy új ötletet jelentenél?** Kezdd a [magyar tesztelői útmutatóval](docs/TESTING.hu.md), majd válassz [issue-űrlapot](https://github.com/szotya/LaTeXIDE/issues/new/choose). Ehhez nem kell kódot módosítanod vagy az alábbi fejlesztési eljárást követned.
+
 Olvasd az [AGENTS.md](AGENTS.md), a [handoff](docs/DEVELOPER_HANDOFF.md), a [projekt-skill](skills/latexide-platform-development/SKILL.md) és a [termékirány](docs/IDE_PRODUCT_DIRECTION.md) dokumentumait. Platformonként különítsd el a forrás/check/build/teszt/indítás/workflow bizonyítékot.
 
 ## Párhuzamos csomag végrehajtása

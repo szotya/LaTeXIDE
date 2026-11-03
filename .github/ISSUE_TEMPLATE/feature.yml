@@ -1,0 +1,45 @@
+name: Új funkcióötlet
+description: Új lehetőséget vagy egy meglévő funkció továbbfejlesztését javaslod.
+title: "[Ötlet] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Egy önálló ötletet írj le; nem kell technikai megoldást vagy fejlesztési tervet készítened.
+        Előbb keress rá a korábbi issue-k között. A beküldés javaslat, nem automatikus elfogadás vagy határidőígéret.
+        Ez nyilvános bejelentés: jelszót, API-kulcsot és privát projektet ne csatolj.
+        [Kitöltési útmutató és példa](https://github.com/szotya/LaTeXIDE/blob/main/docs/TESTING.hu.md)
+  - type: textarea
+    id: problem
+    attributes:
+      label: Probléma és jelenlegi megoldás
+      description: Milyen munka közben és milyen gyakran lenne hasznos? Mi okoz nehézséget, és hogyan oldod meg most?
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: Javasolt működés
+      description: Rövid használati példa és kívánt eredmény. Mi a legkisebb már hasznos változat, és mi maradhat későbbre?
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Miből látnád, hogy jól működik?
+      description: Egy-két konkrét, kipróbálható eredmény. Nem kell technikai tesztet írnod.
+      placeholder: "Ha új fájlt kérek a sablonból, a szövege bekerül az új fájlba, az eredeti sablon pedig változatlan marad. Csak kitöltési példa."
+    validations:
+      required: true
+  - type: input
+    id: platform
+    attributes:
+      label: Érintett platform
+      description: macOS, Windows, Linux vagy mindegyik. Ha a jelenlegi alkalmazásból indulsz ki, add meg a tesztelt verziót is, ha ismert.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Melléklet vagy hivatkozás
+      description: Opcionális vázlat, kép, más alkalmazásból vett példa vagy kapcsolódó issue; csak megosztható tartalommal.

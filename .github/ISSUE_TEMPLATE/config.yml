@@ -1,0 +1,5 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Tesztelői útmutató magyarul
+    url: https://github.com/szotya/LaTeXIDE/blob/main/docs/TESTING.hu.md
+    about: Melyik űrlapot válaszd, mit írj bele, és hogyan küldd be? Példák és másolható sablonok.
