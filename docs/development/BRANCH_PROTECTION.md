@@ -28,7 +28,7 @@ A [P00 CI-kapu távoli forráspróbája](https://github.com/szotya/LaTeXIDE/acti
 
 ## Alkalmazás és visszaellenőrzés
 
-Hitelesített, repository-admin jogosultságú GitHub CLI szükséges. A repo privát marad; token vagy credential nem része a konfigurációnak.
+Hitelesített, repository-admin jogosultságú GitHub CLI szükséges. A 2026-10-31-es szabálylétrehozáskor a repó privát volt; ez történeti állapot, nem a láthatóság megőrzésére vonatkozó előírás. A választott közzétételi modellt és az aktuális eljárást a [repository-útmutató](REPOSITORY.md) és a [licenc-összefoglaló](../../LICENSING.md) írja le. Token vagy credential nem része a konfigurációnak.
 
 Az első létrehozás tényleges parancsa:
 
