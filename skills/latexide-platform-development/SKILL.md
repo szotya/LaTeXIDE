@@ -23,6 +23,14 @@ Read `docs/DEVELOPER_HANDOFF.md` for current implementation state, actual comman
 | Parallel development packages, exclusive paths, contract gate and GitHub onboarding | [references/parallel-development.md](references/parallel-development.md) |
 | Compiler acquisition, package roots and offline proof | `<repo>/tools/texlive/README.md` and `<repo>/docs/compiler-assessment.md` |
 
+## Windows/Linux contributor entry
+
+Mac is the authoritative accepted product/workflow reference. Read the [platform contributor policy](../../docs/development/PLATFORM_DEVELOPMENT.md), [parity baseline](../../docs/development/PLATFORM_PARITY.md) and target app AGENTS/README before port work. Starting branches are `szotya/p21-windows` and `szotya/p22-linux`; later tasks use short branches from current main.
+
+P21 owns the complete `apps/windows/` native tree, including existing MainWindow/NativeCore/XAML/project/NuGet files, its native tests and Windows build script. P22 owns the complete `apps/linux/` tree, its native tests, self-contained app/probe manifests/locks and future Linux build script. The generated ownership registry is authoritative for exact paths. Older blanket P00 ownership of existing WinUI files is superseded by this 2026-11-03 policy.
+
+Shared Rust/runtime/session/IPC/C ABI/MCP, root workspace/locks, shared themes/workflows and central handoff/ledger/skill stay P00 integration work. Platform owners write their own result journal and request shared hooks through their own manifest. Bind each parity result to the exact Mac reference document/test and base commit. The platform test scripts named in the plans are future implementations until their files and real target executions exist; preparation must not add passing placeholders or imply native qualification.
+
 ## Preserve the cross-platform contract
 
 - One authoritative Rust workspace runtime. Native controls and MCP clients share it.

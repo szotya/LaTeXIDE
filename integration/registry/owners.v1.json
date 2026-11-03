@@ -14,11 +14,23 @@
     },
     {
       "package_id": "P00",
+      "path": "AGENTS.md"
+    },
+    {
+      "package_id": "P00",
+      "path": "CONTRIBUTING.md"
+    },
+    {
+      "package_id": "P00",
       "path": "Cargo.lock"
     },
     {
       "package_id": "P00",
       "path": "Cargo.toml"
+    },
+    {
+      "package_id": "P00",
+      "path": "README.md"
     },
     {
       "package_id": "P00",
@@ -46,59 +58,15 @@
     },
     {
       "package_id": "P00",
-      "path": "apps/windows/LaTeXIDE.vcxproj"
-    },
-    {
-      "package_id": "P00",
-      "path": "apps/windows/MainWindow.Editor.cpp"
-    },
-    {
-      "package_id": "P00",
-      "path": "apps/windows/MainWindow.Presentation.cpp"
-    },
-    {
-      "package_id": "P00",
-      "path": "apps/windows/MainWindow.idl"
-    },
-    {
-      "package_id": "P00",
-      "path": "apps/windows/MainWindow.xaml"
-    },
-    {
-      "package_id": "P00",
-      "path": "apps/windows/MainWindow.xaml.cpp"
-    },
-    {
-      "package_id": "P00",
-      "path": "apps/windows/MainWindow.xaml.h"
-    },
-    {
-      "package_id": "P00",
-      "path": "apps/windows/NativeCore.cpp"
-    },
-    {
-      "package_id": "P00",
-      "path": "apps/windows/NativeCore.h"
-    },
-    {
-      "package_id": "P00",
-      "path": "apps/windows/NuGet.Native.props"
-    },
-    {
-      "package_id": "P00",
-      "path": "apps/windows/NuGet.Native.targets"
-    },
-    {
-      "package_id": "P00",
-      "path": "apps/windows/packages.config"
-    },
-    {
-      "package_id": "P00",
       "path": "crates/latexide-build/Cargo.toml"
     },
     {
       "package_id": "P00",
       "path": "crates/latexide-build/src/lib.rs"
+    },
+    {
+      "package_id": "P00",
+      "path": "crates/latexide-build/src/process.rs"
     },
     {
       "package_id": "P00",
@@ -186,7 +154,19 @@
     },
     {
       "package_id": "P00",
+      "path": "docs/IDE_PRODUCT_DIRECTION.md"
+    },
+    {
+      "package_id": "P00",
       "path": "docs/development/BRANCH_PROTECTION.md"
+    },
+    {
+      "package_id": "P00",
+      "path": "docs/development/PLATFORM_DEVELOPMENT.md"
+    },
+    {
+      "package_id": "P00",
+      "path": "docs/development/PLATFORM_PARITY.md"
     },
     {
       "package_id": "P00",
@@ -254,11 +234,11 @@
     },
     {
       "package_id": "P00",
-      "path": "scripts/build_windows.ps1"
+      "path": "scripts/validate_development_packages.py"
     },
     {
       "package_id": "P00",
-      "path": "scripts/validate_development_packages.py"
+      "path": "shared/ide-theme/"
     },
     {
       "package_id": "P00",
@@ -590,7 +570,7 @@
     },
     {
       "package_id": "P21",
-      "path": "apps/windows/Features/PlatformParity/"
+      "path": "apps/windows/"
     },
     {
       "package_id": "P21",
@@ -598,19 +578,35 @@
     },
     {
       "package_id": "P21",
+      "path": "docs/windows-ui-port.md"
+    },
+    {
+      "package_id": "P21",
+      "path": "docs/windows-validation.md"
+    },
+    {
+      "package_id": "P21",
       "path": "integration/requests/P21.json"
     },
     {
       "package_id": "P21",
-      "path": "tests/windows_native/qualification.ps1"
+      "path": "scripts/build_windows.ps1"
+    },
+    {
+      "package_id": "P21",
+      "path": "tests/windows_native/"
+    },
+    {
+      "package_id": "P21",
+      "path": "tests/windows_text_adapter.cpp"
+    },
+    {
+      "package_id": "P21",
+      "path": "tools/windows-nuget-lock.json"
     },
     {
       "package_id": "P22",
-      "path": "apps/linux/platform_probe/"
-    },
-    {
-      "package_id": "P22",
-      "path": "apps/linux/platform_probe/Cargo.toml"
+      "path": "apps/linux/"
     },
     {
       "package_id": "P22",
@@ -622,7 +618,11 @@
     },
     {
       "package_id": "P22",
-      "path": "tests/linux_native/test_runtime_dir.py"
+      "path": "scripts/build_linux.sh"
+    },
+    {
+      "package_id": "P22",
+      "path": "tests/linux_native/"
     },
     {
       "package_id": "P23",

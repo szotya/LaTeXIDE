@@ -1,6 +1,10 @@
 # Kutatói és fejlesztői IDE — termékirány és minőségi szerződés
 
-Frissítve2026-10-31. A felhasználó megerősítette: tényleges, igényes IDE-t akar, JetBrains és VSCode ihlettel, kutatóknak és fejlesztőknek. A prémium jelleg következetes munkafolyamatot és megbízható viselkedést jelent. A témaválasztó vagy egy új panel önmagában nem teljesíti ezt a célt.
+Frissítve2026-11-03. A felhasználó megerősítette: tényleges, igényes IDE-t akar, JetBrains és VSCode ihlettel, kutatóknak és fejlesztőknek. A prémium jelleg következetes munkafolyamatot és megbízható viselkedést jelent. A témaválasztó vagy egy új panel önmagában nem teljesíti ezt a célt.
+
+## Mac által vezetett többplatformos fejlesztés
+
+A Mac az elfogadott termékviselkedés és munkafolyamat irányadó referenciája. Windows és Linux ugyanazt a Rust-dokumentumállapotot és szerződéseket használja saját natív adapterrel. A paritás egy konkrét Mac-funkcióhoz, forrás-/tesztbaseline-hoz és tényleges célplatformi munkafolyamathoz kötött. A hiányzó portképesség explicit planned/partial/unavailable/unrun; nem változtatja meg önállóan a közös viselkedést. Reprodukált Mac-hibát közösen javítunk. A [platformfejlesztői szabály](development/PLATFORM_DEVELOPMENT.md) írja le a brancheket, módosítási határokat és integrációt.
 
 ## A munkaterület logikája
 

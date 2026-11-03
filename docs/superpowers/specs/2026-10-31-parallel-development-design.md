@@ -88,8 +88,9 @@ Ezeket **csak P00 integrálja**, az érintett platformgazda review-jával:
 - core `workspace.rs`, `document.rs`, `project_index.rs`, `tex_scan.rs`, `completion.rs`, `definition.rs` közös hookjai;
 - protocol `lib.rs`/`ipc.rs`, FFI `runtime.rs`/`session.rs`, MCP toolregisztráció és C header;
 - Mac `WorkspaceStore.swift`, `WorkspaceView.swift`, `NativeRuntime.swift`, `NativeEditor.swift`, `SourceTextView.swift`, menü-/panelregisztráció és `Package.swift`;
-- Windows meglévő `MainWindow*`, `NativeCore*`, projekt-/NuGet-/XAML-regisztráció; P21 adja a natív build/runtime ellenőrzést;
-- közös build-/release-script, workflow, capability-leltár, handoff, ledger és skill-routing.
+- közös paletták `shared/ide-theme/`, compiler OS-process adapter (`crates/latexide-build/src/process.rs`), közös build-/release-script, workflow, capability-leltár, handoff, ledger és skill-routing. A Windows saját `scripts/build_windows.ps1` P21-é, a későbbi `scripts/build_linux.sh` P22-é.
+
+**2026-11-03 platformgazdai pontosítás:** P21 a teljes `apps/windows/` natív fát, meglévő `MainWindow*`/`NativeCore*`/projekt/NuGet/XAML fájljait és saját tesztjeit is módosíthatja. P22 a teljes `apps/linux/` fát és saját natív tesztjeit birtokolja, nem csak a probe-ot. A közös Rust/FFI/IPC/C ABI/MCP, gyökér workspace/lock, workflow és központi dokumentáció továbbra P00. A [platformbelépő](../../development/PLATFORM_DEVELOPMENT.md) és a generált owned_paths az irányadó; a régi blanket P00 Windows-korlátot ez felváltja.
 
 Ez nem tiltja a szükséges refaktorálást: P00 kis, reprodukálható patch-ként végzi el a seam-kivágást. Két szolgáltatás ne osszon meg írt fájlt. Új közös API igénye `integration/requests/<ID>.json` kompatibilitási döntésként érkezik; major-váltás nem kerül észrevétlenül párhuzamos branch alá.
 
@@ -117,4 +118,4 @@ Az U01–U20 csomagok további gate-je: a megnevezett technológiai vertikum té
 
 ## Repo-határ
 
-A privát repó forráskódot, terveket, teszteket, projekt-skillt és a történeti helyi bizonyítékok hashjegyzékét tartalmazza. Nyers napló/képernyőkép/helyi metaadat, helyi toolchain, TeX Live runtime, cache, appbundle, sessiondescriptor és credential nem verziózott. Az evidence alatt csak a külön felsorolt három auditsegéd és hat nyilvános compiler-eredetellenőrzési fájl kivétel. A helyi felhasználói alkalmazást ez a feladat nem indítja újra. Nyílt forrású projektlicencet a felhasználó nem választott; a privát repó létrehozása nem ad új licencet harmadik félnek.
+A jelenleg nyilvános, PolyForm Perimeter 1.0.1 licencű repó forráskódot, terveket, teszteket, projekt-skillt és a történeti helyi bizonyítékok hashjegyzékét tartalmazza. Nyers napló/képernyőkép/helyi metaadat, helyi toolchain, TeX Live runtime, cache, appbundle, sessiondescriptor és credential nem verziózott. Az evidence alatt csak a külön felsorolt három auditsegéd és hat nyilvános compiler-eredetellenőrzési fájl kivétel. A helyi felhasználói alkalmazást ez a feladat nem indítja újra. A 2026-10-31-es privát behozatal történeti állapot; a 2026-11-03-i nyilvános source-available közzététel aktuális licencét és hozzáférési szerződését a root LICENSE/LICENSING.md és a repository-útmutató írja le. A nyilvánosság nem ad upstream írási jogot.

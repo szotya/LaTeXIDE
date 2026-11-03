@@ -65,7 +65,10 @@ def render() -> dict[Path, str]:
         for i, focus in enumerate(p["review_focus"], 1):
             body += f"- R{i}: {focus}\n"
         body += "\n---\n\n## Tulajdon és indulás\n\n"
-        body += f"**Branch:** `feature/{p['id'].lower()}-{p['slug']}`. **Profil:** {p['tier']}.\n\n"
+        branch = p.get("branch", f"feature/{p['id'].lower()}-{p['slug']}")
+        body += f"**Branch:** `{branch}`. **Profil:** {p['tier']}.\n\n"
+        if p.get("platform_guide"):
+            body += f"**Platformbelépés és Mac-referencia:** [közzétett kezdőág, módosítási határok és paritás]({p['platform_guide']}). A teljes saját natív fára az itt generált, friss owned_paths érvényes; a szolgáltatás és natív teszt továbbra külön megvalósítandó.\n\n"
         body += "**Kizárólagosan létrehozható/módosítható útvonalak:**\n\n" + "".join(f"- `{path}`\n" for path in p["owned_paths"])
         if p.get("integration_only_paths"):
             body += "\n**P00 kizárólagos közös bekötési útvonalai** (csak fogadott manifest és regresszió mellett; a többi csomagnak olvasható):\n\n" + "".join(f"- `{path}`\n" for path in p["integration_only_paths"])
@@ -124,6 +127,7 @@ def render() -> dict[Path, str]:
     overview = "# Párhuzamos fejlesztési csomagok\n\n"
     overview += f"**24 fő csomag + 20 választható technológiai csomag; mind a {len(backlog)} auditkövetelménynek pontosan egy elsődleges gazdája van.** Minden termékfejlesztési csomag planned; a jelen munka a terveket és a GitHub-fejlesztési alapot készíti el.\n\n"
     overview += "[Közös szerződés és integráció](../superpowers/specs/2026-10-31-parallel-development-design.md) · [Állapotfrissítés](BASELINE_DELTA.md) · [Gépi csomagjegyzék](packages.json) · [226 soros kiosztás](requirement-map.csv) · [Repo/onboarding](REPOSITORY.md) · [44 GitHub-issue](github-issues.json)\n\n"
+    overview += "[Windows/Linux platformbelépő és közzétett kezdőágak](PLATFORM_DEVELOPMENT.md) · [Mac által vezetett paritásmátrix](PLATFORM_PARITY.md). P21 a teljes Windows, P22 a teljes Linux natív fát birtokolja; közös runtime/CI és központi guidance P00-integráció. A fejlesztői előkészítés nem natív platformelfogadás.\n\n"
     overview += "## Párhuzamos indítás\n\n1. P00 rögzíti a contract-v1 DTO-kat, fixture-öket és a modulok bekötési helyeit. Közben P19 tesztkorpusz, P21 Windows környezet és P23 méréstervezés már indulhat.\n2. Az első elkészült contract-szelet után egyszerre indítható P01/P02/P03/P04/P05/P08/P09/P10/P12/P14/P18; izolált tesztekhez egymás szolgáltatásait fake port helyettesíti. A többi fő csomag ugyanígy indulhat a saját v1 szerződése után; nincs kötelező teljes csomagsorrend.\n3. Bekötéskor követelményenként érvényesek az eredeti függőségek. Az adapterek és a szolgáltatók egymástól független fejlesztése nem jelent provider nélküli készterméket.\n4. P20 kiadási jelöltet minősít. P21 Windows natív bizonyítékot ad; P22 Linux külön döntési/portolási program. U01–U20 csak külön választás után kerül a kiadási célba.\n\n"
     overview += "A hét P0 követelmény gazdái: P01 (recovery), P09 (buildfüggőség és snapshot), P18 (compilerhatár), P19 (fault bizonyíték), P20 (kiadás), P21 (Windows). Ezt a hat szálat érdemes elsőként ellátni fejlesztővel; P00 a koordinátor. Személynapot és dátumot nem állítunk mértnek: S/M/L/XL az audit relatív becslése, kapacitás nélkül nincs hiteles naptári határidő.\n\n"
     overview += "```mermaid\nflowchart LR\n  C[\"P00: contract-v1\"] --> A[\"P01–P18: izolált szolgáltatások\"]\n  C --> N[\"P21/P22: célplatformi adapterek\"]\n  A --> I[\"Követelményenkénti integráció\"]\n  N --> I\n  Q[\"P19/P23: korpusz és mérések\"] --> I\n  I --> R[\"P20: kiadási kapuk\"]\n  A -. SDK után .-> U[\"U01–U20: választható vertikumok\"]\n```\n\nEz irányítási nézet, nem a csoportosított backlog-függőségek DAG-ja. Az egyedi követelménygráf aciklikus; csomagcsoportosítás után kölcsönös kapcsolatok természetesek.\n\n"

@@ -5,7 +5,7 @@ Olvasd az [AGENTS.md](AGENTS.md), a [handoff](docs/DEVELOPER_HANDOFF.md), a [pro
 ## Párhuzamos csomag végrehajtása
 
 1. Válassz egyet a [44 csomag](docs/development/README.md) közül; P00 v1 szerződése után saját fixture-rel indulj. Az U-csomagok külön választhatók.
-2. Külön `feature/<id>-<slug>` branch, szükség esetén saját worktree. A jelenleg futó app dirty munkáját ne dobd el és ne indítsd újra automatikusan.
+2. A csomagtervben rögzített branch, szükség esetén saját worktree. Windows/Linux induláshoz `szotya/p21-windows` / `szotya/p22-linux`, további kis feladatokhoz `szotya/p21-<feladat>` / `szotya/p22-<feladat>` az aktuális mainből; [pontos belépés és tulajdon](docs/development/PLATFORM_DEVELOPMENT.md). A jelenleg futó app dirty munkáját ne dobd el és ne indítsd újra automatikusan.
 3. Csak a saját `owned_paths` írhatók párhuzamosan. A [közös szerződés](docs/superpowers/specs/2026-10-31-parallel-development-design.md) leírja a közös fájlok P00 általi bekötését.
 4. Minden követelményhez saját reprodukáló teszt, kis implementáció, GREEN és eredménynapló. Mock és valódi provider eredménye külön szerepeljen.
 5. PR: követelmény-ID-k, contract-verzió, eredménynapló, integration-manifest és tényleges parancsok. P00 a bekötés után frissíti a handoffot, ledgert és skill-reference-et.

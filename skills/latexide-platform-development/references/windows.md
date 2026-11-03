@@ -1,6 +1,12 @@
 # Windows 11 x64 development reference
 
-Read the repository's `docs/DEVELOPER_HANDOFF.md` first for the latest actual state. The supported target is one x64 release for Intel/AMD Windows 11. Separate x86 and Windows ARM64 products were not requested. The private repository now runs shared Rust tests on GitHub's `windows-2025` runner (57 PASS in the initial import). This Windows Server execution is separate from WinUI/MSBuild/launch and Windows 11 Intel/AMD qualification, which remain unrun. Mac-side cross-checks are still not Windows execution.
+Read the repository's `docs/DEVELOPER_HANDOFF.md` first for the latest actual state. The supported target is one x64 release for Intel/AMD Windows 11. Separate x86 and Windows ARM64 products were not requested. The public repository runs shared Rust tests on GitHub's `windows-2025` runner (121 PASS in full main CI41634714704 on 2026-11-03; older counts are historical). This Windows Server execution is separate from WinUI/MSBuild/launch and Windows 11 Intel/AMD qualification, which remain unrun. Mac-side cross-checks are still not Windows execution.
+
+## Contributor branch and write scope
+
+Start from `szotya/p21-windows`, issue #22, and read [the platform policy](../../../docs/development/PLATFORM_DEVELOPMENT.md), `apps/windows/AGENTS.md` and `apps/windows/README.md`. P21 can change the complete `apps/windows/` tree, including current MainWindow/NativeCore/XAML/project/NuGet files, `scripts/build_windows.ps1`, `tools/windows-nuget-lock.json`, `tests/windows_native/`, `tests/windows_text_adapter.cpp`, both Windows validation/UI documents and its own request/result journal. Exact paths come from generated `docs/development/packages.json` / `integration/registry/owners.v1.json`. The former blanket P00 restriction on native Windows files no longer applies.
+
+Shared runtime/ABI/session/IPC/MCP, root locks/workspace, themes, workflows and central guidance require a P21 manifest request and P00 integration. Use a short new task branch from main after the initial work; preserve other authors' work. For parity, record the exact Mac reference test/document and base commit with the actual Windows source/OS/CPU/toolchain and command outcomes. The planned native qualification script is not implemented by the folder preparation; an evidence boolean validator is not a real launch/workflow test.
 
 ## Shared core and native boundary
 

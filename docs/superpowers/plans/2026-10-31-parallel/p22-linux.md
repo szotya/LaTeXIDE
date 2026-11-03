@@ -32,15 +32,17 @@
 
 ## Tulajdon és indulás
 
-**Branch:** `feature/p22-linux`. **Profil:** core.
+**Branch:** `szotya/p22-linux`. **Profil:** core.
+
+**Platformbelépés és Mac-referencia:** [közzétett kezdőág, módosítási határok és paritás](../../../development/PLATFORM_DEVELOPMENT.md). A teljes saját natív fára az itt generált, friss owned_paths érvényes; a szolgáltatás és natív teszt továbbra külön megvalósítandó.
 
 **Kizárólagosan létrehozható/módosítható útvonalak:**
 
-- `apps/linux/platform_probe/`
-- `tests/linux_native/test_runtime_dir.py`
+- `apps/linux/`
+- `tests/linux_native/`
+- `scripts/build_linux.sh`
 - `integration/requests/P22.json`
 - `docs/development/results/P22.md`
-- `apps/linux/platform_probe/Cargo.toml`
 
 **Teszt:** `tests/linux_native/test_runtime_dir.py`. **Eredménynapló:** `docs/development/results/P22.md`.
 

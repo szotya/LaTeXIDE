@@ -1,5 +1,7 @@
 # Windows 11 x64 validation boundary
 
+2026-11-03 contributor preparation: `szotya/p21-windows`, [platform policy](development/PLATFORM_DEVELOPMENT.md), [app entrypoint](../apps/windows/README.md) and [native test scope](../tests/windows_native/README.md). P21 now owns the existing Windows native/project files and build script directly. Shared Rust/ABI/IPC/workflow changes still require P00 integration. The native acceptance below remains unrun.
+
 2026-10-30: no Windows machine or runner is available, as confirmed by the user. This is source and handoff work, **not** a Windows app release.
 
 2026-10-31 repository update: shared Rust tests now execute on GitHub's `windows-2025` runner (initial import: 57 PASS; Unix-only tests differ). This is Windows Server shared-code CI, not WinUI restore/MSBuild/link/launch, Windows 11 or Intel+AMD hardware proof. The native checks below remain required; current repository/CI scope is in [REPOSITORY.md](development/REPOSITORY.md).

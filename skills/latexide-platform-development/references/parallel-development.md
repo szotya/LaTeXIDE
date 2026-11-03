@@ -1,5 +1,13 @@
 # Parallel package execution and repository onboarding
 
+## Current platform contributor allocation
+
+For Windows/Linux onboarding, read [the Mac-led platform policy](../../../docs/development/PLATFORM_DEVELOPMENT.md) and [parity matrix](../../../docs/development/PLATFORM_PARITY.md) first. Published starting branches are `szotya/p21-windows` / `szotya/p22-linux`; later task branches start from current main and PR back to main. One active author per work branch; do not reset or force-update shared starter refs containing someone else's work.
+
+As of 2026-11-03, P21 owns the entire Windows native app tree and `scripts/build_windows.ps1`; P22 owns the entire Linux native app tree and future `scripts/build_linux.sh`. Both own their native test trees and result/request files. This replaces P21's former qualification-only and P22's probe-only allocation. The current generated owned_paths/owners registry, not older prose, supplies the complete path list. Shared Rust/FFI/session/IPC/C ABI/MCP, root locks/workspace, shared themes/workflows and central documentation/skill remain P00 integration. Path ownership is not GitHub file-level ACL or proof that a full PR diff has been checked.
+
+Mac is the accepted product/workflow reference. Each platform result records its exact Mac reference document/test and base commit, own source/OS/tools and evidence scope. Product acceptance stays planned/unrun until real target workflows pass; the preparation creates no fake native harness or provider manifest. Platform authors update their own result journals, and P00 carries accepted contract/procedure changes into handoff, ledger and skill.
+
 Read `docs/development/README.md`, `docs/development/BASELINE_DELTA.md` and `docs/superpowers/specs/2026-10-31-parallel-development-design.md`. The 44 plans live under `docs/superpowers/plans/2026-10-31-parallel/`; machine ownership is in `docs/development/packages.json`. All 226 requirements have exactly one primary package. This is a planning decomposition, not evidence that the services exist.
 
 P00 establishes the planned contracts crate and fixture gate. Other packages use separate branches and exclusive `owned_paths`; existing shared runtime, editor/store, registry, Cargo/lockfile, handoff and ledger changes are integrated by P00 from `integration/requests/<ID>.json`. Never modify another package's files concurrently. `integration_neighbors` are dependency owners, not a package DAG; acceptance follows the original acyclic requirement graph, using fake providers only for isolated development.

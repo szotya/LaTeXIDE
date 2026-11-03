@@ -4,6 +4,8 @@
 
 [Közös szerződés és integráció](../superpowers/specs/2026-10-31-parallel-development-design.md) · [Állapotfrissítés](BASELINE_DELTA.md) · [Gépi csomagjegyzék](packages.json) · [226 soros kiosztás](requirement-map.csv) · [Repo/onboarding](REPOSITORY.md) · [44 GitHub-issue](github-issues.json)
 
+[Windows/Linux platformbelépő és közzétett kezdőágak](PLATFORM_DEVELOPMENT.md) · [Mac által vezetett paritásmátrix](PLATFORM_PARITY.md). P21 a teljes Windows, P22 a teljes Linux natív fát birtokolja; közös runtime/CI és központi guidance P00-integráció. A fejlesztői előkészítés nem natív platformelfogadás.
+
 ## Párhuzamos indítás
 
 1. P00 rögzíti a contract-v1 DTO-kat, fixture-öket és a modulok bekötési helyeit. Közben P19 tesztkorpusz, P21 Windows környezet és P23 méréstervezés már indulhat.
