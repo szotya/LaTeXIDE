@@ -1,5 +1,9 @@
 # Parallel package execution and repository onboarding
 
+## Tester-facing issue reporting
+
+The Hungarian public entrypoint is `docs/TESTING.hu.md`, linked near the top of README, CONTRIBUTING and the issue chooser's `config.yml`. Keep the guide's names, field descriptions, examples and direct `?template=` URLs aligned with `.github/ISSUE_TEMPLATE/bug.yml`, `missing-function.yml` and `feature.yml`. Observed failure, absent/unclear capability and a proposed improvement are separate reporting routes; uncertain reports are accepted for maintainer triage. Package/audit codes, cause diagnosis and developer tool versions are optional for testers. Record the tested app/build and OS, mark unknown/unrun data, and do not infer target-platform acceptance from a report on another OS. Proposals are not automatically accepted or scheduled; preserve private work and use shareable samples. Keep the blank-issue fallback usable. Local YAML/schema checks prove source consistency; verify published default-branch bytes and the actual GitHub chooser separately before claiming web availability. Do not create a dummy public issue as a verification step.
+
 ## Current platform contributor allocation
 
 For Windows/Linux onboarding, read [the Mac-led platform policy](https://github.com/szotya/LaTeXIDE/blob/main/docs/development/PLATFORM_DEVELOPMENT.md) and [parity matrix](https://github.com/szotya/LaTeXIDE/blob/main/docs/development/PLATFORM_PARITY.md) first. Published starting branches are `szotya/p21-windows` / `szotya/p22-linux`; later task branches start from current main and PR back to main. One active author per work branch; do not reset or force-update shared starter refs containing someone else's work.

@@ -1,0 +1,50 @@
+name: Hiányzó funkció
+description: Szükséged lenne egy lehetőségre, de nem találod vagy nem érhető el.
+title: "[Hiányzó funkció] "
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Nem baj, ha nem tudod, hogy a funkció már elkészült-e; a fejlesztők pontosítják a besorolást.
+        Előbb keress rá a korábbi issue-k között. Az ismeretlen adathoz írd: nem ismert / nem találtam.
+        Egy tervben szereplő funkció nem feltétlenül készült már el.
+        Ez nyilvános bejelentés: jelszót, API-kulcsot és privát projektet ne csatolj.
+        [Kitöltési útmutató és példa](https://github.com/szotya/LaTeXIDE/blob/main/docs/TESTING.hu.md)
+  - type: input
+    id: platform
+    attributes:
+      label: Tesztelt verzió és gép
+      description: Appverzió vagy kapott csomag pontos fájlneve; operációs rendszer és verzió; géptípus, ha ismert. SHA nem kötelező.
+    validations:
+      required: true
+  - type: textarea
+    id: missing
+    attributes:
+      label: Hiányzó lehetőség és keresés helye
+      description: Milyen feladatot szeretnél elvégezni? Melyik menüben, panelen vagy munkafolyamatban kerested a lehetőséget?
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Kívánt működés
+      description: Mit szeretnél megtenni, és mi lenne a látható eredmény?
+    validations:
+      required: true
+  - type: textarea
+    id: basis
+    attributes:
+      label: Miért számítottál rá?
+      description: Opcionális tesztfeladat, dokumentáció, korábbi verzió, másik platform vagy saját elvárás; link is jöhet. Jelezheted, hogy az elérhetősége nem tisztázott.
+  - type: textarea
+    id: impact
+    attributes:
+      label: Hatás és jelenlegi megoldás
+      description: Milyen gyakran kellene, mit akadályoz a hiánya, és hogyan oldod meg most? Ha nincs kerülőút, azt írd.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Melléklet vagy hivatkozás
+      description: Opcionális kép arról, hol kerested, megosztható példa vagy kapcsolódó issue.
