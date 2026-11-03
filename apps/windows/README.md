@@ -16,6 +16,22 @@ Kezdőág: `szotya/p21-windows`; issue: [#22](https://github.com/szotya/LaTeXIDE
 
 Követelmény: Windows x64 VS 2022 C++ developer PowerShell, MSVC/Windows SDK, NuGet és hivatalos Rust 1.99.1 MSVC. A pontos csomagpin és TeX-feltétel a [Windows-validációban](../../docs/windows-validation.md), a [Windows-skillben](../../skills/latexide-platform-development/references/windows.md) és a [TeX Live útmutatóban](../../tools/texlive/README.md) szerepel.
 
+Ha a PowerShell futtatási házirendje blokkolja a buildscriptet, előbb ellenőrizd az effektív beállítást és a scope-okat:
+
+```powershell
+Get-ExecutionPolicy
+Get-ExecutionPolicy -List
+```
+
+Ha a helyi szabályzat megengedi az ellenőrzött checkout helyi scriptjét, az aktuális munkamenetre használható:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+Get-ExecutionPolicy
+```
+
+A Process beállítás a munkamenet végén megszűnik; a Group Policy MachinePolicy/UserPolicy szabálya felülírhatja. Ilyen tiltásnál a szervezeti eljárást kövesd. [Microsoft: execution policy és scope](https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_execution_policies?view=powershell-5.1).
+
 ```powershell
 cargo +1.99.1 test --workspace --locked
 cargo +1.99.1 check --workspace --target x86_64-pc-windows-msvc --locked

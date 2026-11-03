@@ -2,7 +2,7 @@
 
 ## Current platform contributor allocation
 
-For Windows/Linux onboarding, read [the Mac-led platform policy](../../../docs/development/PLATFORM_DEVELOPMENT.md) and [parity matrix](../../../docs/development/PLATFORM_PARITY.md) first. Published starting branches are `szotya/p21-windows` / `szotya/p22-linux`; later task branches start from current main and PR back to main. One active author per work branch; do not reset or force-update shared starter refs containing someone else's work.
+For Windows/Linux onboarding, read [the Mac-led platform policy](https://github.com/szotya/LaTeXIDE/blob/main/docs/development/PLATFORM_DEVELOPMENT.md) and [parity matrix](https://github.com/szotya/LaTeXIDE/blob/main/docs/development/PLATFORM_PARITY.md) first. Published starting branches are `szotya/p21-windows` / `szotya/p22-linux`; later task branches start from current main and PR back to main. One active author per work branch; do not reset or force-update shared starter refs containing someone else's work.
 
 As of 2026-11-03, P21 owns the entire Windows native app tree and `scripts/build_windows.ps1`; P22 owns the entire Linux native app tree and future `scripts/build_linux.sh`. Both own their native test trees and result/request files. This replaces P21's former qualification-only and P22's probe-only allocation. The current generated owned_paths/owners registry, not older prose, supplies the complete path list. Shared Rust/FFI/session/IPC/C ABI/MCP, root locks/workspace, shared themes/workflows and central documentation/skill remain P00 integration. Path ownership is not GitHub file-level ACL or proof that a full PR diff has been checked.
 

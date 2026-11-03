@@ -8,7 +8,7 @@ Start with the current handoff and the accepted Rust/native separation. A Linux 
 
 ## Contributor branch and write scope
 
-Start from `szotya/p22-linux`, issue #23, and read [the platform policy](../../../docs/development/PLATFORM_DEVELOPMENT.md), `apps/linux/AGENTS.md` and `apps/linux/README.md`. P22 owns all of `apps/linux/`, including a later selected frontend beyond `platform_probe/`, self-contained Cargo manifest/lock, `tests/linux_native/`, future `scripts/build_linux.sh` and its own request/result journal. The previous probe-only path allocation is superseded; exact paths are generated from `docs/development/package-specs.json`.
+Start from `szotya/p22-linux`, issue #23, and read [the platform policy](https://github.com/szotya/LaTeXIDE/blob/main/docs/development/PLATFORM_DEVELOPMENT.md), `apps/linux/AGENTS.md` and `apps/linux/README.md`. P22 owns all of `apps/linux/`, including a later selected frontend beyond `platform_probe/`, self-contained Cargo manifest/lock, `tests/linux_native/`, future `scripts/build_linux.sh` and its own request/result journal. The previous probe-only path allocation is superseded; exact paths are generated from `docs/development/package-specs.json`.
 
 Changes to existing shared `crates/latexide-ffi/src/session.rs` and other runtime/IPC/ABI/MCP, root workspace/locks, themes/workflows and central guidance still go through a P22 integration request and P00. The app's own isolated `[workspace]` is distinct from root registration. Bind parity to an exact Mac reference document/test and base commit. The native test/probe/build files remain future implementations; folder READMEs do not create a Linux frontend or selected toolkit. Validate actual OS ownership/mode/symlink state, not client-supplied UID/mode claims.
 
