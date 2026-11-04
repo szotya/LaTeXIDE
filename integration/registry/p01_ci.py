@@ -402,7 +402,7 @@ def normal_observation(images, discoveries, records, scratch, nonce, context, p1
         else:
             require("p18_namespace" not in record, "Unbound P18 normal namespace")
         f05 = None
-        if f05_case_ids(Path(context["cwd"]), discovered):
+        if context.get("suite") != "p01-build-only-cohorts" and f05_case_ids(Path(context["cwd"]), discovered):
             f05 = f05_observe(Path(context["cwd"]), record.get("f05_namespace"),
                 text(record["log"]["path"]), Path(scratch) / (name + "-f05"), name,
                 context, normal_command(image, discovered), image["binary"], nonce)
@@ -478,7 +478,8 @@ def discovery_observation(images, image, records, scratch, nonce, context):
         discovered += len(ids)
     require(len(exclusions) == 4 and set(exclusions) == {(image["binary"]["path"], n, n) for n in EXCLUDED},
             "Skip collision/unknown P01 exclusion")
-    f05_discovery(Path(context["cwd"]), records)
+    if context.get("suite") != "p01-build-only-cohorts":
+        f05_discovery(Path(context["cwd"]), records)
     return owned_ids, discovered
 
 

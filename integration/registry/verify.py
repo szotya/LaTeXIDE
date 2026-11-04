@@ -577,7 +577,7 @@ def main():
     report = finalize_report(ROOT, report, steps, artifact_roots=[ROOT / "target", ROOT / ".local/p00-native-build"])
     write_report(args.output, report)
     print(json.dumps({"profile": args.profile, "status": report["status"], "source_sha256": report["source_sha256"],
-                      "checks": [{"name": r["name"], "status": r["status"], "kind": r["kind"], "tests": r.get("test_summary")} for r in report["checks"]],
+                      "checks": [{"name": r["name"], "status": r["status"], "kind": r["kind"], "tests": r.get("test_summary"), "reason": r.get("reason")} for r in report["checks"]],
                       "failure_diagnostics": failure_diagnostics(report["checks"])}, ensure_ascii=True))
     return 0 if report["status"] == "passed" else 1
 

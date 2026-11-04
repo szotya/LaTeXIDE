@@ -924,3 +924,11 @@ Saját source-ci2: közvetlen planassertRED1FAIL→GREEN1PASS; egy --nocapture f
 a P01 Mac Cargo-fázisban, teljes190PythonPASS23.602s. Rust/product/F05pin/legacy
 guard/ignore/skip/budget változatlan. Új headhez új CI, nincs job-rerun vagy
 helyi Rust/helper-replay; F01–F04 tovább merge-blocker.
+
+F05 d9f0302/run41882922235: requiredFAIL, Mac190Python/312rawRustPASS,26marker.
+A régi CLI reason nélkül nem mutatja a qualifier okát; normal/parent részfázis
+állapot ismeretlen a bounded logban. Következő CLI kiírja a meglévő reason mezőt.
+Független scope-regresszió: schema2 source_root/cwd határ az új F05-hookokban,
+RED1FAIL→GREEN1PASS; kizárólag régi build-only suite kihagyja az új combined-F05
+discovery/normal elvárást, saját összes régi őre és a combined26guard megmarad.
+Teljes191PythonPASS23.994s; nincs Rust/parent/helper replay vagy budget/skip/pin módosítás.

@@ -163,3 +163,10 @@ markers even when every test passes. Bind that fixed argv in the plan and its
 regression. Preserve marker validation and the same four exclusions. A raw
 Cargo PASS without the required phase markers is failed qualification; keep
 dependent normal/parent/provider steps unrun and preserve that failed cohort.
+
+Keep the separate schema2 p01-build-only-cohorts contract scoped to its
+source_root and recovery_contract image. Its validated suite does not require
+the combined workspace's FFI IDs; retain all its own source/binary/normal/parent/
+inventory guards. The ordinary combined schema still requires all 26 F05 IDs.
+Do not infer missing phase outcomes from a raw Cargo PASS. Include the existing
+check reason in CLI diagnostics so a failed qualifier remains reviewable.

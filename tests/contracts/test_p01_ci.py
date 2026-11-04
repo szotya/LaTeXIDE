@@ -1058,6 +1058,32 @@ class F05RegistrationTests(unittest.TestCase):
         for selected,ignored in [([],[]),(names[:-1],[]),(names+names[:1],[]),(names,names[:1])]:
             with self.assertRaises(ValueError):a.f05_discovery(root,write(selected,ignored))
 
+
+    def test_f05_registration_preserves_separate_build_only_discovery_and_normal_scope(self):
+        m=Model(self);proof=m.capture();a=m.a
+        pins={}
+        for name in a.F05_PATHS:
+            p=m.root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes((ROOT/name).read_bytes())
+            row=a.binding(p);pins[name]={k:row[k] for k in ('sha256','bytes','mode')}
+        context=dict(proof['context'])
+        context['suite']='p01-build-only-cohorts';context['source_root']=context.pop('cwd')
+        scratch=Path(proof['scratch']);nonce=proof['driver_nonce'];outcomes=[]
+        with patch.object(a,'F05_SOURCE_PINS',pins):
+            for operation in ('discovery','normal'):
+                try:
+                    if operation=='discovery':
+                        a.discovery_observation(proof['images'],proof['images'][0],proof['discovery'],scratch,nonce,context)
+                    else:
+                        identities,_=a.normal_observation(proof['images'],proof['discovery'],proof['normal'],scratch,nonce,context)
+                        self.assertEqual(len(identities),1)
+                except (KeyError,ValueError) as error:
+                    outcomes.append((operation,type(error).__name__,str(error)))
+                else:outcomes.append((operation,'PASS'))
+            self.assertEqual(outcomes,[('discovery','PASS'),('normal','PASS')])
+            # The ordinary combined schema must still require all 26 F05 IDs.
+            with self.assertRaisesRegex(ValueError,'Missing/zero/duplicate/ignored F05 discovery'):
+                a.discovery_observation(proof['images'],proof['images'][0],proof['discovery'],scratch,nonce,proof['context'])
+
     def test_f05_present_source_cannot_disable_registration_or_omit_cargo_proof(self):
         a,root,context,command,binary=self.fixture()
         with patch.object(a,'F05_SOURCE_PINS',{}):
