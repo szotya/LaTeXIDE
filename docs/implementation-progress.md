@@ -915,3 +915,12 @@ Előkészítési AssertionError/API-ERROR/script-szintaxis/EPERM raw megmarad.
 Tényleges parancsok és hash-k a P01 resultban és a saját next-6ba13ed9-3c65a981 gyökérben.
 Új exact-HEAD CI/review/base/main külön kapu; négy valid Major mellett nincs merge,
 végén idle.
+
+PR68 F05 első remote cutoff: c219e02/run41881209133, required aggregateFAIL.
+Mac190PythonPASS/312rawRustPASS, 28FFIPASS, de0PR68_CASEmarker: az első Cargo-argv
+--nocapture nélkül elnyelte a successful outputot. Strict F05guardFAIL; normal/
+exact-parent és függő provider-lépések unrun. Failed raw változatlan.
+Saját source-ci2: közvetlen planassertRED1FAIL→GREEN1PASS; egy --nocapture flag
+a P01 Mac Cargo-fázisban, teljes190PythonPASS23.602s. Rust/product/F05pin/legacy
+guard/ignore/skip/budget változatlan. Új headhez új CI, nincs job-rerun vagy
+helyi Rust/helper-replay; F01–F04 tovább merge-blocker.

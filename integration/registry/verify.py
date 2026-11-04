@@ -334,7 +334,7 @@ def build_steps(root, args, platform, machine):
         if p01_ci.catalog(root) is not None:
             at = rust_step["argv"].index("--")
             rust_step["argv"].insert(at, "--message-format=json")
-            rust_step["argv"] += p01_ci.skipped_arguments()
+            rust_step["argv"] += ["--nocapture", *p01_ci.skipped_arguments()]
             proof = run_dir / "p01-parent-cohorts.json"
             rust_step["p01_cohort"] = {"proof": ref(proof)}
             rust_step["artifact_paths"] += [

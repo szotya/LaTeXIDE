@@ -582,6 +582,7 @@ class P01CiTests(unittest.TestCase):
         args=SimpleNamespace(profile='integrated',run_dir=m.logs,cargo_executable=sys.executable,offline=True,native_schema=False)
         steps=v.build_steps(m.root,args,'darwin','arm64');r=next(x for x in steps if x['name']=='rust-workspace')
         self.assertIn('--message-format=json',r['argv']);self.assertEqual(r['argv'][-8:],m.a.skipped_arguments())
+        self.assertIn('--nocapture',r['argv'][r['argv'].index('--')+1:], 'Cargo must retain successful case nonce markers for proof')
         self.assertEqual(set(r['required_artifact_kinds']),{'p18_os_probe','p01_cohort_proof','p01_rust_build_log'})
         self.assertIn('p18-compiler-pdfs',next(x for x in steps if x['name']=='runtime-build')['depends_on'])
 

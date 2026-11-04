@@ -156,3 +156,10 @@ evidence units. A non-test FFI library link proves compilation/linking, not
 Session/IPC/C caller/native execution. This Mac module does not establish a
 Windows/Linux recovery provider. Preserve historical failed sandbox cohorts;
 a newly authorized F05 cohort never upgrades earlier unrun cases.
+
+The initial qualified P01 Cargo invocation must also use --nocapture after the
+libtest separator: successful libtest cases otherwise suppress the F05 nonce
+markers even when every test passes. Bind that fixed argv in the plan and its
+regression. Preserve marker validation and the same four exclusions. A raw
+Cargo PASS without the required phase markers is failed qualification; keep
+dependent normal/parent/provider steps unrun and preserve that failed cohort.
