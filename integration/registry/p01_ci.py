@@ -163,6 +163,8 @@ def prepare_record(record, expected_argv, run_id, source_sha256, tool):
             "verification_run_id": run_id, "source_sha256": source_sha256, "tool": tool}
     if "p18_environment" in record:
         context["p18_environment"] = record["p18_environment"]
+    if "f05_namespace" in record:
+        context["f05_namespace"] = record["f05_namespace"]
     return context
 
 
@@ -399,6 +401,13 @@ def normal_observation(images, discoveries, records, scratch, nonce, context, p1
             require(same(read(Path(scratch) / (name + ".json")), record), "P18 normal execution record changed")
         else:
             require("p18_namespace" not in record, "Unbound P18 normal namespace")
+        f05 = None
+        if f05_case_ids(Path(context["cwd"]), discovered):
+            f05 = f05_observe(Path(context["cwd"]), record.get("f05_namespace"),
+                text(record["log"]["path"]), Path(scratch) / (name + "-f05"), name,
+                context, normal_command(image, discovered), image["binary"], nonce)
+        else:
+            require("f05_namespace" not in record, "Unbound F05 normal namespace")
         wanted = sorted(set(discovered) - set(EXCLUDED))
         observed = libtest_observation(command_record(record, normal_command(image, discovered), scratch), allow_empty=True)
         require(len(observed["partitions"]) == 1, "Normal image has multiple or reused partitions")
@@ -414,6 +423,8 @@ def normal_observation(images, discoveries, records, scratch, nonce, context, p1
         observations.append({"binary": image["binary"], "method_ids": wanted, "log": binding(record["log"]["path"])})
         if namespace is not None:
             observations[-1]["p18_namespace"] = namespace
+        if f05 is not None:
+            observations[-1]["f05_namespace"] = f05
     require(identities and len({(row["binary_path"], row["method_id"]) for row in identities}) == len(identities),
             "Zero or duplicate compound normal identity")
     return identities, observations
@@ -467,6 +478,7 @@ def discovery_observation(images, image, records, scratch, nonce, context):
         discovered += len(ids)
     require(len(exclusions) == 4 and set(exclusions) == {(image["binary"]["path"], n, n) for n in EXCLUDED},
             "Skip collision/unknown P01 exclusion")
+    f05_discovery(Path(context["cwd"]), records)
     return owned_ids, discovered
 
 
@@ -579,9 +591,16 @@ def parent_observation(kind, record, image, scratch, driver_nonce, discovered, c
 
 def _normal_final(proof):
     """Rebind sealed observations after other source/artifact/parent reads."""
-    for row in proof["normal_observations"]:
+    for index, row in enumerate(proof["normal_observations"]):
         require(same(row["log"], binding(row["log"]["path"])), "Late normal raw observation changed")
         require(same(row["binary"], binding(row["binary"]["path"])), "Late normal image changed")
+        if row.get("f05_namespace") is not None:
+            phase = "normal-" + str(index)
+            image = proof["images"][index]
+            discovered = parse_discovery(text(proof["discovery"][index]["all"]["log"]["path"]))
+            f05_observe(Path(proof["context"]["cwd"]), row["f05_namespace"],
+                text(row["log"]["path"]), Path(proof["scratch"]) / (phase + "-f05"),
+                phase, proof["context"], normal_command(image, discovered), image["binary"], proof["driver_nonce"])
         namespace = row.get("p18_namespace")
         if namespace:
             require(same(namespace["outputs"], _p18_outputs(namespace["environment"],
@@ -617,6 +636,7 @@ def rebuild(root, context, proof, target):
             and not (scratch / "COHORT").is_symlink()
             and _mode(scratch / "COHORT") == 0o600, "P01 nonce marker")
     require(same(proof["scratch_binding"], scratch_binding(scratch)), "P01 fixture/nonce object replaced")
+    f05_validate_cargo(root, context)
     sources = catalog(root)
     require(sources is not None and same(proof["source_before"], sources)
             and same(proof["source_after"], sources), "P01 source changed")
@@ -664,6 +684,7 @@ def rebuild(root, context, proof, target):
     require(same(context["tool"], binding(context["tool"]["path"])), "Late cohort tool changed")
     require(same(p18, _p18_inherited(context["p18_environment"], raw)),
             "Late P18 Cargo namespace/toolkit/proof changed")
+    f05_validate_cargo(root, context)
     _normal_final(proof)
     return {"parent_methods": 2, "helper_entries": 2, "child_passes": 0,
             "parent_subcases": 37, "normal_filtered_observations": 4,
@@ -678,6 +699,7 @@ def qualify(root, record, expected_argv, run_id, source_sha256, target, proof_pa
     root, proof_path = Path(root), Path(proof_path)
     context = prepare_record(record, expected_argv, run_id, source_sha256, tool)
     context["cwd"] = str(root.resolve())
+    f05_validate_cargo(root, context)
     sources = catalog(root)
     require(sources is not None, "No P01 provider to qualify")
     images, image, raw = build_images(root, context, target)
@@ -691,7 +713,7 @@ def qualify(root, record, expected_argv, run_id, source_sha256, target, proof_pa
         f.write(nonce)
     (scratch / "COHORT").chmod(0o600)
     clean = dict(env)
-    for name in OWN_ENV:
+    for name in (*OWN_ENV, *F05_ENV):
         clean.pop(name, None)
     for name in ("durable", "runtime", "tmp"):
         (scratch / name).mkdir(mode=0o700)
@@ -705,6 +727,13 @@ def qualify(root, record, expected_argv, run_id, source_sha256, target, proof_pa
         if p18 is not None and name.startswith("normal-"):
             namespace = _p18_namespace(scratch, name, bound_image, context, nonce, argv, p18, create=True)
             invocation_env.update(namespace["environment"])
+        f05_namespace = None
+        if name.startswith("normal-"):
+            ids = parse_discovery(text(discovery[int(name.removeprefix("normal-"))]["all"]["log"]["path"]))
+            if f05_case_ids(root, ids):
+                f05_namespace = f05_create(root, scratch / (name + "-f05"), name,
+                    context, argv, bound_image["binary"], nonce)
+                invocation_env.update(f05_namespace["environment"])
         result = execute(name, argv, root, scratch / (name + ".log"), timeout, env=invocation_env)
         result["requested_timeout"] = timeout
         result["argc"] = len(argv)
@@ -719,6 +748,13 @@ def qualify(root, record, expected_argv, run_id, source_sha256, target, proof_pa
             except (OSError, ValueError) as error:
                 result["p18_namespace_error"] = str(error)
             result["p18_namespace"] = namespace
+        if f05_namespace is not None:
+            try:
+                f05_namespace = f05_observe(root, f05_namespace, text(result["log"]["path"]),
+                    scratch / (name + "-f05"), name, context, argv, bound_image["binary"], nonce, capture=True)
+            except (OSError, ValueError) as error:
+                result["f05_namespace_error"] = str(error)
+            result["f05_namespace"] = f05_namespace
         with (scratch / (name + ".json")).open("x", encoding="utf-8") as f:
             json.dump(result, f, sort_keys=True, indent=2)
         return result
@@ -1218,6 +1254,158 @@ def main():
         print(json.dumps({"status": "failed", "reason": str(e)}))
         return 1
 
+
+F05_PATHS = ('crates/latexide-core/src/workspace.rs', 'crates/latexide-core/src/services/recovery/runtime_binding.rs', 'crates/latexide-core/src/services/recovery/ffi_runtime_tests.rs', 'crates/latexide-core/src/services/recovery/pr68_runtime_tests.rs')
+F05_SOURCE_PINS = {'crates/latexide-core/src/workspace.rs': {'sha256': '3d47f2a1cbcd9f52e1b7dbe8bcf4bea41e81930a1f387c735b9d4e130a9a001a', 'bytes': 22984, 'mode': 420}, 'crates/latexide-core/src/services/recovery/runtime_binding.rs': {'sha256': 'bfe9a20de5de3a8807ab36c732e153253c0e01db4af7c045772788bd4660edac', 'mode': 420, 'bytes': 28453}, 'crates/latexide-core/src/services/recovery/ffi_runtime_tests.rs': {'sha256': 'cb24a48bfdb60bec4b8f9911d209c5293ac65e001b2961d832253dc0991962b7', 'mode': 420, 'bytes': 4208}, 'crates/latexide-core/src/services/recovery/pr68_runtime_tests.rs': {'sha256': '8457258cd94cbe342349cccaf6fd2c679f661ef9dcea9a0bf911701cf6888de0', 'mode': 420, 'bytes': 38934}}
+
+
+F05_ENV = ("P00_PR68_TASK_ROOT", "P00_PR68_ROOT", "P00_PR68_NONCE")
+F05_PREFIX = "runtime::recovery_tests::pr68_review::"
+F05_CASE_IDS = tuple("r%02d" % n for n in range(1, 27))
+
+def f05_sources(root):
+    root = Path(root)
+    if not F05_SOURCE_PINS:
+        require(not any((root / p).exists() for p in F05_PATHS), "Unregistered F05 source")
+        return None
+    require(set(F05_SOURCE_PINS) == set(F05_PATHS), "Partial F05 pin contract")
+    rows = {}
+    for name, expected in F05_SOURCE_PINS.items():
+        row = binding(root / name)
+        require(same({k: row[k] for k in ("sha256", "bytes", "mode")}, expected), "Unreviewed F05 source")
+        rows[name] = row
+    return rows
+
+def f05_methods(root):
+    if f05_sources(root) is None:
+        return {}
+    source = text(Path(root) / F05_PATHS[-1])
+    names = re.findall(r"\bfn (r\d\d_[A-Za-z0-9_]+)\(", source)
+    require(len(names) == len(set(names)) == 26, "Missing/duplicate F05 source methods")
+    result = {F05_PREFIX + name: name[:3] for name in names}
+    require(set(result.values()) == set(F05_CASE_IDS), "Unknown/zero F05 source cases")
+    return result
+
+def f05_case_ids(root, methods):
+    wanted = f05_methods(root)
+    actual = [m for m in methods if m.startswith(F05_PREFIX)]
+    if not actual:
+        return []
+    require(wanted and set(actual) == set(wanted) and len(actual) == len(wanted), "Partial/unknown F05 image")
+    return sorted(wanted.values())
+
+def f05_discovery(root, records):
+    wanted = f05_methods(root)
+    actual, ignored = [], []
+    for pair in records:
+        actual.extend(n for n in parse_discovery(text(pair["all"]["log"]["path"])) if n.startswith(F05_PREFIX))
+        ignored.extend(n for n in parse_discovery(text(pair["ignored"]["log"]["path"])) if n.startswith(F05_PREFIX))
+    require(Counter(actual) == Counter(wanted.keys()) and not ignored, "Missing/zero/duplicate/ignored F05 discovery")
+
+def _f05_spec(root, phase, context, command, binary, nonce):
+    require(type(nonce) is str and re.fullmatch("[0-9a-f]{64}", nonce) is not None, "F05 nonce")
+    require(type(phase) is str and (phase == "cargo" or re.fullmatch(r"normal-\d+", phase)), "F05 phase")
+    require(type(command) is list and command and all(type(v) is str for v in command), "F05 fixed command")
+    require(re.fullmatch("[0-9a-f]{32}", context["verification_run_id"]) is not None, "F05 run identity")
+    require(re.fullmatch("[0-9a-f]{64}", context["source_sha256"]) is not None, "F05 source identity")
+    if binary is not None:
+        require(same(binary, binding(binary["path"])), "F05 image changed")
+    require(same(context["tool"], binding(context["tool"]["path"])), "F05 build tool changed")
+    return {"phase": phase, "verification_run_id": context["verification_run_id"],
+        "source_sha256": context["source_sha256"], "command": command, "binary": binary,
+        "tool": context["tool"], "nonce": nonce, "sources": f05_sources(root)}
+
+def f05_create(root, directory, phase, context, command, binary=None, nonce=None):
+    if f05_sources(root) is None:
+        return None
+    directory = Path(directory).resolve()
+    nonce = secrets.token_hex(32) if nonce is None else nonce
+    spec = _f05_spec(root, phase, context, command, binary, nonce)
+    directory.mkdir(mode=0o700)  # exclusive; never reuse an earlier phase
+    (directory / "tmp").mkdir(mode=0o700)
+    marker = directory / "NAMESPACE.json"
+    with marker.open("x", encoding="utf-8", newline="\n") as f:
+        json.dump(spec, f, sort_keys=True); f.write("\n")
+    marker.chmod(0o600)
+    return {"environment": {"P00_PR68_TASK_ROOT": str(directory),
+        "P00_PR68_ROOT": str(directory / "tmp"), "P00_PR68_NONCE": nonce},
+        "metadata": binding(marker), "spec": spec}
+
+def _f05_native_target(target):
+    if os.name == "nt":
+        prefix = chr(92) * 2 + "?" + chr(92)
+        unc = prefix + "UNC" + chr(92)
+        if target.startswith(unc):
+            target = chr(92) * 2 + target[len(unc):]
+        elif target.startswith(prefix):
+            target = target[len(prefix):]
+    path = Path(target)
+    require(path.is_absolute() and ".." not in path.parts, "F05 negative target is not absolute/bounded")
+    return path
+
+def _f05_inventory(directory):
+    directory = Path(directory)
+    require({p.name for p in directory.iterdir()} == {"NAMESPACE.json", "tmp"}, "Unknown F05 namespace entry")
+    require({p.name for p in (directory / "tmp").iterdir()} == set(F05_CASE_IDS), "Missing/unknown F05 fixture case")
+    files, directories, links, roles = {}, {}, {}, Counter()
+    for base, ds, ns in os.walk(directory, followlinks=False):
+        for name in sorted(ds + ns):
+            path = Path(base) / name; relative = path.relative_to(directory).as_posix(); s = path.lstat()
+            if stat.S_ISLNK(s.st_mode):
+                if name in ds: ds.remove(name)
+                raw_target = os.readlink(path); target = _f05_native_target(raw_target)
+                if relative == "tmp/r06/project/main.tex":
+                    require(target == directory / "tmp/r06/outside-project.tex", "F05 symlink source/target changed")
+                    role = "r06-project"
+                elif re.fullmatch(r"tmp/r18/project/\.latexide/recovery/cohort-[0-9a-f]{32}/runtime-state\.bin", relative):
+                    require(target == directory / "tmp/r18/own-outside-state.bin", "F05 state target changed")
+                    role = "r18-state"
+                else:
+                    raise ValueError("Unknown F05 fixture symlink")
+                raw = os.fsencode(raw_target)
+                links[relative] = {"target": raw_target, "sha256": hashlib.sha256(raw).hexdigest(),
+                    "bytes": len(raw), "device": s.st_dev, "inode": s.st_ino, "uid": s.st_uid,
+                    "mode": stat.S_IMODE(s.st_mode), "role": role}
+                roles[role] += 1
+            elif stat.S_ISDIR(s.st_mode):
+                directories[relative] = {"device": s.st_dev, "inode": s.st_ino, "uid": s.st_uid, "mode": _mode(path)}
+            else:
+                require(stat.S_ISREG(s.st_mode) and s.st_nlink == 1, "F05 nonregular/hardlink fixture")
+                files[relative] = binding(path)
+    require(roles == Counter({"r06-project": 1, "r18-state": 1}), "Missing/duplicate F05 negative-link fixture")
+    return {"files": files, "directories": directories, "negative_symlinks": links}
+
+def f05_observe(root, namespace, raw, directory, phase, context, command, binary=None, nonce=None, *, capture=False):
+    fields = {"environment", "metadata", "spec"} | (set() if capture else {"inventory"})
+    require(type(namespace) is dict and set(namespace) == fields, "Missing/unknown F05 namespace proof")
+    directory = Path(directory).resolve()
+    env = namespace["environment"]
+    require(type(env) is dict and set(env) == set(F05_ENV), "Missing/unknown F05 environment")
+    if nonce is None: nonce = env["P00_PR68_NONCE"]
+    require(same(env, {"P00_PR68_TASK_ROOT": str(directory), "P00_PR68_ROOT": str(directory / "tmp"),
+                      "P00_PR68_NONCE": nonce}), "F05 owner/nonce environment changed")
+    spec = _f05_spec(root, phase, context, command, binary, nonce)
+    require(spec["sources"] is not None, "Unbound F05 namespace")
+    _directory_binding(directory, True, owner=directory.parent)
+    _directory_binding(directory / "tmp", True, owner=directory)
+    marker = private_path(directory / "NAMESPACE.json", directory)
+    require(_mode(marker) == 0o600 and same(namespace["metadata"], binding(marker))
+            and same(namespace["spec"], spec) and same(read(marker), spec), "F05 phase/source/tool/binary/marker changed")
+    markers = re.findall(r"PR68_CASE\t([0-9a-f]{64})\t(r\d\d)(?=[\r\n])", raw)
+    require(Counter(markers) == Counter((nonce, case) for case in F05_CASE_IDS), "Missing/zero/foreign/duplicate F05 case nonce")
+    inventory = _f05_inventory(directory)
+    if not capture:
+        require(same(namespace["inventory"], inventory), "Late F05 fixture inventory changed")
+    return {**namespace, "inventory": inventory}
+
+def f05_validate_cargo(root, context):
+    if f05_sources(root) is None:
+        require("f05_namespace" not in context, "Unbound F05 Cargo namespace")
+        return
+    require("f05_namespace" in context, "Missing F05 Cargo namespace")
+    f05_observe(root, context["f05_namespace"], text(context["log"]["path"]),
+        Path(context["log"]["path"]).parent / ("f05-cargo-" + context["verification_run_id"]),
+        "cargo", context, context["command"])
 
 if __name__ == "__main__":
     raise SystemExit(main())

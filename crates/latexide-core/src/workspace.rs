@@ -299,7 +299,23 @@ impl Workspace {
             .to_str()
             .ok_or_else(|| CoreError::new("invalid_path", "A fájlnév nem UTF-8."))?
             .replace('\\', "/");
-        if let Some(document) = self.documents.get(&id) {
+        if let Some(document) = self.documents.get_mut(&id) {
+            // Explicit reopen may adopt a replaced file's identity, but only
+            // when its exact physical bytes still equal the saved baseline.
+            // Dirty text, revision, origin and undo/redo are never reset.
+            if let Some(recovery) = self.recovery.as_ref() {
+                if crate::document::file_identity(&path)? != document.disk_identity {
+                    recovery.verify_project_scope(&self.root)?;
+                    if let Ok((bytes, identity)) = read_saved_intent_target(&path) {
+                        if bytes == document.bytes_for(&document.saved_text)
+                            && crate::document::file_identity(&path)? == identity
+                        {
+                            recovery.verify_project_scope(&self.root)?;
+                            document.disk_identity = identity;
+                        }
+                    }
+                }
+            }
             return Ok(document.snapshot());
         }
         if self.documents.len() >= MAX_OPEN_DOCUMENTS {
@@ -439,9 +455,9 @@ impl Workspace {
         let d = self
             .documents
             .get(id)
-            .ok_or_else(|| CoreError::new("document_not_open", "Document is not open"))?;
+            .ok_or_else(|| CoreError::new("document_not_open", "A dokumentum nincs megnyitva."))?;
         if d.revision != expected_revision {
-            return Err(CoreError::new("revision_conflict", "Stale Save revision"));
+            return Err(CoreError::new("revision_conflict", "A mentés várt revíziója elavult."));
         }
         if path != d.path
             || crate::document::file_identity(&path)? != d.disk_identity
@@ -449,7 +465,7 @@ impl Workspace {
         {
             return Err(CoreError::new(
                 "external_change",
-                "Disk baseline changed; no write",
+                "A lemezbeli alapállapot megváltozott; nem történt írás.",
             ));
         }
         if d.text == d.saved_text {

@@ -478,6 +478,17 @@ pub(crate) struct RuntimeRecovery {
     _lock: File,
     observer: Box<dyn RecoveryObserver>,
 }
+fn project_id(project_root: &Path) -> Result<String> {
+    #[cfg(unix)]
+    let identity = {
+        let m = fs::metadata(project_root).map_err(io)?;
+        format!("{}:{}:{}", project_root.display(), m.dev(), m.ino())
+    };
+    #[cfg(not(unix))]
+    let identity = project_root.to_string_lossy().into_owned();
+    Ok(raw_digest(identity.as_bytes()))
+}
+
 impl RuntimeRecovery {
     pub fn open(
         project_root: &Path,
@@ -492,14 +503,7 @@ impl RuntimeRecovery {
         }
         ensure_private(&root)?;
         let lock = lock(&root)?;
-        #[cfg(unix)]
-        let identity = {
-            let m = fs::metadata(project_root).map_err(io)?;
-            format!("{}:{}:{}", project_root.display(), m.dev(), m.ino())
-        };
-        #[cfg(not(unix))]
-        let identity = project_root.to_string_lossy().into_owned();
-        let project = raw_digest(identity.as_bytes());
+        let project = project_id(project_root)?;
         let selector_path = root.join("current");
         let bytes = match fs::symlink_metadata(&selector_path) {
             Ok(_) => Some(durable::read_private(&selector_path, 8192).map_err(durable)?),
@@ -566,6 +570,12 @@ impl RuntimeRecovery {
             observer,
         };
         Ok((r, state))
+    }
+    pub(crate) fn verify_project_scope(&self, project_root: &Path) -> Result<()> {
+        if self.scope.project_id != project_id(project_root)? {
+            return Err(bad("project scope"));
+        }
+        Ok(())
     }
     pub fn status(&self) -> RecoveryStatus {
         self.status.clone()

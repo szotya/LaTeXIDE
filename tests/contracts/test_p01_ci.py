@@ -53,6 +53,9 @@ class Model:
             if k not in ('LATEXIDE_P18_PHASE2_ROOT','LATEXIDE_P18_PHASE3_ROOT',
                          'LATEXIDE_P18_TEX_PREFIX','LATEXIDE_P18_TEX_RUN')},clear=True))
         self.a=adapter or module('p01_ci');self.v=verifier
+        # Legacy inert fixtures have no F05 provider; dedicated controls below bind its real source contract.
+        test.enterContext(patch.object(self.a,'F05_SOURCE_PINS',{}))
+        if verifier:test.enterContext(patch.object(verifier.evidence.p01_ci,'F05_SOURCE_PINS',{}))
         base=fixture_parent()
         self.root=Path(tempfile.mkdtemp(prefix='synthetic-p01-',dir=base))
         self.calls=[];self.mode=None;self.extra_ids=[];self.extra_ignored=[];self.env={};self.normal_envs=[]
@@ -956,5 +959,109 @@ class CombinedIntegrationTests(unittest.TestCase):
         a,root,normals,targets=self.actual_link_fixture();(root/next(iter(targets))).unlink()
         with self.assertRaises(ValueError):a._actual_fixture_inventory(root,normals)
 
+
+
+
+class F05RegistrationTests(unittest.TestCase):
+    def fixture(self):
+        a=module('p01_ci')
+        root=Path(tempfile.mkdtemp(prefix='f05-binding-',dir=fixture_parent()))
+        modes={}
+        for name,row in a.F05_SOURCE_PINS.items():
+            p=root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes((ROOT/name).read_bytes());modes[p]=row['mode']
+        actual=a._mode
+        def fixture_mode(path):
+            p=Path(path)
+            if p in modes:return modes[p]
+            if p.is_relative_to(root):
+                if p.is_dir():return 0o700
+                if p.name=='NAMESPACE.json':return 0o600
+            return actual(p)
+        self.enterContext(patch.object(a,'_mode',side_effect=fixture_mode))
+        tool=root/'tool';tool.write_bytes(b'inert tool; never executed')
+        binary=root/'binary';binary.write_bytes(b'inert image; never executed')
+        context={'verification_run_id':'a'*32,'source_sha256':'b'*64,'tool':a.binding(tool)}
+        parent=root/'logs';parent.mkdir(mode=0o700)
+        return a,root,context,['inert-fixed-command'],a.binding(binary)
+
+    def namespace(self):
+        a,root,context,command,binary=self.fixture()
+        directory=root/'logs/normal-0-f05';nonce='c'*64
+        ns=a.f05_create(root,directory,'normal-0',context,command,binary,nonce)
+        directory=Path(ns['environment']['P00_PR68_TASK_ROOT'])
+        for number in range(1,27):
+            case=directory/'tmp'/f'r{number:02}';case.mkdir(mode=0o700)
+            (case/'project').mkdir();(case/'project/main.tex').write_bytes(b'own fixture')
+        case=directory/'tmp/r06';(case/'project/main.tex').unlink()
+        (case/'outside-project.tex').write_bytes(b'own outside-project sentinel')
+        (case/'project/main.tex').symlink_to(case/'outside-project.tex')
+        case=directory/'tmp/r18';state=case/'project/.latexide/recovery'/('cohort-'+'d'*32)
+        state.mkdir(parents=True);(case/'own-outside-state.bin').write_bytes(b'own state sentinel')
+        (state/'runtime-state.bin').symlink_to(case/'own-outside-state.bin')
+        raw=''.join('PR68_CASE\t'+nonce+'\tr%02d\n'%n for n in range(1,27))
+        captured=a.f05_observe(root,ns,raw,directory,'normal-0',context,command,binary,nonce,capture=True)
+        return a,root,context,command,binary,directory,nonce,raw,captured
+
+    def test_f05_exact_sources_and_missing_wrong_stale_remain_rejected(self):
+        a,root,context,command,binary=self.fixture()
+        self.assertEqual(set(a.f05_sources(root)),set(a.F05_SOURCE_PINS))
+        name=next(iter(a.F05_SOURCE_PINS));p=root/name;original=p.read_bytes()
+        p.write_bytes(original+b'wrong')
+        with self.assertRaises(ValueError):a.f05_sources(root)
+        p.write_bytes(original);pins=json.loads(json.dumps(a.F05_SOURCE_PINS))
+        pins[name]['sha256']='0'*64
+        with patch.object(a,'F05_SOURCE_PINS',pins):
+            with self.assertRaises(ValueError):a.f05_sources(root)
+        p.unlink()
+        with self.assertRaises((ValueError,OSError)):a.f05_sources(root)
+
+    def test_f05_namespace_rebinds_nonce_source_binary_phase_and_env(self):
+        a,root,context,command,binary,directory,nonce,raw,ns=self.namespace()
+        self.assertEqual(a.f05_observe(root,ns,raw,directory,'normal-0',context,command,binary,nonce),ns)
+        variants=[(raw.replace(nonce,'e'*64),directory,'normal-0',context,command,binary,nonce),
+                  (raw,directory,'normal-1',context,command,binary,nonce),
+                  (raw,directory,'normal-0',{**context,'source_sha256':'e'*64},command,binary,nonce),
+                  (raw,directory,'normal-0',context,command,{**binary,'sha256':'0'*64},nonce)]
+        for args in variants:
+            with self.assertRaises(ValueError):a.f05_observe(root,ns,*args)
+        bad=json.loads(json.dumps(ns));bad['environment']['foreign']='unknown'
+        with self.assertRaises(ValueError):a.f05_observe(root,bad,raw,directory,'normal-0',context,command,binary,nonce)
+
+    def test_f05_missing_zero_duplicate_unknown_case_and_late_fixture_reject(self):
+        a,root,context,command,binary,directory,nonce,raw,ns=self.namespace()
+        for changed in ('',raw.replace('r01\n','r27\n'),raw+raw.splitlines(True)[0]):
+            with self.assertRaises(ValueError):a.f05_observe(root,ns,changed,directory,'normal-0',context,command,binary,nonce)
+        bad=json.loads(json.dumps(ns));bad.pop('inventory')
+        with self.assertRaises(ValueError):a.f05_observe(root,bad,raw,directory,'normal-0',context,command,binary,nonce)
+        (directory/'tmp/r01/project/late-foreign').write_bytes(b'late')
+        with self.assertRaises(ValueError):a.f05_observe(root,ns,raw,directory,'normal-0',context,command,binary,nonce)
+
+    def test_f05_unknown_negative_link_and_tampered_marker_reject(self):
+        a,root,context,command,binary,directory,nonce,raw,ns=self.namespace()
+        (directory/'tmp/r01/unknown-link').symlink_to(directory/'tmp/r01/project/main.tex')
+        with self.assertRaises(ValueError):a.f05_observe(root,ns,raw,directory,'normal-0',context,command,binary,nonce)
+        a,root,context,command,binary,directory,nonce,raw,ns=self.namespace()
+        marker=directory/'NAMESPACE.json';marker.write_bytes(marker.read_bytes()+b' ')
+        with self.assertRaises(ValueError):a.f05_observe(root,ns,raw,directory,'normal-0',context,command,binary,nonce)
+
+
+    def test_f05_discovery_rejects_missing_partial_duplicate_or_ignored_roles(self):
+        a,root,context,command,binary=self.fixture()
+        names=sorted(a.f05_methods(root))
+        all_log=root/'all.log';ignored_log=root/'ignored.log'
+        def write(selected,ignored):
+            all_log.write_text(''.join(n+': test\n' for n in selected))
+            ignored_log.write_text(''.join(n+': test\n' for n in ignored))
+            return [{'all':{'log':{'path':str(all_log)}},'ignored':{'log':{'path':str(ignored_log)}}}]
+        a.f05_discovery(root,write(names,[]))
+        for selected,ignored in [([],[]),(names[:-1],[]),(names+names[:1],[]),(names,names[:1])]:
+            with self.assertRaises(ValueError):a.f05_discovery(root,write(selected,ignored))
+
+    def test_f05_present_source_cannot_disable_registration_or_omit_cargo_proof(self):
+        a,root,context,command,binary=self.fixture()
+        with patch.object(a,'F05_SOURCE_PINS',{}):
+            with self.assertRaises(ValueError):a.f05_sources(root)
+        with self.assertRaisesRegex(ValueError,'Missing F05 Cargo namespace'):
+            a.f05_validate_cargo(root,context)
 
 if __name__=='__main__':unittest.main()

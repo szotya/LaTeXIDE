@@ -886,3 +886,32 @@ Csak a RUNTIME spacing és saját evidence docs/skill publikálható; új exact-
 
 
 C17 pin-companion folytatás: explicit kiegészítés után csak a durable_tests.rs SOURCE_PINS sor három értéke frissült 12d99f12/31208/420-ra, a másik két pin és minden sentinel/parent/child/budget/guard logika byte/AST szerint változatlan. Külön pin-red-source: 1 Python teszt / 1 FAIL; pin-green-source: ugyanaz az 1 teszt PASS, négy final/wrong/missing/stale fixture-variánssal. A permission modell kizárólag a privát unit-fixture-ra hat, production catalog nincs mockolva. A publisherbe most a két helper-javítás, spacing, pin és közvetlen regresszió együtt importált, friss source-admission sikeres. Az első sandboxos discovery -6/0 eset és a négy unrun kontroll megmarad; nincs új Rust/Cargo/full-suite replay vagy native/runtime elfogadási állítás. P00 patch továbbra not_applied/P03+READY hiányos; új exact-HEAD CI/review külön, merge NOTATTEMPTED, next idle.
+
+### 2026-11-04 – PR68 reviewed F05 READY integráció
+
+A 6ba13ed9 packet 482 source / 5787 evidence file hash/size/mode ellenőrzött;
+kizárólag négy reviewed F05-path a friss 56cdbe1 publisherre.
+Identical saved physical byte + same project scope + repeated nofollow identity:
+explicit OpenDocument tartós rebind, dirty/revision/origin/undo megmarad.
+Három engedélyezett Save-hiba magyar, codes/Reply/Save-authority változatlan.
+F01–F04 not_fixed; nincs full issue READY vagy merge-approval.
+
+A 23 eredeti assert megmaradt; CI-fixture exkluzív r01–r26 root/joinolt 9 s watchdog/
+bounded tesztlog. Külön F05 source-pin és verify.py pre-Cargo/normal namespace:
+source/run/tool/binary/argv/nonce, 26 pontos nem ignored ID, saját literal
+negatív link és late inventory rebind kötelező. Legacy3pins/négy kizárás/
+330–60 s parent/10 s normal-discovery budget változatlan, c17helper12d99f12 megőrzött.
+A verify.py companion szükséges: enélkül a kötelező root/nonce nem jutna a Cargóhoz.
+
+Saját source-red/green/target/cache/log, existing Rust1.99.1/offline/locked/jobs1.
+190 Python-model PASS; végső pin 6 célzott PASS. Sandbox deny+own write PASS.
+Cargo test --lib --no-run exit0 RED19.605s/GREEN24.552s, compiler/dep-info/link/binary
+rögzített. Lokalizáció RED1FAIL → GREENr24PASS; összes16exactPASS; átfedő
+normalFFI28PASS/0ignored3.877s, 26F05marker/2link/coldrebindPASS.
+cargo build --lib nem teszt .a/.dylib/.rlib exit0/2.264s.
+Nem Session/Ccaller/IPC/GUI/Windows/Linux/production acceptance.
+Producer104/P03 118 külön történeti kohort; c17SIGABRT0case4unrun változatlan.
+Előkészítési AssertionError/API-ERROR/script-szintaxis/EPERM raw megmarad.
+Tényleges parancsok és hash-k a P01 resultban és a saját next-6ba13ed9-3c65a981 gyökérben.
+Új exact-HEAD CI/review/base/main külön kapu; négy valid Major mellett nincs merge,
+végén idle.

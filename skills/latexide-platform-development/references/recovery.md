@@ -127,3 +127,32 @@ Bind the final source bytes to a narrow regression: accept those bytes, reject
 wrong/missing/stale input. A fixture permission model is unit evidence; it
 does not replace actual host/provider mode checks or turn a failed sandbox
 discovery into a runtime PASS.
+
+## Explicit reopen after saved-file replacement
+
+Explicit OpenDocument may rebind an already open document's physical identity
+only after confirming the same project scope, nofollow physical bytes equal to
+the saved baseline, and a repeated identity/scope check. Persist that candidate
+before success; preserve buffer text, revision, origin and both history stacks.
+A changed payload, symlink or replaced project root does not gain Save authority.
+Keep localized user messages separate from error codes and mutation policy.
+PR68 F05 does not settle project-move, full-snapshot latency, unknown-entry
+or mandatory-recovery policy findings.
+
+The Mac-only sessionless F05 tests require caller-owned P00_PR68_TASK_ROOT,
+P00_PR68_ROOT and P00_PR68_NONCE. Use exclusive per-case r01–r26 directories and
+a scoped watchdog that joins on return/unwind. Preserve original assertions.
+Large Reply logging may use a test-only digest; actual Reply stays unchanged.
+The verifier creates a fresh namespace before Cargo and the relevant normal
+image, separately from legacy scratch, binds exact source/run/tool/binary/argv/
+nonce, requires all 26 nonignored IDs and raw case markers, and rechecks a
+nofollow fixture inventory. Only two literal owned negative-link roles are
+accepted; compare target bytes/components without following them. Missing,
+partial, zero, duplicate, stale or late-mutated evidence fails closed.
+Keep legacy pins/exclusions and parent/child/discovery/normal budgets unchanged.
+
+An exact local subset and an overlapping complete normal image are separate
+evidence units. A non-test FFI library link proves compilation/linking, not
+Session/IPC/C caller/native execution. This Mac module does not establish a
+Windows/Linux recovery provider. Preserve historical failed sandbox cohorts;
+a newly authorized F05 cohort never upgrades earlier unrun cases.

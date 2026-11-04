@@ -153,12 +153,18 @@ def run_checks(root, source_paths, steps, log_dir, timeout, artifact_roots=()):
             env["P00_VERIFICATION_RUN_ID"] = run_id
             p01_tool = None
             p01_tool_error = None
+            f05_namespace = None
             if step.get("p01_cohort") or step.get("summary_format") == "rust":
                 executable = shutil.which(step["argv"][0], path=env.get("PATH"))
                 try:
                     if executable is None:
                         raise ValueError("Missing P01 parent build tool")
                     p01_tool = p01_ci.binding(Path(executable).resolve(strict=True))
+                    if step.get("p01_cohort"):
+                        f05_namespace = p01_ci.f05_create(root,
+                            Path(log_dir) / ("f05-cargo-" + run_id), "cargo",
+                            {"verification_run_id": run_id, "source_sha256": before["sha256"], "tool": p01_tool},
+                            step["argv"])
                 except (OSError, ValueError) as error:
                     p01_tool_error = str(error)
             if p01_tool_error:
@@ -166,6 +172,8 @@ def run_checks(root, source_paths, steps, log_dir, timeout, artifact_roots=()):
                           "exit_code": None, "timed_out": False, "reason": p01_tool_error,
                           "artifact_sha256": None}
             else:
+                if f05_namespace is not None:
+                    env.update(f05_namespace["environment"])
                 p01_p18_environment = {key: env[key] for key in p01_ci.P18_ENV if key in env}
                 record = execute_step(step["name"], step["argv"], root, Path(log_dir) / f"{sequence:02}-{step['name']}.log", timeout, env=env)
                 if step.get("summary_format") == "rust":
@@ -174,6 +182,11 @@ def run_checks(root, source_paths, steps, log_dir, timeout, artifact_roots=()):
                     record["p18_environment"] = p01_p18_environment
             if record["status"] == "passed":
                 try:
+                    if f05_namespace is not None:
+                        record["f05_namespace"] = p01_ci.f05_observe(root, f05_namespace,
+                            p01_ci.text(record["log"]["path"]), Path(log_dir) / ("f05-cargo-" + run_id),
+                            "cargo", {"verification_run_id": run_id, "source_sha256": before["sha256"], "tool": p01_tool},
+                            step["argv"], capture=True)
                     if step.get("p01_cohort"):
                         spec = step["p01_cohort"]
                         p01_ci.qualify(root, record, step["argv"], run_id, before["sha256"],
