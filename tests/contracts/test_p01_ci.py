@@ -289,7 +289,7 @@ class F05Model(Model):
             raw+='#'+('x'*self.padding)+'\n'
             Path(log).write_text(raw,encoding='utf-8',newline='\n')
             row['log']['sha256']=hashlib.sha256(Path(log).read_bytes()).hexdigest();return row
-        if argv[0]!=str(self.ffi_binary):
+        if Path(argv[0]).resolve(strict=True)!=self.ffi_binary.resolve(strict=True):
             return super().execute(name,argv,cwd,log,timeout,env)
         self.calls.append((name,list(argv),timeout))
         if name.startswith('discovery'):
@@ -1162,8 +1162,17 @@ class F05RegistrationTests(unittest.TestCase):
                 a.discovery_observation(proof['images'],proof['images'][0],proof['discovery'],scratch,nonce,proof['context'])
 
 
+
+    def aliased_f05_model(self,verifier=None):
+        actual=Path(tempfile.mkdtemp(prefix='f05-real-parent-',dir=fixture_parent())).resolve()
+        alias=actual.with_name(actual.name+'-alias');alias.symlink_to(actual,target_is_directory=True)
+        with patch.dict(os.environ,{'P01_CI_TEST_FIXTURE':str(alias)}):
+            m=F05Model(self,verifier.p01_ci if verifier else None,verifier,padding=1024*1024+64)
+        self.assertNotEqual(str(m.ffi_binary),str(m.ffi_binary.resolve()),'Alias control must exercise distinct lexical/canonical paths')
+        return m
+
     def test_f05_model_qualify_validate_uses_existing_cargo_log_bound(self):
-        m=F05Model(self,padding=1024*1024+64);proof=m.capture();q=m.validate()
+        m=self.aliased_f05_model();proof=m.capture();q=m.validate()
         self.assertEqual((q['normal_methods'],q['parent_methods']),(27,2))
         self.assertTrue(proof['context']['f05_namespace']['inventory'])
         f05=[r for r in proof['normal_observations'] if r.get('f05_namespace')]
@@ -1174,7 +1183,7 @@ class F05RegistrationTests(unittest.TestCase):
         with self.assertRaises(ValueError):m.validate(bad)
 
     def test_f05_model_run_checks_and_cold_validation_use_existing_cargo_log_bound(self):
-        v=module('verify');m=F05Model(self,v.p01_ci,v,padding=1024*1024+64)
+        v=module('verify');m=self.aliased_f05_model(v)
         report,steps=m.driver_report()
         self.assertEqual(report['status'],'passed',report['checks'][0].get('reason'))
         self.assertEqual(report['checks'][0]['test_summary']['passed'],29)

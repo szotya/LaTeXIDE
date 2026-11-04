@@ -942,3 +942,11 @@ RED2FAIL1ERROR→GREEN3PASS, teljes193PythonPASS24.888s. Nem actualRust/child/Ru
 P01 current pointer frissült. Silent-skip Minor4471356078 a hard26case/no-skip
 szerződés miatt nem alkalmazott; commit-wide projectscope Minor4471356092
 új reviewed P00 scope, not_fixed. F01–F04 open; új exact-HEAD CI külön.
+
+F05 CI4/3189530/run41886989079: Mac191/193PythonPASS1FAIL1ERROR, Rustunrun.
+Új F05-model lexical/canonical binary string eltérés system alias fölött,
+változatlan exclusionguard helyesFAIL. Saját parent-alias RED1FAIL1ERROR→GREEN2PASS,
+egyetlen model-only canonical összehasonlítás; teljes193PythonPASS28.145s.
+Mindkét teljes F05-model most mindig valódi alias alatt. Production verifier/
+Rust/P18/pin/guard/deadline változatlan. Failed raw megőrzött, új head sajátCI,
+nem job-rerun. CodeRabbit auto-pause után ugyanazonPR resume, settings/bypass nincs.

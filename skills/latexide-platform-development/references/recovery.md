@@ -182,3 +182,9 @@ Mandatory harness variables are fail-closed prerequisites; never replace
 missing context with silent zero-work PASS. General commit-time project-root
 protection requires its own reviewed product contract; the explicit reopen
 check does not prove every mutation path or a hard replacement-race boundary.
+
+In inert multi-image models compare the configured own image and captured argv
+using canonical path identity. A system or fixture-parent alias above the
+explicit owner may change their lexical spelling. Require a positive own alias
+control so real and model dispatch choose the same image; do not relax the
+production exclusion, owner-symlink or containment guards to hide this mismatch.
