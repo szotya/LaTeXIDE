@@ -2,6 +2,7 @@
 import importlib.util
 import io
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -9,7 +10,7 @@ import tempfile
 from types import SimpleNamespace
 import unittest
 from unittest.mock import patch
-from contextlib import redirect_stdout
+from contextlib import redirect_stdout, contextmanager
 
 ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location("p00_integrated_verify", ROOT / "integration/registry/verify.py")
@@ -18,6 +19,32 @@ verify = importlib.util.module_from_spec(spec); spec.loader.exec_module(verify)
 
 class IntegratedVerificationContract(unittest.TestCase):
     def script(self, body, *args): return [sys.executable, "-c", body, *args]
+
+    @contextmanager
+    def darwin_plan_fixture(self, args):
+        """Inert planning source with observed host modes, never provider evidence."""
+        base = Path(os.environ.get("P01_CI_TEST_FIXTURE", ROOT / ".local/p01-ci-python-fixtures"))
+        base.mkdir(mode=0o700, parents=True, exist_ok=True)
+        root = Path(tempfile.mkdtemp(prefix="darwin-plan-", dir=base))
+        pins = {}
+        for name in verify.p01_ci.SOURCE_PINS:
+            path = root / name; path.parent.mkdir(parents=True, exist_ok=True)
+            path.write_bytes(b"SYNTHETIC PLANNING INPUT, NOT RUST: " + name.encode())
+            row = verify.p01_ci.binding(path)
+            pins[name] = {key: row[key] for key in ("sha256", "bytes", "mode")}
+        fields = vars(args).copy(); fields["run_dir"] = root / ".local/fixture-run"
+        with patch.object(verify.p01_ci, "SOURCE_PINS", pins):
+            yield root, SimpleNamespace(**fields)
+
+    def test_darwin_plan_fixture_binds_host_modes_and_rejects_changed_source(self):
+        args = SimpleNamespace(profile="integrated", cargo_executable=None, offline=True, native_schema=False)
+        original = json.dumps(verify.p01_ci.SOURCE_PINS, sort_keys=True)
+        with patch.object(verify.p01_ci, "_mode", return_value=0o666), self.darwin_plan_fixture(args) as (root, selected):
+            self.assertTrue(verify.build_steps(root, selected, "darwin", "arm64"))
+            path = root / next(iter(verify.p01_ci.SOURCE_PINS)); path.write_bytes(b"changed")
+            with self.assertRaisesRegex(ValueError, "Unreviewed P01"):
+                verify.build_steps(root, selected, "darwin", "arm64")
+        self.assertEqual(json.dumps(verify.p01_ci.SOURCE_PINS, sort_keys=True), original)
 
     def probes(self):
         path = ROOT / "integration/registry/probes.py"
@@ -50,7 +77,8 @@ class IntegratedVerificationContract(unittest.TestCase):
     def test_native_resource_is_mandatory_in_the_builder_and_profile(self):
         module = self.probes()
         args = SimpleNamespace(profile="integrated", cargo_executable=None, offline=True, native_schema=False, run_dir=ROOT / ".local/fixture-run")
-        step = next(s for s in verify.build_steps(ROOT, args, "darwin", "arm64") if s["name"] == "native-build")
+        with self.darwin_plan_fixture(args) as (root, selected):
+            step = next(s for s in verify.build_steps(root, selected, "darwin", "arm64") if s["name"] == "native-build")
         with self.subTest(boundary="profile"):
             self.assertIn("native_theme_resource", step["required_artifact_kinds"])
         with self.subTest(boundary="builder"), tempfile.TemporaryDirectory() as d:
@@ -149,7 +177,8 @@ class IntegratedVerificationContract(unittest.TestCase):
     def test_integrated_profile_requires_real_providers_and_marks_other_hosts_unrun(self):
         self.assertTrue(callable(getattr(verify, "build_steps", None)), "Integrated provider profile is missing")
         args = SimpleNamespace(profile="integrated", cargo_executable=None, offline=True, native_schema=False, run_dir=ROOT / ".local/fixture-run")
-        mac = {s["name"]: s for s in verify.build_steps(ROOT, args, "darwin", "arm64")}
+        with self.darwin_plan_fixture(args) as (root, selected):
+            mac = {s["name"]: s for s in verify.build_steps(root, selected, "darwin", "arm64")}
         for name in ["runtime-build", "ipc-roundtrip", "mcp-roundtrip", "native-build", "native-controls"]:
             self.assertTrue(mac[name]["argv"])
         self.assertIn("runtime-build", mac["mcp-roundtrip"]["consumes_artifacts"])

@@ -153,7 +153,7 @@ def run_checks(root, source_paths, steps, log_dir, timeout, artifact_roots=()):
             env["P00_VERIFICATION_RUN_ID"] = run_id
             p01_tool = None
             p01_tool_error = None
-            if step.get("p01_cohort"):
+            if step.get("p01_cohort") or step.get("summary_format") == "rust":
                 executable = shutil.which(step["argv"][0], path=env.get("PATH"))
                 try:
                     if executable is None:
@@ -168,6 +168,8 @@ def run_checks(root, source_paths, steps, log_dir, timeout, artifact_roots=()):
             else:
                 p01_p18_environment = {key: env[key] for key in p01_ci.P18_ENV if key in env}
                 record = execute_step(step["name"], step["argv"], root, Path(log_dir) / f"{sequence:02}-{step['name']}.log", timeout, env=env)
+                if step.get("summary_format") == "rust":
+                    record["rust_build_tool"] = p01_tool
                 if step.get("p01_cohort"):
                     record["p18_environment"] = p01_p18_environment
             if record["status"] == "passed":
@@ -413,7 +415,7 @@ def repository_identity(root):
     except (OSError, subprocess.SubprocessError): return {"head": None, "dirty": None}
 
 
-def recheck_report(path):
+def recheck_report(path, *, cargo_executable=None, offline=False):
     try:
         report = evidence.read_json(path)
         current = source_identity(ROOT, lambda: discover_sources(ROOT))
@@ -430,8 +432,26 @@ def recheck_report(path):
         relative = report["run_directory"]
         if not isinstance(relative, str) or "\\" in relative or Path(relative).is_absolute() or ".." in Path(relative).parts or not relative.startswith(".local/"):
             raise ValueError("Invalid run directory")
-        args = argparse.Namespace(profile=report["profile"], native_schema=selection["native_schema"], cargo_executable=None, offline=False, run_dir=ROOT / relative)
+        if type(offline) is not bool or (cargo_executable is not None and
+                (type(cargo_executable) is not str or not cargo_executable)):
+            raise ValueError("Invalid caller-selected Cargo/offline configuration")
+        # Selection comes from the trusted caller, never a stored argv. Recheck
+        # only reconstructs fixed checks and reads their original observations.
+        args = argparse.Namespace(profile=report["profile"], native_schema=selection["native_schema"],
+                                  cargo_executable=cargo_executable, offline=offline, run_dir=ROOT / relative)
         steps = build_steps(ROOT, args, selection["platform"], selection["machine"])
+        if len(steps) != len(report["checks"]):
+            raise ValueError("Stored check selection changed")
+        for step, row in zip(steps, report["checks"]):
+            if step.get("argv") is None:
+                continue
+            if not p01_ci.same(row.get("command"), step["argv"]):
+                raise ValueError("Recheck requires the original caller-selected command/tool/offline configuration")
+            if step.get("summary_format") == "rust":
+                executable = shutil.which(step["argv"][0])
+                if executable is None or not p01_ci.same(row.get("rust_build_tool"),
+                        p01_ci.binding(Path(executable).resolve(strict=True))):
+                    raise ValueError("Original Rust build tool is missing or changed")
         updated = finalize_report(ROOT, report, steps, artifact_roots=[ROOT / "target", ROOT / ".local/p00-native-build"])
         return {**updated["evidence_validation"], "capability_inventory": updated.get("capability_inventory", {}),
                 "p00_readiness": updated.get("p00_readiness", {})}
@@ -516,7 +536,7 @@ def main():
     args = parser.parse_args()
     if not math.isfinite(args.timeout) or args.timeout <= 0: parser.error("timeout must be finite and positive")
     if args.recheck_report:
-        result = recheck_report(args.recheck_report)
+        result = recheck_report(args.recheck_report, cargo_executable=args.cargo_executable, offline=args.offline)
         # JSON stdout stays UTF-8-compatible even on redirected Windows cp1252.
         print(json.dumps(result, ensure_ascii=True))
         return 0 if result["status"] == "current" else 1

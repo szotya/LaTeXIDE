@@ -1,6 +1,7 @@
 """Synthetic stdlib controls; no Rust/real parent-child qualification is run."""
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 import importlib.util
+import io
 import hashlib
 import json
 import os
@@ -80,10 +81,10 @@ class Model:
             actual_mode=self.a._mode
             def model_mode(path):
                 p=Path(path)
-                if p.is_relative_to(self.root):
+                if p.resolve(strict=False).is_relative_to(self.root.resolve()):
                     if p.is_dir():return 0o700
                     if p.name in ('COHORT','NAMESPACE.json'):return 0o600
-                    if p==self.binary:return 0o700
+                    if p.resolve(strict=False)==self.binary.resolve():return 0o700
                 return actual_mode(p)
             test.enterContext(patch.object(self.a,'_mode',side_effect=model_mode))
             if verifier:test.enterContext(patch.object(verifier.evidence.p01_ci,'_mode',side_effect=model_mode))
@@ -188,7 +189,7 @@ class Model:
         # Inert tool bytes and PDF placeholders exercise bindings only.
         prefix=self.root/'toolkit/texlive';prefix.mkdir(parents=True)
         (prefix/'inert-tool').write_bytes(b'synthetic toolkit; never executed')
-        receipt={'schema':1,'prefix':str(prefix),'toolchain':module('p18_ci').toolchain_state(prefix)}
+        receipt={'schema':1,'prefix':str(prefix.resolve()),'toolchain':module('p18_ci').toolchain_state(prefix)}
         (prefix.parent/'provision.json').write_text(json.dumps(receipt))
         self.env={'LATEXIDE_P18_TEX_PREFIX':str(prefix),'LATEXIDE_P18_TEX_RUN':'cargo-model'}
         for phase in (2,3):
@@ -363,6 +364,104 @@ class P01NamespaceTests(unittest.TestCase):
         (Path(output['directories'][0]['path'])/'late-proof').write_bytes(b'late foreign evidence')
         with self.assertRaisesRegex(ValueError,'Late P18 output inventory changed'):m.a._normal_final(p)
 
+class ScopedCIRegressionTests(unittest.TestCase):
+    def test_public_recheck_requires_original_offline_tool_and_never_executes(self):
+        v=module('verify');m=Model(self,v.p01_ci,v)
+        m.argv.insert(m.argv.index('--locked')+1,'--offline')
+        for name in ('Cargo.toml','Cargo.lock','rust-toolchain.toml'):
+            (m.root/name).write_bytes(b'synthetic source identity only; no Cargo execution')
+        steps=[m.rust_step()]
+        with patch.object(v,'execute_step',side_effect=m.execute):
+            report=v.run_checks(m.root,lambda:v.discover_sources(m.root),steps,m.logs,10)
+        self.assertEqual(report['status'],'passed')
+        report.update(profile='shared',selection={'platform':sys.platform,'machine':v.host_platform.machine(),'native_schema':False},run_directory='.local/run')
+        path=m.logs/'report.json';path.write_text(json.dumps(report));original=path.read_bytes();calls=len(m.calls)
+        def trusted_plan(root,args,platform,machine):
+            selected=json.loads(json.dumps(steps));argv=selected[0]['argv']
+            argv[0]=args.cargo_executable or 'cargo'
+            argv[:]=[value for value in argv if value!='--offline']
+            if args.offline:argv.insert(argv.index('--locked')+1,'--offline')
+            return selected
+        def cli(extra):
+            with patch.object(sys,'argv',['verify.py','--recheck-report',str(path),*extra]),patch('sys.stdout',new_callable=io.StringIO) as output:
+                code=v.main();return code,json.loads(output.getvalue())
+        with patch.object(v,'ROOT',m.root),patch.object(v,'build_steps',side_effect=trusted_plan), \
+             patch.object(v.readiness,'capability_inventory',return_value={}),patch.object(v.readiness,'p00_readiness',return_value={}), \
+             patch.object(v,'execute_step',side_effect=AssertionError('read-only recheck must not execute')):
+            extra=['--offline','--cargo-executable',m.tool['path']]
+            code,result=cli(extra);self.assertEqual(code,0,result);self.assertEqual(result['status'],'current')
+            self.assertNotEqual(cli(['--cargo-executable',m.tool['path']])[0],0)
+            self.assertNotEqual(cli(['--offline','--cargo-executable',str(m.root/'foreign-cargo')])[0],0)
+            changed=json.loads(original);changed['checks'][0]['command']=[sys.executable,'-c','raise SystemExit(0)'];path.write_text(json.dumps(changed))
+            self.assertNotEqual(cli(extra)[0],0);path.write_bytes(original)
+            changed=json.loads(original);changed['checks'][0]['rust_build_tool']['sha256']='0'*64;path.write_text(json.dumps(changed))
+            self.assertNotEqual(cli(extra)[0],0);path.write_bytes(original)
+            source=m.root/next(iter(m.source_pins));source.write_bytes(source.read_bytes()+b'changed')
+            self.assertEqual(cli(extra)[1]['status'],'stale_source')
+        self.assertEqual(path.read_bytes(),original);self.assertEqual(len(m.calls),calls)
+
+    def test_owner_alias_above_root_does_not_allow_links_below_root(self):
+        a=module('p01_ci')
+        with retained_directory(prefix='owner-alias-') as d:
+            base=Path(d);real=base/'real';real.mkdir();owner=real/'owner';owner.mkdir(mode=0o700)
+            (owner/'data').write_bytes(b'bound bytes');alias=base/'system-alias';alias.symlink_to(real,target_is_directory=True)
+            lexical=alias/'owner'
+            self.assertEqual(a.private_path(lexical/'data',lexical),lexical/'data')
+            (owner/'link').symlink_to(owner/'data')
+            with self.assertRaises(ValueError):a.private_path(lexical/'link',lexical)
+            with self.assertRaises(ValueError):a.private_path(owner/'data',lexical)
+
+    def test_full_namespace_with_system_alias_above_declared_owner(self):
+        with retained_directory(prefix='namespace-alias-') as d:
+            base=Path(d);real=base/'real';real.mkdir();(real/'owner').mkdir(mode=0o700)
+            alias=base/'system-alias';alias.symlink_to(real,target_is_directory=True)
+            self.enterContext(patch.dict(os.environ,{'P01_CI_TEST_FIXTURE':str(alias/'owner')}))
+            m=Model(self);m.enable_p18();p=m.capture();m.validate()
+            self.assertEqual(len(p['normal']),1)
+
+    def test_CRLF_transcripts_keep_parent_paths_and_reject_child_success(self):
+        m=Model(self);execute=m.execute
+        def crlf(name,*args,**kwargs):
+            row=execute(name,*args,**kwargs);path=Path(row['log']['path'])
+            path.write_bytes(path.read_bytes().replace(b'\n',b'\r\n'))
+            row['log']['sha256']=hashlib.sha256(path.read_bytes()).hexdigest()
+            for child in m.root.rglob('child.log'):
+                child.write_bytes(child.read_bytes().replace(b'\r\n',b'\n').replace(b'\n',b'\r\n'))
+            return row
+        with patch.object(m,'execute',side_effect=crlf):p=m.capture()
+        m.validate();a=m.a
+        for child in a.CHILDREN.values():
+            with self.assertRaises(ValueError):a.child_entry_evidence('running 1 test\r\ntest '+child+' ... ok\r\n',child)
+
+    def test_parent_total_deadline_uses_declared_cohort_budget(self):
+        m=Model(self);execute=m.execute
+        def elapsed(name,*args,**kwargs):
+            row=execute(name,*args,**kwargs)
+            if name.startswith('parent-'):row['duration_ms']=12000
+            return row
+        with patch.object(m,'execute',side_effect=elapsed):p=m.capture()
+        m.validate()
+        self.assertEqual({n:t for n,argv,t in m.calls if n.startswith('parent-')},
+                         {'parent-durable':330,'parent-runtime':60})
+        self.assertTrue(all(t==10 for n,argv,t in m.calls if not n.startswith('parent-')))
+        for kind in ('durable','runtime'):
+            changed=json.loads(json.dumps(p));changed['parents'][kind]['duration_ms']=m.a.PARENT_ONLY_DEADLINES[kind]*1000+1
+            with self.assertRaises(ValueError):m.validate(changed)
+
+    def test_windows_link_roles_preserve_raw_NT_target_without_following(self):
+        a=module('p01_ci');root=PureWindowsPath(r'D:\own\cohort');pid=12345
+        cases={f'durable/tmp/path-fixture-{pid}-39/alias':(root/f'durable/tmp/path-fixture-{pid}-39','durable-alias'),
+            f'durable/tmp/ancestor-initial-directory-{pid}-8/parent':(root/f'durable/tmp/ancestor-initial-directory-{pid}-8/outside','durable-ancestor'),
+            f'durable/tmp/checkpoint-{pid}-40/store/checkpoint-1.rec':(root/f'durable/tmp/path-fixture-{pid}-39/own-sentinel','durable-checkpoint'),
+            f'durable/tmp/journal-{pid}-41/store/journal-1.rec':(root/f'durable/tmp/path-fixture-{pid}-39/own-sentinel','durable-journal'),
+            f'runtime/tmp/runtime-{pid}-3/project/main.tex':(root/f'runtime/tmp/runtime-{pid}-3/own-outside-sentinel','runtime-project')}
+        for relative,(target,role) in cases.items():
+            for raw in (str(target),'\\\\?\\'+str(target)):
+                with self.subTest(relative=relative,raw=raw):self.assertEqual(a._normal_negative_link_role(root,relative,pid,raw),role)
+            for raw in (str(target)+'-foreign',str(target.parent/'..'/target.name)):
+                with self.assertRaises(ValueError):a._normal_negative_link_role(root,relative,pid,raw)
+            with self.assertRaises(ValueError):a._normal_negative_link_role(root,relative,pid+1,str(target))
+
 class P01CiTests(unittest.TestCase):
     def test_parent_only_final_rebinds_receipt_even_if_json_value_is_unchanged(self):
         a=module('p01_ci')
@@ -475,7 +574,7 @@ class P01CiTests(unittest.TestCase):
         with self.assertRaises(ValueError):m.validate(p)
 
     def test_parent_unbounded_wait_is_rejected(self):
-        m=Model(self);p=m.capture();p['parents']['runtime']['duration_ms']=10001
+        m=Model(self);p=m.capture();p['parents']['runtime']['duration_ms']=60001
         with self.assertRaises(ValueError):m.validate(p)
 
     def test_parent_timeout_cannot_pass(self):

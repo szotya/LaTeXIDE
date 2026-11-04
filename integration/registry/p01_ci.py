@@ -11,7 +11,7 @@ import hashlib
 import importlib.util
 import json
 import os
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 import re
 import secrets
 import stat
@@ -111,11 +111,14 @@ def scratch_binding(scratch):
 
 
 def private_path(path, parent, directory=False):
-    path, parent = Path(path), Path(parent).resolve(strict=True)
-    require(path.is_absolute() and ".." not in path.parts, "Absolute lexical owned P01 output required")
-    require(path.resolve(strict=True).is_relative_to(parent), "P01 output escaped owned scratch")
-    current = parent
-    for part in path.relative_to(parent).parts:
+    path, owner = Path(path), Path(parent)
+    require(path.is_absolute() and owner.is_absolute() and ".." not in path.parts
+            and ".." not in owner.parts, "Absolute lexical owned P01 output required")
+    require(path.is_relative_to(owner), "P01 output is not lexically under its owner")
+    require(path.resolve(strict=True).is_relative_to(owner.resolve(strict=True)), "P01 output escaped owned scratch")
+    require(not owner.is_symlink(), "P01 owner symlink")
+    current = owner
+    for part in path.relative_to(owner).parts:
         current /= part
         require(not current.is_symlink(), "P01 output symlink")
     require(path.is_dir() if directory else path.is_file(), "Missing P01 output")
@@ -280,10 +283,12 @@ def _p18_module():
     return module
 
 
-def _directory_binding(path, private=False):
+def _directory_binding(path, private=False, *, owner=None):
     path = Path(path)
-    private_path(path, Path(path.anchor), directory=True)
+    # System aliases above the declared owner are not fixture symlinks.
+    private_path(path, path if owner is None else owner, directory=True)
     s = path.lstat()
+    require(stat.S_ISDIR(s.st_mode), "P18 directory object required")
     require(not private or _mode(path) == 0o700, "P18 namespace must be private")
     return {"path": str(path), "device": s.st_dev, "inode": s.st_ino,
             "uid": s.st_uid, "mode": _mode(path)}
@@ -299,14 +304,14 @@ def _p18_outputs(env, raw, ids, require_markers=True):
             require(not markers, "Foreign P18 phase marker")
             continue
         run = root / "artifacts" / env["LATEXIDE_P18_TEX_RUN"]
-        require(markers == [str(run)] or (not require_markers and not markers),
-                "Missing/stale P18 invocation proof")
         private_path(run, root, directory=True)
-        directories, files = [_directory_binding(run)], []
+        require(markers in ([str(run)], [str(run.resolve(strict=True))]) or (not require_markers and not markers),
+                "Missing/stale P18 invocation proof")
+        directories, files = [_directory_binding(run, owner=root)], []
         for path in sorted(run.rglob("*")):
             require(not path.is_symlink(), "P18 proof symlink")
             if path.is_dir():
-                directories.append(_directory_binding(path))
+                directories.append(_directory_binding(path, owner=run))
             else:
                 files.append(binding(private_path(path, run)))
         for role in ("control", "protected"):
@@ -332,11 +337,11 @@ def _p18_inherited(env, raw):
     roots = []
     for phase in (2, 3):
         root = Path(selected[f"LATEXIDE_P18_PHASE{phase}_ROOT"])
-        roots.extend((_directory_binding(root, True), _directory_binding(root / "artifacts", True)))
-    require(not Path(selected[P18_ENV[0]]).is_relative_to(Path(selected[P18_ENV[1]]))
-            and not Path(selected[P18_ENV[1]]).is_relative_to(Path(selected[P18_ENV[0]])), "P18 phase roots overlap")
+        roots.extend((_directory_binding(root, True), _directory_binding(root / "artifacts", True, owner=root)))
+    first, second = (Path(selected[key]).resolve(strict=True) for key in P18_ENV[:2])
+    require(not first.is_relative_to(second) and not second.is_relative_to(first), "P18 phase roots overlap")
     prefix = Path(selected["LATEXIDE_P18_TEX_PREFIX"])
-    private_path(prefix, Path(prefix.anchor), directory=True)
+    private_path(prefix, prefix.parent, directory=True)
     receipt = binding(prefix.parent / "provision.json")
     require(p18.validate_toolchain(prefix) == receipt["sha256"], "P18 toolkit/provision changed")
     return {"environment": selected, "directories": roots, "provision": receipt,
@@ -370,10 +375,10 @@ def _p18_namespace(scratch, name, image, context, nonce, command, inherited, cre
     private_path(directory, scratch, directory=True)
     require(_mode(marker) == 0o600 and not marker.is_symlink() and same(read(marker), expected),
             "P18 invocation source/binary/nonce/argv/proof changed")
-    directories = [_directory_binding(directory, True)]
+    directories = [_directory_binding(directory, True, owner=scratch)]
     for phase in (2, 3):
         root = Path(env[f"LATEXIDE_P18_PHASE{phase}_ROOT"])
-        directories.extend(_directory_binding(path, True) for path in (root, root / "artifacts", root / "fixtures"))
+        directories.extend(_directory_binding(path, True, owner=directory) for path in (root, root / "artifacts", root / "fixtures"))
     return {"environment": env, "metadata": binding(marker), "directories": directories}
 
 
@@ -467,6 +472,7 @@ def discovery_observation(images, image, records, scratch, nonce, context):
 
 def child_entry_evidence(raw, child_id):
     # P01_CHILD_RESULT_GUARD: an exit73 helper never completes libtest successfully.
+    raw = raw.replace("\r\n", "\n")
     if raw == "\nrunning 1 test\n":
         return False  # Source/parent-bound role, not a raw ID observation.
     incomplete = r"\n?running 1 test\ntest " + re.escape(child_id) + r" \.\.\.[ \t\r\n]*"
@@ -494,9 +500,9 @@ def parent_observation(kind, record, image, scratch, driver_nonce, discovered, c
             "P01 exact parent result missing or failed")
     require(outcomes[0][5] == str(discovered - 1), "P01 parent result/discovery mismatch")
     if kind == "durable":
-        marker = re.findall(r"P01_CHILD_CASES=32 PASS=32 FAIL=0 ERROR=0 SKIP=0 nonce=([0-9a-f]{64}) evidence=(.+)", raw)
+        marker = re.findall(r"P01_CHILD_CASES=32 PASS=32 FAIL=0 ERROR=0 SKIP=0 nonce=([0-9a-f]{64}) evidence=([^\r\n]+)", raw)
     else:
-        marker = re.findall(r"P01_RUNTIME_CHILD_CASES=5 PASS=5 FAIL=0 ERROR=0 nonce=([0-9a-f]{64}) evidence=(.+)", raw)
+        marker = re.findall(r"P01_RUNTIME_CHILD_CASES=5 PASS=5 FAIL=0 ERROR=0 nonce=([0-9a-f]{64}) evidence=([^\r\n]+)", raw)
     require(len(marker) == 1, "Missing/duplicate P01 parent case summary")
     nonce, summary = marker[0]
     require(kind != "durable" or nonce == driver_nonce, "Durable child nonce differs from own driver")
@@ -582,10 +588,12 @@ def _normal_final(proof):
                 text(row["log"]["path"]), row["method_ids"])), "Late P18 output inventory changed")
             require(same(namespace["metadata"], binding(namespace["metadata"]["path"])), "Late P18 namespace proof changed")
             for directory in namespace["directories"]:
-                require(same(directory, _directory_binding(directory["path"], True)), "Late P18 namespace directory changed")
+                require(same(directory, _directory_binding(directory["path"], True,
+                    owner=Path(namespace["metadata"]["path"]).parent)), "Late P18 namespace directory changed")
             for output in namespace["outputs"].values():
                 for directory in output["directories"]:
-                    require(same(directory, _directory_binding(directory["path"])), "Late P18 output directory changed")
+                    require(same(directory, _directory_binding(directory["path"],
+                        owner=output["directories"][0]["path"])), "Late P18 output directory changed")
                 for file in output["files"]:
                     require(same(file, binding(file["path"])), "Late P18 output proof changed")
 
@@ -647,7 +655,8 @@ def rebuild(root, context, proof, target):
             "Private P01 entry or parent unexpectedly ran in normal selection")
     observations = []
     for kind in ("durable", "runtime"):
-        observations.append(parent_observation(kind, proof["parents"][kind], image, scratch, nonce, len(owned_ids), context))
+        observations.append(parent_observation(kind, proof["parents"][kind], image, scratch, nonce, len(owned_ids), context,
+                                               PARENT_ONLY_DEADLINES[kind]))
     require(set(proof["parents"]) == {"durable", "runtime"}, "Unknown P01 parent")
     require(same(proof["observations"], observations), "P01 parent/case result changed")
     require(same(proof["source_after"], catalog(root)), "Late cohort source changed")
@@ -675,7 +684,7 @@ def qualify(root, record, expected_argv, run_id, source_sha256, target, proof_pa
     require(same(context.get("p18_environment"), {key: env[key] for key in P18_ENV if key in env}),
             "Missing/mismatched P18 Cargo process environment observation")
     p18 = _p18_inherited(env, raw)
-    scratch = Path(record["log"]["path"]).parent / ("p01-cohort-" + run_id)
+    scratch = Path(context["log"]["path"]).parent / ("p01-cohort-" + run_id)
     scratch.mkdir(mode=0o700)  # exclusive; a stale directory is never reused
     nonce = secrets.token_hex(32)
     with (scratch / "COHORT").open("x", encoding="ascii") as f:
@@ -690,14 +699,14 @@ def qualify(root, record, expected_argv, run_id, source_sha256, target, proof_pa
             (scratch / name / "tmp").mkdir(mode=0o700)
     clean.update(P01_RUN_NONCE=nonce, P01_DURABLE_SCRATCH=str(scratch / "durable"),
                  P01_RUNTIME_SCRATCH=str(scratch / "runtime"), TMPDIR=str(scratch / "tmp"))
-    def invoke(name, argv, bound_image):
+    def invoke(name, argv, bound_image, timeout=10):
         invocation_env = dict(clean)
         namespace = None
         if p18 is not None and name.startswith("normal-"):
             namespace = _p18_namespace(scratch, name, bound_image, context, nonce, argv, p18, create=True)
             invocation_env.update(namespace["environment"])
-        result = execute(name, argv, root, scratch / (name + ".log"), 10, env=invocation_env)
-        result["requested_timeout"] = 10
+        result = execute(name, argv, root, scratch / (name + ".log"), timeout, env=invocation_env)
+        result["requested_timeout"] = timeout
         result["argc"] = len(argv)
         result["cwd"] = str(root.resolve())
         result["owned_environment"] = owned_environment(scratch, nonce)
@@ -724,8 +733,10 @@ def qualify(root, record, expected_argv, run_id, source_sha256, target, proof_pa
     _, normal_outputs = normal_observation(images, discovery, normals, scratch, nonce, context, p18)
     parents = {}
     for kind in ("durable", "runtime"):
-        parents[kind] = invoke("parent-" + kind, [image["binary"]["path"], PARENTS[kind], "--exact", "--nocapture", "--test-threads=1"], image)
-    observations = [parent_observation(k, parents[k], image, scratch, nonce, len(owned_ids), context) for k in ("durable", "runtime")]
+        parents[kind] = invoke("parent-" + kind, [image["binary"]["path"], PARENTS[kind], "--exact", "--nocapture", "--test-threads=1"],
+                               image, PARENT_ONLY_DEADLINES[kind])
+    observations = [parent_observation(k, parents[k], image, scratch, nonce, len(owned_ids), context, PARENT_ONLY_DEADLINES[k])
+                    for k in ("durable", "runtime")]
     proof = {"schema": 3, "suite": "p01-parent-cohorts", "context": context, "p18": p18,
              "scratch": str(scratch), "driver_nonce": nonce, "source_before": sources,
              "source_after": catalog(root), "adapter": binding(Path(__file__)),
@@ -916,6 +927,41 @@ def _fixture_inventory(scratch):
 
 
 
+def _normal_negative_link_role(scratch, relative, pid, raw_target):
+    """Compare inert native path components; never resolve or follow a link."""
+    uint(pid, "Actual normal fixture PID type", 2**31 - 1)
+    require(pid > 0 and isinstance(raw_target, str) and "\0" not in raw_target,
+            "Invalid normal negative-link identity")
+    target = raw_target
+    if isinstance(scratch, PureWindowsPath) and target.startswith("\\\\?\\"):
+        target = target[4:]
+        if target.upper().startswith("UNC\\"):
+            target = "\\\\" + target[4:]
+        else:
+            require(re.match(r"[A-Za-z]:[\\/]", target), "Unsupported Windows link target prefix")
+    target = type(scratch)(target)
+    require(target.is_absolute() and ".." not in target.parts, "Nonabsolute/traversing normal link target")
+    path = scratch / relative
+    role, wanted = None, None
+    if re.fullmatch(r"durable/tmp/path-fixture-" + str(pid) + r"-\d+/alias", relative):
+        role, wanted = "durable-alias", path.parent
+    elif re.fullmatch(r"durable/tmp/ancestor-initial-directory-" + str(pid) + r"-\d+/parent", relative):
+        role, wanted = "durable-ancestor", path.parent / "outside"
+    elif re.fullmatch(r"durable/tmp/(checkpoint|journal)-" + str(pid) + r"-\d+/store/(checkpoint|journal)-1.rec", relative):
+        kind = relative.split('/')[2].split('-')[0]
+        require(path.name == kind + "-1.rec", "Mismatched normal corrupt-store role")
+        parent = scratch / "durable/tmp"
+        require(target.is_relative_to(parent), "Normal corrupt-store target escaped its fixture owner")
+        parts = target.relative_to(parent).parts
+        require(len(parts) == 2 and re.fullmatch(r"path-fixture-" + str(pid) + r"-\d+", parts[0])
+                and parts[1] == "own-sentinel", "Wrong normal corrupt-store link target")
+        role, wanted = "durable-" + kind, target
+    elif re.fullmatch(r"runtime/tmp/runtime-" + str(pid) + r"-\d+/project/main.tex", relative):
+        role, wanted = "runtime-project", path.parent.parent / "own-outside-sentinel"
+    require(role is not None and target == wanted, "Unknown/parent or misbound normal fixture symlink")
+    return role
+
+
 def _actual_fixture_inventory(scratch, normals):
     """Custody of five source-defined normal negative-fixture links, no following.
 
@@ -940,21 +986,7 @@ def _actual_fixture_inventory(scratch, normals):
                 if name in directories:
                     directories.remove(name)
                 target = os.readlink(path)
-                role, wanted = None, None
-                if re.fullmatch(r"durable/tmp/path-fixture-" + str(pid) + r"-\d+/alias", relative):
-                    role, wanted = "durable-alias", str(path.parent)
-                elif re.fullmatch(r"durable/tmp/ancestor-initial-directory-" + str(pid) + r"-\d+/parent", relative):
-                    role, wanted = "durable-ancestor", str(path.parent / "outside")
-                elif re.fullmatch(r"durable/tmp/(checkpoint|journal)-" + str(pid) + r"-\d+/store/(checkpoint|journal)-1.rec", relative):
-                    kind = relative.split('/')[2].split('-')[0]
-                    require(path.name == kind + "-1.rec", "Mismatched normal corrupt-store role")
-                    role = "durable-" + kind
-                    expected = re.escape(str(scratch / "durable/tmp")) + r"/path-fixture-" + str(pid) + r"-\d+/own-sentinel"
-                    require(re.fullmatch(expected, target), "Wrong normal corrupt-store link target")
-                    wanted = target
-                elif re.fullmatch(r"runtime/tmp/runtime-" + str(pid) + r"-\d+/project/main.tex", relative):
-                    role, wanted = "runtime-project", str(path.parent.parent / "own-outside-sentinel")
-                require(role is not None and target == wanted, "Unknown/parent or misbound normal fixture symlink")
+                role = _normal_negative_link_role(scratch, relative, pid, target)
                 raw = os.fsencode(target)
                 links[relative] = {"path": str(path), "kind": "symlink", "target": target,
                     "sha256": hashlib.sha256(raw).hexdigest(), "bytes": len(raw),

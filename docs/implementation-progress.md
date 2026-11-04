@@ -801,3 +801,47 @@ parser/qualifier/core/security/CI/sandbox nem módosult e follow-upban.
 külön32+5nested, childPASS0, seam3/P18PDF4PASS. Új source-bound C ABI19+ancestor5
 PASS47helper; selected a3dd3b06, shared cc552235, proof578af469; teljes hash-k
 és parancsok a P01 eredménynaplóban. Remote javított HEAD CI/review/merge függő.
+
+### 2026-11-03 — AKTUÁLIS c8e147a9 zárás: PR68 BLOCKED → idle
+
+Kiválasztott állapot: nem a történeti local PASS, hanem bf4ebcc current HEAD
+required Actions15368 aggregate FAIL (run41728576237). Ubuntu planning/runtime
+SUCCESS; Windows156/175PASS19ERROR; Mac121/175PASS54failed_tests,
+2FAIL/73ERROR esemény. További raw-rewriter CRLF/negatív-symlink portability,
+Mac lexical/canonical system-alias és anchor-walk hibák nyitottak. CodeRabbit
+2aaf968 review CHANGES_REQUESTED,9unresolved (6Major2Minor1Trivial), bf4ebcc
+új automatikus review még in_progress. A runtime/FFI move/identity/full-state/
+foreign-entry/setup-failure jelzések source-level olvasva, új product-runtime
+reprodukció nélkül; current namespace-only scope core/runtime írást tilt.
+Main45f5824 változatlan,2normálcommit/push32útvonal,PR68nyitva; merge/bypass/
+ruleset/admin/job-rerun0. További qualifier/Python portability és runtime/FFI
+policy-review scope kell ugyanehhez a jelölthöz; nincs önálló új candidate.
+A local source-4 PASS és minden historical failed/unrun megmarad. Záró három
+Markdown helyi metadata, bf4ebcc-tree-n kívül; a selected source a3dd3b06 marad.
+
+### 2026-11-04 — PR68 d4198f2b scoped CI/public-recheck fix, friss helyi PASS
+
+Azonos b9a793d3-attempt2 candidate, bf4ebcc head /45f5824 main. Fixed-commit
+481-source input receipt25781086, byte/mode/Git-blob ellenőrzött, NOT_READY.
+Friss primary snapshot18unresolved/10Major; required Actions15368FAIL,
+CodeRabbit check success mellett CHANGES_REQUESTED. A korábbi bf2c9fe0 report
+BLOCKED marad, egyetlen régi evidence sem változott visszamenőleg.
+
+A hat scoped review-fix: explicit lexical/canonical owner/P18 root; CRLF
+marker/child header; inert Windows symlink native path-role; observed-pin inert
+Darwin plan fixture; caller-selected offline/custom-Cargo public CLI recheck +
+actual Rust tool binding; deklarált330/60s parent összdeadline, gyermek/case és
+normal/discovery10s marad. A test_integrated_verification.py közvetlen fixture
+emberi válasszal és koordinátori path-helyesbítéssel engedélyezett. Core/Runtime/
+Workspace/recovery/FFI/P18-validator/security/wire/gate/workflow változatlan.
+
+Célzott RED/raw/setup-failure megőrzött; végső scoped5PASS +public1PASS,
+P01 teljes96PASS; Darwin mode-boundary2ERROR→2PASS, teljes companion20PASS,
+evidence13PASS. Friss saját T9 source/target/tmp, offline meglévő tools, jobs1:
+structure/shared Python182PASS; normal286 +exact-parent2=framework288PASS,
+külön32+5nested, childPASS0, seam3/P18PDF4PASS. Public --recheck-report az
+azonos offline/custom-Cargo opciókkal current/exit0, nincs execution/rewrite.
+Selected a1a85336; shared640e6345, proof81cf4d1d; teljes SHA-k és parancsok a
+P01 resultban. TeX687f373f unchanged; letöltés/telepítés0. Végső három Markdown
+metadata-only változás. Következő: ugyanazon PR CI-fix push és remote readback;
+nyitott Runtime/Major thread/P00 READY hiány mellett nincs merge.

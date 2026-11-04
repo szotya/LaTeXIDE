@@ -27,8 +27,8 @@ binary as current-source proof. A missing sandbox is blocked, not a reason to
 drop confinement. Preserve all attempts separately.
 
 Keep method counts separate: direct Rust storage/runtime, public native C ABI,
-and authenticated Unix IPC. The 2026-11-02 local cohort has19 final controls,
-41 own helpers and a fresh150-Rust-test regression with2 named ignored drivers;
+and authenticated Unix IPC. The 2026-11-02 local cohort has 19 final controls,
+41 own helpers and a fresh 150-Rust-test regression with 2 named ignored drivers;
 32/5 direct child cohorts are separate units. This changes the earlier C ABI/IPC
 unrun state only for those own synthetic sessions. No GUI/live app is implied.
 v1 has no client-ACK/deduplication operation: after reply loss read/reconcile
@@ -71,7 +71,7 @@ TeX environment is present, preserve its Cargo run and validated provision;
 the runner records the actual P18 environment passed to Cargo. Apply the
 unchanged P18 case validator to its designated Cargo target: successful Cargo
 stdout is captured, and method names may also occur in other test images.
-give every normal-image replay an exclusively created private namespace below
+Give every normal-image replay an exclusively created private namespace below
 the current cohort scratch. Keep phase roots and run labels separate from the
 Cargo invocation and every other image. The namespace receipt binds run ID,
 source, binary, driver nonce, phase, fixed argv and the inherited toolkit/proof.
@@ -81,3 +81,27 @@ missing/stale/foreign evidence or symlinks fail. PDF parsing/render equality
 remains a separate required P18 gate. Never reuse or delete an earlier run to
 make exclusive creation pass. The distinct build-only schema remains 2;
 historical proofs are neither upgraded nor counted as current validation.
+
+Keep the lexical owner for walking fixture components and independently check
+resolved containment. A system alias above that explicit owner is permitted;
+an owner symlink or a symlink below it is rejected. Bind inherited P18 roots
+and the provisioned toolkit to their declared owners rather than walking from
+the filesystem anchor. Preserve lexical environment observations and bind the
+canonical compiler phase marker to the same run. CRLF parsing removes only
+line terminators; raw logs and their hashes remain unchanged. Inert negative
+symlink custody compares native path components without resolving targets,
+including the Windows NT prefix, while retaining the original target bytes.
+
+The integrated exact-parent deadlines are the declared cohort budgets:
+330 seconds for the 32-case durable parent and 60 seconds for the five-case
+runtime parent. Each child/case still has its existing ten-second bound;
+discovery and normal-image waits remain ten seconds. Revalidation checks the
+same exact parent budgets and rejects timeout, type, case or identity drift.
+
+Recheck an offline/custom-Cargo report with the same trusted caller options:
+`python3 -B integration/registry/verify.py --recheck-report <report.json>
+--offline --cargo-executable <original-cargo>`. Recheck reconstructs fixed
+commands, compares the original argv and recorded Rust tool identity, and
+performs no execution or report rewrite. Wrong source/tool/options fail.
+Darwin plan unit tests use inert source fixtures with observed hash/mode pins;
+those model bindings never replace the production SOURCE_PINS contract.
