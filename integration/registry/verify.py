@@ -184,7 +184,7 @@ def run_checks(root, source_paths, steps, log_dir, timeout, artifact_roots=()):
                 try:
                     if f05_namespace is not None:
                         record["f05_namespace"] = p01_ci.f05_observe(root, f05_namespace,
-                            p01_ci.text(record["log"]["path"]), Path(log_dir) / ("f05-cargo-" + run_id),
+                            p01_ci.text(record["log"]["path"], 16 * 1024 * 1024), Path(log_dir) / ("f05-cargo-" + run_id),
                             "cargo", {"verification_run_id": run_id, "source_sha256": before["sha256"], "tool": p01_tool},
                             step["argv"], capture=True)
                     if step.get("p01_cohort"):
@@ -334,7 +334,7 @@ def build_steps(root, args, platform, machine):
         if p01_ci.catalog(root) is not None:
             at = rust_step["argv"].index("--")
             rust_step["argv"].insert(at, "--message-format=json")
-            rust_step["argv"] += ["--nocapture", *p01_ci.skipped_arguments()]
+            rust_step["argv"] += ["--show-output", *p01_ci.skipped_arguments()]
             proof = run_dir / "p01-parent-cohorts.json"
             rust_step["p01_cohort"] = {"proof": ref(proof)}
             rust_step["artifact_paths"] += [

@@ -157,12 +157,15 @@ Session/IPC/C caller/native execution. This Mac module does not establish a
 Windows/Linux recovery provider. Preserve historical failed sandbox cohorts;
 a newly authorized F05 cohort never upgrades earlier unrun cases.
 
-The initial qualified P01 Cargo invocation must also use --nocapture after the
-libtest separator: successful libtest cases otherwise suppress the F05 nonce
-markers even when every test passes. Bind that fixed argv in the plan and its
-regression. Preserve marker validation and the same four exclusions. A raw
-Cargo PASS without the required phase markers is failed qualification; keep
-dependent normal/parent/provider steps unrun and preserve that failed cohort.
+Use --show-output after the libtest separator in the initial qualified P01
+Cargo invocation. It retains successful F05 nonce output while keeping each
+P18 test outcome on one line for the unchanged validator. Initial --nocapture
+can interleave artifact markers with that outcome and is not equivalent.
+Normal and exact-parent invocations retain their existing --nocapture argv.
+Both F05 Cargo readers use the existing canonical 16 MiB Cargo-log bound;
+default and normal transcript reads retain their 1 MiB bound. Missing phase
+markers or invalid P18 outcomes remain failed qualification, even with raw
+Cargo PASS. Preserve every failed cohort and downstream unrun state.
 
 Keep the separate schema2 p01-build-only-cohorts contract scoped to its
 source_root and recovery_contract image. Its validated suite does not require
@@ -170,3 +173,12 @@ the combined workspace's FFI IDs; retain all its own source/binary/normal/parent
 inventory guards. The ordinary combined schema still requires all 26 F05 IDs.
 Do not infer missing phase outcomes from a raw Cargo PASS. Include the existing
 check reason in CLI diagnostics so a failed qualifier remains reviewable.
+
+Cover the F05 registration path with nonempty pins in an inert two-image
+Python model as well as real scoped Runtime tests: initial Cargo fixture,
+qualify, validate, normal discovery/replay, final readback and verifier hook.
+Keep model parent counts separate from actual Rust child coverage.
+Mandatory harness variables are fail-closed prerequisites; never replace
+missing context with silent zero-work PASS. General commit-time project-root
+protection requires its own reviewed product contract; the explicit reopen
+check does not prove every mutation path or a hard replacement-race boundary.

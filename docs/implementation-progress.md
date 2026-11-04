@@ -932,3 +932,13 @@ Független scope-regresszió: schema2 source_root/cwd határ az új F05-hookokba
 RED1FAIL→GREEN1PASS; kizárólag régi build-only suite kihagyja az új combined-F05
 discovery/normal elvárást, saját összes régi őre és a combined26guard megmarad.
 Teljes191PythonPASS23.994s; nincs Rust/parent/helper replay vagy budget/skip/pin módosítás.
+
+F05 CI3/989a89e/run41884760110:191Python/312rawRustPASS,26marker, qualifierFAIL
+pontos P18 outcome-shape reasonnel. Initial --nocapture interleavelte a P18
+marker/status sort. Új initial --show-output, P18 és normal/parent változatlan.
+Két új F05 Cargo-read a meglévő kanonikus16MiB; default/normal1MiB változatlan.
+Nem üres F05-pines teljes inert kvalifikációs/verifier modell:
+RED2FAIL1ERROR→GREEN3PASS, teljes193PythonPASS24.888s. Nem actualRust/child/Runtime.
+P01 current pointer frissült. Silent-skip Minor4471356078 a hard26case/no-skip
+szerződés miatt nem alkalmazott; commit-wide projectscope Minor4471356092
+új reviewed P00 scope, not_fixed. F01–F04 open; új exact-HEAD CI külön.

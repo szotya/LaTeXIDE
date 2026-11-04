@@ -238,6 +238,82 @@ class Model:
         report['selection']={'platform':'synthetic','machine':'model'}
         return report,steps
 
+
+class F05Model(Model):
+    """Synthetic two-image Cargo/cohort controls; no image is executed as Rust."""
+    def __init__(self,test,adapter=None,verifier=None,padding=0):
+        super().__init__(test,adapter,verifier)
+        self.padding=padding
+        self.ffi_binary=self.binary.with_name('latexide_ffi-fedcba9876543210')
+        self.ffi_binary.write_bytes(b'SYNTHETIC INERT FFI IMAGE; NEVER EXECUTED')
+        self.ffi_binary.chmod(0o700)
+        if os.name=='nt':
+            actual=self.a._mode
+            def binary_mode(path):
+                if Path(path).resolve(strict=False)==self.ffi_binary.resolve():return 0o700
+                return actual(path)
+            test.enterContext(patch.object(self.a,'_mode',side_effect=binary_mode))
+            if verifier:test.enterContext(patch.object(verifier.evidence.p01_ci,'_mode',side_effect=binary_mode))
+        pins={}
+        for name in self.a.F05_PATHS:
+            p=self.root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes((ROOT/name).read_bytes())
+            row=self.a.binding(p);pins[name]={k:row[k] for k in ('sha256','bytes','mode')}
+        test.enterContext(patch.object(self.a,'F05_SOURCE_PINS',pins))
+        if verifier:test.enterContext(patch.object(verifier.evidence.p01_ci,'F05_SOURCE_PINS',pins))
+        self.f05_ids=sorted(self.a.f05_methods(self.root))
+        self.argv.insert(self.argv.index('--')+1,'--show-output')
+
+    def f05_output(self,env):
+        base=Path(env['P00_PR68_ROOT'])
+        for case in self.a.F05_CASE_IDS:
+            p=base/case;p.mkdir(mode=0o700);(p/'project').mkdir()
+            (p/'project/main.tex').write_bytes(b'SYNTHETIC F05 STATE; NOT RUNTIME EVIDENCE')
+        case=base/'r06';(case/'project/main.tex').unlink()
+        (case/'outside-project.tex').write_bytes(b'own inert sentinel')
+        (case/'project/main.tex').symlink_to(case/'outside-project.tex')
+        case=base/'r18';state=case/'project/.latexide/recovery'/('cohort-'+'d'*32)
+        state.mkdir(parents=True);(case/'own-outside-state.bin').write_bytes(b'own inert state')
+        (state/'runtime-state.bin').symlink_to(case/'own-outside-state.bin')
+        return ''.join('PR68_CASE\t'+env['P00_PR68_NONCE']+'\t'+case+'\n' for case in self.a.F05_CASE_IDS)
+
+    def execute(self,name,argv,cwd,log,timeout,env=None):
+        if name=='rust-workspace':
+            row=super().execute(name,argv,cwd,log,timeout,env)
+            artifact={'reason':'compiler-artifact','fixture_model':True,
+                'target':{'name':'latexide_ffi','src_path':str(self.root/'crates/latexide-ffi/src/lib.rs')},
+                'profile':{'test':True},'fresh':False,'executable':str(self.ffi_binary)}
+            raw=Path(log).read_text()+json.dumps(artifact)+'\n'
+            raw+='running 26 tests\n'+''.join('test '+n+' ... ok\n' for n in self.f05_ids)
+            raw+='successes:\n'+self.f05_output(env)
+            raw+='test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out;\n'
+            raw+='#'+('x'*self.padding)+'\n'
+            Path(log).write_text(raw,encoding='utf-8',newline='\n')
+            row['log']['sha256']=hashlib.sha256(Path(log).read_bytes()).hexdigest();return row
+        if argv[0]!=str(self.ffi_binary):
+            return super().execute(name,argv,cwd,log,timeout,env)
+        self.calls.append((name,list(argv),timeout))
+        if name.startswith('discovery'):
+            raw='' if '--ignored' in argv else ''.join(n+': test\n' for n in self.f05_ids)
+        elif name.startswith('normal-'):
+            raw='running 26 tests\n'+''.join('test '+n+' ... ok\n' for n in self.f05_ids)
+            raw+=self.f05_output(env)+'test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out;\n'
+        else:raise AssertionError('Unexpected F05 model invocation')
+        log=Path(log)
+        with log.open('x',encoding='utf-8',newline='\n') as f:f.write(raw)
+        return {'name':name,'command':list(argv),'status':'passed','exit_code':0,'timed_out':False,'duration_ms':1,
+            'log':{'kind':'command_log','path':str(log),'sha256':hashlib.sha256(log.read_bytes()).hexdigest()},
+            'fixture_execution_domain':'synthetic-Python-model'}
+
+    def ensure_record(self):
+        if self.record is None:
+            context={'verification_run_id':self.run_id,'source_sha256':self.source_sha,'tool':self.tool}
+            directory=self.logs/('f05-cargo-'+self.run_id)
+            ns=self.a.f05_create(self.root,directory,'cargo',context,self.argv)
+            row=self.execute('rust-workspace',self.argv,self.root,self.log,10,{**self.env,**ns['environment']})
+            row['f05_namespace']=self.a.f05_observe(self.root,ns,self.a.text(self.log,16*1024*1024),
+                directory,'cargo',context,self.argv,capture=True)
+        return self.record
+
 class P01NamespaceTests(unittest.TestCase):
     def test_synthetic_process_transcripts_keep_LF_under_windows_translation(self):
         m=Model(self);actual=Path.open
@@ -582,7 +658,8 @@ class P01CiTests(unittest.TestCase):
         args=SimpleNamespace(profile='integrated',run_dir=m.logs,cargo_executable=sys.executable,offline=True,native_schema=False)
         steps=v.build_steps(m.root,args,'darwin','arm64');r=next(x for x in steps if x['name']=='rust-workspace')
         self.assertIn('--message-format=json',r['argv']);self.assertEqual(r['argv'][-8:],m.a.skipped_arguments())
-        self.assertIn('--nocapture',r['argv'][r['argv'].index('--')+1:], 'Cargo must retain successful case nonce markers for proof')
+        self.assertIn('--show-output',r['argv'][r['argv'].index('--')+1:], 'Cargo must retain markers without interleaving P18 outcome lines')
+        self.assertNotIn('--nocapture',r['argv'])
         self.assertEqual(set(r['required_artifact_kinds']),{'p18_os_probe','p01_cohort_proof','p01_rust_build_log'})
         self.assertIn('p18-compiler-pdfs',next(x for x in steps if x['name']=='runtime-build')['depends_on'])
 
@@ -1083,6 +1160,27 @@ class F05RegistrationTests(unittest.TestCase):
             # The ordinary combined schema must still require all 26 F05 IDs.
             with self.assertRaisesRegex(ValueError,'Missing/zero/duplicate/ignored F05 discovery'):
                 a.discovery_observation(proof['images'],proof['images'][0],proof['discovery'],scratch,nonce,proof['context'])
+
+
+    def test_f05_model_qualify_validate_uses_existing_cargo_log_bound(self):
+        m=F05Model(self,padding=1024*1024+64);proof=m.capture();q=m.validate()
+        self.assertEqual((q['normal_methods'],q['parent_methods']),(27,2))
+        self.assertTrue(proof['context']['f05_namespace']['inventory'])
+        f05=[r for r in proof['normal_observations'] if r.get('f05_namespace')]
+        self.assertEqual(len(f05),1)
+        self.assertEqual(len(f05[0]['method_ids']),26)
+        self.assertEqual(len(f05[0]['f05_namespace']['inventory']['negative_symlinks']),2)
+        bad=json.loads(json.dumps(proof));bad['context']['f05_namespace']['environment']['P00_PR68_NONCE']='f'*64
+        with self.assertRaises(ValueError):m.validate(bad)
+
+    def test_f05_model_run_checks_and_cold_validation_use_existing_cargo_log_bound(self):
+        v=module('verify');m=F05Model(self,v.p01_ci,v,padding=1024*1024+64)
+        report,steps=m.driver_report()
+        self.assertEqual(report['status'],'passed',report['checks'][0].get('reason'))
+        self.assertEqual(report['checks'][0]['test_summary']['passed'],29)
+        proof=json.loads(m.proof.read_text());ctx=proof['context']
+        q=m.a.validate(m.root,m.proof,m.record,m.argv,ctx['verification_run_id'],ctx['source_sha256'],m.target,m.tool)
+        self.assertEqual(q['normal_methods'],27)
 
     def test_f05_present_source_cannot_disable_registration_or_omit_cargo_proof(self):
         a,root,context,command,binary=self.fixture()

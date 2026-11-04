@@ -1404,7 +1404,7 @@ def f05_validate_cargo(root, context):
         require("f05_namespace" not in context, "Unbound F05 Cargo namespace")
         return
     require("f05_namespace" in context, "Missing F05 Cargo namespace")
-    f05_observe(root, context["f05_namespace"], text(context["log"]["path"]),
+    f05_observe(root, context["f05_namespace"], text(context["log"]["path"], 16 * 1024 * 1024),
         Path(context["log"]["path"]).parent / ("f05-cargo-" + context["verification_run_id"]),
         "cargo", context, context["command"])
 
