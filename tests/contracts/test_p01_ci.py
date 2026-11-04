@@ -1046,12 +1046,14 @@ class F05RegistrationTests(unittest.TestCase):
         root=Path(tempfile.mkdtemp(prefix='f05-binding-',dir=fixture_parent()))
         modes={}
         for name,row in a.F05_SOURCE_PINS.items():
-            p=root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes((ROOT/name).read_bytes());modes[p]=row['mode']
+            p=root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes((ROOT/name).read_bytes());modes[p.resolve()]=row['mode']
         actual=a._mode
         def fixture_mode(path):
             p=Path(path)
-            if p in modes:return modes[p]
-            if p.is_relative_to(root):
+            if p.is_symlink():return actual(p)
+            canonical=p.resolve(strict=False)
+            if canonical in modes:return modes[canonical]
+            if canonical.is_relative_to(root.resolve()):
                 if p.is_dir():return 0o700
                 if p.name=='NAMESPACE.json':return 0o600
             return actual(p)
@@ -1166,8 +1168,8 @@ class F05RegistrationTests(unittest.TestCase):
     def aliased_f05_model(self,verifier=None):
         actual=Path(tempfile.mkdtemp(prefix='f05-real-parent-',dir=fixture_parent())).resolve()
         alias=actual.with_name(actual.name+'-alias');alias.symlink_to(actual,target_is_directory=True)
-        with patch.dict(os.environ,{'P01_CI_TEST_FIXTURE':str(alias)}):
-            m=F05Model(self,verifier.p01_ci if verifier else None,verifier,padding=1024*1024+64)
+        self.enterContext(patch.dict(os.environ,{'P01_CI_TEST_FIXTURE':str(alias)}))
+        m=F05Model(self,verifier.p01_ci if verifier else None,verifier,padding=1024*1024+64)
         self.assertNotEqual(str(m.ffi_binary),str(m.ffi_binary.resolve()),'Alias control must exercise distinct lexical/canonical paths')
         return m
 
@@ -1183,13 +1185,30 @@ class F05RegistrationTests(unittest.TestCase):
         with self.assertRaises(ValueError):m.validate(bad)
 
     def test_f05_model_run_checks_and_cold_validation_use_existing_cargo_log_bound(self):
-        v=module('verify');m=self.aliased_f05_model(v)
+        v=module('verify')
+        self.enterContext(patch.dict(os.environ,{name:('inherited-model-run' if name.endswith('TEX_RUN') else str(fixture_parent()/('inert-'+name))) for name in v.p01_ci.P18_ENV}))
+        m=self.aliased_f05_model(v)
+        self.assertFalse(any(name in os.environ for name in v.p01_ci.P18_ENV),'A temporary outer env context must not restore inherited P18 into the F05 model')
         report,steps=m.driver_report()
         self.assertEqual(report['status'],'passed',report['checks'][0].get('reason'))
         self.assertEqual(report['checks'][0]['test_summary']['passed'],29)
         proof=json.loads(m.proof.read_text());ctx=proof['context']
         q=m.a.validate(m.root,m.proof,m.record,m.argv,ctx['verification_run_id'],ctx['source_sha256'],m.target,m.tool)
         self.assertEqual(q['normal_methods'],27)
+
+
+    def test_f05_inert_permission_model_uses_canonical_owner_above_alias(self):
+        actual=Path(tempfile.mkdtemp(prefix='f05-mode-parent-',dir=fixture_parent())).resolve()
+        alias=actual.with_name(actual.name+'-alias');alias.symlink_to(actual,target_is_directory=True)
+        self.enterContext(patch.dict(os.environ,{'P01_CI_TEST_FIXTURE':str(alias)}))
+        original=module
+        def host_module(name):
+            a=original(name)
+            if name=='p01_ci':a._mode=lambda path:0o777
+            return a
+        with patch(__name__+'.module',side_effect=host_module):
+            a,root,context,command,binary,directory,nonce,raw,ns=self.namespace()
+        self.assertEqual(a.f05_observe(root,ns,raw,directory,'normal-0',context,command,binary,nonce),ns)
 
     def test_f05_present_source_cannot_disable_registration_or_omit_cargo_proof(self):
         a,root,context,command,binary=self.fixture()

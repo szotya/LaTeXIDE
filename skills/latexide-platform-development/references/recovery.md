@@ -188,3 +188,10 @@ using canonical path identity. A system or fixture-parent alias above the
 explicit owner may change their lexical spelling. Require a positive own alias
 control so real and model dispatch choose the same image; do not relax the
 production exclusion, owner-symlink or containment guards to hide this mismatch.
+
+Give fixture-parent and model environment contexts the same test lifetime and
+unwind them in LIFO order. A short outer patch can restore inherited P18 values
+over a still-active model isolation and leak an alias into the next test.
+Exercise inherited P18 values explicitly. A host permission representation
+model must compare its own canonical owner above an alias and preserve actual
+symlink observations; it never changes production directory or mode guards.

@@ -899,54 +899,64 @@ F01–F04 not_fixed; nincs full issue READY vagy merge-approval.
 A 23 eredeti assert megmaradt; CI-fixture exkluzív r01–r26 root/joinolt 9 s watchdog/
 bounded tesztlog. Külön F05 source-pin és verify.py pre-Cargo/normal namespace:
 source/run/tool/binary/argv/nonce, 26 pontos nem ignored ID, saját literal
-negatív link és late inventory rebind kötelező. Legacy3pins/négy kizárás/
-330–60 s parent/10 s normal-discovery budget változatlan, c17helper12d99f12 megőrzött.
+negatív link és late inventory rebind kötelező. Legacy3 pins/négy kizárás/
+330–60 s parent/10 s normal-discovery budget változatlan, c17 helper 12d99f12 megőrzött.
 A verify.py companion szükséges: enélkül a kötelező root/nonce nem jutna a Cargóhoz.
 
-Saját source-red/green/target/cache/log, existing Rust1.99.1/offline/locked/jobs1.
+Saját source-red/green/target/cache/log, existing Rust 1.99.1/offline/locked/jobs1.
 190 Python-model PASS; végső pin 6 célzott PASS. Sandbox deny+own write PASS.
-Cargo test --lib --no-run exit0 RED19.605s/GREEN24.552s, compiler/dep-info/link/binary
-rögzített. Lokalizáció RED1FAIL → GREENr24PASS; összes16exactPASS; átfedő
-normalFFI28PASS/0ignored3.877s, 26F05marker/2link/coldrebindPASS.
-cargo build --lib nem teszt .a/.dylib/.rlib exit0/2.264s.
+Cargo test --lib --no-run exit0 RED 19.605 s/GREEN 24.552 s, compiler/dep-info/link/binary
+rögzített. Lokalizáció RED 1 FAIL  →  GREENr24 PASS; összes16exactPASS; átfedő
+normalFFI 28 PASS / 0 ignored3.877 s, 26 F05 marker/2 link/cold rebind PASS.
+cargo build --lib nem teszt .a/.dylib/.rlib exit0/2.264 s.
 Nem Session/Ccaller/IPC/GUI/Windows/Linux/production acceptance.
-Producer104/P03 118 külön történeti kohort; c17SIGABRT0case4unrun változatlan.
+Producer104/P03 118 külön történeti kohort; c17SIGABRT0 case4unrun változatlan.
 Előkészítési AssertionError/API-ERROR/script-szintaxis/EPERM raw megmarad.
 Tényleges parancsok és hash-k a P01 resultban és a saját next-6ba13ed9-3c65a981 gyökérben.
 Új exact-HEAD CI/review/base/main külön kapu; négy valid Major mellett nincs merge,
 végén idle.
 
-PR68 F05 első remote cutoff: c219e02/run41881209133, required aggregateFAIL.
-Mac190PythonPASS/312rawRustPASS, 28FFIPASS, de0PR68_CASEmarker: az első Cargo-argv
---nocapture nélkül elnyelte a successful outputot. Strict F05guardFAIL; normal/
+PR68 F05 első remote cutoff: c219e02/run41881209133, required aggregate FAIL.
+Mac 190 Python PASS / 312 raw Rust PASS, 28FFIPASS, de0PR68_CASEmarker: az első Cargo-argv
+--nocapture nélkül elnyelte a successful outputot. Strict F05guard FAIL; normal/
 exact-parent és függő provider-lépések unrun. Failed raw változatlan.
-Saját source-ci2: közvetlen planassertRED1FAIL→GREEN1PASS; egy --nocapture flag
-a P01 Mac Cargo-fázisban, teljes190PythonPASS23.602s. Rust/product/F05pin/legacy
+Saját source-ci2: közvetlen planassertRED1 FAIL → GREEN 1 PASS; egy --nocapture flag
+a P01 Mac Cargo-fázisban, teljes190 Python PASS 23.602 s. Rust/product/F05pin/legacy
 guard/ignore/skip/budget változatlan. Új headhez új CI, nincs job-rerun vagy
 helyi Rust/helper-replay; F01–F04 tovább merge-blocker.
 
-F05 d9f0302/run41882922235: requiredFAIL, Mac190Python/312rawRustPASS,26marker.
+F05 d9f0302/run41882922235: requiredFAIL, Mac 190 Python/312 raw Rust PASS,26 marker.
 A régi CLI reason nélkül nem mutatja a qualifier okát; normal/parent részfázis
 állapot ismeretlen a bounded logban. Következő CLI kiírja a meglévő reason mezőt.
 Független scope-regresszió: schema2 source_root/cwd határ az új F05-hookokban,
-RED1FAIL→GREEN1PASS; kizárólag régi build-only suite kihagyja az új combined-F05
+RED 1 FAIL → GREEN 1 PASS; kizárólag régi build-only suite kihagyja az új combined-F05
 discovery/normal elvárást, saját összes régi őre és a combined26guard megmarad.
-Teljes191PythonPASS23.994s; nincs Rust/parent/helper replay vagy budget/skip/pin módosítás.
+Teljes191 Python PASS 23.994 s; nincs Rust/parent/helper replay vagy budget/skip/pin módosítás.
 
-F05 CI3/989a89e/run41884760110:191Python/312rawRustPASS,26marker, qualifierFAIL
+F05 CI3/989a89e/run41884760110:191 Python/312 raw Rust PASS,26 marker, qualifierFAIL
 pontos P18 outcome-shape reasonnel. Initial --nocapture interleavelte a P18
 marker/status sort. Új initial --show-output, P18 és normal/parent változatlan.
-Két új F05 Cargo-read a meglévő kanonikus16MiB; default/normal1MiB változatlan.
+Két új F05 Cargo-read a meglévő kanonikus16 MiB; default/normal 1 MiB változatlan.
 Nem üres F05-pines teljes inert kvalifikációs/verifier modell:
-RED2FAIL1ERROR→GREEN3PASS, teljes193PythonPASS24.888s. Nem actualRust/child/Runtime.
-P01 current pointer frissült. Silent-skip Minor4471356078 a hard26case/no-skip
+RED 2 FAIL 1 ERROR → GREEN 3 PASS, teljes193 Python PASS 24.888 s. Nem actualRust/child/Runtime.
+P01 current pointer frissült. Silent-skip Minor4471356078 a hard26 case/no-skip
 szerződés miatt nem alkalmazott; commit-wide projectscope Minor4471356092
 új reviewed P00 scope, not_fixed. F01–F04 open; új exact-HEAD CI külön.
 
-F05 CI4/3189530/run41886989079: Mac191/193PythonPASS1FAIL1ERROR, Rustunrun.
+F05 CI4/3189530/run41886989079: Mac 191 / 193 Python PASS 1 FAIL 1 ERROR, Rust unrun.
 Új F05-model lexical/canonical binary string eltérés system alias fölött,
-változatlan exclusionguard helyesFAIL. Saját parent-alias RED1FAIL1ERROR→GREEN2PASS,
-egyetlen model-only canonical összehasonlítás; teljes193PythonPASS28.145s.
+változatlan exclusionguard helyesFAIL. Saját parent-alias RED 1 FAIL 1 ERROR → GREEN 2 PASS,
+egyetlen model-only canonical összehasonlítás; teljes193 Python PASS 28.145 s.
 Mindkét teljes F05-model most mindig valódi alias alatt. Production verifier/
 Rust/P18/pin/guard/deadline változatlan. Failed raw megőrzött, új head sajátCI,
 nem job-rerun. CodeRabbit auto-pause után ugyanazonPR resume, settings/bypass nincs.
+
+F05 CI5 / 78db31f / run41888175214: Mac és Linux 192 / 193 Python PASS + 1 FAIL,
+Windows 190 PASS + 1 FAIL + 2 ERROR; Rust runtime-lépések unrun.
+Fixture-env kontextus túl korai visszaállítás + inert permission-modell lexical
+owner alias hiba. Saját örökölt-P18/alias/777-mode RED 1 FAIL + 1 ERROR  →
+GREEN 2 PASS; teljes 194 Python PASS, 27.390 s.
+Csak fixture: LIFO test-lifetime env és canonical mode-owner; symlink nem mockolt.
+Production verifier / Rust / P18 / pin / quota / deadline változatlan.
+Saját F05 docs count/status spacing whitespace-only, értékazonosság ellenőrzött.
+Failed raw megmarad; új head saját CI, nincs job-rerun vagy merge.
