@@ -86,7 +86,7 @@ class Model:
                 p=Path(path)
                 if p.resolve(strict=False).is_relative_to(self.root.resolve()):
                     if p.is_dir():return 0o700
-                    if p.name in ('COHORT','NAMESPACE.json'):return 0o600
+                    if p.name in ('COHORT','NAMESPACE.json') or p.name.endswith('.inventory.json'):return 0o600
                     if p.resolve(strict=False)==self.binary.resolve():return 0o700
                 return actual_mode(p)
             test.enterContext(patch.object(self.a,'_mode',side_effect=model_mode))
@@ -241,9 +241,9 @@ class Model:
 
 class F05Model(Model):
     """Synthetic two-image Cargo/cohort controls; no image is executed as Rust."""
-    def __init__(self,test,adapter=None,verifier=None,padding=0):
+    def __init__(self,test,adapter=None,verifier=None,padding=0,fixture_files=0):
         super().__init__(test,adapter,verifier)
-        self.padding=padding
+        self.padding=padding;self.fixture_files=fixture_files
         self.ffi_binary=self.binary.with_name('latexide_ffi-fedcba9876543210')
         self.ffi_binary.write_bytes(b'SYNTHETIC INERT FFI IMAGE; NEVER EXECUTED')
         self.ffi_binary.chmod(0o700)
@@ -268,6 +268,7 @@ class F05Model(Model):
         for case in self.a.F05_CASE_IDS:
             p=base/case;p.mkdir(mode=0o700);(p/'project').mkdir()
             (p/'project/main.tex').write_bytes(b'SYNTHETIC F05 STATE; NOT RUNTIME EVIDENCE')
+            for number in range(self.fixture_files):(p/'project'/('inert-row-%03d.bin'%number)).write_bytes(b'owned inert inventory row')
         case=base/'r06';(case/'project/main.tex').unlink()
         (case/'outside-project.tex').write_bytes(b'own inert sentinel')
         (case/'project/main.tex').symlink_to(case/'outside-project.tex')
@@ -1055,7 +1056,7 @@ class F05RegistrationTests(unittest.TestCase):
             if canonical in modes:return modes[canonical]
             if canonical.is_relative_to(root.resolve()):
                 if p.is_dir():return 0o700
-                if p.name=='NAMESPACE.json':return 0o600
+                if p.name=='NAMESPACE.json' or p.name.endswith('.inventory.json'):return 0o600
             return actual(p)
         self.enterContext(patch.object(a,'_mode',side_effect=fixture_mode))
         tool=root/'tool';tool.write_bytes(b'inert tool; never executed')
@@ -1180,7 +1181,7 @@ class F05RegistrationTests(unittest.TestCase):
         f05=[r for r in proof['normal_observations'] if r.get('f05_namespace')]
         self.assertEqual(len(f05),1)
         self.assertEqual(len(f05[0]['method_ids']),26)
-        self.assertEqual(len(f05[0]['f05_namespace']['inventory']['negative_symlinks']),2)
+        self.assertEqual(len(m.a.read(f05[0]['f05_namespace']['inventory']['path'])['negative_symlinks']),2)
         bad=json.loads(json.dumps(proof));bad['context']['f05_namespace']['environment']['P00_PR68_NONCE']='f'*64
         with self.assertRaises(ValueError):m.validate(bad)
 
@@ -1209,6 +1210,20 @@ class F05RegistrationTests(unittest.TestCase):
         with patch(__name__+'.module',side_effect=host_module):
             a,root,context,command,binary,directory,nonce,raw,ns=self.namespace()
         self.assertEqual(a.f05_observe(root,ns,raw,directory,'normal-0',context,command,binary,nonce),ns)
+
+
+    def test_f05_full_inventory_is_sealed_once_without_exceeding_existing_proof_quota(self):
+        m=F05Model(self,fixture_files=40);proof=m.capture()
+        try:q=m.validate()
+        except ValueError as error:self.fail('Fresh F05 proof must fit the existing evidence quota: '+str(error))
+        self.assertLessEqual(m.proof.stat().st_size,1024*1024)
+        self.assertEqual(q['normal_methods'],27)
+        namespace=proof['context']['f05_namespace']
+        reference=namespace['inventory'];inventory=m.a.read(reference['path'])
+        self.assertGreater(len(inventory['files']),1000)
+        self.assertEqual(reference,m.a.binding(reference['path']))
+        path=Path(reference['path']);path.write_bytes(path.read_bytes()+b' ')
+        with self.assertRaises(ValueError):m.validate()
 
     def test_f05_present_source_cannot_disable_registration_or_omit_cargo_proof(self):
         a,root,context,command,binary=self.fixture()

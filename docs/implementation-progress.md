@@ -960,3 +960,13 @@ Csak fixture: LIFO test-lifetime env és canonical mode-owner; symlink nem mocko
 Production verifier / Rust / P18 / pin / quota / deadline változatlan.
 Saját F05 docs count/status spacing whitespace-only, értékazonosság ellenőrzött.
 Failed raw megmarad; új head saját CI, nincs job-rerun vagy merge.
+
+F05 CI6 / 433a459 / run41889957078: Mac 194 Python és 312 raw Rust PASS,
+qualifier FAIL: P01 evidence quota. Raw szám nem qualified framework/parent.
+1068-row inert F05-fixture RED 1 FAIL a változatlan 1 MiB proof-kapun.
+Külön exkluzív 0600/nlink1, fixed-path/hash-bound fázis-inventory manifest:
+teljes jegyzék cold rederived, late manifest is rejected, quota nem emelkedik.
+Model proof 2053717 → 146130 byte; külön manifest 462700 byte / 1068 sor.
+11 egyedi F05-model PASS + külön átfedő quota megfigyelés; teljes 195 Python PASS,
+33.953 s. Rust / P18 / pin / skip / ignore / deadline változatlan.
+Nincs régi Runtime/helper/parent replay; új head saját CI, Majorok mellett nincs merge.

@@ -195,3 +195,14 @@ over a still-active model isolation and leak an alias into the next test.
 Exercise inherited P18 values explicitly. A host permission representation
 model must compare its own canonical owner above an alias and preserve actual
 symlink observations; it never changes production directory or mode guards.
+
+Seal each F05 inventory once in an exclusive regular 0600/nlink1 manifest
+beside the namespace, using its fixed name plus .inventory.json. Keep both
+the existing evidence-proof bound and the per-manifest bound at 1 MiB.
+The proof may repeat the manifest's full file binding, never the entire
+payload. Cold validation checks the expected owner/path, mode, link count,
+hash and JSON, then rederives every nofollow file/directory/negative-link row.
+Rebind the manifest after reading it. Missing, unknown or late-mutated data
+fails closed. Do not discard fixture rows or raise the proof quota to fit them.
+Exercise a large inventory and late manifest mutation in the inert model;
+retain historical inline proofs with their original adapter/source identity.

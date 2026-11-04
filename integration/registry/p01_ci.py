@@ -1395,9 +1395,23 @@ def f05_observe(root, namespace, raw, directory, phase, context, command, binary
     markers = re.findall(r"PR68_CASE\t([0-9a-f]{64})\t(r\d\d)(?=[\r\n])", raw)
     require(Counter(markers) == Counter((nonce, case) for case in F05_CASE_IDS), "Missing/zero/foreign/duplicate F05 case nonce")
     inventory = _f05_inventory(directory)
+    inventory_path = directory.with_name(directory.name + ".inventory.json")
+    if capture:
+        raw_inventory = (json.dumps(inventory, sort_keys=True, separators=(",", ":")) + "\n").encode("utf-8")
+        require(len(raw_inventory) <= 1024 * 1024, "F05 inventory manifest quota")
+        with inventory_path.open("xb") as stream:
+            stream.write(raw_inventory)
+        inventory_path.chmod(0o600)
+    inventory_path = private_path(inventory_path, directory.parent)
+    require(_mode(inventory_path) == 0o600 and inventory_path.lstat().st_nlink == 1,
+            "F05 private regular inventory manifest required")
+    reference = binding(inventory_path)
     if not capture:
-        require(same(namespace["inventory"], inventory), "Late F05 fixture inventory changed")
-    return {**namespace, "inventory": inventory}
+        require(same(namespace["inventory"], reference), "Late F05 inventory manifest changed")
+    require(same(read(inventory_path), inventory), "Late F05 fixture inventory changed")
+    require(same(reference, binding(inventory_path)) and inventory_path.lstat().st_nlink == 1,
+            "Late F05 inventory manifest changed during readback")
+    return {**namespace, "inventory": reference}
 
 def f05_validate_cargo(root, context):
     if f05_sources(root) is None:
