@@ -365,6 +365,16 @@ class P01NamespaceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'Late P18 output inventory changed'):m.a._normal_final(p)
 
 class ScopedCIRegressionTests(unittest.TestCase):
+    def test_late_mutation_control_arms_with_alias_owner(self):
+        with retained_directory(prefix='late-control-alias-') as d:
+            base=Path(d);real=base/'real';real.mkdir();(real/'owner').mkdir(mode=0o700)
+            alias=base/'system-alias';alias.symlink_to(real,target_is_directory=True)
+            with patch.dict(os.environ,{'P01_CI_TEST_FIXTURE':str(alias/'owner')}):
+                result=unittest.TestResult()
+                P01CiTests('test_readonly_final_recheck_catches_late_nested_mutation').run(result)
+            self.assertEqual(result.testsRun,1)
+            self.assertTrue(result.wasSuccessful(),result.failures+result.errors)
+
     def test_public_recheck_requires_original_offline_tool_and_never_executes(self):
         v=module('verify');m=Model(self,v.p01_ci,v)
         m.argv.insert(m.argv.index('--locked')+1,'--offline')
@@ -712,7 +722,7 @@ class P01CiTests(unittest.TestCase):
         original=v.evidence.digest;armed=[]
         def late(path):
             result=original(path)
-            if Path(path)==last and not armed:
+            if Path(path).resolve()==last.resolve() and not armed:
                 armed.append(True);m.child_log().write_text(m.child_log().read_text()+'\nlate byte change\n')
             return result
         with patch.object(v.evidence,'digest',side_effect=late):

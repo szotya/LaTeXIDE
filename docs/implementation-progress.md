@@ -845,3 +845,15 @@ Selected a1a85336; shared640e6345, proof81cf4d1d; teljes SHA-k és parancsok a
 P01 resultban. TeX687f373f unchanged; letöltés/telepítés0. Végső három Markdown
 metadata-only változás. Következő: ugyanazon PR CI-fix push és remote readback;
 nyitott Runtime/Major thread/P00 READY hiány mellett nincs merge.
+
+A d419 első scoped head eee2c35 (run41824287631) Windows/Ubuntu planning és
+runtime kapui SUCCESS; Mac181/182PASS1FAIL, aggregateFAIL. Late-mutation unit
+hook lexical/canonical source-path eltérés miatt nem aktiválódott; a failed
+joblog és head-snapshot megőrzött. RED1FAIL→GREEN1PASS alias-owner regresszió,
+fixture-only hook összehasonlítás; production guard változatlan. Új source-2/
+target/roots/label:183PythonPASS,288RustframeworkPASS (286normal+2parent),
+külön32+5nested/childPASS0, seam3/P18PDF4PASS, public recheck current/exit0/
+report unchanged. Selected6b96ab6c, shared5a4f6972, proof7a4d4e0a; teljes SHA-k
+és actual parancsok a P01 resultban. Root unittest6PASS, content481PASS.
+Nincs CI-job rerun, nincs core/P00-import; ugyanazon PR következő fix headje
+következik, Runtime/Major/P00 READY blokk továbbra megmarad.
