@@ -835,9 +835,11 @@ normal/discovery10s marad. A test_integrated_verification.py közvetlen fixture
 emberi válasszal és koordinátori path-helyesbítéssel engedélyezett. Core/Runtime/
 Workspace/recovery/FFI/P18-validator/security/wire/gate/workflow változatlan.
 
-Célzott RED/raw/setup-failure megőrzött; végső scoped5PASS +public1PASS,
-P01 teljes96PASS; Darwin mode-boundary2ERROR→2PASS, teljes companion20PASS,
-evidence13PASS. Friss saját T9 source/target/tmp, offline meglévő tools, jobs1:
+Célzott RED/raw/setup-failure megőrzött; végső scoped 5 PASS + public 1 PASS,
+P01 Python-model tesztek 96 PASS; Darwin planning mode-boundary 2 ERROR → 2 PASS,
+teljes companion 20 PASS, evidence 13 PASS. Ezek Python-model eredmények,
+nem natív provider-runtime vagy production minősítések.
+Friss saját T9 source/target/tmp, offline meglévő tools, jobs1:
 structure/shared Python182PASS; normal286 +exact-parent2=framework288PASS,
 külön32+5nested, childPASS0, seam3/P18PDF4PASS. Public --recheck-report az
 azonos offline/custom-Cargo opciókkal current/exit0, nincs execution/rewrite.
@@ -857,3 +859,16 @@ report unchanged. Selected6b96ab6c, shared5a4f6972, proof7a4d4e0a; teljes SHA-k
 és actual parancsok a P01 resultban. Root unittest6PASS, content481PASS.
 Nincs CI-job rerun, nincs core/P00-import; ugyanazon PR következő fix headje
 következik, Runtime/Major/P00 READY blokk továbbra megmarad.
+
+A publikált fbff72b5 kód-head (run 41825437758), majd a handoff-only 91d7b582
+head (run 41827837836) Actions CI-je 7/7 SUCCESS, required aggregate app 15368.
+A hat CI-fix, a late-hook és négy saját doc-megjegyzés bizonyítékos PR-választ
+kapott, 11/20 thread resolved; 9 nyitott Runtime/recovery/Workspace/FFI szál
+maradt (5 Major / 3 Minor / 1 Trivial), nincs új approval vagy P00 READY.
+A két új, nem inline Minor doc-pontosításban a rögzített meglévő Cargo-path
+explicit változódefiníciót kapott, a 96-os ledger-count Python-model határa
+helyben is kiírt. Shell-szintaxis/tool-path read-only ellenőrzött; nem futott
+új build/mérés. Két saját 481-fájlos source-copy + 481 frozen input és 50
+artifact/log hash recheck PASS; selected 6b96ab6c, régi c8 report/TeX unchanged.
+Az új metadata-only commit saját exact-HEAD CI-je külön kapu, a végső receipt
+a d4198f2b continuation reportjában. Összállapot BLOCKED / next idle, merge nincs.
