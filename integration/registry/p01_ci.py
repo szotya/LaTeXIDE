@@ -18,7 +18,7 @@ import stat
 import sys
 
 # Filled from the explicitly frozen, reviewed P01 input by the candidate builder.
-SOURCE_PINS = {'crates/latexide-core/tests/recovery_contract.rs': {'sha256': '969fa145f611a4017875c7ee0350421ee495da08d43138004521f2f9e3b51709', 'mode': 420, 'bytes': 15497}, 'crates/latexide-core/src/services/recovery/durable_tests.rs': {'sha256': '8fd354781287f7501bdb96a3f77073307c2a16b75296adeba6589bd0ae8ce36b', 'mode': 420, 'bytes': 30986}, 'crates/latexide-core/src/services/recovery/runtime_tests.rs': {'sha256': 'ef0f62ca18c3bc8431135504bb889f8fbd3dabc401e50b10f07edb1e95295208', 'mode': 420, 'bytes': 22326}}
+SOURCE_PINS = {'crates/latexide-core/tests/recovery_contract.rs': {'sha256': '969fa145f611a4017875c7ee0350421ee495da08d43138004521f2f9e3b51709', 'mode': 420, 'bytes': 15497}, 'crates/latexide-core/src/services/recovery/durable_tests.rs': {'sha256': '12d99f121a6df6c9573f159b7acafa0ee54617c5201698227b4515f1c64673e3', 'mode': 420, 'bytes': 31208}, 'crates/latexide-core/src/services/recovery/runtime_tests.rs': {'sha256': 'ef0f62ca18c3bc8431135504bb889f8fbd3dabc401e50b10f07edb1e95295208', 'mode': 420, 'bytes': 22326}}
 SENTINELS = ("crates/latexide-core/src/services/recovery/durable_tests.rs",
              "crates/latexide-core/src/services/recovery/runtime_tests.rs")
 PARENTS = {

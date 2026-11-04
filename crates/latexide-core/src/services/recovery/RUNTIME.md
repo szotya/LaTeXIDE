@@ -79,9 +79,9 @@ security, GUI/live packaged app, Windows/Linux, hardware or production acceptanc
 
 P03-P01-RUNTIME-F01 found that rejection alone was insufficient: a `.latexide`
 symlink caused `outside/recovery` to be created before the factory returned NULL.
-The earlier19 public-path controls did not cover that case. A separate own fresh
+The earlier 19 public-path controls did not cover that case. A separate own fresh
 C ABI RED reproduced it; five own C ABI ancestor controls now pass after the fix,
-along with the19 public C ABI/IPC regressions and fresh160-pass Rust workspace.
+along with the 19 public C ABI/IPC regressions and fresh 160-pass Rust workspace.
 Historical source/review results remain unchanged and are not relabeled.
 
 Recovery directory preparation now uses the owned `private_directory.rs` helper.
@@ -89,7 +89,7 @@ Before any creation, existing ancestors are opened read-only with kernel
 O_NOFOLLOW_ANY/O_DIRECTORY and metadata/descriptor identity checks. Missing
 components use mkdirat/openat relative to a held parent; new directories retain
 0700/effective-owner checks, parent sync and final no-follow path/descriptor
-rebind. Existing ordinary project ancestors may remain0755; no chmod or repair.
+rebind. Existing ordinary project ancestors may remain 0755; no chmod or repair.
 Unsupported primitives fail closed without weaker-flag fallback. The runtime
 ensure and producer cohort creation both use this boundary. Auth/wire/C ABI
 and the one authoritative Workspace/Save/undo contract are unchanged.

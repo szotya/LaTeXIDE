@@ -365,6 +365,36 @@ class P01NamespaceTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError,'Late P18 output inventory changed'):m.a._normal_final(p)
 
 class ScopedCIRegressionTests(unittest.TestCase):
+    def test_catalog_final_helper_pin_accepts_bytes_and_rejects_wrong_missing_stale(self):
+        a=module('p01_ci');helper='crates/latexide-core/src/services/recovery/durable_tests.rs'
+        expected=json.loads(json.dumps(a.SOURCE_PINS))
+        source={name:(ROOT/name).read_bytes() for name in expected}
+        for variant in ('current','wrong','missing','stale'):
+            with self.subTest(variant=variant),retained_directory(prefix='pin-companion-'+variant+'-') as d:
+                root=Path(d);modes={}
+                for name,data in source.items():
+                    if variant=='missing' and name==helper:continue
+                    if variant=='wrong' and name==helper:data=bytes([data[0]^1])+data[1:]
+                    p=root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(data)
+                    modes[p]=expected[name]['mode']
+                # Only the private fixture's host permission representation is modeled.
+                # Actual final source bytes and the production catalog checks are not mocked.
+                actual_mode=a._mode
+                def fixture_mode(path):
+                    p=Path(path)
+                    return modes[p] if p in modes else actual_mode(p)
+                selected=json.loads(json.dumps(expected))
+                if variant=='stale':
+                    selected[helper]={'sha256':'8fd354781287f7501bdb96a3f77073307c2a16b75296adeba6589bd0ae8ce36b','bytes':30986,'mode':420}
+                with patch.object(a,'_mode',side_effect=fixture_mode),patch.object(a,'SOURCE_PINS',selected):
+                    if variant=='current':
+                        try:observed=a.catalog(root)
+                        except ValueError as e:self.fail('Final helper byte identity must be admitted: '+str(e))
+                        self.assertEqual(set(observed),set(expected))
+                        self.assertEqual(observed[helper]['sha256'],hashlib.sha256(source[helper]).hexdigest())
+                    else:
+                        with self.assertRaises(ValueError):a.catalog(root)
+
     def test_late_mutation_control_arms_with_alias_owner(self):
         with retained_directory(prefix='late-control-alias-') as d:
             base=Path(d);real=base/'real';real.mkdir();(real/'owner').mkdir(mode=0o700)

@@ -105,3 +105,25 @@ commands, compares the original argv and recorded Rust tool identity, and
 performs no execution or report rewrite. Wrong source/tool/options fail.
 Darwin plan unit tests use inert source fixtures with observed hash/mode pins;
 those model bindings never replace the production SOURCE_PINS contract.
+
+
+Default durable-test runs retain their shared temporary evidence tree. The
+process-static `OnceLock<PathBuf>` does not run drop cleanup at exit; do not add
+a static cleanup guard and claim it removes that evidence. An explicit
+`P01_DURABLE_SCRATCH` remains a caller-owned evidence override.
+
+The durable parent/child test source is pinned by the canonical qualifier.
+Even a helper-only edit or retention comment changes that source identity.
+A separately authorized pin refresh and fresh relevant qualification are needed
+before publishing such a delta; preserve a blocked private candidate when the
+pin file is outside the task allowlist. Do not refresh a pin to hide a failed
+control. A linked extracted helper harness with failed sandbox discovery is
+compile/link evidence only: zero discovered cases remain unrun, with no
+unsandboxed retry or native/provider acceptance inferred.
+
+With explicit companion authorization, refresh only the reviewed helper's
+sha256/byte-count/mode tuple and preserve every other pin and qualifier guard.
+Bind the final source bytes to a narrow regression: accept those bytes, reject
+wrong/missing/stale input. A fixture permission model is unit evidence; it
+does not replace actual host/provider mode checks or turn a failed sandbox
+discovery into a runtime PASS.

@@ -34,6 +34,9 @@ fn scratch() -> PathBuf {
     if let Ok(path) = std::env::var("P01_DURABLE_SCRATCH") {
         return path.into();
     }
+    // Default runs intentionally retain this evidence tree under temp_dir().
+    // A process-static OnceLock is not dropped at exit; it provides no cleanup.
+    // P01_DURABLE_SCRATCH instead selects caller-owned retained evidence.
     static ROOT: std::sync::OnceLock<PathBuf> = std::sync::OnceLock::new();
     ROOT.get_or_init(|| {
         let p = std::env::temp_dir().canonicalize().unwrap().join(format!(
@@ -798,7 +801,7 @@ fn durable_own_child_exit_matrix_preserves_last_caller_observed_ack() {
                 .env("P01_CHILD_PHASE", phase)
                 .env("P01_DURABLE_SCRATCH", scratch())
                 .env("P01_RUN_NONCE", nonce())
-                .env("TMPDIR", std::env::var("TMPDIR").unwrap())
+                .env("TMPDIR", std::env::temp_dir())
                 .stdout(Stdio::from(stdout))
                 .stderr(Stdio::from(stderr))
                 .spawn()

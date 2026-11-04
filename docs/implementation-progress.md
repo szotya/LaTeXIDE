@@ -872,3 +872,17 @@ helyben is kiírt. Shell-szintaxis/tool-path read-only ellenőrzött; nem futott
 artifact/log hash recheck PASS; selected 6b96ab6c, régi c8 report/TeX unchanged.
 Az új metadata-only commit saját exact-HEAD CI-je külön kapu, a végső receipt
 a d4198f2b continuation reportjában. Összállapot BLOCKED / next idle, merge nincs.
+
+
+### 2026-11-04 – PR68 c17c249f: maradék test/doc review szűk részscope
+
+Kezdeti cutoff, a külön pin-companion engedély előtt:
+
+Friss 430f58e input 481 fájl, P00 closed input 482 + capsule 3517 fájl hash/mode verified; külön receipt SHA-k a P01 resultban. A RUNTIME.md négy spacing javítása whitespace-only, régi counts/status/hash változatlan. Két testhelper-javítás privát jelöltben: default evidence retention/static OnceLock nem cleanup, és TMPDIR unset std::env::temp_dir fallback. Ezek 12d99f12/31208 byte identitását a változatlan canonical SOURCE_PINS elutasítja; pin-frissítés e scope-on kívül, ezért a helper nincs a publisher diffben és a két finding not_fixed/blocked marad.
+
+Egy std-only derived harness build linkelt (dep-info + actual linker argv), de a kötelező sandboxos discovery SIGABRT -6, 257 ms, 0 selected; mind a négy tervezett control unrun. Nincs baseline RED/PASS, Core/Runtime/Session/crash-matrix vagy új platform acceptance; nincs sandbox-fallback/replay. Saját raw/binary/forrás/nonce és a preflight EPERM/schema-read hiba megőrzött. P00 F05 négy path before-blobja egyező, saját-copy dry-run exit 0, 481 source változatlan; productpatch nem alkalmazott, producer same-agent evidence nem P03/READY. F01–F04 és F05/Runtime Major, valamint Workspace-localization termékscope továbbra nyitott.
+
+Csak a RUNTIME spacing és saját evidence docs/skill publikálható; új exact-HEAD CI/review/base külön kapu. Aktuális parancsok, hash-kötések és final receipt a P01 resultban/saját c17c249f reportban. Issue/meta/worker/head/main/index/idegenforrás nem írva, merge NOTATTEMPTED. Teljes publication blocked, a lezárt részscope findings_final, next idle.
+
+
+C17 pin-companion folytatás: explicit kiegészítés után csak a durable_tests.rs SOURCE_PINS sor három értéke frissült 12d99f12/31208/420-ra, a másik két pin és minden sentinel/parent/child/budget/guard logika byte/AST szerint változatlan. Külön pin-red-source: 1 Python teszt / 1 FAIL; pin-green-source: ugyanaz az 1 teszt PASS, négy final/wrong/missing/stale fixture-variánssal. A permission modell kizárólag a privát unit-fixture-ra hat, production catalog nincs mockolva. A publisherbe most a két helper-javítás, spacing, pin és közvetlen regresszió együtt importált, friss source-admission sikeres. Az első sandboxos discovery -6/0 eset és a négy unrun kontroll megmarad; nincs új Rust/Cargo/full-suite replay vagy native/runtime elfogadási állítás. P00 patch továbbra not_applied/P03+READY hiányos; új exact-HEAD CI/review külön, merge NOTATTEMPTED, next idle.
