@@ -906,7 +906,7 @@ A verify.py companion szükséges: enélkül a kötelező root/nonce nem jutna a
 Saját source-red/green/target/cache/log, existing Rust 1.99.1/offline/locked/jobs1.
 190 Python-model PASS; végső pin 6 célzott PASS. Sandbox deny+own write PASS.
 Cargo test --lib --no-run exit0 RED 19.605 s/GREEN 24.552 s, compiler/dep-info/link/binary
-rögzített. Lokalizáció RED 1 FAIL  →  GREENr24 PASS; összes16exactPASS; átfedő
+rögzített. Lokalizáció RED 1 FAIL  →  GREEN 1 PASS; összes16exactPASS; átfedő
 normalFFI 28 PASS / 0 ignored3.877 s, 26 F05 marker/2 link/cold rebind PASS.
 cargo build --lib nem teszt .a/.dylib/.rlib exit0/2.264 s.
 Nem Session/Ccaller/IPC/GUI/Windows/Linux/production acceptance.
@@ -970,3 +970,19 @@ Model proof 2053717 → 146130 byte; külön manifest 462700 byte / 1068 sor.
 11 egyedi F05-model PASS + külön átfedő quota megfigyelés; teljes 195 Python PASS,
 33.953 s. Rust / P18 / pin / skip / ignore / deadline változatlan.
 Nincs régi Runtime/helper/parent replay; új head saját CI, Majorok mellett nincs merge.
+
+
+F05 CI7 / fa4e5bc / run41892594317: 7 / 7 Actions SUCCESS, required aggregate
+SUCCESS; Mac 17 required passed, 195 Python PASS, 312 normal + 2 exact-parent =
+314 framework PASS / 0 FAIL / 0 ignored / 4 normal filtered. Külön nested
+32 + 5, child PASS 0. Seam 3 / P18 PDF 4 / tool 6 / synthetic IPC 10 / MCP 1 /
+wire 1 PASS; native 81 PASS / 4 változatlan opt-in SKIP / 85 módszer.
+CodeRabbit check SUCCESS, formal review CHANGES_REQUESTED nem approval.
+F05 resolved, F01–F04 és a két külön Minor not_fixed/open; merge nincs.
+Az új Minor 4472064573 szerinti lokalizációs ledger-token GREEN 1 PASS-ra
+javított, a mért 16 exact / átfedő 28 FFI eredmény változatlan.
+Csak handoff/P01/ledger metadata-delta, saját diff/source/CI receipt külön;
+nincs új helyi Rust/helper/parent futás, P18/pin/guard/quota/deadline változás.
+Windows/Linux natív, live app/model, TeX Live runtime, release-perf és
+accessibility tovább unrun; hosted synthetic eredmény nem production acceptance.
+Korábbi failed raw, c17 SIGABRT / 0 case / 4 unrun megőrzött, végén idle.
