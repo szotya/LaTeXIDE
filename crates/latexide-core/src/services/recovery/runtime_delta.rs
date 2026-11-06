@@ -521,7 +521,8 @@ fn sync_command(file: &File, command: i32) -> std::io::Result<()> {
         fn fcntl(fd: i32, command: i32, ...) -> i32;
     }
     loop {
-        if unsafe { fcntl(file.as_raw_fd(), command) } == 0 {
+        // Darwin's libc wrapper consumes a variadic int even for sync commands.
+        if unsafe { fcntl(file.as_raw_fd(), command, 0_i32) } == 0 {
             return Ok(());
         }
         let error = std::io::Error::last_os_error();
