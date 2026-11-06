@@ -173,10 +173,29 @@ import SwiftUI
             view.enclosingScrollView?.verticalRulerView?.needsDisplay = true
         }
         func beginComposition() -> Bool { pending = nil; work?.cancel(); completionWork?.cancel(); completion.dismiss(); return store.beginComposition() }
+        /// Align accepted normalized text and its UTF-16 selection without a new edit.
+        private func synchronizeNormalizedText(_ view: NSTextView) {
+            let raw = view.string
+            // Canonically equal strings can still have different UTF-16 offsets.
+            guard (raw as NSString).compare(store.text, options: .literal) != .orderedSame else { return }
+            let selected = EditorViewState.safeSelection(view.selectedRange(), in: raw)
+            let source = raw as NSString
+            func normalizedOffset(_ offset: Int) -> Int {
+                source.substring(to: offset).replacingOccurrences(of: "\r\n", with: "\n").utf16.count
+            }
+            let start = normalizedOffset(selected.location), end = normalizedOffset(NSMaxRange(selected))
+            rendering = true
+            defer { rendering = false }
+            view.string = store.text
+            view.setSelectedRange(EditorViewState.safeSelection(NSRange(location: start, length: end - start), in: store.text))
+        }
         func finishComposition(_ view: NSTextView) {
             guard store.isComposing, !view.hasMarkedText() else { return }
             let delta = SourceEdit.difference(from: store.text, to: view.string)
-            do { try store.edit(range: delta.range, replacement: delta.replacement, composition: true) }
+            do {
+                try store.edit(range: delta.range, replacement: delta.replacement, composition: true)
+                synchronizeNormalizedText(view)
+            }
             catch { store.failure = error.localizedDescription; rendering = true; view.string = store.text; rendering = false }
             lineMap = SourceLineMap(view.string); document = store.selection; renderedRevision = store.revision
             if let source = view as? SourceTextView { schedule(source) }
@@ -192,8 +211,14 @@ import SwiftUI
             let currentIndex = document == store.selection && project == store.root && renderedRevision == store.revision
             do {
                 try store.edit(range: delta.range, replacement: delta.replacement)
-                if !currentIndex || !lineMap.replace(range: delta.range, with: delta.replacement) {
-                    lineMap = SourceLineMap(view.string)
+                let normalized = delta.replacement.replacingOccurrences(of: "\r\n", with: "\n")
+                // Only CRLF changes an accepted replacement's representation.
+                // Ordinary keystrokes must not compare the whole document.
+                if normalized.utf16.count != delta.replacement.utf16.count {
+                    synchronizeNormalizedText(view)
+                }
+                if !currentIndex || !lineMap.replace(range: delta.range, with: normalized) {
+                    lineMap = SourceLineMap(store.text)
                 }
             } catch {
                 store.failure = error.localizedDescription; rendering = true; view.string = store.text; rendering = false
@@ -213,8 +238,12 @@ import SwiftUI
             reportCaret(view); view.setNeedsDisplay(view.visibleRect, avoidAdditionalLayout: true)
             view.enclosingScrollView?.verticalRulerView?.needsDisplay = true
         }
+        /// Geometry follows marked text before its single core transaction commits.
+        func displayedLineMap(for view: NSTextView) -> SourceLineMap {
+            store.isComposing ? SourceLineMap(view.string) : lineMap
+        }
         func reportCaret(_ view: SourceTextView) {
-            let position = lineMap.position(at: view.selectedRange().location)
+            let position = displayedLineMap(for: view).position(at: view.selectedRange().location)
             store.reportCaret(line: position.line, column: position.column)
             if store.editorSelection != view.selectedRange() { store.editorSelection = view.selectedRange() }
         }

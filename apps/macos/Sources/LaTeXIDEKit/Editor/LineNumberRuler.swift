@@ -7,6 +7,11 @@ final class LineNumberRuler: NSRulerView {
         clientView = source; ruleThickness = 56
     }
     required init(coder: NSCoder) { fatalError("init(coder:) is not used") }
+    /// Marked text changes display geometry before the core commits a transaction.
+    var displayedLineMap: SourceLineMap {
+        guard let source else { return SourceLineMap() }
+        return source.adapter?.displayedLineMap(for: source) ?? SourceLineMap(source.string)
+    }
     override func drawHashMarksAndLabels(in rect: NSRect) {
         guard let view = source, let theme = view.editorTheme,
               let manager = view.layoutManager, let container = view.textContainer else { return }
@@ -14,7 +19,7 @@ final class LineNumberRuler: NSRulerView {
         let visible = view.visibleRect.offsetBy(dx: -view.textContainerOrigin.x, dy: -view.textContainerOrigin.y)
         manager.ensureLayout(forBoundingRect: visible, in: container)
         let glyphs = manager.glyphRange(forBoundingRectWithoutAdditionalLayout: visible, in: container)
-        let lines = view.adapter?.lineMap ?? SourceLineMap(view.string)
+        let lines = displayedLineMap
         let selected = lines.position(at: view.selectedRange().location).line
         let font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .regular)
         var glyph = glyphs.location

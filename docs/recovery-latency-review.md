@@ -43,8 +43,14 @@ Times below are milliseconds. Diagnostic six-sample values do not qualify the
 | Private soft-wrap experiment, single line | 6 | 19.882 | 163.170 | Diagnostic only; wrapping not applied to product |
 | First UI candidate, 80-column LF | 40 | 16.118 | 26.947 | Original target not met at 1 MiB; proposed criterion still pending |
 | Private memory-only control, single line | 6 | 17.712 | 608.223 | Diagnostic; no recovery/restore/undo qualification |
-| Final contiguous-layout candidate, single line | 40 | 45.666 | 510.243 | Original target FAIL; restore/undo/disk pass |
-| Same final binary, 80-column LF | 40 | 33.783 | 30.497 | Original target FAIL; meets proposed 50 ms numerically, decision pending |
+| App 92b041c6, single line | 40 | 45.666 | 510.243 | Original target FAIL; restore/undo/disk pass |
+| Same app, 80-column LF | 40 | 33.783 | 30.497 | Original target FAIL; meets proposed 50 ms numerically, decision pending |
+| CRLF/composition-corrected binary, single line | 40 | 32.896 | 519.369 | Original target FAIL; restore/undo/disk pass |
+| Same corrected binary, 80-column LF | 40 | 33.874 | 37.136 | Original target FAIL; proposed 50 ms meets numerically, decision pending |
+| App 3adcfae6, single line | 40 | 33.901 | 509.957 | Original target FAIL; restore/undo/disk pass |
+| Same latest app, 80-column LF | 40 | 31.702 | 30.187 | Original target FAIL; proposed 50 ms meets numerically, decision pending |
+| App 9aefca1b, single line | 40 | 32.856 | 513.615 | Original target FAIL; restore/undo/disk pass |
+| Same shared-geometry app, 80-column LF | 40 | 34.216 | 32.177 | Original target FAIL; proposed 50 ms meets numerically, decision pending |
 
 The memory control differs by one private factory call, opening Workspace
 explicitly in memory. Its archive/source identity is separate. It verifies
@@ -82,14 +88,59 @@ selection and shared undo/redo contracts remain as before.
 The new line-map tests compare incremental and freshly derived offsets across
 Unicode, line insertion/deletion and all valid UTF-16 boundaries; a real native
 editor test exercises newline/emoji edits and undo/redo synchronization.
-The final full native regression has 89 methods: 85 PASS / 4 unchanged named
+The first full native regression has 89 methods: 85 PASS / 4 unchanged named
 opt-in SKIP / 0 failures. It includes the three new line-map methods and the
 existing viewport/selection/composition controls. Its separate ABI p95 is
-6.995 / 8.095 ms, again descriptive. The final app executable SHA256 is
+6.995 / 8.095 ms, again descriptive. The first final app executable SHA256 is
 `92b041c620e5087aac1c3b56fb4b57ae0f07431a883a73a00a906287fd0cc88e`;
-both final 40-sample workloads use exactly this binary. The fresh structure check passes all 195 Python tests plus generated/planning/
+both final 40-sample workloads use exactly this binary. The earlier structure check passes all 195 Python tests plus generated/planning/
 documentation validation. Current exact-head CI/review and the acceptance
 decision remain separate merge gates.
+
+## CRLF, composition and older compiler follow-up
+
+The a625f3b Actions run passed 195 Python and 330 Rust methods, but its older
+Swift compiler could not type-check the new test's combined filter expression.
+Native build was ERROR and native controls were UNRUN. The test now constructs
+an explicitly typed UInt16/Int boundary list in simple steps, preserving every
+case and assertion; no fixture, skip or coverage was removed.
+
+Two new real-editor regressions reproduced nine assertions in two failed methods:
+marked text changed displayed line starts before the core committed, and CRLF
+insertion left raw editor offsets different from normalized store offsets.
+The ruler now derives transient geometry from marked text while composition is
+active. After accepted CRLF edits or composition, the coordinator aligns literal
+UTF-16 editor text and caret with store.text, and updates line offsets from the
+normalized replacement. Ordinary keystrokes inspect only the replacement length for normalization;
+they do not compare or scan the whole document. The core remains unchanged during composition; its end
+still creates exactly one undo transaction. Ordinary and marked CRLF/emoji
+cases verify the next edit, literal UTF-16 agreement, caret and unchanged disk.
+
+All five line-map methods pass. The new complete native regression has 91 methods:
+87 PASS / 4 unchanged opt-in SKIP / 0 failures. Its separate ABI p95 is
+7.014 / 7.018 ms. The corrected packaged executable SHA256 is
+`84352204e76bafee607750793a775fb761edc6f213af369b6ed774dfb7c49330`;
+both corrected 40-sample workloads above use this exact binary. Rust/C ABI and
+its archive remain unchanged. The original 16.7 ms target remains failed;
+the proposed ordinary-LF 50 ms criterion still needs an explicit user decision.
+
+The final replacement-bounded path again passes all 91 native methods (87 PASS /
+4 unchanged opt-in SKIP). Its separate descriptive ABI p95 is 7.038 / 7.036 ms.
+The latest app SHA256 is
+`3adcfae66f34bf24c15c5d781d71767c0f069b1470492b92d215d9100fbfbb4f`;
+the latest two table rows use this identical binary with 40 samples per size.
+The previous app rows remain historical observations, with their original hashes
+and failed original target. Current CI and the proposed criterion are still pending.
+
+The same transient index also serves the status caret. A new assertion reproduced
+an incorrect marked-text column (4 instead of 3); the ruler and caret now share
+the display geometry. The core still stays unchanged before the single commit.
+The complete native regression is again 91 methods: 87 PASS / 4 unchanged skips,
+0 failures (19.176 seconds). Its descriptive ABI p95 is 7.130 / 10.759 ms.
+The latest shared-geometry app SHA256 is
+`9aefca1b27ac55e3ed5b9b5de3e57d55475e536a8faab84febd570dec762fc39`;
+its two table rows use the same binary and fresh 40-sample fixtures. The original
+criterion remains failed and the proposed ordinary-source criterion is pending.
 
 ## Custody and remaining qualification
 
