@@ -986,3 +986,40 @@ nincs új helyi Rust/helper/parent futás, P18/pin/guard/quota/deadline változ�
 Windows/Linux natív, live app/model, TeX Live runtime, release-perf és
 accessibility tovább unrun; hosted synthetic eredmény nem production acceptance.
 Korábbi failed raw, c17 SIGABRT / 0 case / 4 unrun megőrzött, végén idle.
+
+
+### 2026-11-06 – PR68 mind a hat review finding javítása
+
+Új közvetlen user authorization: F01–F04 és két Minor javítása, szükséges tesztek,
+CI/review, majd kizárólag minden kapu sikerénél protected merge.
+Path-független, store-on kívüli privát projekt-lineage; edit/undo/redo előtt és
+publikáláskor project/store/writer-lock inode guard. Unknown entry/cohort retained,
+bounded nofollow quota. Directory/lock setup failure explicit in-memory státusz,
+selected corruption soha nem fallback. Incremental text/history + sealed high-water
+receipt, egy tartós file barrier az edit ACK előtt; checkpoint Save/compactionnél.
+Bare F05 Cargo mindhárom env hiányánál valódi saját fixture-t futtat, nincs skip.
+
+Új 6-case RED → GREEN, missing-log RED → LXPTR002 required-log guard;
+bővített 10 Runtime PASS; átfedő teljes FFI 38 PASS / 26 F05 / 0 ignored / 0 filtered.
+Python 195 PASS. A retention unit most bounded 1..2 checkpointot és mind a 40 undót
+ellenőrzi, egy legacy source-pin frissült, sentinel/parent/deadline változatlan.
+F05 closure 7 source pin, mind a 26 ID tovább mandatory. Bare workspace P18 env
+hiányában failed; hivatalos wrapper-verifier P18 OS EPERM miatt 37 FAIL, függő
+lépések unrun. Native baseline wrapper 1 FAIL / 0 timing EPERM. Raw megmarad;
+külön hostengedélyes own-fixture attempt és friss remote CI/review folyamatban.
+Nincs telepítés, régi c17 replay, idegen PID vagy worker/frozen/main checkout írás.
+Részletes implementáció/actual command/result: P01 result és RUNTIME.md.
+
+Az önreview után az incremental high-water külön, atomikusan cserélt privát
+receipt lett: POSIX data/receipt/directory ordering, egy végső médiaflush.
+Új integritás és előkészítési hiba kontrollok: teljes FFI 40 PASS / 12 follow-up /
+26 F05 / 0 ignored / 0 filtered, 5.61 s. A korábbi host-verifier 322 raw PASS után
+fresh-artifact hiány miatt failed, ezért végső friss source/target futás külön.
+A baseline native ABI mérés p50 32.039 ms (1 KiB) / 61.039 ms (1 MiB), 40-40 minta;
+prototípus/current-final külön kötött, nem GUI vagy release-performance acceptance.
+
+Végső local shared PASS: 195 Python / 326 framework Rust (324 normal + 2 parent),
+0 fail/ignored, 4 normal filtered; 32+5 nested külön, child PASS0, seam3/P18PDF4 PASS.
+Végső native ABI p50 3.724 / 4.568 ms (1KiB/1MiB), baseline32.039/61.039ms,
+40-40 minta; restore/dirty/undo/disk assertions PASS. GUI/release perf tovább unrun.
+Új PR-HEAD required CI és review következik; merge csak minden kapu után.

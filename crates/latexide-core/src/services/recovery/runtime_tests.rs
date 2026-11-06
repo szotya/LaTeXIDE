@@ -389,11 +389,18 @@ fn runtime_retention_is_bounded_across_more_than_32_edits_without_losing_history
                 .starts_with("cohort-")
         })
         .count();
-    assert_eq!(cohorts, 2);
+    assert!(
+        (1..=2).contains(&cohorts),
+        "current plus at most one previous checkpoint"
+    );
     drop(w);
     let mut w = Workspace::open_recoverable(root, storage).unwrap();
     assert_eq!(w.snapshot("main.tex").unwrap().text, "edit-39");
-    assert_eq!(w.undo().unwrap().text, "edit-38");
+    for n in (0..39).rev() {
+        assert_eq!(w.undo().unwrap().text, format!("edit-{n}"));
+    }
+    assert_eq!(w.undo().unwrap().text, "original");
+    assert!(!w.can_undo());
 }
 
 #[test]

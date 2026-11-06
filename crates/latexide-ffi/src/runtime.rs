@@ -29,7 +29,8 @@ impl Runtime {
     pub fn open_project(root: PathBuf) -> Result<Self, CoreError> {
         let root = root.canonicalize()?;
         #[cfg(target_os = "macos")]
-        let workspace = Workspace::open_recoverable(root.clone(), root.join(".latexide/recovery"))?;
+        let workspace =
+            Workspace::open_with_optional_recovery(root.clone(), root.join(".latexide/recovery"))?;
         #[cfg(not(target_os = "macos"))]
         let workspace = Workspace::open(root)?;
         Ok(Self::new(workspace))

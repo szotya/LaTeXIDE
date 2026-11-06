@@ -6,10 +6,10 @@ use latexide_protocol::{Reply, Request};
 use std::os::unix::fs::{MetadataExt, OpenOptionsExt, PermissionsExt, symlink};
 use std::{
     fs,
-    io::Write,
+    io::{Read, Write},
     path::{Path, PathBuf},
     sync::{
-        Arc, Mutex,
+        Arc, Mutex, OnceLock,
         atomic::{AtomicBool, AtomicUsize, Ordering},
     },
     time::{Duration, Instant},
@@ -18,7 +18,63 @@ fn hex(b: &[u8]) -> String {
     b.iter().map(|v| format!("{v:02x}")).collect()
 }
 fn nonce() -> String {
-    std::env::var("P00_PR68_NONCE").expect("own nonce")
+    run_fixture().nonce.clone()
+}
+struct RunFixture {
+    task_root: PathBuf,
+    cases: PathBuf,
+    nonce: String,
+}
+fn run_fixture() -> &'static RunFixture {
+    static FIXTURE: OnceLock<RunFixture> = OnceLock::new();
+    FIXTURE.get_or_init(|| {
+        let vars = ["P00_PR68_TASK_ROOT", "P00_PR68_ROOT", "P00_PR68_NONCE"].map(std::env::var_os);
+        if vars.iter().all(Option::is_none) {
+            // Bare Cargo gets a real exclusive private fixture, never a skip.
+            let mut bytes = [0u8; 32];
+            fs::File::open("/dev/urandom")
+                .unwrap()
+                .read_exact(&mut bytes)
+                .unwrap();
+            let nonce = hex(&bytes);
+            let task_root = std::env::temp_dir()
+                .canonicalize()
+                .unwrap()
+                .join(format!("pr68-standalone-{}-{nonce}", std::process::id()));
+            fs::create_dir(&task_root).unwrap();
+            fs::set_permissions(&task_root, fs::Permissions::from_mode(0o700)).unwrap();
+            let tmp = task_root.join("tmp");
+            fs::create_dir(&tmp).unwrap();
+            fs::set_permissions(&tmp, fs::Permissions::from_mode(0o700)).unwrap();
+            let cases = tmp.join("cases");
+            fs::create_dir(&cases).unwrap();
+            fs::set_permissions(&cases, fs::Permissions::from_mode(0o700)).unwrap();
+            RunFixture {
+                task_root,
+                cases,
+                nonce,
+            }
+        } else {
+            assert!(
+                vars.iter().all(Option::is_some),
+                "partial F05 harness environment; all three variables are required"
+            );
+            RunFixture {
+                task_root: PathBuf::from(vars[0].as_ref().unwrap())
+                    .canonicalize()
+                    .unwrap(),
+                cases: PathBuf::from(vars[1].as_ref().unwrap())
+                    .canonicalize()
+                    .unwrap(),
+                nonce: vars[2]
+                    .as_ref()
+                    .unwrap()
+                    .to_str()
+                    .expect("ASCII nonce")
+                    .to_owned(),
+            }
+        }
+    })
 }
 
 struct CaseWatch {
@@ -61,12 +117,8 @@ fn fixture(id: &str, body: &[u8]) -> (PathBuf, PathBuf, CaseWatch) {
         std::any::type_name::<Runtime>(),
         "latexide_ffi::runtime::Runtime"
     );
-    let root = PathBuf::from(std::env::var("P00_PR68_TASK_ROOT").expect("own task root"))
-        .canonicalize()
-        .unwrap();
-    let parent = PathBuf::from(std::env::var("P00_PR68_ROOT").expect("own case root"))
-        .canonicalize()
-        .unwrap();
+    let root = &run_fixture().task_root;
+    let parent = &run_fixture().cases;
     assert!(parent.starts_with(root.join("tmp")));
     let index = id
         .strip_prefix('r')
@@ -510,7 +562,7 @@ fn r10_rebind_does_not_make_stale_revision_edit_or_save_valid() {
     assert_eq!(r.workspace.recovery_status().sequence, seq + 1);
 }
 #[test]
-fn r11_project_rename_reproduces_scope_refusal_without_losing_acknowledged_state() {
+fn r11_project_rename_restores_acknowledged_state_and_history() {
     let (base, p, _case_watch) = fixture("r11", b"old");
     let mut r = runtime(&p);
     let rev = open(&mut r);
@@ -521,27 +573,24 @@ fn r11_project_rename_reproduces_scope_refusal_without_losing_acknowledged_state
     fs::rename(&p, &moved).unwrap();
     let after = fs::metadata(&moved).unwrap();
     assert_eq!((before.dev(), before.ino()), (after.dev(), after.ino()));
-    let e = match Runtime::open_project(moved.clone()) {
-        Ok(_) => panic!("current scope policy unexpectedly accepted moved project"),
-        Err(e) => e,
-    };
-    println!(
-        "PR68_LIMIT\t{}\tproject_move\t{}\t{}",
-        nonce(),
-        e.code,
-        e.message
-    );
-    assert_eq!(e.code, "recovery_corrupt");
-    assert!(e.message.contains("project scope"));
-    assert_eq!(fs::read(moved.join("main.tex")).unwrap(), b"old");
-    fs::rename(&moved, &p).unwrap();
-    let mut r = runtime(&p);
+    let mut r = runtime(&moved);
     assert_eq!(
         r.workspace.snapshot("main.tex").unwrap().text,
         "acknowledged"
     );
+    assert!(r.workspace.snapshot("main.tex").unwrap().dirty);
+    assert_eq!(fs::read(moved.join("main.tex")).unwrap(), b"old");
     ok(&mut r, Request::Undo);
     assert_eq!(r.workspace.snapshot("main.tex").unwrap().text, "old");
+    drop(r);
+    fs::rename(&moved, &p).unwrap();
+    let mut r = runtime(&p);
+    assert_eq!(r.workspace.snapshot("main.tex").unwrap().text, "old");
+    ok(&mut r, Request::Redo);
+    assert_eq!(
+        r.workspace.snapshot("main.tex").unwrap().text,
+        "acknowledged"
+    );
     state(&r, "original-location-recovered");
 }
 fn copy_tree(a: &Path, b: &Path) {
@@ -620,63 +669,50 @@ fn foreign_entry_case(id: &str, name: &str, cohort: bool) {
                     line: 0,
                     character: 12,
                 },
-                text: "rejected".into(),
+                text: "accepted".into(),
             }],
         },
     );
-    assert!(!reply.ok);
-    let e = reply.error.unwrap();
-    assert_eq!(e.code, "recovery_corrupt");
-    println!(
-        "PR68_LIMIT\t{}\tforeign_entry\t{}\t{}",
-        nonce(),
-        e.code,
-        e.message
-    );
-    assert_eq!(r.workspace.recovery_status().sequence, seq);
-    assert_eq!(
-        r.workspace.snapshot("main.tex").unwrap().text,
-        "acknowledged"
-    );
+    assert!(reply.ok, "{:?}", reply.error);
+    assert_eq!(r.workspace.recovery_status().sequence, seq + 1);
+    assert_eq!(r.workspace.snapshot("main.tex").unwrap().text, "accepted");
     assert_eq!(fs::read(&foreign).unwrap(), b"foreign-preserve");
-    state(&r, "foreign-blocked-with-ack-retained");
+    state(&r, "foreign-retained-with-edit-accepted");
     disk(&foreign, "foreign-retained");
     drop(r);
     let r = runtime(&p);
-    assert_eq!(
-        r.workspace.snapshot("main.tex").unwrap().text,
-        "acknowledged"
-    );
+    assert_eq!(r.workspace.snapshot("main.tex").unwrap().text, "accepted");
     assert!(r.workspace.can_undo());
     assert_eq!(fs::read(foreign).unwrap(), b"foreign-preserve");
 }
 #[test]
-fn r13_unknown_root_file_reproduces_edit_block_and_is_retained() {
+fn r13_unknown_root_file_is_retained_without_blocking_edits() {
     foreign_entry_case("r13", "notes.txt", false)
 }
 #[test]
-fn r14_ds_store_reproduces_edit_block_and_is_retained() {
+fn r14_ds_store_is_retained_without_blocking_edits() {
     foreign_entry_case("r14", ".DS_Store", false)
 }
 #[test]
-fn r15_unknown_unselected_cohort_file_reproduces_edit_block_and_is_retained() {
+fn r15_unknown_unselected_cohort_is_retained_without_blocking_edits() {
     foreign_entry_case("r15", "notes.txt", true)
 }
 #[test]
-fn r16_recovery_setup_failure_rejects_factory_without_silent_fallback() {
+fn r16_recovery_setup_failure_reports_explicit_in_memory_mode() {
     let (_, p, _case_watch) = fixture("r16", b"old");
     own_file(&p.join(".latexide"), b"foreign-blocking-file");
-    let e = match Runtime::open_project(p.clone()) {
-        Ok(_) => panic!("factory silently bypassed failed durable recovery setup"),
-        Err(e) => e,
-    };
-    println!(
-        "PR68_LIMIT\t{}\trecovery_setup\t{}\t{}",
-        nonce(),
-        e.code,
-        e.message
+    let mut r = Runtime::open_project(p.clone()).unwrap();
+    assert!(!r.workspace.recovery_status().enabled);
+    assert_eq!(
+        r.workspace.recovery_status().last_error.as_deref(),
+        Some("recovery_storage")
     );
-    assert_eq!(e.code, "recovery_storage");
+    let info = ok(&mut r, Request::WorkspaceInfo);
+    assert_eq!(info["recovery"]["enabled"], false);
+    assert_eq!(info["recovery"]["last_error"], "recovery_storage");
+    let rev = open(&mut r);
+    edit(&mut r, rev, "in-memory");
+    assert_eq!(r.workspace.snapshot("main.tex").unwrap().text, "in-memory");
     assert_eq!(
         fs::read(p.join(".latexide")).unwrap(),
         b"foreign-blocking-file"

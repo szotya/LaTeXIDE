@@ -20,6 +20,8 @@ use std::{
 };
 const MAX_STATE: usize = 64 * 1024 * 1024;
 const MAX_ROOT: u64 = 256 * 1024 * 1024;
+#[path = "runtime_delta.rs"]
+mod incremental;
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum RecoveryPhase {
     Prepared,
@@ -428,6 +430,7 @@ fn unseal<'a>(bytes: &'a [u8], magic: &[u8; 8]) -> Result<&'a [u8]> {
     Ok(&bytes[24..bytes.len() - 64])
 }
 struct Selector {
+    incremental: bool,
     sequence: u64,
     current: String,
     previous: String,
@@ -442,10 +445,25 @@ impl Selector {
         w.string(&self.previous)?;
         w.string(&self.state_sha)?;
         w.bytes(&self.ack.encode().map_err(durable)?)?;
-        seal(b"LXPTR001", w.0)
+        seal(
+            if self.incremental {
+                b"LXPTR002"
+            } else {
+                b"LXPTR001"
+            },
+            w.0,
+        )
     }
     fn decode(bytes: &[u8]) -> Result<Self> {
-        let mut r = Reader::new(unseal(bytes, b"LXPTR001")?);
+        let incremental = bytes.starts_with(b"LXPTR002");
+        let mut r = Reader::new(unseal(
+            bytes,
+            if incremental {
+                b"LXPTR002"
+            } else {
+                b"LXPTR001"
+            },
+        )?);
         let sequence = r.u64()?;
         let current = r.string(64)?;
         let previous = r.string(64)?;
@@ -460,6 +478,7 @@ impl Selector {
             return Err(bad("selector binding"));
         }
         Ok(Self {
+            incremental,
             sequence,
             current,
             previous,
@@ -470,15 +489,23 @@ impl Selector {
 }
 pub(crate) struct RuntimeRecovery {
     root: PathBuf,
+    project_root: PathBuf,
+    project_identity: (u64, u64),
+    storage_identity: (u64, u64),
     scope: StoreScope,
     current: Option<String>,
     previous: Option<String>,
     selector_sha: Option<String>,
+    edits: Option<incremental::EditLog>,
     status: RecoveryStatus,
     _lock: File,
     observer: Box<dyn RecoveryObserver>,
 }
-fn project_id(project_root: &Path) -> Result<String> {
+pub(crate) enum OpenRecovery {
+    Enabled(RuntimeRecovery, Option<State>),
+    Unavailable(CoreError),
+}
+fn legacy_project_id(project_root: &Path) -> Result<String> {
     #[cfg(unix)]
     let identity = {
         let m = fs::metadata(project_root).map_err(io)?;
@@ -488,22 +515,71 @@ fn project_id(project_root: &Path) -> Result<String> {
     let identity = project_root.to_string_lossy().into_owned();
     Ok(raw_digest(identity.as_bytes()))
 }
+fn project_marker(project_root: &Path) -> PathBuf {
+    project_root.join(".latexide/recovery-project-id")
+}
+fn read_project_id(project_root: &Path) -> Result<Option<String>> {
+    let p = project_marker(project_root);
+    match fs::symlink_metadata(&p) {
+        Err(e) if e.kind() == std::io::ErrorKind::NotFound => Ok(None),
+        Err(e) => Err(io(e)),
+        Ok(_) => {
+            let bytes = durable::read_private(&p, 64).map_err(durable)?;
+            let id = String::from_utf8(bytes).map_err(|_| bad("project identity UTF8"))?;
+            if !latexide_contracts::is_sha256(&id) {
+                return Err(bad("project identity"));
+            }
+            Ok(Some(id))
+        }
+    }
+}
+
+fn directory_identity(path: &Path) -> Result<(u64, u64)> {
+    #[cfg(unix)]
+    {
+        let f = OpenOptions::new()
+            .read(true)
+            .custom_flags(0x20000000)
+            .open(path)
+            .map_err(io)?;
+        let m = f.metadata().map_err(io)?;
+        if !m.is_dir() {
+            return Err(bad("project/storage directory identity"));
+        }
+        Ok((m.dev(), m.ino()))
+    }
+    #[cfg(not(unix))]
+    {
+        let _ = path;
+        Err(bad("unconfirmed directory identity"))
+    }
+}
 
 impl RuntimeRecovery {
     pub fn open(
         project_root: &Path,
         root: PathBuf,
         observer: Box<dyn RecoveryObserver>,
-    ) -> Result<(Self, Option<State>)> {
+    ) -> Result<OpenRecovery> {
         if !cfg!(target_os = "macos") {
             return Err(CoreError::new(
                 "recovery_unconfirmed_platform",
                 "Persistent runtime recovery is currently confirmed only on macOS",
             ));
         }
-        ensure_private(&root)?;
-        let lock = lock(&root)?;
-        let project = project_id(project_root)?;
+        let project_identity = directory_identity(project_root)?;
+        if let Err(e) = ensure_private(&root) {
+            return Ok(OpenRecovery::Unavailable(e));
+        }
+        let storage_identity = directory_identity(&root)?;
+        let lock = match lock(&root) {
+            Ok(lock) => lock,
+            Err(e) => return Ok(OpenRecovery::Unavailable(e)),
+        };
+        if let Err(e) = ensure_private(&project_root.join(".latexide")) {
+            return Ok(OpenRecovery::Unavailable(e));
+        }
+        let marker = read_project_id(project_root)?;
         let selector_path = root.join("current");
         let bytes = match fs::symlink_metadata(&selector_path) {
             Ok(_) => Some(durable::read_private(&selector_path, 8192).map_err(durable)?),
@@ -513,9 +589,16 @@ impl RuntimeRecovery {
         let mut state = None;
         let (mut current, mut previous, mut selector_sha) = (None, None, None);
         let mut sequence = 0;
+        let mut edits = None;
         let scope = if let Some(bytes) = bytes {
             let p = Selector::decode(&bytes)?;
-            if p.ack.scope.project_id != project || p.ack.scope.session_id != "single-workspace-v1"
+            let expected = match &marker {
+                Some(id) => id.clone(),
+                // Migrate an already verified path-bound store at its original
+                // location. A recovery-only copy cannot mint its project ID.
+                None => legacy_project_id(project_root)?,
+            };
+            if p.ack.scope.project_id != expected || p.ack.scope.session_id != "single-workspace-v1"
             {
                 return Err(bad("project scope"));
             }
@@ -527,7 +610,7 @@ impl RuntimeRecovery {
             if raw_digest(&data) != p.state_sha {
                 return Err(bad("runtime metadata byte binding"));
             }
-            let s = State::decode(&data, project_root)?;
+            let mut s = State::decode(&data, project_root)?;
             let (cp, enc) = s.checkpoint(p.sequence);
             if cp.documents != recovered.recovery.documents
                 || enc != recovered.encodings
@@ -535,8 +618,21 @@ impl RuntimeRecovery {
             {
                 return Err(bad("runtime/provider state binding"));
             }
+            if p.incremental {
+                edits = Some(
+                    incremental::EditLog::open(
+                        &croot,
+                        &p.ack.scope,
+                        &p.state_sha,
+                        p.sequence,
+                        &mut s,
+                        project_root,
+                    )?
+                    .ok_or_else(|| bad("selected edit log missing"))?,
+                );
+            }
+            sequence = edits.as_ref().map_or(p.sequence, |log| log.sequence);
             let scope = p.ack.scope;
-            sequence = p.sequence;
             current = Some(p.current);
             previous = if p.previous.is_empty() {
                 None
@@ -548,17 +644,25 @@ impl RuntimeRecovery {
             scope
         } else {
             StoreScope {
-                project_id: project.clone(),
+                project_id: marker.clone().unwrap_or(random_hex(32)?),
                 session_id: "single-workspace-v1".into(),
                 nonce: random_hex(32)?,
             }
         };
+        if marker.is_none() {
+            new_file(&project_marker(project_root), scope.project_id.as_bytes())?;
+            dir_sync(&project_root.join(".latexide"))?;
+        }
         let r = Self {
+            project_root: project_root.to_path_buf(),
+            project_identity,
+            storage_identity,
             root,
             scope,
             current,
             previous,
             selector_sha,
+            edits,
             status: RecoveryStatus {
                 enabled: true,
                 restored: state.is_some(),
@@ -569,11 +673,26 @@ impl RuntimeRecovery {
             _lock: lock,
             observer,
         };
-        Ok((r, state))
+        r.verify_project_scope(project_root)?;
+        Ok(OpenRecovery::Enabled(r, state))
     }
     pub(crate) fn verify_project_scope(&self, project_root: &Path) -> Result<()> {
-        if self.scope.project_id != project_id(project_root)? {
+        if read_project_id(project_root)?.as_ref() != Some(&self.scope.project_id)
+            || directory_identity(project_root)? != self.project_identity
+            || directory_identity(&self.root)? != self.storage_identity
+        {
             return Err(bad("project scope"));
+        }
+        #[cfg(unix)]
+        {
+            let held = self._lock.metadata().map_err(io)?;
+            let named = durable::open_private(&self.root.join("writer.lock"), false)
+                .map_err(durable)?
+                .metadata()
+                .map_err(io)?;
+            if (held.dev(), held.ino()) != (named.dev(), named.ino()) {
+                return Err(bad("writer lock identity"));
+            }
         }
         Ok(())
     }
@@ -602,6 +721,7 @@ impl RuntimeRecovery {
         r
     }
     fn commit_inner(&mut self, state: &State) -> Result<()> {
+        self.verify_project_scope(&self.project_root)?;
         self.cleanup()?;
         let data = state.encode()?;
         let sequence = self
@@ -615,9 +735,12 @@ impl RuntimeRecovery {
             .map_err(durable)?;
         let croot = self.root.join(&name);
         new_file(&croot.join("runtime-state.bin"), &data)?;
+        let edits =
+            incremental::EditLog::create(&croot, &self.scope, &raw_digest(&data), sequence)?;
         dir_sync(&croot)?;
         self.phase(RecoveryPhase::Prepared)?;
         let selector = Selector {
+            incremental: true,
             sequence,
             current: name.clone(),
             previous: self.current.clone().unwrap_or_default(),
@@ -631,6 +754,7 @@ impl RuntimeRecovery {
             .join(format!("current-{}.pending", random_hex(16)?));
         new_file(&temp, &bytes)?;
         self.phase(RecoveryPhase::BeforePublish)?;
+        self.verify_project_scope(&self.project_root)?;
         let existing = match fs::symlink_metadata(self.root.join("current")) {
             Ok(_) => Some(raw_digest(
                 &durable::read_private(&self.root.join("current"), 8192).map_err(durable)?,
@@ -643,6 +767,7 @@ impl RuntimeRecovery {
         }
         fs::rename(&temp, self.root.join("current")).map_err(io)?;
         self.previous = self.current.replace(name);
+        self.edits = Some(edits);
         self.status.sequence = sequence;
         self.selector_sha = Some(raw_digest(&bytes));
         if let Err(error) = self
@@ -670,50 +795,58 @@ impl RuntimeRecovery {
     }
     fn cleanup(&self) -> Result<()> {
         durable::private_dir(&self.root).map_err(durable)?;
-        for e in fs::read_dir(&self.root).map_err(io)? {
+        'entries: for e in fs::read_dir(&self.root).map_err(io)? {
             let e = e.map_err(io)?;
-            let name = e
-                .file_name()
-                .to_str()
-                .ok_or_else(|| bad("storage filename"))?
-                .to_owned();
+            let Some(name) = e.file_name().to_str().map(str::to_owned) else {
+                continue;
+            };
             if cohort_name(&name) {
                 if self.current.as_ref() == Some(&name) || self.previous.as_ref() == Some(&name) {
                     continue;
                 }
-                durable::private_dir(&e.path()).map_err(durable)?;
+                if durable::private_dir(&e.path()).is_err() {
+                    continue;
+                }
                 let mut files = Vec::new();
                 for f in fs::read_dir(e.path()).map_err(io)? {
                     let f = f.map_err(io)?;
-                    let n = f
-                        .file_name()
-                        .to_str()
-                        .ok_or_else(|| bad("cohort filename"))?
-                        .to_owned();
+                    let Some(n) = f.file_name().to_str().map(str::to_owned) else {
+                        continue 'entries;
+                    };
                     if ![
                         "checkpoint-1.rec",
                         "journal-1.rec",
                         "runtime-state.bin",
+                        incremental::EDIT_FILE,
+                        incremental::HEAD_FILE,
                         ".checkpoint-1.rec.pending",
                         ".journal-1.rec.pending",
                     ]
                     .contains(&n.as_str())
+                        && !incremental::head_pending_name(&n)
                     {
-                        return Err(bad("unexpected cohort file; retained"));
+                        continue 'entries;
                     }
-                    durable::open_private(&f.path(), false).map_err(durable)?;
+                    if durable::open_private(&f.path(), false).is_err() {
+                        continue 'entries;
+                    }
                     files.push(f.path());
                 }
                 for f in files {
                     fs::remove_file(f).map_err(io)?;
                 }
                 fs::remove_dir(e.path()).map_err(io)?;
-            } else if name.starts_with("current-") && name.ends_with(".pending") && name.len() == 48
+            } else if name.starts_with("current-")
+                && name.ends_with(".pending")
+                && name.len() == 48
+                && name.as_bytes()[8..40]
+                    .iter()
+                    .all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase())
             {
-                durable::open_private(&e.path(), false).map_err(durable)?;
+                if durable::open_private(&e.path(), false).is_err() {
+                    continue;
+                }
                 fs::remove_file(e.path()).map_err(io)?;
-            } else if name != "writer.lock" && name != "current" {
-                return Err(bad("unexpected storage entry; retained"));
             }
         }
         dir_sync(&self.root)
@@ -721,20 +854,25 @@ impl RuntimeRecovery {
     fn root_budget(&self, extra: u64) -> Result<()> {
         let mut n = extra;
         let mut count = 0;
-        for e in fs::read_dir(&self.root).map_err(io)? {
-            let e = e.map_err(io)?;
-            if e.file_type().map_err(io)?.is_dir() {
-                for f in fs::read_dir(e.path()).map_err(io)? {
-                    count += 1;
-                    n = n
-                        .checked_add(f.map_err(io)?.metadata().map_err(io)?.len())
-                        .ok_or_else(|| bad("storage overflow"))?;
-                }
-            } else {
+        let mut dirs = vec![self.root.clone()];
+        while let Some(dir) = dirs.pop() {
+            directory_identity(&dir)?;
+            for e in fs::read_dir(dir).map_err(io)? {
+                let p = e.map_err(io)?.path();
+                let metadata = fs::symlink_metadata(&p).map_err(io)?;
                 count += 1;
                 n = n
-                    .checked_add(e.metadata().map_err(io)?.len())
+                    .checked_add(metadata.len())
                     .ok_or_else(|| bad("storage overflow"))?;
+                if n > MAX_ROOT || count > 32 {
+                    return Err(CoreError::new(
+                        "recovery_quota",
+                        "Runtime recovery retained storage exceeds budget",
+                    ));
+                }
+                if metadata.is_dir() {
+                    dirs.push(p);
+                }
             }
         }
         if n > MAX_ROOT || count > 32 {

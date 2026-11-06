@@ -45,6 +45,7 @@ pub struct Workspace {
     next_transaction: u64,
     completion_index: crate::project_index::ProjectIndex,
     recovery: Option<crate::runtime_recovery::RuntimeRecovery>,
+    recovery_error: Option<String>,
 }
 
 impl Workspace {
@@ -64,6 +65,7 @@ impl Workspace {
             next_transaction: 1,
             completion_index: Default::default(),
             recovery: None,
+            recovery_error: None,
         })
     }
     /// Open with durable recovery in a caller-selected private storage root.
@@ -79,9 +81,39 @@ impl Workspace {
         storage: PathBuf,
         observer: Box<dyn crate::RecoveryObserver>,
     ) -> Result<Self> {
+        Self::open_recovery(root, storage, observer, true)
+    }
+    /// The default runtime can remain usable when private recovery setup is
+    /// unavailable. Verification errors after setup are always propagated.
+    pub fn open_with_optional_recovery(root: PathBuf, storage: PathBuf) -> Result<Self> {
+        Self::open_recovery(
+            root,
+            storage,
+            Box::new(crate::runtime_recovery::NoObserver),
+            false,
+        )
+    }
+    fn open_recovery(
+        root: PathBuf,
+        storage: PathBuf,
+        observer: Box<dyn crate::RecoveryObserver>,
+        strict: bool,
+    ) -> Result<Self> {
         let mut workspace = Self::open(root)?;
-        let (recovery, state) =
-            crate::runtime_recovery::RuntimeRecovery::open(&workspace.root, storage, observer)?;
+        let (recovery, state) = match crate::runtime_recovery::RuntimeRecovery::open(
+            &workspace.root,
+            storage,
+            observer,
+        )? {
+            crate::runtime_recovery::OpenRecovery::Enabled(recovery, state) => (recovery, state),
+            crate::runtime_recovery::OpenRecovery::Unavailable(e) => {
+                if strict {
+                    return Err(e);
+                }
+                workspace.recovery_error = Some(e.code);
+                return Ok(workspace);
+            }
+        };
         workspace.recovery = Some(recovery);
         if let Some(mut state) = state {
             let pending = state.pending_save.take();
@@ -112,7 +144,10 @@ impl Workspace {
         self.recovery
             .as_ref()
             .map(|r| r.status())
-            .unwrap_or_default()
+            .unwrap_or_else(|| crate::RecoveryStatus {
+                last_error: self.recovery_error.clone(),
+                ..Default::default()
+            })
     }
     fn recovery_state(&self, pending_save: Option<String>) -> crate::runtime_recovery::State {
         crate::runtime_recovery::State {
@@ -149,10 +184,16 @@ impl Workspace {
                 return Err(e);
             }
         };
-        if self.recovery_state(None) == before {
+        let after = self.recovery_state(None);
+        if after == before {
             return Ok(value);
         }
-        if let Err(e) = self.persist_recovery(None) {
+        if let Err(e) = self
+            .recovery
+            .as_mut()
+            .unwrap()
+            .commit_change(&before, &after)
+        {
             if e.code != "recovery_commit_uncertain" {
                 self.restore_state(before);
             }
@@ -457,7 +498,10 @@ impl Workspace {
             .get(id)
             .ok_or_else(|| CoreError::new("document_not_open", "A dokumentum nincs megnyitva."))?;
         if d.revision != expected_revision {
-            return Err(CoreError::new("revision_conflict", "A mentés várt revíziója elavult."));
+            return Err(CoreError::new(
+                "revision_conflict",
+                "A mentés várt revíziója elavult.",
+            ));
         }
         if path != d.path
             || crate::document::file_identity(&path)? != d.disk_identity

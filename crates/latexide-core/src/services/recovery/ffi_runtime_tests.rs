@@ -145,3 +145,6 @@ fn native_composition_guard_is_preserved_with_durable_agent_access() {
 
 #[path = "pr68_runtime_tests.rs"]
 mod pr68_review;
+
+#[path = "review_followup_tests.rs"]
+mod review_followup;
