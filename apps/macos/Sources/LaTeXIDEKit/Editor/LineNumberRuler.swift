@@ -13,7 +13,7 @@ final class LineNumberRuler: NSRulerView {
         theme.ns("editor").setFill(); bounds.fill()
         let visible = view.visibleRect.offsetBy(dx: -view.textContainerOrigin.x, dy: -view.textContainerOrigin.y)
         manager.ensureLayout(forBoundingRect: visible, in: container)
-        let glyphs = manager.glyphRange(forBoundingRect: visible, in: container)
+        let glyphs = manager.glyphRange(forBoundingRectWithoutAdditionalLayout: visible, in: container)
         let lines = view.adapter?.lineMap ?? SourceLineMap(view.string)
         let selected = lines.position(at: view.selectedRange().location).line
         let font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .regular)
@@ -24,7 +24,7 @@ final class LineNumberRuler: NSRulerView {
             let size = string.size(withAttributes: attrs)
             string.draw(at: NSPoint(x: ruleThickness - 16 - size.width, y: y + 1), withAttributes: attrs)
         }
-        while glyph < NSMaxRange(glyphs) && glyph < manager.numberOfGlyphs {
+        while glyphs.location != NSNotFound && glyph < NSMaxRange(glyphs) {
             var range = NSRange()
             let fragment = manager.lineFragmentRect(forGlyphAt: glyph, effectiveRange: &range)
             let character = manager.characterIndexForGlyph(at: glyph)

@@ -140,11 +140,12 @@ import SwiftUI
             if let scroll = view.enclosingScrollView, let manager = view.layoutManager, let container = view.textContainer, count > 0 {
                 let visible = scroll.documentVisibleRect.offsetBy(dx: -view.textContainerOrigin.x, dy: -view.textContainerOrigin.y)
                 manager.ensureLayout(forBoundingRect: visible, in: container)
-                let first = manager.glyphIndex(for: NSPoint(x: max(0, visible.minX), y: max(0, visible.minY)), in: container)
-                let last = manager.glyphIndex(for: NSPoint(x: max(0, visible.maxX), y: max(0, visible.maxY)), in: container)
-                let start = manager.characterIndexForGlyph(at: min(first, max(0, manager.numberOfGlyphs - 1)))
-                let end = last >= manager.numberOfGlyphs ? count : manager.characterIndexForGlyph(at: last)
-                range = NSRange(location: min(start, count), length: min(32768, max(1, end - start + 512), count - min(start, count)))
+                let glyphs = manager.glyphRange(forBoundingRectWithoutAdditionalLayout: visible, in: container)
+                if glyphs.location != NSNotFound, glyphs.length > 0 {
+                    let characters = manager.characterRange(forGlyphRange: glyphs, actualGlyphRange: nil)
+                    let start = min(characters.location, count)
+                    range = NSRange(location: start, length: min(32768, max(1, characters.length + 512), count - start))
+                }
             }
             let revision = store.revision
             guard let spans = store.syntax(document: id, revision: revision, range: range), store.selection == id, store.revision == revision else { return }
@@ -168,7 +169,8 @@ import SwiftUI
             view.setSelectedRange(selected)
             if let origin { view.enclosingScrollView?.contentView.scroll(to: origin) }
             rendering = false
-            view.needsDisplay = true; view.enclosingScrollView?.verticalRulerView?.needsDisplay = true
+            view.setNeedsDisplay(view.visibleRect, avoidAdditionalLayout: true)
+            view.enclosingScrollView?.verticalRulerView?.needsDisplay = true
         }
         func beginComposition() -> Bool { pending = nil; work?.cancel(); completionWork?.cancel(); completion.dismiss(); return store.beginComposition() }
         func finishComposition(_ view: NSTextView) {
@@ -187,9 +189,17 @@ import SwiftUI
             guard !rendering, !store.isComposing, let view = notification.object as? SourceTextView else { return }
             let delta = pending.map { (range: $0.0, replacement: $0.1) } ?? SourceEdit.difference(from: store.text, to: view.string)
             pending = nil
-            do { try store.edit(range: delta.range, replacement: delta.replacement) }
-            catch { store.failure = error.localizedDescription; rendering = true; view.string = store.text; rendering = false }
-            lineMap = SourceLineMap(view.string); document = store.selection; renderedRevision = store.revision
+            let currentIndex = document == store.selection && project == store.root && renderedRevision == store.revision
+            do {
+                try store.edit(range: delta.range, replacement: delta.replacement)
+                if !currentIndex || !lineMap.replace(range: delta.range, with: delta.replacement) {
+                    lineMap = SourceLineMap(view.string)
+                }
+            } catch {
+                store.failure = error.localizedDescription; rendering = true; view.string = store.text; rendering = false
+                lineMap = SourceLineMap(view.string)
+            }
+            document = store.selection; renderedRevision = store.revision
             schedule(view); scheduleCompletion(view); reportCaret(view)
         }
         func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
@@ -200,7 +210,8 @@ import SwiftUI
             guard !rendering, let view = notification.object as? SourceTextView else { return }
             capturePresentation(view)
             scheduleCompletion(view)
-            reportCaret(view); view.needsDisplay = true; view.enclosingScrollView?.verticalRulerView?.needsDisplay = true
+            reportCaret(view); view.setNeedsDisplay(view.visibleRect, avoidAdditionalLayout: true)
+            view.enclosingScrollView?.verticalRulerView?.needsDisplay = true
         }
         func reportCaret(_ view: SourceTextView) {
             let position = lineMap.position(at: view.selectedRange().location)
