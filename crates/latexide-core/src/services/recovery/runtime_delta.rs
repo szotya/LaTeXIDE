@@ -386,13 +386,13 @@ impl RuntimeRecovery {
     }
     #[cfg(unix)]
     fn append_edit(&mut self, log: &mut EditLog, frame: &[u8], sequence: u64) -> Result<()> {
-        if let Err(e) = self.root_budget((frame.len() + HEADER) as u64) {
+        if let Err(e) = self.root_budget((frame.len() + HEADER) as u64, None) {
             if e.code != "recovery_quota" {
                 return Err(e);
             }
             self.verify_project_scope(&self.project_root)?;
             self.cleanup()?;
-            self.root_budget((frame.len() + HEADER) as u64)?;
+            self.root_budget((frame.len() + HEADER) as u64, None)?;
         }
         self.verify_project_scope(&self.project_root)?;
         let selector = durable::read_private(&self.root.join("current"), 8192).map_err(durable)?;
@@ -422,9 +422,9 @@ impl RuntimeRecovery {
         let next = header(&log.base, sequence, log.bytes + frame.len(), &last)?;
         let parent = log.path.parent().ok_or_else(|| bad("edit parent"))?;
         let pending = parent.join(format!(".runtime-head-{}.pending", random_hex(16)?));
-        // No acknowledged selecting receipt is overwritten in place. Plain
-        // fsync orders data/receipt/rename; one final F_FULLFSYNC drains the
-        // device cache after all three filesystem updates are ordered.
+        // Never overwrite a selecting receipt. Submit both files, then order
+        // them at the drive before the selecting rename. A final full media
+        // flush makes the newly selected prefix durable before acknowledgment.
         log.tail = true;
         f.write_all_at(frame, log.bytes as u64).map_err(io)?;
         plain_sync(&f)?;
@@ -437,6 +437,7 @@ impl RuntimeRecovery {
             .map_err(io)?;
         receipt.write_all(&next).map_err(io)?;
         plain_sync(&receipt)?;
+        publication_barrier(&f)?;
         self.phase(RecoveryPhase::Prepared)?;
         self.phase(RecoveryPhase::BeforePublish)?;
         self.verify_project_scope(&self.project_root)?;
@@ -465,7 +466,7 @@ impl RuntimeRecovery {
                     .map_err(io)
             })
             .and_then(|dir| plain_sync(&dir))
-            .and_then(|_| f.sync_all().map_err(io))
+            .and_then(|_| full_media_sync(&f))
             .and_then(|_| self.phase(RecoveryPhase::Published))
         {
             self.status.blocked = true;
@@ -511,5 +512,78 @@ fn plain_sync(file: &File) -> Result<()> {
         if error.kind() != std::io::ErrorKind::Interrupted {
             return Err(io(error));
         }
+    }
+}
+
+#[cfg(target_os = "macos")]
+fn sync_command(file: &File, command: i32) -> std::io::Result<()> {
+    unsafe extern "C" {
+        fn fcntl(fd: i32, command: i32, ...) -> i32;
+    }
+    loop {
+        if unsafe { fcntl(file.as_raw_fd(), command) } == 0 {
+            return Ok(());
+        }
+        let error = std::io::Error::last_os_error();
+        if error.kind() != std::io::ErrorKind::Interrupted {
+            return Err(error);
+        }
+    }
+}
+#[cfg(target_os = "macos")]
+fn full_media_sync(file: &File) -> Result<()> {
+    // Darwin F_FULLFSYNC. Do not silently downgrade an unsupported full flush.
+    sync_command(file, 51).map_err(io)
+}
+#[cfg(target_os = "macos")]
+fn finish_barrier(file: &File, result: std::io::Result<()>) -> Result<()> {
+    match result {
+        Ok(()) => Ok(()),
+        // Darwin EINVAL, ENOTTY, ENOTSUP, ENOSYS: the cheaper barrier is
+        // unavailable. A successful full media flush provides stronger order.
+        Err(e) if matches!(e.raw_os_error(), Some(22 | 25 | 45 | 78)) => full_media_sync(file),
+        Err(e) => Err(io(e)),
+    }
+}
+#[cfg(target_os = "macos")]
+fn publication_barrier(file: &File) -> Result<()> {
+    // Darwin F_BARRIERFSYNC, after both log and receipt were submitted by fsync.
+    finish_barrier(file, sync_command(file, 85))
+}
+#[cfg(all(unix, not(target_os = "macos")))]
+fn publication_barrier(file: &File) -> Result<()> {
+    plain_sync(file)
+}
+#[cfg(all(unix, not(target_os = "macos")))]
+fn full_media_sync(file: &File) -> Result<()> {
+    file.sync_all().map_err(io)
+}
+
+#[cfg(all(test, target_os = "macos"))]
+mod barrier_tests {
+    use super::*;
+    #[test]
+    fn unsupported_barrier_requires_a_real_full_flush_and_io_errors_propagate() {
+        // Inject only the syscall result; the fallback performs a real full
+        // flush on an owned regular file, and cannot hide a failing flush.
+        let root = std::env::var_os("P01_RUNTIME_SCRATCH")
+            .map(PathBuf::from)
+            .unwrap_or_else(std::env::temp_dir);
+        let path = root.join(format!("pr68-barrier-{}", random_hex(16).unwrap()));
+        let mut file = OpenOptions::new()
+            .read(true)
+            .write(true)
+            .create_new(true)
+            .mode(0o600)
+            .open(path)
+            .unwrap();
+        file.write_all(b"ordered data").unwrap();
+        publication_barrier(&file).unwrap();
+        for errno in [22, 25, 45, 78] {
+            finish_barrier(&file, Err(std::io::Error::from_raw_os_error(errno))).unwrap();
+        }
+        assert!(finish_barrier(&file, Err(std::io::Error::from_raw_os_error(5))).is_err());
+        let device = File::open("/dev/null").unwrap();
+        assert!(finish_barrier(&device, Err(std::io::Error::from_raw_os_error(45))).is_err());
     }
 }

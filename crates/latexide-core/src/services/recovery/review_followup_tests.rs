@@ -458,3 +458,183 @@ fn review6_prepared_delta_failure_preserves_selected_receipt_and_allows_reopen()
     assert_eq!(fs::read(head).unwrap(), before);
     assert_eq!(fs::read(p.join("main.tex")).unwrap(), b"old");
 }
+
+struct SaveFinalizeFault(std::sync::Arc<std::sync::atomic::AtomicUsize>);
+impl latexide_core::RecoveryObserver for SaveFinalizeFault {
+    fn phase(&mut self, p: latexide_core::RecoveryPhase) -> std::io::Result<()> {
+        if p == latexide_core::RecoveryPhase::Prepared {
+            let remaining = self.0.load(Ordering::SeqCst);
+            if remaining > 0 && self.0.fetch_sub(1, Ordering::SeqCst) == 1 {
+                return Err(std::io::Error::from(std::io::ErrorKind::PermissionDenied));
+            }
+        }
+        Ok(())
+    }
+}
+
+#[test]
+fn review6_edit_after_failed_save_finalization_checkpoints_the_new_saved_baseline() {
+    let p = project();
+    let remaining = std::sync::Arc::new(std::sync::atomic::AtomicUsize::new(0));
+    let w = latexide_core::Workspace::open_recoverable_with_observer(
+        p.clone(),
+        p.join(".latexide/recovery"),
+        Box::new(SaveFinalizeFault(remaining.clone())),
+    )
+    .unwrap();
+    let mut r = Runtime::new(w);
+    let rev = open(&mut r);
+    let mut request = edit(rev);
+    if let Request::ApplyEdits { edits, .. } = &mut request {
+        edits[0].text = "saved-long".into();
+    }
+    assert!(r.dispatch(request, "review6").ok);
+    let rev = r.workspace.snapshot("main.tex").unwrap().revision;
+    remaining.store(2, Ordering::SeqCst);
+    let reply = r.dispatch(
+        Request::SaveDocument {
+            document_id: "main.tex".into(),
+            expected_revision: rev,
+        },
+        "review6",
+    );
+    assert!(!reply.ok);
+    assert_eq!(reply.error.unwrap().code, "save_completed_recovery_failed");
+    assert_eq!(fs::read(p.join("main.tex")).unwrap(), b"saved-long");
+    let rev = r.workspace.snapshot("main.tex").unwrap().revision;
+    let reply = r.dispatch(
+        Request::ApplyEdits {
+            document_id: "main.tex".into(),
+            expected_revision: rev,
+            edits: vec![TextEdit {
+                start: Position {
+                    line: 0,
+                    character: 0,
+                },
+                end: Position {
+                    line: 0,
+                    character: 10,
+                },
+                text: "later-long".into(),
+            }],
+        },
+        "review6",
+    );
+    assert!(reply.ok, "{:?}", reply.error);
+    drop(r);
+    let mut r = Runtime::open_project(p.clone()).unwrap();
+    let snapshot = r.workspace.snapshot("main.tex").unwrap();
+    assert_eq!(snapshot.text, "later-long");
+    assert!(snapshot.dirty);
+    assert!(
+        r.dispatch(
+            Request::SaveDocument {
+                document_id: "main.tex".into(),
+                expected_revision: snapshot.revision
+            },
+            "review6"
+        )
+        .ok
+    );
+    assert_eq!(fs::read(p.join("main.tex")).unwrap(), b"later-long");
+    assert!(r.dispatch(Request::Undo, "review6").ok);
+    assert_eq!(r.workspace.snapshot("main.tex").unwrap().text, "saved-long");
+    assert!(r.workspace.snapshot("main.tex").unwrap().dirty);
+}
+
+#[test]
+fn review6_many_foreign_entries_and_unreadable_directories_do_not_block_edits_or_save() {
+    let p = project();
+    let mut r = Runtime::open_project(p.clone()).unwrap();
+    let rev = open(&mut r);
+    let root = p.join(".latexide/recovery");
+    for n in 0..48 {
+        fs::write(root.join(format!("foreign-{n}")), format!("retained-{n}")).unwrap();
+    }
+    let foreign = root.join("foreign-directory");
+    fs::create_dir(&foreign).unwrap();
+    let cohort = root.join(format!("cohort-{}", "c".repeat(32)));
+    fs::create_dir(&cohort).unwrap();
+    for dir in [&foreign, &cohort] {
+        fs::set_permissions(dir, fs::Permissions::from_mode(0)).unwrap();
+    }
+    let rev = edited(&mut r, rev);
+    assert!(
+        r.dispatch(
+            Request::SaveDocument {
+                document_id: "main.tex".into(),
+                expected_revision: rev
+            },
+            "review6"
+        )
+        .ok
+    );
+    assert!(r.dispatch(Request::Undo, "review6").ok);
+    drop(r);
+    let r = Runtime::open_project(p.clone()).unwrap();
+    assert_eq!(r.workspace.snapshot("main.tex").unwrap().text, "old");
+    assert!(r.workspace.snapshot("main.tex").unwrap().dirty);
+    assert_eq!(fs::read(p.join("main.tex")).unwrap(), b"new");
+    for n in 0..48 {
+        assert_eq!(
+            fs::read(root.join(format!("foreign-{n}"))).unwrap(),
+            format!("retained-{n}").as_bytes()
+        );
+    }
+    for dir in [&foreign, &cohort] {
+        assert_eq!(
+            fs::symlink_metadata(dir).unwrap().permissions().mode() & 0o777,
+            0
+        );
+        fs::set_permissions(dir, fs::Permissions::from_mode(0o700)).unwrap();
+        assert_eq!(fs::read_dir(dir).unwrap().count(), 0);
+    }
+}
+
+#[test]
+fn review6_owned_retained_data_still_enforces_quota_without_changing_live_text() {
+    let p = project();
+    let mut r = Runtime::open_project(p.clone()).unwrap();
+    let rev = open(&mut r);
+    let old = selected(&p.join(".latexide/recovery"));
+    let rev = edited(&mut r, rev);
+    assert!(
+        r.dispatch(
+            Request::SaveDocument {
+                document_id: "main.tex".into(),
+                expected_revision: rev
+            },
+            "review6"
+        )
+        .ok
+    );
+    // Keep a sparse, owned checkpoint in the retained previous cohort over quota.
+    let previous = fs::read_dir(p.join(".latexide/recovery"))
+        .unwrap()
+        .filter_map(|e| {
+            let path = e.unwrap().path();
+            (path.is_dir() && path != selected(&p.join(".latexide/recovery")) && path != old)
+                .then_some(path)
+        })
+        .next()
+        .unwrap();
+    let file = fs::OpenOptions::new()
+        .write(true)
+        .open(previous.join("runtime-state.bin"))
+        .unwrap();
+    file.set_len(256 * 1024 * 1024 + 1).unwrap();
+    let before = r.workspace.snapshot("main.tex").unwrap();
+    let mut request = edit(before.revision);
+    if let Request::ApplyEdits { edits, .. } = &mut request {
+        edits[0].text = "end".into();
+    }
+    let reply = r.dispatch(request, "review6");
+    assert!(!reply.ok);
+    assert_eq!(reply.error.unwrap().code, "recovery_quota");
+    assert_eq!(r.workspace.snapshot("main.tex").unwrap().text, before.text);
+    assert_eq!(
+        r.workspace.snapshot("main.tex").unwrap().revision,
+        before.revision
+    );
+    assert_eq!(fs::read(p.join("main.tex")).unwrap(), b"new");
+}

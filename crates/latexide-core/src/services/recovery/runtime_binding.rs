@@ -716,6 +716,10 @@ impl RuntimeRecovery {
         self.writable()?;
         let r = self.commit_inner(state);
         if let Err(e) = &r {
+            // A Save may already have changed the live saved baseline. The
+            // selected checkpoint can still describe its earlier intent state;
+            // no subsequent delta may use that stale base.
+            self.edits = None;
             self.status.last_error = Some(e.code.clone());
         }
         r
@@ -748,7 +752,7 @@ impl RuntimeRecovery {
             ack,
         };
         let bytes = selector.encode()?;
-        self.root_budget(bytes.len() as u64)?;
+        self.root_budget(bytes.len() as u64, Some(&croot))?;
         let temp = self
             .root
             .join(format!("current-{}.pending", random_hex(16)?));
@@ -808,8 +812,11 @@ impl RuntimeRecovery {
                     continue;
                 }
                 let mut files = Vec::new();
-                for f in fs::read_dir(e.path()).map_err(io)? {
-                    let f = f.map_err(io)?;
+                let Ok(entries) = fs::read_dir(e.path()) else {
+                    continue;
+                };
+                for f in entries {
+                    let Ok(f) = f else { continue 'entries };
                     let Some(n) = f.file_name().to_str().map(str::to_owned) else {
                         continue 'entries;
                     };
@@ -851,28 +858,53 @@ impl RuntimeRecovery {
         }
         dir_sync(&self.root)
     }
-    fn root_budget(&self, extra: u64) -> Result<()> {
+    fn root_budget(&self, extra: u64, prepared: Option<&Path>) -> Result<()> {
+        // Budget only our selectable retained artifacts. Foreign entries are
+        // preserved, never traversed, and cannot spend the writer's quota.
         let mut n = extra;
         let mut count = 0;
-        let mut dirs = vec![self.root.clone()];
-        while let Some(dir) = dirs.pop() {
+        let mut files = vec![self.root.join("current"), self.root.join("writer.lock")];
+        let mut dirs = self
+            .current
+            .iter()
+            .chain(self.previous.iter())
+            .map(|name| self.root.join(name))
+            .collect::<Vec<_>>();
+        if let Some(dir) = prepared {
+            dirs.push(dir.to_path_buf());
+        }
+        for dir in dirs {
             directory_identity(&dir)?;
-            for e in fs::read_dir(dir).map_err(io)? {
-                let p = e.map_err(io)?.path();
-                let metadata = fs::symlink_metadata(&p).map_err(io)?;
-                count += 1;
-                n = n
-                    .checked_add(metadata.len())
-                    .ok_or_else(|| bad("storage overflow"))?;
-                if n > MAX_ROOT || count > 32 {
-                    return Err(CoreError::new(
-                        "recovery_quota",
-                        "Runtime recovery retained storage exceeds budget",
-                    ));
-                }
-                if metadata.is_dir() {
-                    dirs.push(p);
-                }
+            count += 1;
+            for name in [
+                "checkpoint-1.rec",
+                "journal-1.rec",
+                "runtime-state.bin",
+                incremental::EDIT_FILE,
+                incremental::HEAD_FILE,
+            ] {
+                files.push(dir.join(name));
+            }
+        }
+        for p in files {
+            match fs::symlink_metadata(&p) {
+                Err(e) if e.kind() == std::io::ErrorKind::NotFound => continue,
+                Err(e) => return Err(io(e)),
+                Ok(_) => (),
+            }
+            let metadata = durable::open_private(&p, false)
+                .map_err(durable)?
+                .metadata()
+                .map_err(io)?;
+            count += 1;
+            n = n
+                .checked_add(metadata.len())
+                .ok_or_else(|| bad("storage overflow"))?;
+            if n > MAX_ROOT || count > 32 {
+                return Err(CoreError::new(
+                    "recovery_quota",
+                    "Runtime recovery retained storage exceeds budget",
+                ));
             }
         }
         if n > MAX_ROOT || count > 32 {
