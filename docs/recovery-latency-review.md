@@ -1,5 +1,57 @@
 # PR68 recovery and native editor latency — 2026-11-07
 
+## Final physical-fixture qualification — 2026-11-07
+
+Candidate40 closes the review's fixture-binding gap without changing product,
+Rust/verifier code, the40-sample clock, actual-image publication guard or16.7ms
+p95 target. Before opening or sampling, the driver checks actual Data.count,
+validates the complete all-A single-row or periodic LF byte recipe, derives the
+layout and line counts, and hashes those physical bytes. Reported byte counts
+come from Data.count. Wrong sizes, labels and recipes must fail four negative
+controls. Disk bytes remain unchanged after sampling/reopen/undo.
+
+| Physical layout | Bytes | p50 ms | p95 ms | Max ms | Target |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Single line | 1024 | 10.036 | 13.685 | 23.965 | PASS |
+| Single line | 1048576 | 12.048 | 15.868 | 17.326 | PASS |
+| 80-byte LF rows | 1024 | 6.496 | 10.029 | 25.114 | PASS |
+| 80-byte LF rows | 1048576 | 7.616 | 11.854 | 13.798 | PASS |
+
+A complete LF row contains79 printable bytes plusLF; the1KiB file has12 full
+rows and64 final bytes, and1MiB has13107 full rows and16 final bytes. The same
+signed executable measures all four cases. The original Candidate39 samples and
+bindings below remain intact; their driver did not bind physical fixture
+properties before sampling, so Candidate40 supplies that missing qualification.
+
+SHA256 bindings:
+
+- Executable: `915dcd821c137e03f3233a823724432e444e9f6d03266cf87446cc05e3c17055`.
+- Compiled source manifest: `fe0ca2f9cdc324701f33668ae1d1fe191a842bcc1d25bc749864798a961da718`.
+- Unchanged Rust archive: `1abc94f4a59412bad28aa244c6cca1c247901bf1a480941be6fd79a4089817e1`.
+- Single-line report: `a1101f8c9c8b279b5684b64781bf204b4805f21bc7f763aff6034d184c0e90bb`.
+- LF report: `deca3ea47296e122073872870d691361b2e912212c064dca1788150f7c51d55e`.
+
+| Physical file | SHA256 |
+| --- | --- |
+| Single1024 | `6ab72eeb9e77b07540897e0c8d6d23ec8eef0f8c3a47e1b3f4e93443d9536bed` |
+| Single1048576 | `4e29ad18ab9f42d7c233500771a39d7c852b200baf328fd00fbbe3fecea1eb56` |
+| LF1024 | `43bb5915095ed13608ae3d166c8930af81d33548fb9afa240b1a0d8710318fbf` |
+| LF1048576 | `e80b54b383c37dcd40e92d98638dd4a91de3443dc3e6dc12347cec6f9748743a` |
+
+Original reviewable artifacts are published with explicit user authorization in
+[raw reports/qualification metadata](https://github.com/szotya/LaTeXIDE/pull/68#issuecomment-6710850348),
+[complete driver/preparer/controllers](https://github.com/szotya/LaTeXIDE/pull/68#issuecomment-6710851744),
+[original input map](https://github.com/szotya/LaTeXIDE/pull/68#issuecomment-6710852986) and
+[compiled source map](https://github.com/szotya/LaTeXIDE/pull/68#issuecomment-6710854210).
+Every published body was read back and compared exactly with its original.
+Source/product code is231f06b, whose product/Rust/verifier code equals7a648ac.
+[231f06b Actions42397114427](https://github.com/szotya/LaTeXIDE/actions/runs/42397114427)
+has all seven jobs SUCCESS. The final documentation-only head and F02 recheck
+remain protected-merge gates. No hardware input-to-photon or broad release
+qualification follows from this controlled own-window measurement.
+
+## Earlier Candidate39 checkpoint
+
 The retained p95 <=16.7 ms target now passes locally for all four cases, including
 single-line 1 MiB. The proposed 50 ms limit was rejected. Candidate39 uses the
 same signed executable for both layouts, the original 40 samples per size and

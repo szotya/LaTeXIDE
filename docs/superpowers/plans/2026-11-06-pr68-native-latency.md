@@ -60,7 +60,7 @@
 
 ### Task 4: Publish and finish the existing PR
 
-- [ ] Commit and push the reviewed fix normally; do not force or rerun failed CI manually.
+- [x] Commit/push normal7a648ac and231f06b; both exact-head Actions7/7 SUCCESS. No force or failed-CI manual rerun.
 - [ ] Address still-valid new review feedback and follow the then-current exact-head CI to completion.
 - [ ] Resolve F02 only with the strict passing measurement and current source/test evidence; verify every thread is resolved.
 - [ ] Refresh head/base/rules/checks/reviews and use the authorized protected expected-head squash merge; verify merged main and its post-merge CI.
@@ -74,3 +74,8 @@ The remaining large-file cost also included bytewise comparisons of unchanged re
 Actual hosted lifecycle tests found initial updateNSView before window attachment/viewport sizing. Guarded restoration now waits for that main-turn layout and yields to explicit native input/navigation. Pixel tests found fractional highlight damage; outward backing-pixel alignment fixes it. A pre-existing keyboard fixture manually ended an event-owned undo group; the fixture now owns an explicit group, with its original undo/redo assertions retained.
 
 Latest local native qualification: 133 methods =129 PASS +4 unchanged opt-in SKIP, 0 FAIL, 17.682 s. Candidate39 same-binary strict40-sample UI p95 passes all four cases: single13.491/16.109 ms, LF14.129/15.832 ms. Every actual-image/recovery/undo/disk guard passes. Exact commands, source manifests and all failed controls remain under the private PR68 evidence root. Fresh complete integrated/F0517 PASS (Python195/Rust331/native129 PASS+4 SKIP). Current-head remote CI/review remain pending.
+
+
+## Physical-fixture review follow-up — 2026-11-07
+
+The reviewer independently verified the published11 block hashes/source reconstruction and all four Candidate39 p95 calculations, but found the driver did not bind actual physical size/layout to each run. Candidate40 adds pre-open/pre-clock Data.count/full-byte-recipe/derived-layout/SHA256/line-count checks plus four negative controls. Product/Rust/verifier code and sample clock/target are unchanged. New same-binary40-sample p95: single13.685/15.868ms, LF10.029/11.854ms, allfour PASS with image/text/recovery/undo/disk controls. Raw reports, complete driver/controllers and source maps were separately authorized, published and exactly read back. Candidate39 remains retained with its validation gap distinguished. Current231f06b Actions7/7SUCCESS; final documentation-only head/review/F02 closure/protected merge are still pending.
