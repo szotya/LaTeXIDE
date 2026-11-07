@@ -10,6 +10,14 @@ public struct WorkspaceView: View {
         VStack(spacing: 0) {
             WorkspaceChrome(store: store, preferences: preferences)
             theme.ui("border").frame(height: 1)
+            if let warning = store.recoveryWarning {
+                Label(warning, systemImage: "exclamationmark.triangle.fill")
+                    .font(.system(size: 11.5)).foregroundStyle(theme.ui("warning"))
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.horizontal, 14).padding(.vertical, 8)
+                    .background(theme.ui("warning").opacity(0.08))
+                    .accessibilityIdentifier("recovery-warning")
+            }
             GeometryReader { geometry in
                 let available = Double(geometry.size.width) - 47
                 let side = min(preferences.sidebarWidth, max(190, available - 760))

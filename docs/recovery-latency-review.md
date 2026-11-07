@@ -1,5 +1,58 @@
 # PR68 recovery and native editor latency — 2026-11-07
 
+## Final product qualification after recovery warning — 2026-11-07
+
+The outside-diff Major in review5814084752 was valid: WorkspaceStore ignored
+workspace_info.recovery.enabled/last_error. It now keeps a separate persistent
+recoveryWarning, shown prominently before the editor content when recovery is
+disabled. The actual last_error is included. Ordinary operation failures remain
+separate; memory editing and explicit Save remain available. A healthy project
+clears the previous warning. The enabled path does not publish unchanged state.
+
+Two real-Core/native tests force recovery setup failure using an owned regular
+file at the recovery-directory path, inspect the actual disabled/error status,
+and prove warning-before-edit, editable in-memory text, unchanged disk before
+Save, explicit Save, unchanged blocker, preservation of unrelated errors and
+clearing on healthy-project switch. Full sealed native verification is135
+methods:131 PASS/four unchanged opt-in SKIP/zero failures,19.192s. The first
+missing-API compile-RED and the later ENOSPC build ERROR/zero-case attempt remain
+retained; no failed run was relabeled. The successful run used byte-identical
+APFS archive clones without modifying signed executables or receipt fixtures.
+
+The final warning-enabled Candidate41 uses the BYTE-IDENTICAL physical-fixture
+measurement driver from Candidate40, the same unchanged Rust archive and normal
+build profiles. Physical preflight/rejection controls, original40 samples and
+insert/yield/layout/display clock,16700000ns target and actual-image publication
+assertion remain intact. The same final executable measures all four cases:
+
+| Physical layout | Bytes | p50 ms | p95 ms | Max ms | Target |
+| --- | ---: | ---: | ---: | ---: | --- |
+| Single line | 1024 | 6.977 | 14.455 | 29.089 | PASS |
+| Single line | 1048576 | 7.993 | 14.794 | 37.513 | PASS |
+| 80-byte LF rows | 1024 | 6.662 | 11.207 | 18.853 | PASS |
+| 80-byte LF rows | 1048576 | 8.064 | 11.726 | 21.230 | PASS |
+
+All actual-image/text/recovery/reopen/dirty/revision/undo/unchanged-disk guards
+pass. Maxima remain reported; the criterion is p95. This is the controlled
+own-window AppKit display boundary, not hardware input-to-photon or broad
+release acceptance.
+
+- Executable SHA256: `080858ba1f70b3b77b0da24d619622235d55c48476577735cab67abf3e0bbbf4`.
+- Compiled source manifest: `5963b78376eacdfe455231f9d1446a086650166398f1b7379b004911127cf991`.
+- Rust archive remains `1abc94f4a59412bad28aa244c6cca1c247901bf1a480941be6fd79a4089817e1`.
+
+The separately authorized [complete raw reports and source/binary binding deltas](https://github.com/szotya/LaTeXIDE/pull/68#issuecomment-6711223695)
+and [complete driver/preparer/controllers](https://github.com/szotya/LaTeXIDE/pull/68#issuecomment-6711224581)
+were published and exactly read back. Applying the recorded deltas to the
+already public Candidate40 maps reconstructs the complete Candidate41 original
+and compiled maps byte-for-byte, including their stated SHA256 values.
+
+Earlier checkpoints below keep their original numbers, names and then-pending
+states. Candidate41 is the current product qualification. Fresh exact-head CI,
+the outside-diff finding's recheck and the formal request-changes decision are
+still merge gates; seven green jobs/38 resolved threads alone did not clear the
+old formal CHANGES_REQUESTED state. No branch rule or reviewer policy is relaxed.
+
 ## Final physical-fixture qualification — 2026-11-07
 
 Candidate40 closes the review's fixture-binding gap without changing product,

@@ -24,6 +24,8 @@ Mac SourceViewportSurface is owned by its SourceTextView. Draw synchronously int
 
 WorkspaceStore uses field-specific Observation. UI tab projections exclude revision churn but update dirty/origin/title independently of revision, including same-revision saves. Core revision-bearing metadata remains authoritative. Verify actual NSHostingView external NFC/NFD refresh, subsequent UTF-16 edit/undo, and hide/destroy/recreate selection/scroll behavior rather than only manually calling synchronize.
 
+When workspace_info reports recovery.enabled=false, show a persistent warning and actual last_error before the first editable presentation. Keep this state separate from operation errors, retain in-memory editing/explicit Save and clear it on healthy-project switch. Do not repeatedly publish unchanged enabled-state metadata per keystroke. Exercise a real owned recovery setup blocker, native editing/Save/disk preservation and project switching; a green backend fallback test alone does not prove the user sees its loss-of-recovery status.
+
 ## Workspace presentation
 
 Selection and scroll state belong to persistent per-project presentation, not a disposable editor coordinator. Restore both range endpoints safely; scroll to the caret for explicit navigation. Mac `EditorViewportTests` exercises real view update and last-tab destruction/recreation. Project switches reset presentation and choose a main file from the new project's files.

@@ -12,6 +12,7 @@ import Observation
     var canRedo = false
     var message = "Nyiss meg egy helyi projektmappát."
     var failure: String?
+    var recoveryWarning: String?
     var mainFile = "main.tex"
     var operation: String?
     var buildState = ""
@@ -142,6 +143,13 @@ import Observation
     func refreshInfo(reloadSelection: Bool = true) throws {
         guard let runtime else { return }
         let info = try runtime.call("workspace_info")
+        let recovery = info["recovery"] as? [String: Any]
+        let warning: String?
+        if recovery?["enabled"] as? Bool == false {
+            let reason = (recovery?["last_error"] as? String).map { " Ok: \($0)." } ?? ""
+            warning = "Az összeomlás utáni helyreállítás nem elérhető. A mentetlen módosítások elveszhetnek. A kézi mentés továbbra is használható." + reason
+        } else { warning = nil }
+        if recoveryWarning != warning { recoveryWarning = warning }
         let undo = info["can_undo"] as? Bool ?? false, redo = info["can_redo"] as? Bool ?? false
         if canUndo != undo { canUndo = undo }; if canRedo != redo { canRedo = redo }
         let descriptor = info["session_descriptor"] as? String ?? ""

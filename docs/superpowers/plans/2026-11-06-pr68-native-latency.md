@@ -79,3 +79,8 @@ Latest local native qualification: 133 methods =129 PASS +4 unchanged opt-in SKI
 ## Physical-fixture review follow-up — 2026-11-07
 
 The reviewer independently verified the published11 block hashes/source reconstruction and all four Candidate39 p95 calculations, but found the driver did not bind actual physical size/layout to each run. Candidate40 adds pre-open/pre-clock Data.count/full-byte-recipe/derived-layout/SHA256/line-count checks plus four negative controls. Product/Rust/verifier code and sample clock/target are unchanged. New same-binary40-sample p95: single13.685/15.868ms, LF10.029/11.854ms, allfour PASS with image/text/recovery/undo/disk controls. Raw reports, complete driver/controllers and source maps were separately authorized, published and exactly read back. Candidate39 remains retained with its validation gap distinguished. Current231f06b Actions7/7SUCCESS; final documentation-only head/review/F02 closure/protected merge are still pending.
+
+
+## Outside-diff Major and final product — 2026-11-07
+
+Review5814084752 raised recovery-disabled UI outside the diff. It is valid and fixed via a persistent actual enabled/last_error warning, separately from operation errors, preserving memory editing/Save. Two real-Core/native controls pass; full135=131PASS/four unchangedSKIP. ENOSPC buildERROR/zero cases remains retained. Final Candidate41 uses byte-identical40 measurement driver and physical preflight: single14.455/14.794ms, LF11.207/11.726ms, allfour PASS with allfunctional guards. Two authorized public evidence blocks reconstruct complete input/compiled maps from40 exactly and preserve raw41 samples. Fresh-head CI, targeted review and formal CHANGES_REQUESTED clearance precede merge; no rule/policy bypass.
