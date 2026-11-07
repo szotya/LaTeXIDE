@@ -499,3 +499,11 @@ fn independent_sha256_vectors_cover_padding_blocks_and_file_ceiling() {
         assert_eq!(result.documents[0].revision, 7);
     }
 }
+
+#[cfg(target_os = "macos")]
+#[path = "../src/services/recovery/durable_tests.rs"]
+mod durable_contract;
+
+#[cfg(target_os = "macos")]
+#[path = "../src/services/recovery/runtime_tests.rs"]
+mod runtime_contract;

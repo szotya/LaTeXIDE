@@ -93,3 +93,13 @@ struct ProjectNode: Identifiable {
         return build(files, prefix: "")
     }
 }
+
+/// Only metadata actually presented by tabs and project/status lists.
+/// Core revision-bearing EditorTab values remain authoritative in the store.
+struct EditorTabPresentation: Identifiable, Equatable {
+    let id: String
+    let dirty: Bool
+    let origin: String
+    var title: String { (id as NSString).lastPathComponent }
+    init(_ tab: EditorTab) { id = tab.id; dirty = tab.dirty; origin = tab.origin }
+}

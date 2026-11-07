@@ -1,6 +1,6 @@
 import SwiftUI
 struct EditorWorkspace: View {
-    @ObservedObject var store: WorkspaceStore
+    let store: WorkspaceStore
     let theme: ResolvedTheme
     let fontSize: Double
     var completionEnabled = true
@@ -34,14 +34,14 @@ struct EditorWorkspace: View {
     }
 }
 private struct EditorTabs: View {
-    @ObservedObject var store: WorkspaceStore
+    let store: WorkspaceStore
     @Environment(\.ideTheme) private var theme
     var body: some View {
         HStack(spacing: 0) {
             ScrollViewReader { proxy in
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 0) {
-                        ForEach(store.tabs) { tab in
+                        ForEach(store.presentedTabs) { tab in
                             HStack(spacing: 6) {
                                 Button { store.select(tab.id) } label: {
                                     HStack(spacing: 7) { FileTypeIcon(path: tab.id); Text(tab.title).font(.system(size: 11.5, weight: tab.id == store.selection ? .medium : .regular)); if tab.dirty { Circle().fill(theme.ui("accent")).frame(width: 5, height: 5) } }
@@ -55,14 +55,14 @@ private struct EditorTabs: View {
                     }
                 }.onChange(of: store.selection) { _, value in if let value { proxy.scrollTo(value) } }
             }
-            if store.tabs.isEmpty { Text("Szerkesztő").font(.system(size: 11)).foregroundStyle(theme.ui("secondary")).padding(.horizontal, 14) }
+            if store.presentedTabs.isEmpty { Text("Szerkesztő").font(.system(size: 11)).foregroundStyle(theme.ui("secondary")).padding(.horizontal, 14) }
             Spacer(minLength: 0)
             IDEIconButton(symbol: "doc.badge.plus", label: "Gyors fájlmegnyitás · ⌘P", size: 28) { store.showQuickOpen() }.padding(.trailing, 6)
         }.frame(height: 36).background(theme.ui("sidebar")).overlay(alignment: .bottom) { theme.ui("border").opacity(0.6).frame(height: 1) }
     }
 }
 private struct WorkspaceStart: View {
-    @ObservedObject var store: WorkspaceStore
+    let store: WorkspaceStore
     @Environment(\.ideTheme) private var theme
     var body: some View {
         VStack(alignment: .leading, spacing: 28) {

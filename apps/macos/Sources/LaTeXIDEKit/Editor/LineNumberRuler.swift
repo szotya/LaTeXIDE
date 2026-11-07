@@ -7,14 +7,19 @@ final class LineNumberRuler: NSRulerView {
         clientView = source; ruleThickness = 56
     }
     required init(coder: NSCoder) { fatalError("init(coder:) is not used") }
+    /// Marked text changes display geometry before the core commits a transaction.
+    var displayedLineMap: SourceLineMap {
+        guard let source else { return SourceLineMap() }
+        return source.adapter?.displayedLineMap(for: source) ?? SourceLineMap(source.string)
+    }
     override func drawHashMarksAndLabels(in rect: NSRect) {
         guard let view = source, let theme = view.editorTheme,
               let manager = view.layoutManager, let container = view.textContainer else { return }
         theme.ns("editor").setFill(); bounds.fill()
         let visible = view.visibleRect.offsetBy(dx: -view.textContainerOrigin.x, dy: -view.textContainerOrigin.y)
         manager.ensureLayout(forBoundingRect: visible, in: container)
-        let glyphs = manager.glyphRange(forBoundingRect: visible, in: container)
-        let lines = view.adapter?.lineMap ?? SourceLineMap(view.string)
+        let glyphs = manager.glyphRange(forBoundingRectWithoutAdditionalLayout: visible, in: container)
+        let lines = displayedLineMap
         let selected = lines.position(at: view.selectedRange().location).line
         let font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: .regular)
         var glyph = glyphs.location
@@ -24,7 +29,7 @@ final class LineNumberRuler: NSRulerView {
             let size = string.size(withAttributes: attrs)
             string.draw(at: NSPoint(x: ruleThickness - 16 - size.width, y: y + 1), withAttributes: attrs)
         }
-        while glyph < NSMaxRange(glyphs) && glyph < manager.numberOfGlyphs {
+        while glyphs.location != NSNotFound && glyph < NSMaxRange(glyphs) {
             var range = NSRange()
             let fragment = manager.lineFragmentRect(forGlyphAt: glyph, effectiveRange: &range)
             let character = manager.characterIndexForGlyph(at: glyph)
@@ -36,7 +41,9 @@ final class LineNumberRuler: NSRulerView {
             guard NSMaxRange(range) > glyph else { break }; glyph = NSMaxRange(range)
         }
         let extra = manager.extraLineFragmentRect
-        if view.string.isEmpty || (view.string.hasSuffix("\n") && extra.intersects(visible)) {
+        let count = view.textStorage?.length ?? 0
+        let endsInLineFeed = count > 0 && view.textStorage?.mutableString.character(at: count - 1) == 10
+        if count == 0 || (endsInLineFeed && extra.intersects(visible)) {
             let point = convert(NSPoint(x: 0, y: extra.minY + view.textContainerOrigin.y), from: view)
             draw(lines.starts.count, at: point.y)
         }

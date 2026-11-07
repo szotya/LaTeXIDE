@@ -1,60 +1,73 @@
 import AppKit
-import Combine
+import Observation
 
-@MainActor public final class WorkspaceStore: ObservableObject {
-    @Published var root: URL?
-    @Published var files: [String] = []
-    @Published var selection: String?
-    @Published var text = ""
-    @Published var revision: UInt64 = 0
-    @Published var dirty = false
-    @Published var canUndo = false
-    @Published var canRedo = false
-    @Published var message = "Nyiss meg egy helyi projektmappát."
-    @Published var failure: String?
-    @Published var mainFile = "main.tex"
-    @Published var operation: String?
-    @Published var buildState = ""
-    @Published var buildLog = ""
-    @Published var pdf: URL?
-    @Published var pdfIsOld = false
-    @Published var sessionPath = ""
-    @Published var isComposing = false
-    @Published var tabs: [EditorTab] = []
-    @Published var retainedDocuments: [EditorTab] = []
-    @Published var sidebar: SidebarTool? = .project
-    @Published var bottomPanel: BottomTool? = .output
-    @Published var pdfVisible = true
-    @Published var inspector: InspectorTab = .pdf
-    @Published var quickOpen: QuickOpenMode?
-    @Published var appearancePresented = false
-    @Published var caretLine = 1
-    @Published var caretColumn = 1
-    @Published var lineEnding = "lf"
-    @Published var bom = false
-    @Published var navigation: EditorNavigation?
-    @Published var navigationNotice: String?
-    @Published var diagnostics: [CompilerDiagnostic] = []
-    @Published var compilerReady = false
-    @Published var editorFocusVersion = 0
-    @Published var editorSelection = NSRange(location: 0, length: 0)
-    @Published var completionIndexStatus: CompletionIndexStatus?
+@MainActor @Observable public final class WorkspaceStore {
+    var root: URL?
+    var files: [String] = []
+    var selection: String?
+    var text = ""
+    var revision: UInt64 = 0
+    var dirty = false
+    var canUndo = false
+    var canRedo = false
+    var message = "Nyiss meg egy helyi projektmappát."
+    var failure: String?
+    var recoveryWarning: String?
+    var mainFile = "main.tex"
+    var operation: String?
+    var buildState = ""
+    var buildLog = ""
+    var pdf: URL?
+    var pdfIsOld = false
+    var sessionPath = ""
+    var isComposing = false
+    var presentedTabs: [EditorTabPresentation] = []
+    var tabs: [EditorTab] = [] {
+        didSet {
+            let next = tabs.map { EditorTabPresentation($0) }
+            if presentedTabs != next { presentedTabs = next }
+        }
+    }
+    var presentedDocuments: [EditorTabPresentation] = []
+    var retainedDocuments: [EditorTab] = [] {
+        didSet {
+            let next = retainedDocuments.map { EditorTabPresentation($0) }
+            if presentedDocuments != next { presentedDocuments = next }
+        }
+    }
+    var sidebar: SidebarTool? = .project
+    var bottomPanel: BottomTool? = .output
+    var pdfVisible = true
+    var inspector: InspectorTab = .pdf
+    var quickOpen: QuickOpenMode?
+    var appearancePresented = false
+    var caretLine = 1
+    var caretColumn = 1
+    var lineEnding = "lf"
+    var bom = false
+    var navigation: EditorNavigation?
+    var navigationNotice: String?
+    var diagnostics: [CompilerDiagnostic] = []
+    var compilerReady = false
+    var editorFocusVersion = 0
+    var editorSelection = NSRange(location: 0, length: 0)
+    var completionIndexStatus: CompletionIndexStatus?
     // Presentation survives the editor view being removed after the last tab is hidden.
-    var editorStates: [String: EditorViewState] = [:]
+    @ObservationIgnored var editorStates: [String: EditorViewState] = [:]
     private var cachedProjectNodes: [ProjectNode] = []
-    private var navigationSerial = 0
-    private var consumedNavigationSerial = 0
-    private var reportedBuildState = ""
-    private var lastPollKey = ""
-    private var runtime: NativeRuntime?
-    private var timer: Timer?
+    @ObservationIgnored private var navigationSerial = 0
+    @ObservationIgnored private var consumedNavigationSerial = 0
+    @ObservationIgnored private var reportedBuildState = ""
+    @ObservationIgnored private var lastPollKey = ""
+    @ObservationIgnored private var runtime: NativeRuntime?
+    @ObservationIgnored private var timer: Timer?
     public init() {
         timer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: true) { [weak self] _ in
             Task { @MainActor [weak self] in self?.poll() }
         }
     }
     deinit { timer?.invalidate() }
-    var hiddenTabCount: Int { retainedDocuments.filter { doc in !tabs.contains(where: { $0.id == doc.id }) }.count }
+    var hiddenTabCount: Int { presentedDocuments.filter { doc in !presentedTabs.contains(where: { $0.id == doc.id }) }.count }
     var projectNodes: [ProjectNode] { cachedProjectNodes }
     var errorCount: Int { diagnostics.filter { $0.severity == "error" }.count }
     var warningCount: Int { diagnostics.filter { $0.severity == "warning" }.count }
@@ -130,6 +143,13 @@ import Combine
     func refreshInfo(reloadSelection: Bool = true) throws {
         guard let runtime else { return }
         let info = try runtime.call("workspace_info")
+        let recovery = info["recovery"] as? [String: Any]
+        let warning: String?
+        if recovery?["enabled"] as? Bool == false {
+            let reason = (recovery?["last_error"] as? String).map { " Ok: \($0)." } ?? ""
+            warning = "Az összeomlás utáni helyreállítás nem elérhető. A mentetlen módosítások elveszhetnek. A kézi mentés továbbra is használható." + reason
+        } else { warning = nil }
+        if recoveryWarning != warning { recoveryWarning = warning }
         let undo = info["can_undo"] as? Bool ?? false, redo = info["can_redo"] as? Bool ?? false
         if canUndo != undo { canUndo = undo }; if canRedo != redo { canRedo = redo }
         let descriptor = info["session_descriptor"] as? String ?? ""
@@ -228,10 +248,15 @@ import Combine
             if composition { isComposing = false }
             throw error
         }
-        text = (text as NSString).replacingCharacters(in: range, with: replacement).replacingOccurrences(of: "\r\n", with: "\n")
-        revision = (info["revision"] as! NSNumber).uint64Value; dirty = info["dirty"] as! Bool
+        // Core normalizes each replacement; the accepted mirror contains no CR.
+        let normalized = replacement.replacingOccurrences(of: "\r\n", with: "\n", options: .literal)
+        text = (text as NSString).replacingCharacters(in: range, with: normalized)
+        revision = (info["revision"] as! NSNumber).uint64Value
+        let nextDirty = info["dirty"] as! Bool
+        if dirty != nextDirty { dirty = nextDirty }
         if composition { isComposing = false }
-        pdfIsOld = pdf != nil
+        let oldPDF = pdf != nil
+        if pdfIsOld != oldPDF { pdfIsOld = oldPDF }
         try refreshInfo()
     }
     func beginComposition() -> Bool {

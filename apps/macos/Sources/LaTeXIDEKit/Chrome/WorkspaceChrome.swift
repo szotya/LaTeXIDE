@@ -1,6 +1,6 @@
 import SwiftUI
 struct WorkspaceChrome: View {
-    @ObservedObject var store: WorkspaceStore
+    @Bindable var store: WorkspaceStore
     @ObservedObject var preferences: EditorPreferences
     @Environment(\.ideTheme) private var theme
     var body: some View {
@@ -46,7 +46,7 @@ struct WorkspaceChrome: View {
     }
 }
 struct ActivityRail: View {
-    @ObservedObject var store: WorkspaceStore
+    @Bindable var store: WorkspaceStore
     @Environment(\.ideTheme) private var theme
     var body: some View {
         VStack(spacing: 8) {

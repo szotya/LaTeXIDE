@@ -19,7 +19,7 @@ private final class CompletionPanelWindow: NSPanel {
     func refresh(_ view: SourceTextView, explicit: Bool = false) {
         guard let coordinator, coordinator.completionEnabled, !coordinator.rendering,
               !coordinator.store.isComposing, !view.hasMarkedText(), view.selectedRange().length == 0,
-              view.string == coordinator.store.text else { dismiss(); return }
+              view.hasLiteralText(coordinator.store.text) else { dismiss(); return }
         if let window = view.window, window.firstResponder !== view { dismiss(); return }
         let caret = view.selectedRange().location
         let key = "\(coordinator.store.selection ?? ""):\(coordinator.store.revision):\(caret)"
@@ -41,28 +41,28 @@ private final class CompletionPanelWindow: NSPanel {
         guard let coordinator, let proposal else { return false }
         return proposal.documentID == coordinator.store.selection && proposal.revision == coordinator.store.revision
             && view.selectedRange() == NSRange(location: proposalCaret, length: 0)
-            && view.string == coordinator.store.text && !view.hasMarkedText() && !coordinator.store.isComposing
+            && view.hasLiteralText(coordinator.store.text) && !view.hasMarkedText() && !coordinator.store.isComposing
     }
     @discardableResult func accept(_ view: SourceTextView) -> Bool {
         guard let coordinator, let proposal, proposal.items.indices.contains(selectedIndex),
               proposal.documentID == coordinator.store.selection, proposal.revision == coordinator.store.revision,
               view.selectedRange() == NSRange(location: proposalCaret, length: 0),
-              view.string == coordinator.store.text, !view.hasMarkedText(), !coordinator.store.isComposing else { dismiss(); return false }
+              view.hasLiteralText(coordinator.store.text), !view.hasMarkedText(), !coordinator.store.isComposing else { dismiss(); return false }
         let item = proposal.items[selectedIndex]
         // A definition can change in another buffer without changing this document's revision.
         guard let fresh = coordinator.store.completions(caret: proposalCaret, refreshProject: true), fresh.range == proposal.range,
-              fresh.items.contains(where: { $0.label == item.label && $0.kind == item.kind && $0.insertText == item.insertText && $0.selectionStartUTF16 == item.selectionStartUTF16 && $0.selectionLengthUTF16 == item.selectionLengthUTF16 }) else { dismiss(); return false }
+              fresh.items.contains(where: { $0.label == item.label && $0.kind == item.kind && ($0.insertText as NSString).compare(item.insertText, options: .literal) == .orderedSame && $0.selectionStartUTF16 == item.selectionStartUTF16 && $0.selectionLengthUTF16 == item.selectionLengthUTF16 }) else { dismiss(); return false }
         let count = (view.string as NSString).length, inserted = (item.insertText as NSString).length
         guard proposal.range.location >= 0, proposal.range.length >= 0,
               proposal.range.location <= count - min(count, proposal.range.length), proposal.range.length <= count,
               item.selectionStartUTF16 >= 0, item.selectionLengthUTF16 >= 0,
               item.selectionStartUTF16 <= inserted - min(inserted, item.selectionLengthUTF16), item.selectionLengthUTF16 <= inserted,
               (try? SourceEdit.make(text: view.string, range: proposal.range, replacement: item.insertText)) != nil else { dismiss(); return false }
-        let unchanged = (view.string as NSString).substring(with: proposal.range) == item.insertText
+        let unchanged = ((view.string as NSString).substring(with: proposal.range) as NSString).compare(item.insertText, options: .literal) == .orderedSame
         dismiss()
         if !unchanged {
             view.insertText(item.insertText, replacementRange: proposal.range)
-            guard coordinator.store.text == view.string, coordinator.store.revision != proposal.revision else { return false }
+            guard view.hasLiteralText(coordinator.store.text), coordinator.store.revision != proposal.revision else { return false }
         }
         view.setSelectedRange(NSRange(location: proposal.range.location + item.selectionStartUTF16, length: item.selectionLengthUTF16))
         dismissedKey = "\(coordinator.store.selection ?? ""):\(coordinator.store.revision):\(view.selectedRange().location)"

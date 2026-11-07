@@ -1,0 +1,1235 @@
+"""Synthetic stdlib controls; no Rust/real parent-child qualification is run."""
+from pathlib import Path, PureWindowsPath
+import importlib.util
+import io
+import hashlib
+import json
+import os
+import secrets
+import stat
+import subprocess
+import sys
+import tarfile
+import tempfile
+import unittest
+from contextlib import contextmanager
+from types import SimpleNamespace
+from unittest.mock import patch
+
+ROOT=Path(os.environ.get('P01_CI_MODULE_ROOT',Path(__file__).resolve().parents[2]))
+def module(name):
+    spec=importlib.util.spec_from_file_location('test_'+name,ROOT/'integration/registry'/f'{name}.py')
+    m=importlib.util.module_from_spec(spec);spec.loader.exec_module(m);return m
+
+def fixture_parent(directory=None):
+    value=os.environ.get('P01_CI_TEST_FIXTURE') or directory or os.environ.get('TMPDIR')
+    base=Path(value) if value else ROOT/'.local/p01-ci-python-fixtures'
+    base.mkdir(parents=True,exist_ok=True,mode=0o700)
+    return base
+
+@contextmanager
+def retained_directory(prefix='p01-fixture-',dir=None):
+    # Keep failed/negative fixtures in the declared owner or this checkout's ignored root.
+    base=fixture_parent(dir)
+    yield tempfile.mkdtemp(prefix=prefix,dir=base)
+
+# Independent literal model table, transcribed from the frozen source contract.
+# Its files are tagged synthetic data and are never compiled or executed as Rust.
+APPEND_FIXTURE = ("JournalWrite","JournalPartiallyWritten","JournalWritten","JournalFlushed",
+    "JournalSync","JournalSynced","JournalParentSync","JournalParentSynced","BeforeAck","after_return")
+CHECKPOINT_FIXTURE = ("CheckpointWrite","CheckpointPartiallyWritten","CheckpointWritten",
+    "CheckpointFlushed","CheckpointSync","CheckpointSynced","CheckpointRename","CheckpointRenamed",
+    "CheckpointParentSync","CheckpointParentSynced","JournalWrite","JournalPartiallyWritten",
+    "JournalWritten","JournalFlushed","JournalSync","JournalSynced","JournalRename","JournalRenamed",
+    "JournalParentSync","JournalParentSynced","BeforeAck","after_return")
+RUNTIME_FIXTURE = ("edit_before_publish","edit_after_publish","save_intent_published",
+                   "save_final_prepared","undo_after_save")
+
+class Model:
+    """Only external execution/source-version inputs are substituted, not validators."""
+    def __init__(self, test, adapter=None, verifier=None):
+        # Synthetic Cargo logs never consume the surrounding real TeX session.
+        test.enterContext(patch.dict(os.environ,{k:v for k,v in os.environ.items()
+            if k not in ('LATEXIDE_P18_PHASE2_ROOT','LATEXIDE_P18_PHASE3_ROOT',
+                         'LATEXIDE_P18_TEX_PREFIX','LATEXIDE_P18_TEX_RUN')},clear=True))
+        self.a=adapter or module('p01_ci');self.v=verifier
+        # Legacy inert fixtures have no F05 provider; dedicated controls below bind its real source contract.
+        test.enterContext(patch.object(self.a,'F05_SOURCE_PINS',{}))
+        if verifier:test.enterContext(patch.object(verifier.evidence.p01_ci,'F05_SOURCE_PINS',{}))
+        base=fixture_parent()
+        self.root=Path(tempfile.mkdtemp(prefix='synthetic-p01-',dir=base))
+        self.calls=[];self.mode=None;self.extra_ids=[];self.extra_ignored=[];self.env={};self.normal_envs=[]
+        self.all_ids=sorted([*self.a.EXCLUDED,'ordinary_contract'])
+        self.run_id=secrets.token_hex(16)
+        self.source_pins={}
+        for name in self.a.SOURCE_PINS:
+            p=self.root/name;p.parent.mkdir(parents=True,exist_ok=True)
+            p.write_bytes(b'SYNTHETIC OPAQUE MODEL DATA, NOT RUST SOURCE: '+name.encode())
+            s=p.stat()
+            self.source_pins[name]={'sha256':hashlib.sha256(p.read_bytes()).hexdigest(),
+                                  'bytes':s.st_size,'mode':stat.S_IMODE(s.st_mode)}
+        test.enterContext(patch.object(self.a,'SOURCE_PINS',self.source_pins))
+        if verifier:
+            test.enterContext(patch.object(verifier.evidence.p01_ci,'SOURCE_PINS',self.source_pins))
+        self.target=self.root/'target'
+        self.binary=self.target/'debug/deps/recovery_contract-0123456789abcdef'
+        self.binary.parent.mkdir(parents=True)
+        self.binary.write_bytes(b'SYNTHETIC INERT IMAGE; NEVER EXECUTED; NOT RUST')
+        self.binary.chmod(0o700)
+        self.binary_sha=hashlib.sha256(self.binary.read_bytes()).hexdigest()
+        # Windows model tests represent POSIX stat facts at this one boundary.
+        # Production _mode remains a real stat observation; no skip or relaxed
+        # actual filesystem policy is introduced.
+        if os.name=='nt':
+            actual_mode=self.a._mode
+            def model_mode(path):
+                p=Path(path)
+                if p.resolve(strict=False).is_relative_to(self.root.resolve()):
+                    if p.is_dir():return 0o700
+                    if p.name in ('COHORT','NAMESPACE.json') or p.name.endswith('.inventory.json'):return 0o600
+                    if p.resolve(strict=False)==self.binary.resolve():return 0o700
+                return actual_mode(p)
+            test.enterContext(patch.object(self.a,'_mode',side_effect=model_mode))
+            if verifier:test.enterContext(patch.object(verifier.evidence.p01_ci,'_mode',side_effect=model_mode))
+        self.logs=self.root/'.local/run';self.logs.mkdir(parents=True,mode=0o700)
+        self.log=self.logs/'01-rust-workspace.log';self.proof=self.logs/'p01.json'
+        self.tool=self.a.binding(Path(sys.executable).resolve())
+        self.argv=[str(Path(sys.executable).resolve()),'test','--workspace','--locked',
+                   '--target-dir',str(self.target),'--message-format=json','--',
+                   '--include-ignored','--test-threads=1',*self.a.skipped_arguments()]
+        self.source_sha=hashlib.sha256(json.dumps(self.source_pins,sort_keys=True).encode()).hexdigest()
+        self.record=None
+        (self.root/'MODEL.json').write_text(json.dumps({'scope':'synthetic Python fixture only',
+            'Rust_parent_child_processes':0,'nonce':os.environ.get('P01_CI_TEST_NONCE')}))
+
+    def _table(self,kind,env):
+        if kind=='durable':
+            parent=Path(env['P01_DURABLE_SCRATCH'])/'tmp'
+            nonce=env['P01_RUN_NONCE'];rows=[]
+            for mode,phases in [('append',APPEND_FIXTURE),('checkpoint',CHECKPOINT_FIXTURE)]:
+                for phase in phases:
+                    d=parent/f'child-{mode}-{phase}';d.mkdir(mode=0o700)
+                    (d/'child.log').write_text('running 1 test\ntest durable_contract::durable_crash_child ... ',encoding='utf-8',newline='\n')
+                    trace=phases[:-1] if phase=='after_return' else phases[:phases.index(phase)+1]
+                    (d/'phases.log').write_text('\n'.join(trace)+'\n',encoding='utf-8',newline='\n')
+                    (d/'observed-r7.receipt').write_bytes(b'synthetic opaque ack bytes, not a real recovery receipt')
+                    if phase=='after_return':(d/'observed-after-return.receipt').write_bytes(b'synthetic after-return bytes')
+                    seq=8 if mode=='append' and phase=='after_return' else 7
+                    rows.append(f'mode={mode} phase={phase} exit=73 observed_sequence={seq} recovered_sequence={seq} strict_rejected=false duration_ms=1 binary_sha256={self.binary_sha} nonce={nonce} fixture={d}\n')
+            d=parent/'child-matrix-summary';d.mkdir(mode=0o700)
+            (d/'32-process-boundary-cases.txt').write_text(''.join(rows),encoding='utf-8',newline='\n')
+            return f'P01_CHILD_CASES=32 PASS=32 FAIL=0 ERROR=0 SKIP=0 nonce={nonce} evidence={d}'
+        parent=Path(env['P01_RUNTIME_SCRATCH'])/'tmp'
+        nonce=hashlib.sha256((self.run_id+':independent-runtime-model-nonce').encode()).hexdigest()
+        rows=[]
+        for i,case in enumerate(RUNTIME_FIXTURE):
+            d=parent/f'runtime-{i}';d.mkdir(mode=0o700)
+            (d/'project').mkdir();(d/'recovery').mkdir(mode=0o700)
+            (d/'child.log').write_text('running 1 test\ntest runtime_contract::runtime_crash_child ... ',encoding='utf-8',newline='\n')
+            rows.append(f'case={case} exit=73 duration_ms=1 binary_sha256={self.binary_sha} nonce={nonce} project={d}/project\n')
+        summary=parent/'runtime-process-cases.txt';summary.write_text(''.join(rows),encoding='utf-8',newline='\n')
+        return f'P01_RUNTIME_CHILD_CASES=5 PASS=5 FAIL=0 ERROR=0 nonce={nonce} evidence={summary}'
+
+    def execute(self,name,argv,cwd,log,timeout,env=None):
+        self.calls.append((name,list(argv),timeout))
+        log=Path(log);log.parent.mkdir(parents=True,exist_ok=True)
+        if name=='rust-workspace':
+            artifact={'reason':'compiler-artifact','fixture_model':True,
+              'target':{'name':'recovery_contract','src_path':str(self.root/'crates/latexide-core/tests/recovery_contract.rs')},
+              'profile':{'test':True},'fresh':False,'executable':str(self.binary)}
+            if self.mode=='cached':artifact['fresh']=True
+            if self.mode=='fresh-bool-int':artifact['fresh']=0
+            text='# SYNTHETIC PYTHON FIXTURE, NOT A RUST RUN\n'+json.dumps(artifact)+'\n'
+            if self.env:text+='Running tests/security_policy_contract.rs (synthetic-inert-image)\n'
+            ids=[n for n in self.all_ids if n not in self.a.EXCLUDED]
+            text+=''.join('test '+n+' ... ok\n' for n in ids)
+            if self.env:self.p18_outputs(self.env)  # Cargo captures successful test stdout.
+            text+=f'test result: ok. {len(ids)} passed; 0 failed; 0 ignored; 0 measured; 4 filtered out;\n'
+        elif name.startswith('normal-'):
+            ids=[n for n in self.all_ids+self.extra_ids if n not in self.a.EXCLUDED]
+            text='running '+str(len(ids))+' tests\n'+''.join('test '+n+' ... ok\n' for n in ids)
+            if self.env:
+                self.normal_envs.append(dict(env));text+=self.p18_outputs(env)
+            text+=f'test result: ok. {len(ids)} passed; 0 failed; 0 ignored; 0 measured; 4 filtered out;\n'
+        elif name.startswith('discovery'):
+            ids=(list(self.a.CHILDREN.values())+self.extra_ignored if '--ignored' in argv
+                 else self.all_ids+self.extra_ids)
+            if self.mode=='zero-discovery':ids=[]
+            text=''.join(n+': test\n' for n in ids)
+        elif name in ['parent-durable','parent-runtime']:
+            kind=name.removeprefix('parent-');marker=self._table(kind,env)
+            if self.mode=='missing-parent-marker':marker=''
+            text=f'running 1 test\ntest {self.a.PARENTS[kind]} ... {marker}\nok\n'
+            text+=f'test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; {len(self.all_ids+self.extra_ids)-1} filtered out;\n'
+        elif name=='late-model-change':
+            self.child_log().write_text(self.child_log().read_text()+'\nsynthetic late mutation\n')
+            text='synthetic file changed, no external provider executed\n'
+        else:raise AssertionError('Unexpected model command: '+name)
+        with log.open('x',encoding='utf-8',newline='\n') as f:f.write(text)
+        row={'name':name,'command':list(argv),'status':'passed','exit_code':0,'timed_out':False,
+             'duration_ms':1,'log':{'kind':'command_log','path':str(log),'sha256':hashlib.sha256(log.read_bytes()).hexdigest()},
+             'fixture_execution_domain':'synthetic-Python-model'}
+        if name=='rust-workspace':
+            row['p18_environment']={key:self.env[key] for key in self.a.P18_ENV if key in self.env}
+            self.record=row
+        return row
+
+    def ensure_record(self):
+        if self.record is None:self.execute('rust-workspace',self.argv,self.root,self.log,10)
+        return self.record
+
+    def capture(self):
+        self.a.qualify(self.root,self.ensure_record(),self.argv,self.run_id,self.source_sha,
+                       self.target,self.proof,self.env,self.execute,self.tool)
+        proof=json.loads(self.proof.read_bytes())
+        archive=self.root/'capture-before-mutation.tar.gz'
+        with tarfile.open(archive,'w:gz') as tar:
+            for p in sorted(self.root.rglob('*')):
+                if p!=archive:tar.add(p,arcname=p.relative_to(self.root).as_posix(),recursive=False)
+        return proof
+
+    def enable_p18(self):
+        # Inert tool bytes and PDF placeholders exercise bindings only.
+        prefix=self.root/'toolkit/texlive';prefix.mkdir(parents=True)
+        (prefix/'inert-tool').write_bytes(b'synthetic toolkit; never executed')
+        receipt={'schema':1,'prefix':str(prefix.resolve()),'toolchain':module('p18_ci').toolchain_state(prefix)}
+        (prefix.parent/'provision.json').write_text(json.dumps(receipt))
+        self.env={'LATEXIDE_P18_TEX_PREFIX':str(prefix),'LATEXIDE_P18_TEX_RUN':'cargo-model'}
+        for phase in (2,3):
+            root=self.root/f'cargo-phase{phase}';root.mkdir(mode=0o700)
+            (root/'artifacts').mkdir(mode=0o700)
+            self.env[f'LATEXIDE_P18_PHASE{phase}_ROOT']=str(root)
+        self.all_ids=sorted(self.all_ids+module('p18_ci').REQUIRED)
+
+    def p18_outputs(self,env):
+        markers=''
+        for phase in (2,3):
+            run=Path(env[f'LATEXIDE_P18_PHASE{phase}_ROOT'])/'artifacts'/env['LATEXIDE_P18_TEX_RUN']
+            run.mkdir(mode=0o700)  # real exclusive-create collision, no validator stub
+            for role in ('control','protected'):
+                output=run/(role if phase==2 else role+'-generation')/'output';output.mkdir(parents=True)
+                (output/'main.pdf').write_bytes(b'SYNTHETIC INERT PDF BINDING; NOT RENDERED')
+            if phase==3:(run/'generation-publication.receipt').write_text('synthetic generation binding')
+            markers+=f'P18_PHASE{phase}_TEX_ARTIFACTS={run}\n'
+        return markers
+
+    def validate(self,proof=None,run_id=None):
+        if proof is not None:self.proof.write_text(json.dumps(proof))
+        return self.a.validate(self.root,self.proof,self.record,self.argv,run_id or self.run_id,
+                               self.source_sha,self.target,self.tool)
+
+    def child_log(self):
+        d=json.loads(self.proof.read_bytes())
+        return Path(d['observations'][0]['cases'][0]['files'][0]['path'])
+
+    def rust_step(self):
+        return {'name':'rust-workspace','kind':'rust-unit','summary_format':'rust',
+                'argv':self.argv,'p01_cohort':{'proof':str(self.proof)},
+                'artifact_paths':[{'path':str(self.proof),'kind':'p01_cohort_proof'},
+                                  {'path':str(self.log),'kind':'p01_rust_build_log'}],
+                'required_artifact_kinds':['p01_cohort_proof','p01_rust_build_log'],
+                'platform':'synthetic/model'}
+
+    def driver_report(self,late=False):
+        steps=[self.rust_step()]
+        if late:steps.append({'name':'late-model-change','kind':'source','argv':[sys.executable,'model-only']})
+        with patch.object(self.v,'execute_step',side_effect=self.execute):
+            report=self.v.run_checks(self.root,list(self.source_pins),steps,self.logs,10)
+        report['selection']={'platform':'synthetic','machine':'model'}
+        return report,steps
+
+
+class F05Model(Model):
+    """Synthetic two-image Cargo/cohort controls; no image is executed as Rust."""
+    def __init__(self,test,adapter=None,verifier=None,padding=0,fixture_files=0):
+        super().__init__(test,adapter,verifier)
+        self.padding=padding;self.fixture_files=fixture_files
+        self.ffi_binary=self.binary.with_name('latexide_ffi-fedcba9876543210')
+        self.ffi_binary.write_bytes(b'SYNTHETIC INERT FFI IMAGE; NEVER EXECUTED')
+        self.ffi_binary.chmod(0o700)
+        if os.name=='nt':
+            actual=self.a._mode
+            def binary_mode(path):
+                if Path(path).resolve(strict=False)==self.ffi_binary.resolve():return 0o700
+                return actual(path)
+            test.enterContext(patch.object(self.a,'_mode',side_effect=binary_mode))
+            if verifier:test.enterContext(patch.object(verifier.evidence.p01_ci,'_mode',side_effect=binary_mode))
+        pins={}
+        for name in self.a.F05_PATHS:
+            p=self.root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes((ROOT/name).read_bytes())
+            row=self.a.binding(p);pins[name]={k:row[k] for k in ('sha256','bytes','mode')}
+        test.enterContext(patch.object(self.a,'F05_SOURCE_PINS',pins))
+        if verifier:test.enterContext(patch.object(verifier.evidence.p01_ci,'F05_SOURCE_PINS',pins))
+        self.f05_ids=sorted(self.a.f05_methods(self.root))
+        self.argv.insert(self.argv.index('--')+1,'--show-output')
+
+    def f05_output(self,env):
+        base=Path(env['P00_PR68_ROOT'])
+        for case in self.a.F05_CASE_IDS:
+            p=base/case;p.mkdir(mode=0o700);(p/'project').mkdir()
+            (p/'project/main.tex').write_bytes(b'SYNTHETIC F05 STATE; NOT RUNTIME EVIDENCE')
+            for number in range(self.fixture_files):(p/'project'/('inert-row-%03d.bin'%number)).write_bytes(b'owned inert inventory row')
+        case=base/'r06';(case/'project/main.tex').unlink()
+        (case/'outside-project.tex').write_bytes(b'own inert sentinel')
+        (case/'project/main.tex').symlink_to(case/'outside-project.tex')
+        case=base/'r18';state=case/'project/.latexide/recovery'/('cohort-'+'d'*32)
+        state.mkdir(parents=True);(case/'own-outside-state.bin').write_bytes(b'own inert state')
+        (state/'runtime-state.bin').symlink_to(case/'own-outside-state.bin')
+        return ''.join('PR68_CASE\t'+env['P00_PR68_NONCE']+'\t'+case+'\n' for case in self.a.F05_CASE_IDS)
+
+    def execute(self,name,argv,cwd,log,timeout,env=None):
+        if name=='rust-workspace':
+            row=super().execute(name,argv,cwd,log,timeout,env)
+            artifact={'reason':'compiler-artifact','fixture_model':True,
+                'target':{'name':'latexide_ffi','src_path':str(self.root/'crates/latexide-ffi/src/lib.rs')},
+                'profile':{'test':True},'fresh':False,'executable':str(self.ffi_binary)}
+            raw=Path(log).read_text()+json.dumps(artifact)+'\n'
+            raw+='running 26 tests\n'+''.join('test '+n+' ... ok\n' for n in self.f05_ids)
+            raw+='successes:\n'+self.f05_output(env)
+            raw+='test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out;\n'
+            raw+='#'+('x'*self.padding)+'\n'
+            Path(log).write_text(raw,encoding='utf-8',newline='\n')
+            row['log']['sha256']=hashlib.sha256(Path(log).read_bytes()).hexdigest();return row
+        if Path(argv[0]).resolve(strict=True)!=self.ffi_binary.resolve(strict=True):
+            return super().execute(name,argv,cwd,log,timeout,env)
+        self.calls.append((name,list(argv),timeout))
+        if name.startswith('discovery'):
+            raw='' if '--ignored' in argv else ''.join(n+': test\n' for n in self.f05_ids)
+        elif name.startswith('normal-'):
+            raw='running 26 tests\n'+''.join('test '+n+' ... ok\n' for n in self.f05_ids)
+            raw+=self.f05_output(env)+'test result: ok. 26 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out;\n'
+        else:raise AssertionError('Unexpected F05 model invocation')
+        log=Path(log)
+        with log.open('x',encoding='utf-8',newline='\n') as f:f.write(raw)
+        return {'name':name,'command':list(argv),'status':'passed','exit_code':0,'timed_out':False,'duration_ms':1,
+            'log':{'kind':'command_log','path':str(log),'sha256':hashlib.sha256(log.read_bytes()).hexdigest()},
+            'fixture_execution_domain':'synthetic-Python-model'}
+
+    def ensure_record(self):
+        if self.record is None:
+            context={'verification_run_id':self.run_id,'source_sha256':self.source_sha,'tool':self.tool}
+            directory=self.logs/('f05-cargo-'+self.run_id)
+            ns=self.a.f05_create(self.root,directory,'cargo',context,self.argv)
+            row=self.execute('rust-workspace',self.argv,self.root,self.log,10,{**self.env,**ns['environment']})
+            row['f05_namespace']=self.a.f05_observe(self.root,ns,self.a.text(self.log,16*1024*1024),
+                directory,'cargo',context,self.argv,capture=True)
+        return self.record
+
+class P01NamespaceTests(unittest.TestCase):
+    def test_synthetic_process_transcripts_keep_LF_under_windows_translation(self):
+        m=Model(self);actual=Path.open
+        def windows_text_open(path,mode='r',*args,**kwargs):
+            if 'b' not in mode and any(flag in mode for flag in 'wax') and kwargs.get('newline') is None:
+                kwargs['newline']='\r\n'
+            return actual(path,mode,*args,**kwargs)
+        with patch.object(Path,'open',windows_text_open):
+            m.capture();m.validate()
+        self.assertNotIn(b'\r\n',m.log.read_bytes())
+
+    def test_inherited_cargo_scope_allows_captured_stdout_and_other_image_names(self):
+        m=Model(self);m.enable_p18();m.ensure_record()
+        raw=m.log.read_text()
+        raw='\n'.join(line for line in raw.splitlines() if not line.startswith('P18_PHASE'))+'\n'
+        for target in ('other-one','other-two'):
+            raw+=f'Running tests/{target}.rs (inert-model-image)\ntest review_focus_r2 ... ok\n'
+            raw+='test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out;\n'
+        inherited=m.a._p18_inherited(m.env,raw)
+        self.assertEqual(inherited['environment'],m.env)
+
+    def test_replay_uses_fresh_namespace_after_cargo_exclusive_create(self):
+        m=Model(self);m.enable_p18();m.ensure_record()
+        original={p:hashlib.sha256(p.read_bytes()).hexdigest() for p in m.root.glob('cargo-phase*/artifacts/**/*') if p.is_file()}
+        p=m.capture();m.validate()
+        self.assertEqual(len(m.normal_envs),1)
+        for env in m.normal_envs:
+            self.assertNotEqual(env['LATEXIDE_P18_TEX_RUN'],m.env['LATEXIDE_P18_TEX_RUN'])
+            for phase in (2,3):
+                root=Path(env[f'LATEXIDE_P18_PHASE{phase}_ROOT'])
+                self.assertTrue(root.is_relative_to(Path(p['scratch'])))
+                self.assertNotEqual(root,Path(m.env[f'LATEXIDE_P18_PHASE{phase}_ROOT']))
+        self.assertEqual(original,{path:hashlib.sha256(path.read_bytes()).hexdigest() for path in original})
+
+    def test_stale_foreign_or_missing_namespace_bindings_fail_read_only(self):
+        for fault in ('missing-contract','missing-namespace','stale-label','foreign-root','escape',
+                      'wrong-nonce','wrong-source','wrong-binary','foreign-proof','wrong-directory','fifth-skip',
+                      'wrong-cargo-env','missing-cargo-env'):
+            with self.subTest(fault=fault):
+                m=Model(self);m.enable_p18();p=m.capture();calls=len(m.calls)
+                row=p['normal'][0];ns=row['p18_namespace']
+                if fault=='missing-contract':p['p18']=None
+                elif fault=='missing-namespace':row.pop('p18_namespace')
+                elif fault=='stale-label':ns['environment']['LATEXIDE_P18_TEX_RUN']='cargo-model'
+                elif fault=='foreign-root':ns['environment']['LATEXIDE_P18_PHASE2_ROOT']=m.env['LATEXIDE_P18_PHASE2_ROOT']
+                elif fault=='escape':ns['environment']['LATEXIDE_P18_PHASE2_ROOT']=str(m.root/'../foreign')
+                elif fault=='wrong-nonce':row['context_binding']['driver_nonce']='0'*64
+                elif fault=='wrong-source':row['context_binding']['source_sha256']='0'*64
+                elif fault=='wrong-binary':row['context_binding']['binary']['sha256']='0'*64
+                elif fault=='foreign-proof':ns['metadata']['path']=str(m.root/'toolkit/provision.json')
+                elif fault=='wrong-directory':ns['directories'][0]['inode']+=1
+                elif fault=='fifth-skip':row['command']+=['--skip','os_subprocess_boundary_probe']
+                elif fault=='wrong-cargo-env':m.record['p18_environment']['LATEXIDE_P18_TEX_RUN']='foreign'
+                else:m.record.pop('p18_environment')
+                with self.assertRaises(ValueError):m.validate(p)
+                self.assertEqual(len(m.calls),calls)
+
+    def test_namespace_metadata_is_rederived_from_context_and_argv(self):
+        for field in ('driver_nonce','source_sha256','binary','phase','verification_run_id','command','inherited_sha256'):
+            with self.subTest(field=field):
+                m=Model(self);m.enable_p18();p=m.capture()
+                path=Path(p['normal'][0]['p18_namespace']['metadata']['path'])
+                data=json.loads(path.read_bytes());data['identity'][field]='foreign'
+                path.write_text(json.dumps(data))
+                # Even a refreshed file hash cannot authorize another invocation.
+                p['normal'][0]['p18_namespace']['metadata']=m.a.binding(path)
+                with self.assertRaisesRegex(ValueError,'source/binary/nonce/argv/proof'):m.validate(p)
+
+    def test_missing_raw_phase_proof_fails_with_refreshed_log_hash(self):
+        m=Model(self);m.enable_p18();p=m.capture();row=p['normal'][0];log=Path(row['log']['path'])
+        raw=log.read_text();log.write_text('\n'.join(line for line in raw.splitlines() if not line.startswith('P18_PHASE2_'))+'\n')
+        row['log']['sha256']=hashlib.sha256(log.read_bytes()).hexdigest()
+        (Path(p['scratch'])/'normal-0.json').write_text(json.dumps(row))
+        with self.assertRaisesRegex(ValueError,'Missing/stale P18 invocation proof'):m.validate(p)
+
+    def test_namespace_symlink_and_missing_pdf_proof_fail(self):
+        for fault in ('symlink','missing-pdf','toolkit-change','missing-provision'):
+            with self.subTest(fault=fault):
+                m=Model(self);m.enable_p18();p=m.capture()
+                phase=Path(p['normal'][0]['p18_namespace']['environment']['LATEXIDE_P18_PHASE2_ROOT'])
+                if fault=='symlink':
+                    retained=phase.with_name('phase2-retained');phase.rename(retained)
+                    try:phase.symlink_to(retained,target_is_directory=True)
+                    except OSError as error:
+                        if os.name!='nt':raise
+                        retained.rename(phase)
+                        # Windows models the actual link observation at the stat boundary.
+                        actual=Path.is_symlink
+                        with patch.object(Path,'is_symlink',lambda path: path==phase or actual(path)):
+                            with self.assertRaises((OSError,ValueError)):m.validate(p)
+                        continue
+                elif fault=='missing-pdf':
+                    pdf=next(phase.rglob('main.pdf'));pdf.rename(pdf.with_name('retained.pdf'))
+                elif fault=='toolkit-change':(Path(m.env['LATEXIDE_P18_TEX_PREFIX'])/'inert-tool').write_bytes(b'changed')
+                else:
+                    receipt=Path(m.env['LATEXIDE_P18_TEX_PREFIX']).parent/'provision.json'
+                    receipt.rename(receipt.with_name('retained-provision.json'))
+                with self.assertRaises((OSError,ValueError)):m.validate(p)
+
+    def test_existing_invocation_directory_is_preserved_and_refused(self):
+        m=Model(self);m.enable_p18();execute=m.execute;retained=[]
+        def collide(name,*args,**kwargs):
+            row=execute(name,*args,**kwargs)
+            if name=='discovery-ignored-0':
+                directory=Path(row['log']['path']).parent/'p18-normal-0';directory.mkdir(mode=0o700)
+                marker=directory/'retained';marker.write_bytes(b'old invocation');retained.append(marker)
+            return row
+        with patch.object(m,'execute',side_effect=collide),self.assertRaises(FileExistsError):m.capture()
+        self.assertEqual(retained[0].read_bytes(),b'old invocation')
+        self.assertEqual(m.normal_envs,[])
+
+    def test_second_image_gets_distinct_private_roots_label_and_receipt(self):
+        m=Model(self);m.enable_p18();p=m.capture();image=dict(p['images'][0])
+        binary=m.binary.with_name('second-image');binary.write_bytes(b'other inert image');binary.chmod(0o700)
+        image['binary']=m.a.binding(binary);command=m.a.normal_command(image,[])
+        ns=m.a._p18_namespace(Path(p['scratch']),'normal-1',image,p['context'],p['driver_nonce'],command,p['p18'],create=True)
+        first=p['normal'][0]['p18_namespace']
+        for key in ('LATEXIDE_P18_PHASE2_ROOT','LATEXIDE_P18_PHASE3_ROOT','LATEXIDE_P18_TEX_RUN'):
+            self.assertNotEqual(first['environment'][key],ns['environment'][key])
+        self.assertNotEqual(first['metadata']['inode'],ns['metadata']['inode'])
+        with self.assertRaises(FileExistsError):
+            m.a._p18_namespace(Path(p['scratch']),'normal-1',image,p['context'],p['driver_nonce'],command,p['p18'],create=True)
+
+    def test_final_seal_detects_added_output_after_normal_observation(self):
+        m=Model(self);m.enable_p18();p=m.capture()
+        output=p['normal_observations'][0]['p18_namespace']['outputs']['2']
+        (Path(output['directories'][0]['path'])/'late-proof').write_bytes(b'late foreign evidence')
+        with self.assertRaisesRegex(ValueError,'Late P18 output inventory changed'):m.a._normal_final(p)
+
+class ScopedCIRegressionTests(unittest.TestCase):
+    def test_catalog_final_helper_pin_accepts_bytes_and_rejects_wrong_missing_stale(self):
+        a=module('p01_ci');helper='crates/latexide-core/src/services/recovery/durable_tests.rs'
+        expected=json.loads(json.dumps(a.SOURCE_PINS))
+        source={name:(ROOT/name).read_bytes() for name in expected}
+        for variant in ('current','wrong','missing','stale'):
+            with self.subTest(variant=variant),retained_directory(prefix='pin-companion-'+variant+'-') as d:
+                root=Path(d);modes={}
+                for name,data in source.items():
+                    if variant=='missing' and name==helper:continue
+                    if variant=='wrong' and name==helper:data=bytes([data[0]^1])+data[1:]
+                    p=root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(data)
+                    modes[p]=expected[name]['mode']
+                # Only the private fixture's host permission representation is modeled.
+                # Actual final source bytes and the production catalog checks are not mocked.
+                actual_mode=a._mode
+                def fixture_mode(path):
+                    p=Path(path)
+                    return modes[p] if p in modes else actual_mode(p)
+                selected=json.loads(json.dumps(expected))
+                if variant=='stale':
+                    selected[helper]={'sha256':'8fd354781287f7501bdb96a3f77073307c2a16b75296adeba6589bd0ae8ce36b','bytes':30986,'mode':420}
+                with patch.object(a,'_mode',side_effect=fixture_mode),patch.object(a,'SOURCE_PINS',selected):
+                    if variant=='current':
+                        try:observed=a.catalog(root)
+                        except ValueError as e:self.fail('Final helper byte identity must be admitted: '+str(e))
+                        self.assertEqual(set(observed),set(expected))
+                        self.assertEqual(observed[helper]['sha256'],hashlib.sha256(source[helper]).hexdigest())
+                    else:
+                        with self.assertRaises(ValueError):a.catalog(root)
+
+    def test_late_mutation_control_arms_with_alias_owner(self):
+        with retained_directory(prefix='late-control-alias-') as d:
+            base=Path(d);real=base/'real';real.mkdir();(real/'owner').mkdir(mode=0o700)
+            alias=base/'system-alias';alias.symlink_to(real,target_is_directory=True)
+            with patch.dict(os.environ,{'P01_CI_TEST_FIXTURE':str(alias/'owner')}):
+                result=unittest.TestResult()
+                P01CiTests('test_readonly_final_recheck_catches_late_nested_mutation').run(result)
+            self.assertEqual(result.testsRun,1)
+            self.assertTrue(result.wasSuccessful(),result.failures+result.errors)
+
+    def test_public_recheck_requires_original_offline_tool_and_never_executes(self):
+        v=module('verify');m=Model(self,v.p01_ci,v)
+        m.argv.insert(m.argv.index('--locked')+1,'--offline')
+        for name in ('Cargo.toml','Cargo.lock','rust-toolchain.toml'):
+            (m.root/name).write_bytes(b'synthetic source identity only; no Cargo execution')
+        steps=[m.rust_step()]
+        with patch.object(v,'execute_step',side_effect=m.execute):
+            report=v.run_checks(m.root,lambda:v.discover_sources(m.root),steps,m.logs,10)
+        self.assertEqual(report['status'],'passed')
+        report.update(profile='shared',selection={'platform':sys.platform,'machine':v.host_platform.machine(),'native_schema':False},run_directory='.local/run')
+        path=m.logs/'report.json';path.write_text(json.dumps(report));original=path.read_bytes();calls=len(m.calls)
+        def trusted_plan(root,args,platform,machine):
+            selected=json.loads(json.dumps(steps));argv=selected[0]['argv']
+            argv[0]=args.cargo_executable or 'cargo'
+            argv[:]=[value for value in argv if value!='--offline']
+            if args.offline:argv.insert(argv.index('--locked')+1,'--offline')
+            return selected
+        def cli(extra):
+            with patch.object(sys,'argv',['verify.py','--recheck-report',str(path),*extra]),patch('sys.stdout',new_callable=io.StringIO) as output:
+                code=v.main();return code,json.loads(output.getvalue())
+        with patch.object(v,'ROOT',m.root),patch.object(v,'build_steps',side_effect=trusted_plan), \
+             patch.object(v.readiness,'capability_inventory',return_value={}),patch.object(v.readiness,'p00_readiness',return_value={}), \
+             patch.object(v,'execute_step',side_effect=AssertionError('read-only recheck must not execute')):
+            extra=['--offline','--cargo-executable',m.tool['path']]
+            code,result=cli(extra);self.assertEqual(code,0,result);self.assertEqual(result['status'],'current')
+            self.assertNotEqual(cli(['--cargo-executable',m.tool['path']])[0],0)
+            self.assertNotEqual(cli(['--offline','--cargo-executable',str(m.root/'foreign-cargo')])[0],0)
+            changed=json.loads(original);changed['checks'][0]['command']=[sys.executable,'-c','raise SystemExit(0)'];path.write_text(json.dumps(changed))
+            self.assertNotEqual(cli(extra)[0],0);path.write_bytes(original)
+            changed=json.loads(original);changed['checks'][0]['rust_build_tool']['sha256']='0'*64;path.write_text(json.dumps(changed))
+            self.assertNotEqual(cli(extra)[0],0);path.write_bytes(original)
+            source=m.root/next(iter(m.source_pins));source.write_bytes(source.read_bytes()+b'changed')
+            self.assertEqual(cli(extra)[1]['status'],'stale_source')
+        self.assertEqual(path.read_bytes(),original);self.assertEqual(len(m.calls),calls)
+
+    def test_owner_alias_above_root_does_not_allow_links_below_root(self):
+        a=module('p01_ci')
+        with retained_directory(prefix='owner-alias-') as d:
+            base=Path(d);real=base/'real';real.mkdir();owner=real/'owner';owner.mkdir(mode=0o700)
+            (owner/'data').write_bytes(b'bound bytes');alias=base/'system-alias';alias.symlink_to(real,target_is_directory=True)
+            lexical=alias/'owner'
+            self.assertEqual(a.private_path(lexical/'data',lexical),lexical/'data')
+            (owner/'link').symlink_to(owner/'data')
+            with self.assertRaises(ValueError):a.private_path(lexical/'link',lexical)
+            with self.assertRaises(ValueError):a.private_path(owner/'data',lexical)
+
+    def test_full_namespace_with_system_alias_above_declared_owner(self):
+        with retained_directory(prefix='namespace-alias-') as d:
+            base=Path(d);real=base/'real';real.mkdir();(real/'owner').mkdir(mode=0o700)
+            alias=base/'system-alias';alias.symlink_to(real,target_is_directory=True)
+            self.enterContext(patch.dict(os.environ,{'P01_CI_TEST_FIXTURE':str(alias/'owner')}))
+            m=Model(self);m.enable_p18();p=m.capture();m.validate()
+            self.assertEqual(len(p['normal']),1)
+
+    def test_CRLF_transcripts_keep_parent_paths_and_reject_child_success(self):
+        m=Model(self);execute=m.execute
+        def crlf(name,*args,**kwargs):
+            row=execute(name,*args,**kwargs);path=Path(row['log']['path'])
+            path.write_bytes(path.read_bytes().replace(b'\n',b'\r\n'))
+            row['log']['sha256']=hashlib.sha256(path.read_bytes()).hexdigest()
+            for child in m.root.rglob('child.log'):
+                child.write_bytes(child.read_bytes().replace(b'\r\n',b'\n').replace(b'\n',b'\r\n'))
+            return row
+        with patch.object(m,'execute',side_effect=crlf):p=m.capture()
+        m.validate();a=m.a
+        for child in a.CHILDREN.values():
+            with self.assertRaises(ValueError):a.child_entry_evidence('running 1 test\r\ntest '+child+' ... ok\r\n',child)
+
+    def test_parent_total_deadline_uses_declared_cohort_budget(self):
+        m=Model(self);execute=m.execute
+        def elapsed(name,*args,**kwargs):
+            row=execute(name,*args,**kwargs)
+            if name.startswith('parent-'):row['duration_ms']=12000
+            return row
+        with patch.object(m,'execute',side_effect=elapsed):p=m.capture()
+        m.validate()
+        self.assertEqual({n:t for n,argv,t in m.calls if n.startswith('parent-')},
+                         {'parent-durable':330,'parent-runtime':60})
+        self.assertTrue(all(t==10 for n,argv,t in m.calls if not n.startswith('parent-')))
+        for kind in ('durable','runtime'):
+            changed=json.loads(json.dumps(p));changed['parents'][kind]['duration_ms']=m.a.PARENT_ONLY_DEADLINES[kind]*1000+1
+            with self.assertRaises(ValueError):m.validate(changed)
+
+    def test_windows_link_roles_preserve_raw_NT_target_without_following(self):
+        a=module('p01_ci');root=PureWindowsPath(r'D:\own\cohort');pid=12345
+        cases={f'durable/tmp/path-fixture-{pid}-39/alias':(root/f'durable/tmp/path-fixture-{pid}-39','durable-alias'),
+            f'durable/tmp/ancestor-initial-directory-{pid}-8/parent':(root/f'durable/tmp/ancestor-initial-directory-{pid}-8/outside','durable-ancestor'),
+            f'durable/tmp/checkpoint-{pid}-40/store/checkpoint-1.rec':(root/f'durable/tmp/path-fixture-{pid}-39/own-sentinel','durable-checkpoint'),
+            f'durable/tmp/journal-{pid}-41/store/journal-1.rec':(root/f'durable/tmp/path-fixture-{pid}-39/own-sentinel','durable-journal'),
+            f'runtime/tmp/runtime-{pid}-3/project/main.tex':(root/f'runtime/tmp/runtime-{pid}-3/own-outside-sentinel','runtime-project')}
+        for relative,(target,role) in cases.items():
+            for raw in (str(target),'\\\\?\\'+str(target)):
+                with self.subTest(relative=relative,raw=raw):self.assertEqual(a._normal_negative_link_role(root,relative,pid,raw),role)
+            for raw in (str(target)+'-foreign',str(target.parent/'..'/target.name)):
+                with self.assertRaises(ValueError):a._normal_negative_link_role(root,relative,pid,raw)
+            with self.assertRaises(ValueError):a._normal_negative_link_role(root,relative,pid+1,str(target))
+
+class P01CiTests(unittest.TestCase):
+    def test_parent_only_final_rebinds_receipt_even_if_json_value_is_unchanged(self):
+        a=module('p01_ci')
+        with retained_directory(prefix='late-receipt-') as d:
+            root=Path(d);scratch=root/'scratch';scratch.mkdir();(scratch/'child.log').write_text('fixture')
+            compiler=root/'compiler.json';compiler.write_text('{}\n')
+            fixture=root/'fixture.json';fixture.write_text(json.dumps(a._fixture_inventory(scratch)))
+            proof={'compiler':a.binding(compiler),'fixture':a.binding(fixture)}
+            fixture.write_text(fixture.read_text()+'\n')
+            with self.assertRaises(ValueError):a._parent_only_final(proof,scratch)
+
+    def test_child_header_uses_source_role_without_claiming_a_raw_entry_ID(self):
+        a=module('p01_ci')
+        self.assertFalse(a.child_entry_evidence('\nrunning 1 test\n',a.CHILDREN['durable']))
+
+    def test_child_missing_and_unknown_transcripts_are_still_rejected(self):
+        a=module('p01_ci')
+        for raw in ['', 'running 0 tests\n','test unknown_child ... ']:
+            with self.subTest(raw=raw),self.assertRaises(ValueError):a.child_entry_evidence(raw,a.CHILDREN['durable'])
+
+    def test_child_success_summary_is_rejected_even_with_the_expected_ID(self):
+        a=module('p01_ci');line='\nrunning 1 test\ntest '+a.CHILDREN['durable']+' ... ok\n'
+        for raw in [line,line+'test result: ok. 1 passed;\n']:
+            with self.subTest(raw=raw),self.assertRaises(ValueError):a.child_entry_evidence(raw,a.CHILDREN['durable'])
+
+    def test_parent_only_depfile_preserves_escaped_spaces_and_relative_sources(self):
+        a=module('p01_ci')
+        raw='out.d: /own/T9\\ Data/src.rs crates/core/tests/../src/mod.rs\n/own/T9\\ Data/src.rs:\n'
+        self.assertEqual(a.depfile_inputs(raw),['/own/T9 Data/src.rs','crates/core/tests/../src/mod.rs'])
+
+    def test_parent_only_depfile_rejects_empty_or_truncated_input(self):
+        a=module('p01_ci')
+        for raw in ['# no prerequisites\n','out: trailing'+'\\','no-colon']:
+            with self.subTest(raw=raw),self.assertRaises(ValueError):a.depfile_inputs(raw)
+
+    def test_parent_only_rejects_workspace_selection_before_any_process_or_source_read(self):
+        a=module('p01_ci');argv=['cargo','test','--workspace']
+        with self.assertRaisesRegex(ValueError,'Wrong scoped build selection'):
+            a._parent_only_context(ROOT,{'command':argv},argv,'a'*32,{'target':'unrun','tool_root':'unrun'})
+
+    def test_standalone_private_child_pass_is_not_acceptance(self):
+        evidence=module('evidence')
+        with retained_directory(prefix='p01-red-') as d:
+            log=Path(d)/'rust.log';log.write_text('running 1 test\ntest durable_contract::durable_crash_child ... ok\ntest result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out;\n')
+            with self.assertRaises(ValueError):evidence.rust_summary(log,'rust-workspace')
+
+    def test_other_private_child_ignored_is_not_an_allowlist(self):
+        e=module('evidence')
+        with retained_directory() as d:
+            p=Path(d)/'log';p.write_text('test runtime_contract::runtime_crash_child ... ignored\ntest result: ok. 0 passed; 0 failed; 1 ignored;\n')
+            with self.assertRaises(ValueError):e.rust_summary(p,'rust-workspace')
+
+    def test_main_first_slice_is_not_a_fake_zero_case_pass(self):
+        a=module('p01_ci')
+        with retained_directory() as d:self.assertIsNone(a.catalog(d))
+
+    def test_partial_provider_source_is_rejected(self):
+        m=Model(self);(m.root/m.a.SENTINELS[1]).unlink()
+        with self.assertRaises(ValueError):m.a.catalog(m.root)
+
+    def test_unknown_parent_source_version_is_rejected(self):
+        m=Model(self);p=m.root/m.a.SENTINELS[0];p.write_text('different opaque source data')
+        with self.assertRaises(ValueError):m.a.catalog(m.root)
+
+    def test_main_mac_include_ignored_serial_selection_is_preserved(self):
+        v=module('verify')
+        with retained_directory() as d:
+            root=Path(d);args=SimpleNamespace(profile='shared',run_dir=root/'.local/run',cargo_executable=None,offline=True,native_schema=False)
+            steps=v.build_steps(root,args,'darwin','arm64');r=next(x for x in steps if x['name']=='rust-workspace')
+            self.assertEqual(r['argv'][-3:],['--','--include-ignored','--test-threads=1'])
+            self.assertNotIn('p01_cohort',r);self.assertIn('p18-compiler-pdfs',[x['name'] for x in steps])
+
+    def test_provider_plan_has_explicit_four_exclusions_and_bound_proof(self):
+        v=module('verify');m=Model(self,v.p01_ci,v)
+        args=SimpleNamespace(profile='integrated',run_dir=m.logs,cargo_executable=sys.executable,offline=True,native_schema=False)
+        steps=v.build_steps(m.root,args,'darwin','arm64');r=next(x for x in steps if x['name']=='rust-workspace')
+        self.assertIn('--message-format=json',r['argv']);self.assertEqual(r['argv'][-8:],m.a.skipped_arguments())
+        self.assertIn('--show-output',r['argv'][r['argv'].index('--')+1:], 'Cargo must retain markers without interleaving P18 outcome lines')
+        self.assertNotIn('--nocapture',r['argv'])
+        self.assertEqual(set(r['required_artifact_kinds']),{'p18_os_probe','p01_cohort_proof','p01_rust_build_log'})
+        self.assertIn('p18-compiler-pdfs',next(x for x in steps if x['name']=='runtime-build')['depends_on'])
+
+    def test_non_mac_profile_does_not_claim_p01_cohort_qualification(self):
+        v=module('verify');m=Model(self,v.p01_ci,v)
+        args=SimpleNamespace(profile='shared',run_dir=m.logs,cargo_executable=None,offline=True,native_schema=False)
+        r=next(x for x in v.build_steps(m.root,args,'win32','AMD64') if x['name']=='rust-workspace')
+        self.assertNotIn('p01_cohort',r);self.assertNotIn('--skip',r['argv'])
+
+    def test_model_parents_and_helpers_and_subcases_are_separate_units(self):
+        m=Model(self);proof=m.capture();q=m.validate()
+        self.assertEqual((q['parent_methods'],q['helper_entries'],q['parent_subcases'],q['child_passes']),(2,2,37,0))
+        normal={'schema':1,'suite':'rust-workspace','tests':1,'passed':1,'skipped':0,'failures':0,'errors':0,'skipped_ids':[]}
+        self.assertEqual(m.a.combine_summary(normal,q)['tests'],3)
+        self.assertNotEqual(proof['observations'][0]['nonce'],proof['observations'][1]['nonce'])
+
+    def test_readonly_validation_never_invokes_driver(self):
+        m=Model(self);m.capture();before=len(m.calls)
+        with patch.object(m.a,'qualify',side_effect=AssertionError('must not execute')):self.assertEqual(m.validate()['parent_methods'],2)
+        self.assertEqual(len(m.calls),before)
+
+    def test_wrong_parent_command_is_rejected(self):
+        m=Model(self);p=m.capture();p['parents']['runtime']['command'][1]='other_parent'
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_bool_exit_is_not_integer_zero(self):
+        m=Model(self);m.ensure_record();m.record['exit_code']=False
+        with self.assertRaises(ValueError):m.capture()
+        self.assertFalse(any(n.startswith('parent-') for n,_,_ in m.calls))
+
+    def test_parent_bool_wait_is_rejected(self):
+        m=Model(self);p=m.capture();p['parents']['runtime']['duration_ms']=True
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_parent_unbounded_wait_is_rejected(self):
+        m=Model(self);p=m.capture();p['parents']['runtime']['duration_ms']=60001
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_parent_timeout_cannot_pass(self):
+        m=Model(self);p=m.capture();p['parents']['runtime']['timed_out']=True
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_missing_case_is_rejected(self):
+        m=Model(self);p=m.capture();f=Path(p['observations'][0]['table']['path']);f.write_text(''.join(f.read_text().splitlines(keepends=True)[:-1]))
+        with self.assertRaises(ValueError):m.validate()
+
+    def test_case_nonce_mismatch_is_rejected(self):
+        m=Model(self);p=m.capture();f=Path(p['observations'][0]['table']['path'])
+        f.write_text(f.read_text().replace(p['driver_nonce'],'0'*64))
+        with self.assertRaises(ValueError):m.validate()
+
+    def test_case_binary_mismatch_is_rejected(self):
+        m=Model(self);p=m.capture();f=Path(p['observations'][0]['table']['path']);f.write_text(f.read_text().replace(m.binary_sha,'0'*64))
+        with self.assertRaises(ValueError):m.validate()
+
+    def test_zero_discovery_never_starts_parent(self):
+        m=Model(self);m.mode='zero-discovery'
+        with self.assertRaises(ValueError):m.capture()
+        self.assertFalse(any(n.startswith('parent-') for n,_,_ in m.calls))
+
+    def test_unknown_ignored_helper_never_starts_parent(self):
+        m=Model(self);m.extra_ids=['new_helper'];m.extra_ignored=['new_helper']
+        with self.assertRaises(ValueError):m.capture()
+        self.assertFalse(any(n.startswith('parent-') for n,_,_ in m.calls))
+
+    def test_skip_substring_collision_is_rejected(self):
+        m=Model(self);m.extra_ids=['other::durable_contract::durable_crash_child_extra']
+        with self.assertRaises(ValueError):m.capture()
+
+    def test_cached_binary_is_not_a_new_cohort(self):
+        m=Model(self);m.mode='cached'
+        with self.assertRaises(ValueError):m.capture()
+        self.assertFalse(any(n.startswith('parent-') for n,_,_ in m.calls))
+
+    def test_cargo_fresh_integer_is_not_boolean_false(self):
+        m=Model(self);m.mode='fresh-bool-int'
+        with self.assertRaises(ValueError):m.capture()
+
+    def test_binary_mutation_is_rejected(self):
+        m=Model(self);m.capture();m.binary.write_bytes(b'new inert data')
+        with self.assertRaises(ValueError):m.validate()
+
+    def test_identical_binary_object_replacement_is_rejected(self):
+        m=Model(self);m.capture();p=m.binary.with_suffix('.new');p.write_bytes(m.binary.read_bytes());p.chmod(0o700);p.replace(m.binary)
+        with self.assertRaises(ValueError):m.validate()
+
+    def test_stale_step_nonce_is_rejected(self):
+        m=Model(self);m.capture()
+        with self.assertRaises(ValueError):m.validate(run_id='0'*32)
+
+    def test_nonce_marker_tamper_is_rejected(self):
+        m=Model(self);p=m.capture();(Path(p['scratch'])/'COHORT').write_text('0'*64)
+        with self.assertRaises(ValueError):m.validate()
+
+    def test_identical_nonce_marker_object_replacement_is_rejected(self):
+        m=Model(self);p=m.capture();old=Path(p['scratch'])/'COHORT';new=old.with_suffix('.new')
+        new.write_bytes(old.read_bytes());new.chmod(0o600);new.replace(old)
+        with self.assertRaises(ValueError):m.validate()
+
+    def test_child_log_mutation_is_rejected(self):
+        m=Model(self);m.capture();m.child_log().write_text(m.child_log().read_text()+'\nchanged')
+        with self.assertRaises(ValueError):m.validate()
+
+    def test_child_pass_cannot_replace_parent_case(self):
+        m=Model(self);m.capture();m.child_log().write_text(m.child_log().read_text()+'\ntest result: ok. 1 passed; 0 failed; 0 ignored;\n')
+        with self.assertRaises(ValueError):m.validate()
+
+    def test_phase_transcript_mismatch_is_rejected(self):
+        m=Model(self);p=m.capture();f=Path(p['observations'][0]['cases'][0]['files'][1]['path']);f.write_text('UnknownPhase\n')
+        with self.assertRaises(ValueError):m.validate()
+
+    def test_unknown_runtime_case_is_rejected(self):
+        m=Model(self);p=m.capture();f=Path(p['observations'][1]['table']['path'])
+        f.write_text(f.read_text().replace('edit_before_publish','unknown_case'))
+        with self.assertRaises(ValueError):m.validate()
+
+    def test_bool_schema_is_not_version_one(self):
+        m=Model(self);p=m.capture();p['schema']=True
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_bool_zero_child_pass_count_is_rejected(self):
+        a=module('p01_ci');normal={'tests':1,'passed':1,'skipped':0,'failures':0,'errors':0}
+        q={'parent_methods':2,'helper_entries':2,'child_passes':False,'parent_subcases':37}
+        with self.assertRaises(ValueError):a.combine_summary(normal,q)
+
+    def test_unknown_proof_field_is_rejected(self):
+        m=Model(self);p=m.capture();p['allow_skip']=True
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_proof_quota_is_fail_closed(self):
+        m=Model(self);m.capture();m.proof.write_bytes(b' '*(1024*1024+1))
+        with self.assertRaises(ValueError):m.validate()
+
+    def test_wrong_process_cwd_is_rejected(self):
+        m=Model(self);p=m.capture();p['parents']['runtime']['cwd']=str(m.root/'other')
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_wrong_owned_environment_is_rejected(self):
+        m=Model(self);p=m.capture();p['parents']['runtime']['owned_environment']['P01_RUN_NONCE']='0'*64
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_source_metadata_bool_int_is_rejected(self):
+        m=Model(self);p=m.capture();p['source_before'][next(iter(p['source_before']))]['bytes']=True
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_reusing_same_claim_cannot_overwrite_evidence(self):
+        m=Model(self);m.capture();before=m.proof.read_bytes()
+        with self.assertRaises(FileExistsError):m.capture()
+        self.assertEqual(m.proof.read_bytes(),before)
+
+    def test_step_driver_model_and_readonly_parent_receipt_binding(self):
+        v=module('verify');m=Model(self,v.p01_ci,v);r,steps=m.driver_report()
+        self.assertEqual(r['status'],'passed');self.assertEqual(r['checks'][0]['test_summary']['tests'],3)
+        current=v.source_identity(m.root,list(m.source_pins))
+        checked=v.evidence.revalidate_report(m.root,r,current,steps)
+        self.assertEqual(checked['status'],'current')
+
+    def test_cargo_exit_zero_without_parent_marker_fails_driver(self):
+        v=module('verify');m=Model(self,v.p01_ci,v);m.mode='missing-parent-marker';r,_=m.driver_report()
+        self.assertEqual(r['status'],'failed');self.assertNotEqual(r['checks'][0]['status'],'passed')
+        self.assertFalse(m.proof.exists())
+
+    def test_step_finalization_revalidates_nested_parent_files(self):
+        v=module('verify');m=Model(self,v.p01_ci,v);r,_=m.driver_report(late=True)
+        self.assertEqual(r['status'],'failed');self.assertEqual(r['checks'][0]['status'],'stale_artifact')
+
+    def test_readonly_final_recheck_catches_late_nested_mutation(self):
+        v=module('verify');m=Model(self,v.p01_ci,v);r,steps=m.driver_report()
+        self.assertEqual(r['status'],'passed')
+        current=v.source_identity(m.root,list(m.source_pins));last=m.root/current['files'][-1]['path']
+        original=v.evidence.digest;armed=[]
+        def late(path):
+            result=original(path)
+            if Path(path).resolve()==last.resolve() and not armed:
+                armed.append(True);m.child_log().write_text(m.child_log().read_text()+'\nlate byte change\n')
+            return result
+        with patch.object(v.evidence,'digest',side_effect=late):
+            checked=v.evidence.revalidate_report(m.root,r,current,steps)
+        self.assertTrue(armed);self.assertNotEqual(checked['status'],'current')
+
+    def test_missing_parent_build_tool_is_unrun_not_success(self):
+        v=module('verify');m=Model(self,v.p01_ci,v);step=m.rust_step();step['argv']=[str(m.root/'missing-cargo'),*m.argv[1:]]
+        with patch.object(v,'execute_step',side_effect=AssertionError('missing tool must not run')):
+            r=v.run_checks(m.root,list(m.source_pins),[step],m.logs,10)
+        self.assertEqual(r['checks'][0]['status'],'unrun');self.assertEqual(r['status'],'failed')
+
+    def test_bound_fixture_does_not_require_tmpdir_environment(self):
+        errors=[]
+        with retained_directory(prefix='portable-fixture-owner-') as owner:
+            with patch.dict(os.environ,{'P01_CI_TEST_FIXTURE':owner}):
+                os.environ.pop('TMPDIR',None)
+                try:
+                    with retained_directory(prefix='no-tmpdir-') as d:
+                        self.assertEqual(Path(d).parent,Path(owner))
+                        self.assertEqual(Model(self).root.parent,Path(owner))
+                except KeyError as caught:errors.append(('bound',str(caught)))
+            with patch.dict(os.environ),patch.dict(globals(),ROOT=Path(owner)):
+                os.environ.pop('TMPDIR',None);os.environ.pop('P01_CI_TEST_FIXTURE',None)
+                try:
+                    with retained_directory(prefix='own-default-') as d:
+                        self.assertEqual(Path(d).parent,Path(owner)/'.local/p01-ci-python-fixtures')
+                except KeyError as caught:errors.append(('own-default',str(caught)))
+        self.assertEqual(errors,[],'Fixture setup must not require TMPDIR or use an external fallback')
+
+    def test_python_cli_source_inspection_does_not_run_provider(self):
+        a=module('p01_ci')
+        with retained_directory() as d:
+            r=subprocess.run([sys.executable,'-B',a.__file__,'--inspect',d],capture_output=True,text=True,timeout=5)
+            self.assertEqual(r.returncode,0);data=json.loads(r.stdout)
+            self.assertIs(data['execution_performed'],False);self.assertIs(data['applicable'],False)
+
+
+
+class CombinedIntegrationTests(unittest.TestCase):
+    """New cross-boundary controls: actual-style headers plus strict normal evidence."""
+    def fixture(self, mode=None):
+        m=Model(self)
+        before=m._table
+        def table(kind,env):
+            value=before(kind,env)
+            parent=Path(env['P01_DURABLE_SCRATCH'] if kind=='durable' else env['P01_RUNTIME_SCRATCH'])/'tmp'
+            for p in parent.rglob('child.log'):p.write_bytes(b'\nrunning 1 test\n')
+            return value
+        m._table=table
+        execute=m.execute
+        def run(name,argv,cwd,log,timeout,env=None):
+            row=execute(name,argv,cwd,log,timeout,env=env)
+            p=Path(log);data=p.read_text()
+            if mode=='normal-ID' and name=='normal-0':data=data.replace('ordinary_contract','substituted_contract')
+            if mode=='Cargo-ID' and name=='rust-workspace':data=data.replace('test ordinary_contract','test substituted_contract')
+            if name.startswith('parent-') and mode in {'FAILED','missing','ignored'}:
+                data=data.replace('\nok\n','\n'+({'FAILED':'FAILED','missing':'','ignored':'ignored'}[mode])+'\n')
+            p.write_text(data);row['log']['sha256']=hashlib.sha256(p.read_bytes()).hexdigest()
+            return row
+        m.execute=run
+        return m
+
+    def test_B01_headers_with_exact_normal_identity_complete_one_bound_flow(self):
+        m=self.fixture();p=m.capture();q=m.validate()
+        self.assertEqual(q['normal_methods'],1)
+        self.assertEqual([x['method_id'] for x in q['normal_identities']],['ordinary_contract'])
+        self.assertEqual([o['subcases'] for o in p['observations']],[32,5])
+        self.assertTrue(all(c['raw_child_ID_observed'] is False for o in p['observations'] for c in o['cases']))
+        self.assertEqual(len(m.calls),6)
+
+    def test_B02_header_role_cannot_launder_substituted_normal_ID(self):
+        with self.assertRaises(ValueError):self.fixture('normal-ID').capture()
+
+    def test_B03_header_role_cannot_launder_wrong_Cargo_multiset(self):
+        with self.assertRaises(ValueError):self.fixture('Cargo-ID').capture()
+
+    def test_B04_header_child_does_not_complete_FAILED_parent(self):
+        with self.assertRaises(ValueError):self.fixture('FAILED').capture()
+
+    def test_B05_header_child_does_not_complete_missing_parent_terminal(self):
+        with self.assertRaises(ValueError):self.fixture('missing').capture()
+
+    def test_B06_header_child_does_not_complete_ignored_parent(self):
+        with self.assertRaises(ValueError):self.fixture('ignored').capture()
+
+    def test_B07_rehash_normal_record_does_not_refresh_sealed_snapshot(self):
+        m=self.fixture();p=m.capture();row=p['normal'][0];log=Path(row['log']['path'])
+        log.write_text(log.read_text()+'\nretagged raw\n');row['log']['sha256']=hashlib.sha256(log.read_bytes()).hexdigest()
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_B08_header_flow_normal_snapshot_keeps_exact_JSON_types(self):
+        m=self.fixture();p=m.capture();p['normal_observations'][0]['log']['bytes']=True
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_B09_header_flow_run_identity_cannot_be_boolean(self):
+        m=self.fixture();p=m.capture();p['normal'][0]['context_binding']['verification_run_id']=True
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_B10_header_flow_binary_permissions_cannot_be_equal_valued_float(self):
+        m=self.fixture();p=m.capture();b=p['normal'][0]['context_binding']['binary'];b['mode']=float(b['mode'])
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_B11_header_flow_normal_log_cannot_alias_discovery_partition(self):
+        m=self.fixture();p=m.capture();p['normal'][0]['log']=p['discovery'][0]['all']['log']
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_B12_header_flow_parent_cannot_borrow_normal_phase(self):
+        m=self.fixture();p=m.capture();p['parents']['runtime']['context_binding']=p['normal'][0]['context_binding']
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_B13_rehashed_unknown_bytes_are_not_header_role_evidence(self):
+        m=self.fixture();p=m.capture();case=p['observations'][0]['cases'][0];log=Path(case['files'][0]['path'])
+        log.write_bytes(log.read_bytes()+b'unknown entry bytes\n');case['files'][0]=m.a.binding(log)
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_B14_header_only_snapshot_cannot_claim_observed_child_ID(self):
+        m=self.fixture();p=m.capture();p['observations'][0]['cases'][0]['raw_child_ID_observed']=True
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_B15_late_coordinated_raw_and_proof_retagging_stays_invalid(self):
+        m=self.fixture();p=m.capture();original=m.a.binding;tool_calls=[];armed=[]
+        def late(path):
+            if Path(path)==Path(m.tool['path']):
+                tool_calls.append(True)
+                if len(tool_calls)==3:
+                    log=Path(p['normal'][0]['log']['path']);log.write_text(log.read_text()+'\ncoordinated late bytes\n')
+                    p['normal'][0]['log']['sha256']=hashlib.sha256(log.read_bytes()).hexdigest()
+                    p['normal_observations'][0]['log']=original(log)
+                    m.proof.write_text(json.dumps(p));armed.append(True)
+            return original(path)
+        with patch.object(m.a,'binding',side_effect=late),self.assertRaises(ValueError):m.validate()
+        self.assertTrue(armed)
+
+    def test_B16_same_bytes_new_normal_log_object_is_not_same_observation(self):
+        m=self.fixture();p=m.capture();log=Path(p['normal'][0]['log']['path'])
+        replacement=log.with_suffix('.new');replacement.write_bytes(log.read_bytes());replacement.chmod(stat.S_IMODE(log.stat().st_mode))
+        replacement.replace(log)
+        with self.assertRaises(ValueError):m.validate()
+
+    def test_B17_header_flow_cannot_select_private_child_in_normal_argv(self):
+        m=self.fixture();p=m.capture();p['normal'][0]['command']=[str(m.binary),m.a.CHILDREN['durable'],'--exact']
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_B18_header_flow_normal_source_digest_is_phase_bound(self):
+        m=self.fixture();p=m.capture();p['normal'][0]['context_binding']['source_sha256']='0'*64
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_B19_rehashed_child_terminal_without_summary_is_still_not_coverage(self):
+        m=self.fixture();p=m.capture();case=p['observations'][1]['cases'][0];log=Path(case['files'][0]['path'])
+        log.write_text('\nrunning 1 test\ntest '+m.a.CHILDREN['runtime']+' ... ok\n');case['files'][0]=m.a.binding(log)
+        with self.assertRaises(ValueError):m.validate(p)
+
+    def test_B20_old_private_schema_is_refused_without_reexecution_or_upgrade(self):
+        m=self.fixture();p=m.capture();p['schema']=1;m.proof.write_text(json.dumps(p));before=m.proof.read_bytes();calls=len(m.calls)
+        with self.assertRaises(ValueError):m.validate()
+        self.assertEqual(m.proof.read_bytes(),before);self.assertEqual(len(m.calls),calls)
+
+
+    def actual_link_fixture(self):
+        a=module('p01_ci');root=Path(self.enterContext(retained_directory(prefix='negative-link-custody-')))
+        pid=12345
+        targets={
+            f'durable/tmp/path-fixture-{pid}-39/alias':root/f'durable/tmp/path-fixture-{pid}-39',
+            f'durable/tmp/ancestor-initial-directory-{pid}-8/parent':root/f'durable/tmp/ancestor-initial-directory-{pid}-8/outside',
+            f'durable/tmp/checkpoint-{pid}-40/store/checkpoint-1.rec':root/f'durable/tmp/path-fixture-{pid}-39/own-sentinel',
+            f'durable/tmp/journal-{pid}-41/store/journal-1.rec':root/f'durable/tmp/path-fixture-{pid}-39/own-sentinel',
+            f'runtime/tmp/runtime-{pid}-3/project/main.tex':root/f'runtime/tmp/runtime-{pid}-3/own-outside-sentinel'}
+        for name,target in targets.items():
+            path=root/name;path.parent.mkdir(parents=True,exist_ok=True);path.symlink_to(target)
+        normal={'name':'normal-0','own_pid':pid};(root/'normal-0.json').write_text(json.dumps(normal))
+        return a,root,[normal],targets
+
+    def test_B21_source_defined_negative_links_are_custodied_without_following(self):
+        a,root,normals,targets=self.actual_link_fixture();q=a._actual_fixture_inventory(root,normals)
+        self.assertEqual(len(q['normal_negative_symlinks']),5)
+        self.assertEqual(set(q['normal_negative_symlinks']),set(targets))
+        self.assertEqual(set(q['files']),{'normal-0.json'})
+        with self.assertRaises(ValueError):a._fixture_inventory(root)
+
+    def test_B22_other_process_negative_links_are_not_normal_owned(self):
+        a,root,normals,_=self.actual_link_fixture();normals[0]['own_pid']+=1
+        (root/'normal-0.json').write_text(json.dumps(normals[0]))
+        with self.assertRaises(ValueError):a._actual_fixture_inventory(root,normals)
+
+    def test_B23_known_negative_link_name_requires_its_exact_source_target(self):
+        a,root,normals,targets=self.actual_link_fixture();path=root/next(iter(targets));path.unlink();path.symlink_to(root/'wrong-target')
+        with self.assertRaises(ValueError):a._actual_fixture_inventory(root,normals)
+
+    def test_B24_normal_negative_link_policy_never_admits_parent_fixture_links(self):
+        a,root,normals,_=self.actual_link_fixture();path=root/'durable/tmp/child-append-JournalWrite/alias'
+        path.parent.mkdir();path.symlink_to(root)
+        with self.assertRaises(ValueError):a._actual_fixture_inventory(root,normals)
+
+    def test_B25_normal_negative_link_PID_is_never_boolean_evidence(self):
+        a,root,normals,_=self.actual_link_fixture();normals[0]['own_pid']=True
+        (root/'normal-0.json').write_text(json.dumps(normals[0]))
+        with self.assertRaises(ValueError):a._actual_fixture_inventory(root,normals)
+
+    def test_B26_missing_normal_negative_link_is_not_silent_partial_custody(self):
+        a,root,normals,targets=self.actual_link_fixture();(root/next(iter(targets))).unlink()
+        with self.assertRaises(ValueError):a._actual_fixture_inventory(root,normals)
+
+
+
+
+class F05RegistrationTests(unittest.TestCase):
+    def fixture(self):
+        a=module('p01_ci')
+        root=Path(tempfile.mkdtemp(prefix='f05-binding-',dir=fixture_parent()))
+        modes={}
+        for name,row in a.F05_SOURCE_PINS.items():
+            p=root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes((ROOT/name).read_bytes());modes[p.resolve()]=row['mode']
+        actual=a._mode
+        def fixture_mode(path):
+            p=Path(path)
+            if p.is_symlink():return actual(p)
+            canonical=p.resolve(strict=False)
+            if canonical in modes:return modes[canonical]
+            if canonical.is_relative_to(root.resolve()):
+                if p.is_dir():return 0o700
+                if p.name=='NAMESPACE.json' or p.name.endswith('.inventory.json'):return 0o600
+            return actual(p)
+        self.enterContext(patch.object(a,'_mode',side_effect=fixture_mode))
+        tool=root/'tool';tool.write_bytes(b'inert tool; never executed')
+        binary=root/'binary';binary.write_bytes(b'inert image; never executed')
+        context={'verification_run_id':'a'*32,'source_sha256':'b'*64,'tool':a.binding(tool)}
+        parent=root/'logs';parent.mkdir(mode=0o700)
+        return a,root,context,['inert-fixed-command'],a.binding(binary)
+
+    def namespace(self):
+        a,root,context,command,binary=self.fixture()
+        directory=root/'logs/normal-0-f05';nonce='c'*64
+        ns=a.f05_create(root,directory,'normal-0',context,command,binary,nonce)
+        directory=Path(ns['environment']['P00_PR68_TASK_ROOT'])
+        for number in range(1,27):
+            case=directory/'tmp'/f'r{number:02}';case.mkdir(mode=0o700)
+            (case/'project').mkdir();(case/'project/main.tex').write_bytes(b'own fixture')
+        case=directory/'tmp/r06';(case/'project/main.tex').unlink()
+        (case/'outside-project.tex').write_bytes(b'own outside-project sentinel')
+        (case/'project/main.tex').symlink_to(case/'outside-project.tex')
+        case=directory/'tmp/r18';state=case/'project/.latexide/recovery'/('cohort-'+'d'*32)
+        state.mkdir(parents=True);(case/'own-outside-state.bin').write_bytes(b'own state sentinel')
+        (state/'runtime-state.bin').symlink_to(case/'own-outside-state.bin')
+        raw=''.join('PR68_CASE\t'+nonce+'\tr%02d\n'%n for n in range(1,27))
+        captured=a.f05_observe(root,ns,raw,directory,'normal-0',context,command,binary,nonce,capture=True)
+        return a,root,context,command,binary,directory,nonce,raw,captured
+
+    def test_f05_exact_sources_and_missing_wrong_stale_remain_rejected(self):
+        a,root,context,command,binary=self.fixture()
+        self.assertEqual(set(a.f05_sources(root)),set(a.F05_SOURCE_PINS))
+        name=next(iter(a.F05_SOURCE_PINS));p=root/name;original=p.read_bytes()
+        p.write_bytes(original+b'wrong')
+        with self.assertRaises(ValueError):a.f05_sources(root)
+        p.write_bytes(original);pins=json.loads(json.dumps(a.F05_SOURCE_PINS))
+        pins[name]['sha256']='0'*64
+        with patch.object(a,'F05_SOURCE_PINS',pins):
+            with self.assertRaises(ValueError):a.f05_sources(root)
+        p.unlink()
+        with self.assertRaises((ValueError,OSError)):a.f05_sources(root)
+
+    def test_f05_namespace_rebinds_nonce_source_binary_phase_and_env(self):
+        a,root,context,command,binary,directory,nonce,raw,ns=self.namespace()
+        self.assertEqual(a.f05_observe(root,ns,raw,directory,'normal-0',context,command,binary,nonce),ns)
+        variants=[(raw.replace(nonce,'e'*64),directory,'normal-0',context,command,binary,nonce),
+                  (raw,directory,'normal-1',context,command,binary,nonce),
+                  (raw,directory,'normal-0',{**context,'source_sha256':'e'*64},command,binary,nonce),
+                  (raw,directory,'normal-0',context,command,{**binary,'sha256':'0'*64},nonce)]
+        for args in variants:
+            with self.assertRaises(ValueError):a.f05_observe(root,ns,*args)
+        bad=json.loads(json.dumps(ns));bad['environment']['foreign']='unknown'
+        with self.assertRaises(ValueError):a.f05_observe(root,bad,raw,directory,'normal-0',context,command,binary,nonce)
+
+    def test_f05_missing_zero_duplicate_unknown_case_and_late_fixture_reject(self):
+        a,root,context,command,binary,directory,nonce,raw,ns=self.namespace()
+        for changed in ('',raw.replace('r01\n','r27\n'),raw+raw.splitlines(True)[0]):
+            with self.assertRaises(ValueError):a.f05_observe(root,ns,changed,directory,'normal-0',context,command,binary,nonce)
+        bad=json.loads(json.dumps(ns));bad.pop('inventory')
+        with self.assertRaises(ValueError):a.f05_observe(root,bad,raw,directory,'normal-0',context,command,binary,nonce)
+        (directory/'tmp/r01/project/late-foreign').write_bytes(b'late')
+        with self.assertRaises(ValueError):a.f05_observe(root,ns,raw,directory,'normal-0',context,command,binary,nonce)
+
+    def test_f05_unknown_negative_link_and_tampered_marker_reject(self):
+        a,root,context,command,binary,directory,nonce,raw,ns=self.namespace()
+        (directory/'tmp/r01/unknown-link').symlink_to(directory/'tmp/r01/project/main.tex')
+        with self.assertRaises(ValueError):a.f05_observe(root,ns,raw,directory,'normal-0',context,command,binary,nonce)
+        a,root,context,command,binary,directory,nonce,raw,ns=self.namespace()
+        marker=directory/'NAMESPACE.json';marker.write_bytes(marker.read_bytes()+b' ')
+        with self.assertRaises(ValueError):a.f05_observe(root,ns,raw,directory,'normal-0',context,command,binary,nonce)
+
+
+    def test_f05_discovery_rejects_missing_partial_duplicate_or_ignored_roles(self):
+        a,root,context,command,binary=self.fixture()
+        names=sorted(a.f05_methods(root))
+        all_log=root/'all.log';ignored_log=root/'ignored.log'
+        def write(selected,ignored):
+            all_log.write_text(''.join(n+': test\n' for n in selected))
+            ignored_log.write_text(''.join(n+': test\n' for n in ignored))
+            return [{'all':{'log':{'path':str(all_log)}},'ignored':{'log':{'path':str(ignored_log)}}}]
+        a.f05_discovery(root,write(names,[]))
+        for selected,ignored in [([],[]),(names[:-1],[]),(names+names[:1],[]),(names,names[:1])]:
+            with self.assertRaises(ValueError):a.f05_discovery(root,write(selected,ignored))
+
+
+    def test_f05_registration_preserves_separate_build_only_discovery_and_normal_scope(self):
+        m=Model(self);proof=m.capture();a=m.a
+        pins={}
+        for name in a.F05_PATHS:
+            p=m.root/name;p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes((ROOT/name).read_bytes())
+            row=a.binding(p);pins[name]={k:row[k] for k in ('sha256','bytes','mode')}
+        context=dict(proof['context'])
+        context['suite']='p01-build-only-cohorts';context['source_root']=context.pop('cwd')
+        scratch=Path(proof['scratch']);nonce=proof['driver_nonce'];outcomes=[]
+        with patch.object(a,'F05_SOURCE_PINS',pins):
+            for operation in ('discovery','normal'):
+                try:
+                    if operation=='discovery':
+                        a.discovery_observation(proof['images'],proof['images'][0],proof['discovery'],scratch,nonce,context)
+                    else:
+                        identities,_=a.normal_observation(proof['images'],proof['discovery'],proof['normal'],scratch,nonce,context)
+                        self.assertEqual(len(identities),1)
+                except (KeyError,ValueError) as error:
+                    outcomes.append((operation,type(error).__name__,str(error)))
+                else:outcomes.append((operation,'PASS'))
+            self.assertEqual(outcomes,[('discovery','PASS'),('normal','PASS')])
+            # The ordinary combined schema must still require all 26 F05 IDs.
+            with self.assertRaisesRegex(ValueError,'Missing/zero/duplicate/ignored F05 discovery'):
+                a.discovery_observation(proof['images'],proof['images'][0],proof['discovery'],scratch,nonce,proof['context'])
+
+
+
+    def aliased_f05_model(self,verifier=None):
+        actual=Path(tempfile.mkdtemp(prefix='f05-real-parent-',dir=fixture_parent())).resolve()
+        alias=actual.with_name(actual.name+'-alias');alias.symlink_to(actual,target_is_directory=True)
+        self.enterContext(patch.dict(os.environ,{'P01_CI_TEST_FIXTURE':str(alias)}))
+        m=F05Model(self,verifier.p01_ci if verifier else None,verifier,padding=1024*1024+64)
+        self.assertNotEqual(str(m.ffi_binary),str(m.ffi_binary.resolve()),'Alias control must exercise distinct lexical/canonical paths')
+        return m
+
+    def test_f05_model_qualify_validate_uses_existing_cargo_log_bound(self):
+        m=self.aliased_f05_model();proof=m.capture();q=m.validate()
+        self.assertEqual((q['normal_methods'],q['parent_methods']),(27,2))
+        self.assertTrue(proof['context']['f05_namespace']['inventory'])
+        f05=[r for r in proof['normal_observations'] if r.get('f05_namespace')]
+        self.assertEqual(len(f05),1)
+        self.assertEqual(len(f05[0]['method_ids']),26)
+        self.assertEqual(len(m.a.read(f05[0]['f05_namespace']['inventory']['path'])['negative_symlinks']),2)
+        bad=json.loads(json.dumps(proof));bad['context']['f05_namespace']['environment']['P00_PR68_NONCE']='f'*64
+        with self.assertRaises(ValueError):m.validate(bad)
+
+    def test_f05_model_run_checks_and_cold_validation_use_existing_cargo_log_bound(self):
+        v=module('verify')
+        self.enterContext(patch.dict(os.environ,{name:('inherited-model-run' if name.endswith('TEX_RUN') else str(fixture_parent()/('inert-'+name))) for name in v.p01_ci.P18_ENV}))
+        m=self.aliased_f05_model(v)
+        self.assertFalse(any(name in os.environ for name in v.p01_ci.P18_ENV),'A temporary outer env context must not restore inherited P18 into the F05 model')
+        report,steps=m.driver_report()
+        self.assertEqual(report['status'],'passed',report['checks'][0].get('reason'))
+        self.assertEqual(report['checks'][0]['test_summary']['passed'],29)
+        proof=json.loads(m.proof.read_text());ctx=proof['context']
+        q=m.a.validate(m.root,m.proof,m.record,m.argv,ctx['verification_run_id'],ctx['source_sha256'],m.target,m.tool)
+        self.assertEqual(q['normal_methods'],27)
+
+
+    def test_f05_inert_permission_model_uses_canonical_owner_above_alias(self):
+        actual=Path(tempfile.mkdtemp(prefix='f05-mode-parent-',dir=fixture_parent())).resolve()
+        alias=actual.with_name(actual.name+'-alias');alias.symlink_to(actual,target_is_directory=True)
+        self.enterContext(patch.dict(os.environ,{'P01_CI_TEST_FIXTURE':str(alias)}))
+        original=module
+        def host_module(name):
+            a=original(name)
+            if name=='p01_ci':a._mode=lambda path:0o777
+            return a
+        with patch(__name__+'.module',side_effect=host_module):
+            a,root,context,command,binary,directory,nonce,raw,ns=self.namespace()
+        self.assertEqual(a.f05_observe(root,ns,raw,directory,'normal-0',context,command,binary,nonce),ns)
+
+
+    def test_f05_full_inventory_is_sealed_once_without_exceeding_existing_proof_quota(self):
+        m=F05Model(self,fixture_files=40);proof=m.capture()
+        try:q=m.validate()
+        except ValueError as error:self.fail('Fresh F05 proof must fit the existing evidence quota: '+str(error))
+        self.assertLessEqual(m.proof.stat().st_size,1024*1024)
+        self.assertEqual(q['normal_methods'],27)
+        namespace=proof['context']['f05_namespace']
+        reference=namespace['inventory'];inventory=m.a.read(reference['path'])
+        self.assertGreater(len(inventory['files']),1000)
+        self.assertEqual(reference,m.a.binding(reference['path']))
+        path=Path(reference['path']);path.write_bytes(path.read_bytes()+b' ')
+        with self.assertRaises(ValueError):m.validate()
+
+    def test_f05_present_source_cannot_disable_registration_or_omit_cargo_proof(self):
+        a,root,context,command,binary=self.fixture()
+        with patch.object(a,'F05_SOURCE_PINS',{}):
+            with self.assertRaises(ValueError):a.f05_sources(root)
+        with self.assertRaisesRegex(ValueError,'Missing F05 Cargo namespace'):
+            a.f05_validate_cargo(root,context)
+
+if __name__=='__main__':unittest.main()

@@ -3,6 +3,11 @@ import hashlib
 import json
 from pathlib import Path
 import re
+import importlib.util
+
+_p01 = importlib.util.spec_from_file_location("latexide_p01_evidence", Path(__file__).with_name("p01_ci.py"))
+p01_ci = importlib.util.module_from_spec(_p01)
+_p01.loader.exec_module(p01_ci)
 
 
 def read_json(path, limit=8 * 1024 * 1024):
@@ -45,10 +50,14 @@ def validate_summary(data, suite, allowed_skips=(), run_id=None, allow_failures=
 def rust_summary(log, suite, allow_failures=False):
     if Path(log).stat().st_size > 16 * 1024 * 1024: raise ValueError("Test summary log quota exceeded")
     text = Path(log).read_text(encoding="utf-8", errors="replace")
-    rows = re.findall(r"test result: (ok|FAILED)\. (\d+) passed; (\d+) failed; (\d+) ignored;", text)
-    if not rows: raise ValueError("Missing Rust test summary")
-    passed = sum(int(r[1]) for r in rows); failures = sum(int(r[2]) for r in rows); skipped = sum(int(r[3]) for r in rows)
-    ids = re.findall(r"^test (\S+) \.\.\. ignored", text, flags=re.M)
+    # P01_PRIVATE_CHILD_GUARD: private entry outcomes are never standalone tests.
+    reported = re.findall(r"^test (\S+) \.\.\.", text, flags=re.M)
+    if any(n.split("::")[-1] in {"durable_crash_child", "runtime_crash_child"} for n in reported):
+        raise ValueError("Private P01 crash child requires bound parent cohort evidence")
+    observed = p01_ci.libtest_observation(text)
+    rows = observed["partitions"]
+    passed = sum(r["passed"] for r in rows); failures = sum(r["failed"] for r in rows); skipped = sum(r["ignored"] for r in rows)
+    ids = [name for name, state in observed["events"] if state == "ignored"]
     return validate_summary({"schema": 1, "suite": suite, "tests": passed + failures + skipped, "passed": passed,
                              "skipped": skipped, "failures": failures, "errors": 0, "skipped_ids": ids}, suite, allow_failures=allow_failures)
 
@@ -157,7 +166,11 @@ def revalidate_report(root, report, current_source, expected_steps, artifact_roo
                     summary = validate_summary(read_json(output(step["summary_path"])), step["summary_suite"], step.get("allowed_skips", []), run_id)
                 elif step.get("summary_format") == "rust":
                     summary = rust_summary(output(log["path"]), row["name"])
-                if row.get("test_summary") != summary:
+                    if step.get("p01_cohort"):
+                        qualification = p01_ci.validate(root, output(step["p01_cohort"]["proof"]), row,
+                            step["argv"], run_id, source, root / "target", row["p01_build_tool"])
+                        summary = p01_ci.combine_summary(summary, qualification)
+                if not p01_ci.same(row.get("test_summary"), summary):
                     raise ValueError("Stored test outcome differs")
                 if summary is not None:
                     identities["tests"] = "current"
@@ -189,6 +202,17 @@ def revalidate_report(root, report, current_source, expected_steps, artifact_roo
         if any(digest(root / f["path"]) != f["sha256"] for f in current_source["files"]):
             identities["source"] = "stale_source"
             return result("stale_source", "Input bytes changed during revalidation")
+        # P01_FINAL_NESTED_GUARD: child/case files are below the bounded proof artifact.
+        for step, row in zip(expected_steps, records):
+            if step.get("p01_cohort"):
+                try:
+                    qualification = p01_ci.validate(root, output(step["p01_cohort"]["proof"]), row,
+                        step["argv"], row["verification_run_id"], source, root / "target", row["p01_build_tool"])
+                    summary = p01_ci.combine_summary(rust_summary(output(row["log"]["path"]), row["name"]), qualification)
+                    if not p01_ci.same(summary, row.get("test_summary")):
+                        raise ValueError("P01 final parent summary changed")
+                except (OSError, ValueError, KeyError, TypeError) as error:
+                    return result("stale_artifact", str(error))
         identities["selection"] = "current"
         return result("current")
     except (OSError, ValueError, KeyError, TypeError, AttributeError) as error:

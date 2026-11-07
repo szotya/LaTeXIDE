@@ -16,6 +16,7 @@ from pathlib import Path
 import platform as host_platform
 import re
 import signal
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -29,6 +30,9 @@ _support.loader.exec_module(evidence)
 _readiness = importlib.util.spec_from_file_location("latexide_readiness", Path(__file__).with_name("readiness.py"))
 readiness = importlib.util.module_from_spec(_readiness)
 _readiness.loader.exec_module(readiness)
+_p01 = importlib.util.spec_from_file_location("latexide_p01_ci", Path(__file__).with_name("p01_ci.py"))
+p01_ci = importlib.util.module_from_spec(_p01)
+_p01.loader.exec_module(p01_ci)
 
 
 def digest(path):
@@ -147,9 +151,47 @@ def run_checks(root, source_paths, steps, log_dir, timeout, artifact_roots=()):
                 if value is None: env.pop(name, None)
                 else: env[name] = value
             env["P00_VERIFICATION_RUN_ID"] = run_id
-            record = execute_step(step["name"], step["argv"], root, Path(log_dir) / f"{sequence:02}-{step['name']}.log", timeout, env=env)
+            p01_tool = None
+            p01_tool_error = None
+            f05_namespace = None
+            if step.get("p01_cohort") or step.get("summary_format") == "rust":
+                executable = shutil.which(step["argv"][0], path=env.get("PATH"))
+                try:
+                    if executable is None:
+                        raise ValueError("Missing P01 parent build tool")
+                    p01_tool = p01_ci.binding(Path(executable).resolve(strict=True))
+                    if step.get("p01_cohort"):
+                        f05_namespace = p01_ci.f05_create(root,
+                            Path(log_dir) / ("f05-cargo-" + run_id), "cargo",
+                            {"verification_run_id": run_id, "source_sha256": before["sha256"], "tool": p01_tool},
+                            step["argv"])
+                except (OSError, ValueError) as error:
+                    p01_tool_error = str(error)
+            if p01_tool_error:
+                record = {"name": step["name"], "command": step["argv"], "status": "unrun",
+                          "exit_code": None, "timed_out": False, "reason": p01_tool_error,
+                          "artifact_sha256": None}
+            else:
+                if f05_namespace is not None:
+                    env.update(f05_namespace["environment"])
+                p01_p18_environment = {key: env[key] for key in p01_ci.P18_ENV if key in env}
+                record = execute_step(step["name"], step["argv"], root, Path(log_dir) / f"{sequence:02}-{step['name']}.log", timeout, env=env)
+                if step.get("summary_format") == "rust":
+                    record["rust_build_tool"] = p01_tool
+                if step.get("p01_cohort"):
+                    record["p18_environment"] = p01_p18_environment
             if record["status"] == "passed":
                 try:
+                    if f05_namespace is not None:
+                        record["f05_namespace"] = p01_ci.f05_observe(root, f05_namespace,
+                            p01_ci.text(record["log"]["path"], 16 * 1024 * 1024), Path(log_dir) / ("f05-cargo-" + run_id),
+                            "cargo", {"verification_run_id": run_id, "source_sha256": before["sha256"], "tool": p01_tool},
+                            step["argv"], capture=True)
+                    if step.get("p01_cohort"):
+                        spec = step["p01_cohort"]
+                        p01_ci.qualify(root, record, step["argv"], run_id, before["sha256"],
+                                       root / "target", root / spec["proof"], env, execute_step, p01_tool)
+                        record["p01_build_tool"] = p01_tool
                     artifacts = capture_artifacts(root, step, run_id, allowed_roots)
                     if artifacts:
                         record["artifacts"] = artifacts; record["artifact_status"] = "current"
@@ -158,7 +200,12 @@ def run_checks(root, source_paths, steps, log_dir, timeout, artifact_roots=()):
                     if step.get("summary_path"):
                         summary = bounded_json(checked_output(root, step["summary_path"], allowed_roots))
                         record["test_summary"] = validate_summary(summary, step["summary_suite"], step.get("allowed_skips", []), run_id)
-                    if step.get("summary_format") == "rust": record["test_summary"] = rust_summary(record["log"]["path"], step["name"])
+                    if step.get("summary_format") == "rust":
+                        record["test_summary"] = rust_summary(record["log"]["path"], step["name"])
+                        if step.get("p01_cohort"):
+                            qualification = p01_ci.validate(root, root / step["p01_cohort"]["proof"],
+                                record, step["argv"], run_id, before["sha256"], root / "target", p01_tool)
+                            record["test_summary"] = p01_ci.combine_summary(record["test_summary"], qualification)
                     if step.get("documentation_path"):
                         data = bounded_json(checked_output(root, step["documentation_path"], allowed_roots))
                         if not isinstance(data, dict) or data.get("verification_run_id") != run_id or not data.get("files"): raise ValueError("Stale or empty documentation identity")
@@ -184,6 +231,18 @@ def run_checks(root, source_paths, steps, log_dir, timeout, artifact_roots=()):
     except (OSError, ValueError): after_sha = None
     for record in records:
         if record.get("artifacts") and not artifacts_current(root, record["artifacts"], allowed_roots): record["artifact_status"] = "stale_artifact"
+    for step, record in zip(steps, records):
+        if step.get("p01_cohort") and record.get("status") == "passed":
+            try:
+                qualification = p01_ci.validate(root, root / step["p01_cohort"]["proof"], record,
+                    step["argv"], record["verification_run_id"], before["sha256"],
+                    root / "target", record["p01_build_tool"])
+                expected = p01_ci.combine_summary(rust_summary(record["log"]["path"], step["name"]), qualification)
+                if not p01_ci.same(expected, record["test_summary"]):
+                    raise ValueError("P01 parent summary changed")
+            except (OSError, ValueError, KeyError, TypeError) as error:
+                record["status"] = "stale_artifact"
+                record["reason"] = str(error)
     failed = any(r["required"] and (r["status"] != "passed" or r.get("artifact_status") == "stale_artifact") for r in records)
     status = "source_changed" if before["sha256"] != after_sha else "failed" if failed else "passed"
     for record in records: record["report_status"] = status
@@ -272,6 +331,16 @@ def build_steps(root, args, platform, machine):
         rust_step.update(artifact_paths=[{"path": ref(root / "target/debug/latexide-p18-os-probe"), "kind": "p18_os_probe"}],
                          required_artifact_kinds=["p18_os_probe"])
         rust_log = run_dir / f"{next(i for i, step in enumerate(steps, 1) if step['name'] == rust):02}-{rust}.log"
+        if p01_ci.catalog(root) is not None:
+            at = rust_step["argv"].index("--")
+            rust_step["argv"].insert(at, "--message-format=json")
+            rust_step["argv"] += ["--show-output", *p01_ci.skipped_arguments()]
+            proof = run_dir / "p01-parent-cohorts.json"
+            rust_step["p01_cohort"] = {"proof": ref(proof)}
+            rust_step["artifact_paths"] += [
+                {"path": ref(proof), "kind": "p01_cohort_proof"},
+                {"path": ref(rust_log), "kind": "p01_rust_build_log"}]
+            rust_step["required_artifact_kinds"] += ["p01_cohort_proof", "p01_rust_build_log"]
         p18_result = run_dir / "p18-pdfs.json"
         steps.append({"name": "p18-compiler-pdfs", "kind": "p18-compiler-pdfs", "depends_on": [rust], "consumes_artifacts": [rust],
                       "argv": [sys.executable, "integration/registry/p18_ci.py", "--rust-log", str(rust_log), "--result", str(p18_result)],
@@ -359,7 +428,7 @@ def repository_identity(root):
     except (OSError, subprocess.SubprocessError): return {"head": None, "dirty": None}
 
 
-def recheck_report(path):
+def recheck_report(path, *, cargo_executable=None, offline=False):
     try:
         report = evidence.read_json(path)
         current = source_identity(ROOT, lambda: discover_sources(ROOT))
@@ -376,8 +445,26 @@ def recheck_report(path):
         relative = report["run_directory"]
         if not isinstance(relative, str) or "\\" in relative or Path(relative).is_absolute() or ".." in Path(relative).parts or not relative.startswith(".local/"):
             raise ValueError("Invalid run directory")
-        args = argparse.Namespace(profile=report["profile"], native_schema=selection["native_schema"], cargo_executable=None, offline=False, run_dir=ROOT / relative)
+        if type(offline) is not bool or (cargo_executable is not None and
+                (type(cargo_executable) is not str or not cargo_executable)):
+            raise ValueError("Invalid caller-selected Cargo/offline configuration")
+        # Selection comes from the trusted caller, never a stored argv. Recheck
+        # only reconstructs fixed checks and reads their original observations.
+        args = argparse.Namespace(profile=report["profile"], native_schema=selection["native_schema"],
+                                  cargo_executable=cargo_executable, offline=offline, run_dir=ROOT / relative)
         steps = build_steps(ROOT, args, selection["platform"], selection["machine"])
+        if len(steps) != len(report["checks"]):
+            raise ValueError("Stored check selection changed")
+        for step, row in zip(steps, report["checks"]):
+            if step.get("argv") is None:
+                continue
+            if not p01_ci.same(row.get("command"), step["argv"]):
+                raise ValueError("Recheck requires the original caller-selected command/tool/offline configuration")
+            if step.get("summary_format") == "rust":
+                executable = shutil.which(step["argv"][0])
+                if executable is None or not p01_ci.same(row.get("rust_build_tool"),
+                        p01_ci.binding(Path(executable).resolve(strict=True))):
+                    raise ValueError("Original Rust build tool is missing or changed")
         updated = finalize_report(ROOT, report, steps, artifact_roots=[ROOT / "target", ROOT / ".local/p00-native-build"])
         return {**updated["evidence_validation"], "capability_inventory": updated.get("capability_inventory", {}),
                 "p00_readiness": updated.get("p00_readiness", {})}
@@ -462,7 +549,7 @@ def main():
     args = parser.parse_args()
     if not math.isfinite(args.timeout) or args.timeout <= 0: parser.error("timeout must be finite and positive")
     if args.recheck_report:
-        result = recheck_report(args.recheck_report)
+        result = recheck_report(args.recheck_report, cargo_executable=args.cargo_executable, offline=args.offline)
         # JSON stdout stays UTF-8-compatible even on redirected Windows cp1252.
         print(json.dumps(result, ensure_ascii=True))
         return 0 if result["status"] == "current" else 1
@@ -490,7 +577,7 @@ def main():
     report = finalize_report(ROOT, report, steps, artifact_roots=[ROOT / "target", ROOT / ".local/p00-native-build"])
     write_report(args.output, report)
     print(json.dumps({"profile": args.profile, "status": report["status"], "source_sha256": report["source_sha256"],
-                      "checks": [{"name": r["name"], "status": r["status"], "kind": r["kind"], "tests": r.get("test_summary")} for r in report["checks"]],
+                      "checks": [{"name": r["name"], "status": r["status"], "kind": r["kind"], "tests": r.get("test_summary"), "reason": r.get("reason")} for r in report["checks"]],
                       "failure_diagnostics": failure_diagnostics(report["checks"])}, ensure_ascii=True))
     return 0 if report["status"] == "passed" else 1
 

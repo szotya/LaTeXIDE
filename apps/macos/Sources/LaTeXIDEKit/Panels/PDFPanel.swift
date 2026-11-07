@@ -47,7 +47,7 @@ private struct NativePDF: NSViewRepresentable {
     }
 }
 struct PDFPanel: View {
-    @ObservedObject var store: WorkspaceStore
+    let store: WorkspaceStore
     var embedded = false
     @StateObject private var controls = PDFControls()
     @Environment(\.ideTheme) private var theme

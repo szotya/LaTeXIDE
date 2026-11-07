@@ -74,6 +74,14 @@ final class DefinitionNavigationTests: XCTestCase {
         XCTAssertFalse(f.store.canUndo)
     }
 
+    @MainActor func testCanonicalEquivalentUnacknowledgedSourceDoesNotNavigate() throws {
+        let f = try Fixture("é \\mean{x}"); defer { f.cleanup() }
+        f.coordinator.rendering = true; f.source.string = "e\u{301} \\mean{x}"; f.coordinator.rendering = false
+        XCTAssertFalse(f.source.followDefinition(with: try f.event(on: "\\mean")))
+        XCTAssertEqual(f.store.selection, "main.tex")
+        XCTAssertFalse(f.store.canUndo)
+    }
+
     @MainActor func testDirtyTargetAndUndoDetermineTheActualSelectedRange() throws {
         let f = try Fixture(); defer { f.cleanup() }
         f.store.select("defs.tex")

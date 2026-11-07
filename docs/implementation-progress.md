@@ -699,3 +699,383 @@ Tényleges helyi ellenőrzések:
 - A böngészős `issues/new/choose` olvasás a GitHub bejelentkezési oldalára irányított. Bejelentkezett űrlapmegjelenítés, kitöltés, fájlcsatolás és tényleges beküldés **unrun**; nyilvános próbaissue nem készült. A helyi YAML-/linkegyezés nem élő GitHub-formpróba. A közzétételhez a pontos PR-head CI/review, normál védett merge és a nyilvános main fájljainak külön visszaolvasása tartozik.
 
 A gyökércheckout HEADje, indexe és kilenc helyi módosított/új fájljának hash-e a helyi validátor szerint változatlan. A korábbi részletes hibajegy-/feature-útmutatók, PDF-ek és helyi feature-űrlap megőrzöttek, nem kerülnek véletlenül e változtatásba. A reusable jelentési eljárás a projekt-skill parallel-development referenciájában szerepel. Ez dokumentáció és issue-űrlap: nincs termékkód-, CI-kapu-, licenc-, hozzáférés- vagy platformeljárás-változás; nincs új Mac-, Windows- vagy Linux-runtime-eredmény.
+
+
+## P01 kombinált qualifier/recovery publikálói integráció előkészítése — 2026-11-03
+
+Konkrét `p01-cohort-qualified-v2-20261103-b9a793d3-attempt2` READY input. A receipt `fa3d69ac4ef3b74f76c9715b41af14aced8c80b0aedfb089f6cc43c7a771bffa`; 17 qualifier/403 historical/22 kiválasztott és 11983 újraellenőrzött reused evidence-fájl integritása igazolt, új termékteszt nélkül. Friss remote/base `45f5824f3c3620d6802f2779c7f348d156c6b3c1`, tree16931a3e71af398e2e79f31ae50db174543d8dc4; ruleset26284711 aktív, bypass üres/never, required Actions15368 Planning and Python contracts. Saját új managed worktree, normál szotya/branch, meglévő munkafák HEAD/indexe nem módosult.
+
+Csak a négy qualifier-fájl és a korábbi28 P01 owned útvonal deltája került be. A közös Rust/FFI öt fájlja a friss mainen még a történeti d5ab alappal egyezett; a korábbi read-only recovery/teszt prefix megmarad. A shared handoff/ledger/skill a mainre épül, a korábbi P00/P04/P19/P09 és Windows/Linux contributor-policy bejegyzéseit megőrzi. A package-specs/owners régi kontextusát, script CRLF-reprezentációt és teljes17/403 fát nem importáljuk. Saját friss kombinált ellenőrzés és PR/CI/review/merge **unrun**; a következő bejegyzés csak tényleges eredményt rögzíthet. A régi blocked/report/source/failed/mutáns evidence megmarad.
+
+
+### P01 fresh-main integrációs tesztkontraktus: BLOCKED — 2026-11-03
+
+A saját friss structure-parancs (`python3 -B integration/registry/verify.py --profile structure --offline --output .local/p00-verification/structure.json`) exit1: generált szerződés/planning/documentation PASS, coordinator162/161PASS/1FAIL/0ERROR/0skip. A fail a main változatlan `tests/contracts/test_p18_ci.py:54` globális no-`--skip` assertionje, amely a source-pinned P01 négy külön-kohort kizárását is elutasítja. A qualifier canonical SHA32423f97a7c55f3a4e054352f12756dc784f85b387f803e3c739f3b6944a45d6 változatlan; allowed_skips nincs, P18 actual/PDF függőségek megmaradtak. Saját selected-source374 before/after SHA `8870de040bb80ee7e4ab0c1546939d7c1e9cd5c774a9694211819bd7168951b9`. Ezt nem nevezzük strict-gate PASS-nak.
+
+Az érintett P18 contractteszt a kapott qualifier4+P01-28 scope-on kívüli új útvonal, ezért nem módosítottuk vagy kerültük meg. Külön engedélyezett szűk tesztkontraktus-integráció és utána friss kombinált validáció szükséges. Rust/C ABI/cohort build/run, commit/push/PR/CI/review/merge0/unrun; saját managed worktree és minimális31-path változat megőrzött, issue-k nem változtak. Az első intake-reader relatív MAIN-source feloldási setup-hibája 0 termékművelettel megőrzött; az actual162-es failed kör külön nyers report/log/test-ID/nonce receipttel megmarad. Történeti P00149 és P03 split148+1 /46normal+2parent/32+5 nested nem új aktuális főági futás. Végállapot BLOCKED→idle.
+
+### P01/P18 no-skip contract szűk kompatibilitás — 2026-11-03
+
+Új konkrét27b7c2cf continuation a meglévő candidate-re, egyetlen hozzáadott
+`tests/contracts/test_p18_ci.py` útvonallal (33 felső scope). Az induló481
+source byteazonos a lezárt BLOCKED receipt mapjával; régi report/history megmarad.
+Friss exact main45f5824 és strict required-check/ruleset readback egyezett.
+Saját célzott original-method RED1FAIL, majd a szűk tesztjavítás után4PythonPASS;
+18 beágyazott skip/proof/dependency/partial-stale modellvariáns elutasított.
+Az eredeti method aktív, a négy P18 identity/PDF és no-allowed-skips őr megmarad;
+P01 csak a négy külön literal parent/helperID és kötelező friss proof/raw-log
+artifact mellett választható le. Nem készült új termék/verifier/workflow/séma
+módosítás; canonical qualifier és frozen403/17/inputok változatlanok.
+A modellfixture nem Rust/Windows/Linux acceptance. Teljes friss structure,
+Rust/C ABI/cohort/CI/merge még unrun; új eredmény csak tényleges futásból kerül ide.
+
+
+### P01/P18 continuation actual gate: BLOCKED — 2026-11-03
+
+A27b7c2cf test-compat javítás után full structure165/165PASS, 0skip/hiba.
+Canonical qualifier4 és P18 validator változatlan. A tényleges shared kör
+Cargo286normálPASS/4P01-filter után a saját logsymlink-realpath elrendezésen
+elakadt; a failed kohort megmarad. Új, byte/mód szerint egyező481-fájlos
+T9 source fixture valódi könyvtárain, külön target/label/roots mellett ismét
+165PythonPASS és Cargo286normálPASS. A canonical qualifier ezután ugyanazon
+P18artifact ROOT/TEX_RUN címkével újrafuttatja a23 normál testimage-et:284PASS
+és2P18 real-TeX AlreadyExists FAIL, exit101/timeoutfalse. Ez nem full-gate PASS.
+A P01 két exact-parent és32+5 nested eset nem indult; C ABI és remote kör unrun.
+
+A source-selected374 before/after82ef6dbc96b4a26743739db60efc74980ed078cfda9d10d96897b9f295413fd2
+egyezett; a forráskopi before/after byteazonos a managed checkouttal a futáskor.
+A saját snapshot nem kapott másolt Git-metaadatot; tested-base45f5824 a managed
+checkout nyugtájából külön származik. A TeX-provision before/after687f373f
+egyezett. A normal-replay hiba további canonical qualifier/fixture-invocation
+integrációt igényel; ezt a test-only continuation tiltja. Újabb termékscope
+vagy futtatási kerülőút nem indult. A szűk diff/negatívok és mindkét actual
+failed kör saját új continuation report/receipt alatt megőrzött, a korábbi
+a67e8a99 BLOCKED report változatlan. Commit/push/PR/CI/merge0; idle.
+
+### 2026-11-03 — P01 c8e147a9 normal-replay namespace: friss helyi kapu PASS
+
+Ugyanazon b9a793d3-attempt2 jelölt,45f5824 managed alap. Szűk qualifier/test és
+háromsoros Cargo-env observation javítás, reusable recovery-reference; P18
+production validator/core/security/workflow/ci_gate/sandbox változatlan.
+A schema3 proof mind23 normal-image-nek saját exclusive0700 namespace-t,
+46 külön phase-rootot/23 külön labelt és source/bináris/nonce/argv/provision
+kötésű0600 receiptet ad; read-only/final inventory újraellenőrzött.
+
+Actual célzott AlreadyExists RED1ERROR→GREEN;9 namespace-method PASS. A saját
+alias-path1ERROR és az első globális review_focus_r2-számolásnál FAILED teljes
+kör megőrzött (abban structure173PASS/Cargo286PASS). Külön Cargo-scope RED1ERROR
+után változatlan P18 target-validator + tényleges Cargo-env binding; új source-2,
+friss target/roots/label. Végső structure/shared Python174PASS; Cargo286normálPASS,
+46 discovery/23 normal-image286PASS/4P01-filter, exact-parent2PASS és32+5 nested,
+childPASS0. Kombinált Rust288PASS; seam3PASS, P18 PDF parser/render4PASS.
+Friss actual Cargo static/dynamic FFI-ből új public C helper, load-command pin;
+C ABI/IPC19PASS41helper, ancestor5PASS6helper,0FAIL/0ERROR/0unrun. Saját sandbox,
+9s helper-alarm/<=10s parent-wait, nincs GUI/live app vagy controller-kill.
+
+Parancsok: unittest namespace kontrollok, `verify.py --profile structure` és
+`--profile shared --offline --timeout 600`, meglévő Cargo/Rust/TeX, jobs1.
+481 fájl byte/mód before/after egyenlő; selected374 SHA dced8f22; full shared
+report f045ce13, schema3 proof3184c1bb. TeX before/after687f373f változatlan;
+letöltés/telepítés0. Részletek és teljes SHA-k: `docs/development/results/P01.md`.
+A három végső Markdown eredményfrissítés selected-source-on kívüli metadata.
+Távoli main45f5824, strict required Actions15368 változatlan/bypass0;
+exact-HEAD remote CI/review/protected publikálás még függő. Platform/GUI/
+power-loss/client-ACK/exactly-once/production acceptance nem következik ebből.
+
+Végső read-only: a default CLI recheck invalid_test_summary (a helyi explicit
+Cargo/offline helyett default argv-t épít) megőrzött failed próba. A közvetlen
+P01 validate PASS, az eredeti tényleges builderkonfigurációval teljes
+`evidence.revalidate_report` current; source/artifact/log/parent/namespace
+őrök változatlanok. E CLI-korlát külön marad a sikeres required helyi kaputól.
+
+### 2026-11-03 — PR68 Windows Python raw-LF regresszió, új source-4 PASS
+
+Az első2aaf968 PR-head Windows planning/runtime Python-kapuja failed:174tests,
+120PASS/54failed_tests;2failure/73error esemény/0skip. Szintetikus CRLF került
+a parent marker útvonalába és child raw headerbe; nem natív Windows eredmény.
+A naplók és failed körök megőrzöttek, CI-job retry nincs. Célzott platform-
+newline RED1ERROR, részleges LF-fix child-header1ERROR és failed source-3
+structure (Rust unrun), majd teljes fixture-only UTF-8/LF GREEN1PASS. Production
+parser/qualifier/core/security/CI/sandbox nem módosult e follow-upban.
+Új source-4/target/roots/label:175PythonPASS,286normal+2exact-parent=288RustPASS,
+külön32+5nested, childPASS0, seam3/P18PDF4PASS. Új source-bound C ABI19+ancestor5
+PASS47helper; selected a3dd3b06, shared cc552235, proof578af469; teljes hash-k
+és parancsok a P01 eredménynaplóban. Remote javított HEAD CI/review/merge függő.
+
+### 2026-11-03 — AKTUÁLIS c8e147a9 zárás: PR68 BLOCKED → idle
+
+Kiválasztott állapot: nem a történeti local PASS, hanem bf4ebcc current HEAD
+required Actions15368 aggregate FAIL (run41728576237). Ubuntu planning/runtime
+SUCCESS; Windows156/175PASS19ERROR; Mac121/175PASS54failed_tests,
+2FAIL/73ERROR esemény. További raw-rewriter CRLF/negatív-symlink portability,
+Mac lexical/canonical system-alias és anchor-walk hibák nyitottak. CodeRabbit
+2aaf968 review CHANGES_REQUESTED,9unresolved (6Major2Minor1Trivial), bf4ebcc
+új automatikus review még in_progress. A runtime/FFI move/identity/full-state/
+foreign-entry/setup-failure jelzések source-level olvasva, új product-runtime
+reprodukció nélkül; current namespace-only scope core/runtime írást tilt.
+Main45f5824 változatlan,2normálcommit/push32útvonal,PR68nyitva; merge/bypass/
+ruleset/admin/job-rerun0. További qualifier/Python portability és runtime/FFI
+policy-review scope kell ugyanehhez a jelölthöz; nincs önálló új candidate.
+A local source-4 PASS és minden historical failed/unrun megmarad. Záró három
+Markdown helyi metadata, bf4ebcc-tree-n kívül; a selected source a3dd3b06 marad.
+
+### 2026-11-04 — PR68 d4198f2b scoped CI/public-recheck fix, friss helyi PASS
+
+Azonos b9a793d3-attempt2 candidate, bf4ebcc head /45f5824 main. Fixed-commit
+481-source input receipt25781086, byte/mode/Git-blob ellenőrzött, NOT_READY.
+Friss primary snapshot18unresolved/10Major; required Actions15368FAIL,
+CodeRabbit check success mellett CHANGES_REQUESTED. A korábbi bf2c9fe0 report
+BLOCKED marad, egyetlen régi evidence sem változott visszamenőleg.
+
+A hat scoped review-fix: explicit lexical/canonical owner/P18 root; CRLF
+marker/child header; inert Windows symlink native path-role; observed-pin inert
+Darwin plan fixture; caller-selected offline/custom-Cargo public CLI recheck +
+actual Rust tool binding; deklarált330/60s parent összdeadline, gyermek/case és
+normal/discovery10s marad. A test_integrated_verification.py közvetlen fixture
+emberi válasszal és koordinátori path-helyesbítéssel engedélyezett. Core/Runtime/
+Workspace/recovery/FFI/P18-validator/security/wire/gate/workflow változatlan.
+
+Célzott RED/raw/setup-failure megőrzött; végső scoped 5 PASS + public 1 PASS,
+P01 Python-model tesztek 96 PASS; Darwin planning mode-boundary 2 ERROR → 2 PASS,
+teljes companion 20 PASS, evidence 13 PASS. Ezek Python-model eredmények,
+nem natív provider-runtime vagy production minősítések.
+Friss saját T9 source/target/tmp, offline meglévő tools, jobs1:
+structure/shared Python182PASS; normal286 +exact-parent2=framework288PASS,
+külön32+5nested, childPASS0, seam3/P18PDF4PASS. Public --recheck-report az
+azonos offline/custom-Cargo opciókkal current/exit0, nincs execution/rewrite.
+Selected a1a85336; shared640e6345, proof81cf4d1d; teljes SHA-k és parancsok a
+P01 resultban. TeX687f373f unchanged; letöltés/telepítés0. Végső három Markdown
+metadata-only változás. Következő: ugyanazon PR CI-fix push és remote readback;
+nyitott Runtime/Major thread/P00 READY hiány mellett nincs merge.
+
+A d419 első scoped head eee2c35 (run41824287631) Windows/Ubuntu planning és
+runtime kapui SUCCESS; Mac181/182PASS1FAIL, aggregateFAIL. Late-mutation unit
+hook lexical/canonical source-path eltérés miatt nem aktiválódott; a failed
+joblog és head-snapshot megőrzött. RED1FAIL→GREEN1PASS alias-owner regresszió,
+fixture-only hook összehasonlítás; production guard változatlan. Új source-2/
+target/roots/label:183PythonPASS,288RustframeworkPASS (286normal+2parent),
+külön32+5nested/childPASS0, seam3/P18PDF4PASS, public recheck current/exit0/
+report unchanged. Selected6b96ab6c, shared5a4f6972, proof7a4d4e0a; teljes SHA-k
+és actual parancsok a P01 resultban. Root unittest6PASS, content481PASS.
+Nincs CI-job rerun, nincs core/P00-import; ugyanazon PR következő fix headje
+következik, Runtime/Major/P00 READY blokk továbbra megmarad.
+
+A publikált fbff72b5 kód-head (run 41825437758), majd a handoff-only 91d7b582
+head (run 41827837836) Actions CI-je 7/7 SUCCESS, required aggregate app 15368.
+A hat CI-fix, a late-hook és négy saját doc-megjegyzés bizonyítékos PR-választ
+kapott, 11/20 thread resolved; 9 nyitott Runtime/recovery/Workspace/FFI szál
+maradt (5 Major / 3 Minor / 1 Trivial), nincs új approval vagy P00 READY.
+A két új, nem inline Minor doc-pontosításban a rögzített meglévő Cargo-path
+explicit változódefiníciót kapott, a 96-os ledger-count Python-model határa
+helyben is kiírt. Shell-szintaxis/tool-path read-only ellenőrzött; nem futott
+új build/mérés. Két saját 481-fájlos source-copy + 481 frozen input és 50
+artifact/log hash recheck PASS; selected 6b96ab6c, régi c8 report/TeX unchanged.
+Az új metadata-only commit saját exact-HEAD CI-je külön kapu, a végső receipt
+a d4198f2b continuation reportjában. Összállapot BLOCKED / next idle, merge nincs.
+
+
+### 2026-11-04 – PR68 c17c249f: maradék test/doc review szűk részscope
+
+Kezdeti cutoff, a külön pin-companion engedély előtt:
+
+Friss 430f58e input 481 fájl, P00 closed input 482 + capsule 3517 fájl hash/mode verified; külön receipt SHA-k a P01 resultban. A RUNTIME.md négy spacing javítása whitespace-only, régi counts/status/hash változatlan. Két testhelper-javítás privát jelöltben: default evidence retention/static OnceLock nem cleanup, és TMPDIR unset std::env::temp_dir fallback. Ezek 12d99f12/31208 byte identitását a változatlan canonical SOURCE_PINS elutasítja; pin-frissítés e scope-on kívül, ezért a helper nincs a publisher diffben és a két finding not_fixed/blocked marad.
+
+Egy std-only derived harness build linkelt (dep-info + actual linker argv), de a kötelező sandboxos discovery SIGABRT -6, 257 ms, 0 selected; mind a négy tervezett control unrun. Nincs baseline RED/PASS, Core/Runtime/Session/crash-matrix vagy új platform acceptance; nincs sandbox-fallback/replay. Saját raw/binary/forrás/nonce és a preflight EPERM/schema-read hiba megőrzött. P00 F05 négy path before-blobja egyező, saját-copy dry-run exit 0, 481 source változatlan; productpatch nem alkalmazott, producer same-agent evidence nem P03/READY. F01–F04 és F05/Runtime Major, valamint Workspace-localization termékscope továbbra nyitott.
+
+Csak a RUNTIME spacing és saját evidence docs/skill publikálható; új exact-HEAD CI/review/base külön kapu. Aktuális parancsok, hash-kötések és final receipt a P01 resultban/saját c17c249f reportban. Issue/meta/worker/head/main/index/idegenforrás nem írva, merge NOTATTEMPTED. Teljes publication blocked, a lezárt részscope findings_final, next idle.
+
+
+C17 pin-companion folytatás: explicit kiegészítés után csak a durable_tests.rs SOURCE_PINS sor három értéke frissült 12d99f12/31208/420-ra, a másik két pin és minden sentinel/parent/child/budget/guard logika byte/AST szerint változatlan. Külön pin-red-source: 1 Python teszt / 1 FAIL; pin-green-source: ugyanaz az 1 teszt PASS, négy final/wrong/missing/stale fixture-variánssal. A permission modell kizárólag a privát unit-fixture-ra hat, production catalog nincs mockolva. A publisherbe most a két helper-javítás, spacing, pin és közvetlen regresszió együtt importált, friss source-admission sikeres. Az első sandboxos discovery -6/0 eset és a négy unrun kontroll megmarad; nincs új Rust/Cargo/full-suite replay vagy native/runtime elfogadási állítás. P00 patch továbbra not_applied/P03+READY hiányos; új exact-HEAD CI/review külön, merge NOTATTEMPTED, next idle.
+
+### 2026-11-04 – PR68 reviewed F05 READY integráció
+
+A 6ba13ed9 packet 482 source / 5787 evidence file hash/size/mode ellenőrzött;
+kizárólag négy reviewed F05-path a friss 56cdbe1 publisherre.
+Identical saved physical byte + same project scope + repeated nofollow identity:
+explicit OpenDocument tartós rebind, dirty/revision/origin/undo megmarad.
+Három engedélyezett Save-hiba magyar, codes/Reply/Save-authority változatlan.
+F01–F04 not_fixed; nincs full issue READY vagy merge-approval.
+
+A 23 eredeti assert megmaradt; CI-fixture exkluzív r01–r26 root/joinolt 9 s watchdog/
+bounded tesztlog. Külön F05 source-pin és verify.py pre-Cargo/normal namespace:
+source/run/tool/binary/argv/nonce, 26 pontos nem ignored ID, saját literal
+negatív link és late inventory rebind kötelező. Legacy3 pins/négy kizárás/
+330–60 s parent/10 s normal-discovery budget változatlan, c17 helper 12d99f12 megőrzött.
+A verify.py companion szükséges: enélkül a kötelező root/nonce nem jutna a Cargóhoz.
+
+Saját source-red/green/target/cache/log, existing Rust 1.99.1/offline/locked/jobs1.
+190 Python-model PASS; végső pin 6 célzott PASS. Sandbox deny+own write PASS.
+Cargo test --lib --no-run exit0 RED 19.605 s/GREEN 24.552 s, compiler/dep-info/link/binary
+rögzített. Lokalizáció RED 1 FAIL  →  GREEN 1 PASS; összes16exactPASS; átfedő
+normalFFI 28 PASS / 0 ignored3.877 s, 26 F05 marker/2 link/cold rebind PASS.
+cargo build --lib nem teszt .a/.dylib/.rlib exit0/2.264 s.
+Nem Session/Ccaller/IPC/GUI/Windows/Linux/production acceptance.
+Producer104/P03 118 külön történeti kohort; c17SIGABRT0 case4unrun változatlan.
+Előkészítési AssertionError/API-ERROR/script-szintaxis/EPERM raw megmarad.
+Tényleges parancsok és hash-k a P01 resultban és a saját next-6ba13ed9-3c65a981 gyökérben.
+Új exact-HEAD CI/review/base/main külön kapu; négy valid Major mellett nincs merge,
+végén idle.
+
+PR68 F05 első remote cutoff: c219e02/run41881209133, required aggregate FAIL.
+Mac 190 Python PASS / 312 raw Rust PASS, 28FFIPASS, de0PR68_CASEmarker: az első Cargo-argv
+--nocapture nélkül elnyelte a successful outputot. Strict F05guard FAIL; normal/
+exact-parent és függő provider-lépések unrun. Failed raw változatlan.
+Saját source-ci2: közvetlen planassertRED1 FAIL → GREEN 1 PASS; egy --nocapture flag
+a P01 Mac Cargo-fázisban, teljes190 Python PASS 23.602 s. Rust/product/F05pin/legacy
+guard/ignore/skip/budget változatlan. Új headhez új CI, nincs job-rerun vagy
+helyi Rust/helper-replay; F01–F04 tovább merge-blocker.
+
+F05 d9f0302/run41882922235: requiredFAIL, Mac 190 Python/312 raw Rust PASS,26 marker.
+A régi CLI reason nélkül nem mutatja a qualifier okát; normal/parent részfázis
+állapot ismeretlen a bounded logban. Következő CLI kiírja a meglévő reason mezőt.
+Független scope-regresszió: schema2 source_root/cwd határ az új F05-hookokban,
+RED 1 FAIL → GREEN 1 PASS; kizárólag régi build-only suite kihagyja az új combined-F05
+discovery/normal elvárást, saját összes régi őre és a combined26guard megmarad.
+Teljes191 Python PASS 23.994 s; nincs Rust/parent/helper replay vagy budget/skip/pin módosítás.
+
+F05 CI3/989a89e/run41884760110:191 Python/312 raw Rust PASS,26 marker, qualifierFAIL
+pontos P18 outcome-shape reasonnel. Initial --nocapture interleavelte a P18
+marker/status sort. Új initial --show-output, P18 és normal/parent változatlan.
+Két új F05 Cargo-read a meglévő kanonikus16 MiB; default/normal 1 MiB változatlan.
+Nem üres F05-pines teljes inert kvalifikációs/verifier modell:
+RED 2 FAIL 1 ERROR → GREEN 3 PASS, teljes193 Python PASS 24.888 s. Nem actualRust/child/Runtime.
+P01 current pointer frissült. Silent-skip Minor4471356078 a hard26 case/no-skip
+szerződés miatt nem alkalmazott; commit-wide projectscope Minor4471356092
+új reviewed P00 scope, not_fixed. F01–F04 open; új exact-HEAD CI külön.
+
+F05 CI4/3189530/run41886989079: Mac 191 / 193 Python PASS 1 FAIL 1 ERROR, Rust unrun.
+Új F05-model lexical/canonical binary string eltérés system alias fölött,
+változatlan exclusionguard helyesFAIL. Saját parent-alias RED 1 FAIL 1 ERROR → GREEN 2 PASS,
+egyetlen model-only canonical összehasonlítás; teljes193 Python PASS 28.145 s.
+Mindkét teljes F05-model most mindig valódi alias alatt. Production verifier/
+Rust/P18/pin/guard/deadline változatlan. Failed raw megőrzött, új head sajátCI,
+nem job-rerun. CodeRabbit auto-pause után ugyanazonPR resume, settings/bypass nincs.
+
+F05 CI5 / 78db31f / run41888175214: Mac és Linux 192 / 193 Python PASS + 1 FAIL,
+Windows 190 PASS + 1 FAIL + 2 ERROR; Rust runtime-lépések unrun.
+Fixture-env kontextus túl korai visszaállítás + inert permission-modell lexical
+owner alias hiba. Saját örökölt-P18/alias/777-mode RED 1 FAIL + 1 ERROR  →
+GREEN 2 PASS; teljes 194 Python PASS, 27.390 s.
+Csak fixture: LIFO test-lifetime env és canonical mode-owner; symlink nem mockolt.
+Production verifier / Rust / P18 / pin / quota / deadline változatlan.
+Saját F05 docs count/status spacing whitespace-only, értékazonosság ellenőrzött.
+Failed raw megmarad; új head saját CI, nincs job-rerun vagy merge.
+
+F05 CI6 / 433a459 / run41889957078: Mac 194 Python és 312 raw Rust PASS,
+qualifier FAIL: P01 evidence quota. Raw szám nem qualified framework/parent.
+1068-row inert F05-fixture RED 1 FAIL a változatlan 1 MiB proof-kapun.
+Külön exkluzív 0600/nlink1, fixed-path/hash-bound fázis-inventory manifest:
+teljes jegyzék cold rederived, late manifest is rejected, quota nem emelkedik.
+Model proof 2053717 → 146130 byte; külön manifest 462700 byte / 1068 sor.
+11 egyedi F05-model PASS + külön átfedő quota megfigyelés; teljes 195 Python PASS,
+33.953 s. Rust / P18 / pin / skip / ignore / deadline változatlan.
+Nincs régi Runtime/helper/parent replay; új head saját CI, Majorok mellett nincs merge.
+
+
+F05 CI7 / fa4e5bc / run41892594317: 7 / 7 Actions SUCCESS, required aggregate
+SUCCESS; Mac 17 required passed, 195 Python PASS, 312 normal + 2 exact-parent =
+314 framework PASS / 0 FAIL / 0 ignored / 4 normal filtered. Külön nested
+32 + 5, child PASS 0. Seam 3 / P18 PDF 4 / tool 6 / synthetic IPC 10 / MCP 1 /
+wire 1 PASS; native 81 PASS / 4 változatlan opt-in SKIP / 85 módszer.
+CodeRabbit check SUCCESS, formal review CHANGES_REQUESTED nem approval.
+F05 resolved, F01–F04 és a két külön Minor not_fixed/open; merge nincs.
+Az új Minor 4472064573 szerinti lokalizációs ledger-token GREEN 1 PASS-ra
+javított, a mért 16 exact / átfedő 28 FFI eredmény változatlan.
+Csak handoff/P01/ledger metadata-delta, saját diff/source/CI receipt külön;
+nincs új helyi Rust/helper/parent futás, P18/pin/guard/quota/deadline változás.
+Windows/Linux natív, live app/model, TeX Live runtime, release-perf és
+accessibility tovább unrun; hosted synthetic eredmény nem production acceptance.
+Korábbi failed raw, c17 SIGABRT / 0 case / 4 unrun megőrzött, végén idle.
+
+
+### 2026-11-06 – PR68 mind a hat review finding javítása
+
+Új közvetlen user authorization: F01–F04 és két Minor javítása, szükséges tesztek,
+CI/review, majd kizárólag minden kapu sikerénél protected merge.
+Path-független, store-on kívüli privát projekt-lineage; edit/undo/redo előtt és
+publikáláskor project/store/writer-lock inode guard. Unknown entry/cohort retained,
+bounded nofollow quota. Directory/lock setup failure explicit in-memory státusz,
+selected corruption soha nem fallback. Incremental text/history + sealed high-water
+receipt, egy tartós file barrier az edit ACK előtt; checkpoint Save/compactionnél.
+Bare F05 Cargo mindhárom env hiányánál valódi saját fixture-t futtat, nincs skip.
+
+Új 6-case RED → GREEN, missing-log RED → LXPTR002 required-log guard;
+bővített 10 Runtime PASS; átfedő teljes FFI 38 PASS / 26 F05 / 0 ignored / 0 filtered.
+Python 195 PASS. A retention unit most bounded 1..2 checkpointot és mind a 40 undót
+ellenőrzi, egy legacy source-pin frissült, sentinel/parent/deadline változatlan.
+F05 closure 7 source pin, mind a 26 ID tovább mandatory. Bare workspace P18 env
+hiányában failed; hivatalos wrapper-verifier P18 OS EPERM miatt 37 FAIL, függő
+lépések unrun. Native baseline wrapper 1 FAIL / 0 timing EPERM. Raw megmarad;
+külön hostengedélyes own-fixture attempt és friss remote CI/review folyamatban.
+Nincs telepítés, régi c17 replay, idegen PID vagy worker/frozen/main checkout írás.
+Részletes implementáció/actual command/result: P01 result és RUNTIME.md.
+
+Az önreview után az incremental high-water külön, atomikusan cserélt privát
+receipt lett: POSIX data/receipt/directory ordering, egy végső médiaflush.
+Új integritás és előkészítési hiba kontrollok: teljes FFI 40 PASS / 12 follow-up /
+26 F05 / 0 ignored / 0 filtered, 5.61 s. A korábbi host-verifier 322 raw PASS után
+fresh-artifact hiány miatt failed, ezért végső friss source/target futás külön.
+A baseline native ABI mérés p50 32.039 ms (1 KiB) / 61.039 ms (1 MiB), 40-40 minta;
+prototípus/current-final külön kötött, nem GUI vagy release-performance acceptance.
+
+Végső local shared PASS: 195 Python / 326 framework Rust (324 normal + 2 parent),
+0 fail/ignored, 4 normal filtered; 32+5 nested külön, child PASS0, seam3/P18PDF4 PASS.
+Végső native ABI p50 3.724 / 4.568 ms (1KiB/1MiB), baseline32.039/61.039ms,
+40-40 minta; restore/dirty/undo/disk assertions PASS. GUI/release perf tovább unrun.
+Új PR-HEAD required CI és review következik; merge csak minden kapu után.
+
+
+PR68 friss review, 2026-11-06: az 1e484cd HEAD Actions 7/7 SUCCESS (Mac: 195 Python, 326 framework Rust, külön 37 nested; native82 PASS/4 opt-in SKIP), de három új Major megmaradt. Új reprodukció: 15 follow-up tesztből 13 PASS/2 FAIL (Save-finalizálás utáni reopen `edit text range/quota`, 48 idegen entry `recovery_quota`). Javítás: minden sikertelen full commit eldobja a cached logot; a kvóta a fixed owned current/previous/preparing artifactokra számol, az idegen/unreadable unselected könyvtárakat nem járja; az owned 256 MiB/32 entry korlát megmarad, sparse retained-data negatív kontrollal. Az incremental receipt rename elé explicit Darwin F_BARRIERFSYNC került, unsupported esetben kötelező sikeres F_FULLFSYNC fallback, egyéb I/O hiba elutasítva, a végső explicit full flush megmarad. Teljes FFI 43 PASS/0 FAIL/0 ignored/0 filtered, 6.74 s futás; 15 follow-up és 26 F05 átfedő részhalmaz. Új unit kontroll valódi fájlon barrier/full-flush fallbacket és propagált I/O hibát ellenőriz; teljes shared/native eredménye külön következik. A korábbi POSIX-only sorrendezési állítás és az 1e484cd natív timing történeti, nem az új barrieres kód minősítése.
+
+
+A három új Major javításának friss teljes shared kapuja PASS: 195 Python, 328 normal + 2 exact parent = 330 Rust framework; külön 32+5 nested subcase, 0 child PASS, 4 normal filtered. Seam3/P18PDF4 PASS, source `ea82df9f429e9b9cfaf06b14794d2a766a78aaa8bb72af787c0766f8fc832a24`, proof `e4f9232079d8d77d6c6da25e53b0db0e462aa887881c43269ff75a2253ffd85b`. Saját `verify-source-barrier`/üres target és változatlan belső sandbox/installed offline toolchain; nem a korábbi target replay-e. A külön valós barrier/full-flush syscall-fallback kontroll 1 PASS. Új archive `75f4e63c155e7944b13cae58398c50d37cb04661b10f59b8dda350ed301f88ae` mellett NativeRuntime/C ABI/runtime-lock 40-40 minta: 1KiB p50/p95/max 4.019/5.035/5.087 ms; 1MiB 5.681/6.056/6.122 ms. Restore/dirty/undo és változatlan disk PASS. Ez nem csomagolt UI-event vagy release qualification. Az F02 reviewer elismerte az incremental synchronous javítást, de a csomagolt app saját szerkesztőútjának mérése és egyeztetett target még hiányzik; a korábbi explicit GUI/NSApp.run tilalom megmarad. Csak saját instrumentált bundle előkészítése folyik, launch eddig0; ehhez külön szűk emberi döntés szükséges. Az új kódhead exact CI/review/merge kapuja tovább függő.
+
+
+75bd651 exact-HEAD Actions 42280320570: 7/7 SUCCESS, required aggregate15368 SUCCESS; Mac integrated195Python/330frameworkRust/37nested/seam3/P18PDF4/native82PASS+4unchangedopt-inSKIP. A friss CodeRabbit review1 új ABI-findinget adott (4496766162): a Darwin libc fcntl default ága variadic intet olvas a két sync parancsnál is. Az explicit `0_i32` argumentum javítja az UB-t, a barrier/fallback/final-flush szemantika változatlan. Az Apple xnu fcntl-base.c forrásában ellenőrzött; az eddig sikeres tesztek nem bizonyították az UB hiányát. Új barrier-I/O kontroll1 PASS, teljes FFI43 PASS/0failure/0ignored/0filtered (5.04s); F05 pin csak az érintett delta-source sha/bytes/mode értékén frissült. A friss ABI-helyes natív archive/mérés és saját signature-verified bundle külön kötést kap; az új kódhead CI/review-je még külön kapu. A csomagolt UI-méréshez kért korábbi GUI-tilalom alóli szűk kivétel még függő, launch0; merge nem történt.
+
+Az ABI-helyes natív archive `5b4417cbf11ed36f7c23275107d1d1260868e83a0592fc25d109ef6bc455a4db` új mérésén 1KiB p50/p95/max 3.978/4.594/5.050 ms; 1MiB 5.010/5.728/6.232 ms, 40-40 minta. Restore/undo/dirty/disk változatlanság PASS. A csomagolt alkalmazás mérésének ettől külön GUI-kapuja megmarad.
+
+
+PR68 saját csomagolt UI-kör – 2026-11-06: a felhasználó külön engedélyezte a saját NSApp/ablak/helyi insertText mérést (40–40 minta, eredeti p95≤16,7ms), szükséges javítás/újramérés mellett; globális input/TCC/modell/élő userapp nincs. Az eredeti egysoros workload p95 18,235/783,306ms, FAIL. Saját PID2s profil: teljes sorindex-újraépítés és TextKit glyph/paragraph-layout költség. A sorindex cache most validált UTF-16 edit alapján frissül, azonos hossz/újsor nélküli edit nem szkennel dokumentumot. Viewport coloring/ruler nem kér total glyph countot; a kijelölés/coloring invalidálás nem kényszerít rekurzív layoutot. A 2 új pure-cache API-teszt hiányzó API compile-RED után PASS; valódi emoji/newline/native undo/redo kontroll is van. A noncontiguous kísérlet teljes89method futásában84PASS/4SKIP/1FAILmethod(2viewport-assertion), ezért kikerült; a változatlan viewport-tesztekkel új teljes89method85PASS/4SKIP/0failure. Külön korlátozott6mintás soft-wrap és memory-only baseline kísérlet csak saját példányon, nem productváltozás/acceptance. Memory-only1MiB egysor p95~608ms; baselinefactory egy privát callban tér el, különarchive/hash, nincs recovery/undo qualification.
+
+A végső viewportot megőrző app ugyanazon92b041c6 executable-hash-sel mért40–40mintán egysor p95 45,666/510,243ms, 80oszlopos LF-sorokon33,783/30,497ms. Recovery enabled, tényleges runtime-drop/reopen, dirty/revision, recovered undo és változatlan disk minden durable körben PASS. Eredeti16,7ms cél FAIL; a normál sorokra50ms javaslat számszerűen teljesül, de külön emberi kritériumdöntésre vár, nem csendes gate-lazítás. A végső fullnative suite külön ABI p95 6,995/8,095ms, nem UI/hardveres frame qualification. Teljes minták/fixture/source/app/archive/argv/PID/nyers failed kísérletek saját pr68-review6-20261106 receiptben; a rendszerlemez átmeneti telítődése miatt saját metadata/log/controller másolat új T9 publisher könyvtárban, régi adatok/tárak nem takarítva. Részletes, platformonként külön tartott határ: docs/recovery-latency-review.md és UI-skill-reference. Rust/CABI/CI guard/pinek/26F05/Cargo.lock változatlanok a16db0f1 óta.
+
+A natív UI-jelölt friss structure kapuja195Python/generated/planning/documentation PASS (source78f46844), teljes natív89method85PASS/4név szerint változatlan opt-inSKIP/0failure; a korábbi failed viewport-kör nem kerül PASS-ként újracímkézésre. A végső app összes Rust/Swift inputja az aktuális jelölttel byteazonos, a későbbi eltérés csak a tényleges eredményt rögzítő Markdown. Új saját exact-HEAD CI/review következik; F02 kritériumdöntésig nyitott, merge nincs.
+
+
+PR68 a625f3b / run42287641480: Windows/Linux kapuk SUCCESS; Mac195Python/330frameworkRust/37nested/seam3/P18PDF4/IPC10/MCP1 PASS, de native-build ERROR az új SourceLineMapTests összetett filter-kifejezésének régebbi Swift type-check limitje miatt; native-controls UNRUN. Explicit UInt16/Int lépések ugyanazokat a scalar-boundary eseteket és mindhárom eredeti methodot megőrzik. Új review4497251981/4497251994: composition-ruler és CRLF cache/editor drift. Valós saját marked/insertText RED5method:3PASS/2FAIL,9assertion. Javítás után öt method PASS, majd teljes91method87PASS/4változatlan opt-inSKIP/0failure,14.39s; core megmarad kompozíció alatt, end egyetlen undo, literal UTF-16/caret/next-edit/disk kontrollok PASS. Ruler a transient marked textből kér geometriai mapet; accepted edit/composition után a coordinator a normalizált store.texthez igazítja a view-t és caret-et, normalizált replacementből frissíti az indexet. Rust/CABI/pin/guard/Cargo.lock változatlan.
+
+Új84352204 executable-hash:40–40 saját minta, normál80oszlopos LF p95 33,874/37,136ms; egysor32,896/519,369ms. Recovery enabled, runtime-drop/reopen, dirty/revision, recovered undo és változatlan disk PASS. Eredeti16,7ms FAIL marad, javasolt normál50ms kritérium explicit emberi döntésre vár. A korábbi bináris/mérések és a private memory/soft-wrap kontrollok változatlanok; nem átminősített eredmények. Új exact-HEAD CI/review a következő kapu.
+
+
+A CRLF-korrekció végső gyors útja csak a replacement UTF-16 hosszváltozását ellenőrzi; normál billentyűnél nincs teljes dokumentum-összehasonlítás. Az öt új/eredeti line-map method és a teljes91method87PASS/4változatlanSKIP/0failure ismét PASS (20,42s); a külön ABI-p95 7,038/7,036ms, leíró mérés. Ugyanazon3adcfae6 apphash-en40–40 mintás normál LF p95 31,702/30,187ms; egysor33,901/509,957ms. Reopen/dirty/revision/undo/disk kontrollok PASS, eredeti16,7ms cél FAIL, normál50ms kritériumdöntés még függő. Minden korábbi mérés megmarad.
+
+
+A transient index státuszsori fogyasztóján ugyanebben a marked-text esetben külön RED1method/1assertion reprodukálta a 4-es oszlopot a helyes3 helyett. A ruler és caret közös display-geometriával javult, core tovább változatlan marad kompozíció alatt. A teljes91method87PASS/4változatlanSKIP/0failure,19,176s; külön ABI p95 7,130/10,759ms, leíró adat. Legújabb9aefca1b apphash40–40 mintán normál LF p95 34,216/32,177ms, egysor32,856/513,615ms. Mindkét workloadon recovery/reopen/dirty/revision/undo/disk kontrollok PASS; eredeti16,7ms tovább FAIL, normál50ms elfogadás tovább emberi döntésre vár. A korábbi hash-ek/körök megmaradnak, nem változnak új eredménnyé.
+
+
+## PR68 szigorú natív UI-kapu — 2026-11-07
+
+**PR68 szigorú UI-kapu – 2026-11-07:** az eredeti p95 ≤16,7 ms feltétel mind a négy saját csomagolt esetben PASS, ugyanazon `ba15ffbb` binárissal, 40–40 mintán. Egysoros 1 KiB/1 MiB: 13,491/16,109 ms; 80 oszlopos LF: 14,129/15,832 ms. Tényleges képfrissítés, szó szerinti core/editor-egyezés, recovery/reopen/revízió/dirty/undo és változatlan disk PASS. Az 50 ms-os javaslat elutasított; a régi ~608 ms nem megváltoztathatatlan AppKit-korlát. Teljes helyi natív: 133 method =129 PASS /4 változatlan opt-in SKIP /0 failure. Friss helyi integrált17 PASS (Python195/Rust331/native129 PASS+4 SKIP), exact-head hosted CI/review és protected merge még függő; a régi `ef22b231` zöld CI nem minősíti ezt a kódot. [Mérés, hash-ek, minden failed kísérlet és határ](recovery-latency-review.md), [terv](superpowers/plans/2026-11-06-pr68-native-latency.md).
+
+**Megvalósított folytatás:** korlátos, egysoros ASCII-fragmentek és szigorúan tanúsított glyph-geometria; Unicode/attribútum/IME fallback; szó szerinti UTF-16 guardok; rajzolási színezés; field-specific Observation és revíziótól független tab-metadata; valódi hosting lifecycle/viewport tesztek; szinkron, ablakprofilú BGRA viewport-rajz, teljes backing-pixel damage és megismételt caret-redraw elhagyása. A recovery encoder változatlan byte-okat kiadó blokk-összehasonlítást kapott, új archive `1abc94f4`; csak ennek F05 source SHA/size kötése frissült, a másik hat pin/mode/nonce/receipt/flush/ACK guard és a C ABI/lock/profile változatlan. A friss teljes F05-kohort integráltan PASS:329 normal+2 exact parent=331 framework Rust, külön37 nested,0 child PASS/4 normal filtered. Az offline default327 PASS/6 ignored korábbi részhalmaz; nem ehhez hozzáadandó. Globális input/TCC/modell/élő userapp nincs.
+
+A teljes natív kör a végső termékforráson 17,682 s alatt futott. A 39. csomagolt jelölt négy p95-e teljesítette az eredeti határt; a nyers maximumok és az összes korábbi failed kísérlet külön megmaradnak. A friss integrált ellenőrzés, új commit/push, exact-head CI/review és elvárt-heades protected squash merge következik. A c17 befagyasztott futás nincs újraindítva; Windows/Linux/hardveres power-loss/online model/release acceptance nincs állítva.
+
+
+Friss helyi integrált minősítés — 2026-11-07:17/17 required lépés PASS, Python195/Rust331 (329 normal+2 exact parent; külön37 nested;0 child PASS;4 filtered)/native133 (129 PASS+4 változatlan named opt-in SKIP), seam3/P18PDF4/tools6/IPC10/MCP1/schema1. Új saját source/target/fixture és kötelező runtime-clean, source `a6685a87d71f1ec1ee8930a76a578fbff16aeae79d8d4fd966d5acf8a883af36`, parentproof `69451071f8b51debb7051b41edd7221a68c930d07730d25eef8581bdc641da10`. A hiányzó Cargo cache-tag miatti első harness-hiba és annak UNRUN függőségei megmaradnak; az új, saját Cargo-címkézett cache-t használó kör sikeres. A termék/guard forrása azonos, az utána következő változás csak ezt rögzítő dokumentáció. A következő kötelező kapu az új commit exact-head hosted CI/review-je.
+
+
+**PR68 review follow-up – 2026-11-07:** a `7a648ac` exact-head Actions kör mind a hét jobja SUCCESS. Az új review két Minorját közvetlenül javítottuk: a SourceTypesetter fixture-ek létrehozáskor regisztrált, main-actoros teardownja menti a saját tesztállapotot, megszünteti a store-t és eltávolítja a saját projektkönyvtárat; a P01-eredménylap két relatív linkje a valós docs-célra mutat. Teljes új sealed natív kör:133 method=129 PASS/4 változatlan opt-in SKIP/0 hiba,19,472 s; a saját fixture-prefixekből nulla maradt. Termék/Rust/CI-guard nem változott, az azonos binárisú négy szigorú UI-mérés változatlanul érvényes. Az új follow-up head CI/review-je és az F02 részletes mérési bizonyítékának reviewer-hozzáférése még merge-kapu.
+
+Futtatás: `swift test --package-path <sealed-source>/apps/macos --scratch-path <own-swift-cache> --disable-sandbox --jobs 1`, a `native-review-fixture-teardown-complete` controller/forrásmanifest alatt. Mindkét javított dokumentációs célfájl létezése külön ellenőrizve; `git diff --check` PASS. A friss strukturális/generated/planning/documentation ellenőrzés PASS,195 Python-teszt PASS (source `a06701053b15fb582e0b142e41244f951b72d9fcfaec98d3ceb8035bb07bd5a5`); termékkód nem változott.
+
+
+**PR68 fizikai fixture-kapu – 2026-11-07:** a Candidate40 driver a mintavétel és projektmegnyitás előtt a tényleges Data méretét, teljes byte-receptjét, ebből levezetett sorelrendezését/sorszámait és SHA256-át validálja; négy negatív kontrollnak el kell buknia. Azonos bináris40–40 minta mellett egysor p95 13,685/15,868 ms,80-byte LF sorok10,029/11,854 ms, mind a négy PASS az eredeti16,7ms határon. Minden kép/text/recovery/reopen/dirty/revízió/undo/disk kontroll PASS. A Candidate39 régi adatai megmaradnak; annak méret-/layout-címkéihez hiányzott a futáshoz kötött preflight. A40 új nyers riportja/driverje/bindingje külön explicit engedéllyel nyilvános és pontosan visszaolvasott a PR-ban; [részletek](recovery-latency-review.md#final-physical-fixture-qualification--2026-11-07). A termék/Rust/verifier változatlan231f06b CI-je7/7 SUCCESS. Az utolsó dokumentációs head CI/review és az F02 újraellenőrzése még merge-kapu.
+
+Futtatás: a változatlan normál debug profilú, aláírás-ellenőrzött saját app két soros controllerrel (`run-packed-strict-candidate-40-single.py`, `run-packed-strict-candidate-40-lines.py`), egymás után, párhuzamos helyi build/teszt nélkül. Bináris SHA256 `915dcd821c137e03f3233a823724432e444e9f6d03266cf87446cc05e3c17055`; compiled manifest `fe0ca2f9cdc324701f33668ae1d1fe191a842bcc1d25bc749864798a961da718`. Eredeti40minta/p95index37/16700000ns clock és post-clock tényleges új kép assert változatlan; nincs átminősített failed futás. A szöveges méret-/layout-címke helyett a fizikai Data validálása és receptből számolt hash zárja a reviewer által talált bizonyítási rést. Natív133 és195Python a231f06b fixture/link javításon PASS, a fresh Actions teljes7/7 SUCCESS; ez a következő commit csak dokumentáció/skill mérési eljárás.
+
+
+**PR68 recovery-jelzés és végső termékmérés – 2026-11-07:** a szálon kívüli5814084752 Major igazolódott: a UI nem jelenítette meg a recovery.enabled=false/last_error állapotot. A külön recoveryWarning és az editor előtti tartós jelzés most a tényleges hibakódot mutatja, az in-memory szerkesztés/explicit Save és az önálló műveleti hibák megmaradnak; egészséges projektre váltva eltűnik. Két valódi Core/native eset PASS, teljes natív135=131 PASS/4 változatlan SKIP/0 hiba,19,192s. A végső Candidate41 azonos binárisán40–40minta: egysor p95 14,455/14,794ms,80-byte LF11,207/11,726ms, mind a négy PASS az eredeti16,7ms határon; fizikai preflight/kép/text/recovery/reopen/undo/disk kontrollok PASS. A mérődriver byte-azonos40-nel, Rust/archive/CABI/flush/ACK/CI-guard változatlan. [Új végső bizonyíték](recovery-latency-review.md#final-product-qualification-after-recovery-warning--2026-11-07). A friss head CI, a Major célzott újraellenőrzése és a megmaradt formális CHANGES_REQUESTED döntés rendezése még szükséges; puszta38 resolved szál alapján nem történt merge.
+
+Parancs/kör: `native-recovery-warning-complete` sealed `swift test --package-path <source>/apps/macos --scratch-path <own-cache> --disable-sandbox --jobs 1`,135 method; `run-packed-strict-candidate-41-single.py` és `run-packed-strict-candidate-41-lines.py` sorosan, párhuzamos helyi build nélkül. A fallback-teszt csak saját blockerfájlt használ, nem ír élő apphoz/TCC/modellhez; a törölt fixture-ek saját ideiglenes tesztprojektek. Az ENOSPC előtti failed compiler-run megmarad;12 felsorolt saját inputarchive APFS-clone összevonásnál SHA/mode/mtime változatlan, signed app és receipt fixture érintetlen. Bináris `080858ba1f70b3b77b0da24d619622235d55c48476577735cab67abf3e0bbbf4`, compiled map `5963b78376eacdfe455231f9d1446a086650166398f1b7379b004911127cf991`; két külön engedélyezett, pontosan visszaolvasott publikus blokk rögzíti az összes nyers mintát és a teljes40->41 source-map rekonstrukciót.
