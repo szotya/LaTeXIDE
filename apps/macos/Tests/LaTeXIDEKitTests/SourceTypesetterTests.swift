@@ -48,7 +48,15 @@ final class SourceTypesetterTests: XCTestCase {
         let root = parent.appendingPathComponent("native-fragments-" + UUID().uuidString)
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         try Data(source.utf8).write(to: root.appendingPathComponent("main.tex"))
-        let store = WorkspaceStore(); store.open(root)
+        let store = WorkspaceStore()
+        addTeardownBlock {
+            try await MainActor.run {
+                store.save()
+                XCTAssertTrue(store.requestTermination())
+                try FileManager.default.removeItem(at: root)
+            }
+        }
+        store.open(root)
         let editor = NativeEditor(store: store), coordinator = editor.makeCoordinator()
         let scroll = editor.makeScrollView(coordinator: coordinator)
         scroll.frame = NSRect(x: 0, y: 0, width: 500, height: 240)
@@ -99,7 +107,15 @@ final class SourceTypesetterTests: XCTestCase {
         try FileManager.default.createDirectory(at: root, withIntermediateDirectories: true)
         let original = String(repeating: "A", count: 1024 * 1024)
         try Data(original.utf8).write(to: root.appendingPathComponent("main.tex"))
-        let store = WorkspaceStore(); store.open(root)
+        let store = WorkspaceStore()
+        addTeardownBlock {
+            try await MainActor.run {
+                store.save()
+                XCTAssertTrue(store.requestTermination())
+                try FileManager.default.removeItem(at: root)
+            }
+        }
+        store.open(root)
         let editor = NativeEditor(store: store), coordinator = editor.makeCoordinator()
         let scroll = editor.makeScrollView(coordinator: coordinator)
         scroll.frame = NSRect(x: 0, y: 0, width: 500, height: 240)
