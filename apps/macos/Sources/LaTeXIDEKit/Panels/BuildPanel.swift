@@ -1,6 +1,6 @@
 import SwiftUI
 struct BuildPanel: View {
-    @ObservedObject var store: WorkspaceStore
+    let store: WorkspaceStore
     @Environment(\.ideTheme) private var theme
     var body: some View {
         VStack(spacing: 0) {

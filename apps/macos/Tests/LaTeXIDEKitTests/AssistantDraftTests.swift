@@ -4,7 +4,7 @@ import XCTest
 @testable import LaTeXIDEKit
 
 private struct DraftTestWorkspace: View {
-    @ObservedObject var store: WorkspaceStore
+    let store: WorkspaceStore
     @ObservedObject var session: AssistantSession
     var body: some View {
         Group {

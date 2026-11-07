@@ -1,6 +1,6 @@
 import SwiftUI
 public struct WorkspaceView: View {
-    @ObservedObject var store: WorkspaceStore
+    let store: WorkspaceStore
     @ObservedObject var preferences: EditorPreferences
     @Environment(\.colorScheme) private var systemScheme
     @StateObject private var assistant = AssistantSession()

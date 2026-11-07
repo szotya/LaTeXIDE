@@ -41,7 +41,9 @@ final class LineNumberRuler: NSRulerView {
             guard NSMaxRange(range) > glyph else { break }; glyph = NSMaxRange(range)
         }
         let extra = manager.extraLineFragmentRect
-        if view.string.isEmpty || (view.string.hasSuffix("\n") && extra.intersects(visible)) {
+        let count = view.textStorage?.length ?? 0
+        let endsInLineFeed = count > 0 && view.textStorage?.mutableString.character(at: count - 1) == 10
+        if count == 0 || (endsInLineFeed && extra.intersects(visible)) {
             let point = convert(NSPoint(x: 0, y: extra.minY + view.textContainerOrigin.y), from: view)
             draw(lines.starts.count, at: point.y)
         }

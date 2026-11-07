@@ -1,6 +1,6 @@
 import SwiftUI
 struct InspectorPanel: View {
-    @ObservedObject var store: WorkspaceStore
+    let store: WorkspaceStore
     @ObservedObject var session: AssistantSession
     @Environment(\.ideTheme) private var theme
     private var context: AssistantContext {

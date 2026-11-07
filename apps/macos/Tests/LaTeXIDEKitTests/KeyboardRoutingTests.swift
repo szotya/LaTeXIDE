@@ -33,8 +33,12 @@ final class KeyboardRoutingTests: XCTestCase {
         window.isReleasedWhenClosed = false; defer { window.close() }
         let prompt = NSTextView(frame: window.contentView!.bounds); prompt.allowsUndo = true
         window.contentView = prompt; window.makeFirstResponder(prompt)
+        let manager = try XCTUnwrap(prompt.undoManager)
+        // This synchronous fixture owns its group; a later run-loop event must
+        // not try to close the same automatically scheduled group a second time.
+        manager.groupsByEvent = false; manager.beginUndoGrouping()
         prompt.insertText("draft", replacementRange: NSRange(location: 0, length: 0))
-        if let manager = prompt.undoManager, manager.groupingLevel > 0 { manager.endUndoGrouping() }
+        manager.endUndoGrouping()
         store.undoCommand(in: window)
         XCTAssertEqual(prompt.string, ""); XCTAssertEqual(store.text, "agent original"); XCTAssertEqual(store.revision, 2)
         store.redoCommand(in: window)

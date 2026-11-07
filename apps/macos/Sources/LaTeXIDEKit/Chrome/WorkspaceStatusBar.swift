@@ -1,6 +1,6 @@
 import SwiftUI
 struct WorkspaceStatusBar: View {
-    @ObservedObject var store: WorkspaceStore
+    let store: WorkspaceStore
     @Environment(\.ideTheme) private var theme
     @State private var goToLine = false
     @State private var lineInput = ""
@@ -21,7 +21,7 @@ struct WorkspaceStatusBar: View {
                 Text(notice).lineLimit(1).truncationMode(.middle).frame(maxWidth: 280, alignment: .leading).layoutPriority(-1).help(notice)
             }
             Spacer(minLength: 8)
-            if let selected = store.retainedDocuments.first(where: { $0.id == store.selection }), selected.origin == "agent" { Label("Agent", systemImage: "sparkle").foregroundStyle(theme.ui("accent")) }
+            if let selected = store.presentedDocuments.first(where: { $0.id == store.selection }), selected.origin == "agent" { Label("Agent", systemImage: "sparkle").foregroundStyle(theme.ui("accent")) }
             if store.selection != nil {
                 Button { lineInput = String(store.caretLine); goToLine = true } label: { Text("Sor \(store.caretLine), oszlop \(store.caretColumn)").monospacedDigit() }.buttonStyle(.plain)
                     .popover(isPresented: $goToLine) {

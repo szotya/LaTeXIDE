@@ -2,7 +2,7 @@ import AppKit
 import SwiftUI
 
 @MainActor struct NativeEditor: NSViewRepresentable {
-    @ObservedObject var store: WorkspaceStore
+    @Bindable var store: WorkspaceStore
     var theme: ResolvedTheme = ThemeCatalog.shared.palette("graphite").resolve(dark: true)
     var fontSize: Double = 14
     var completionEnabled = true
@@ -12,6 +12,8 @@ import SwiftUI
     }
     func makeScrollView(coordinator: Coordinator) -> NSScrollView {
         let scroll = NSScrollView()
+        scroll.drawsBackground = true; scroll.backgroundColor = theme.ns("editor")
+        scroll.contentView.drawsBackground = true; scroll.contentView.backgroundColor = theme.ns("editor")
         scroll.hasVerticalScroller = true; scroll.hasHorizontalScroller = true; scroll.borderType = .noBorder
         scroll.autohidesScrollers = true; scroll.scrollerStyle = .overlay
         let view = SourceTextView(frame: NSRect(x: 0, y: 0, width: 700, height: 600))
@@ -19,7 +21,11 @@ import SwiftUI
         view.isRichText = false; view.importsGraphics = false; view.allowsUndo = false
         view.isAutomaticQuoteSubstitutionEnabled = false; view.isAutomaticDashSubstitutionEnabled = false
         view.isAutomaticTextReplacementEnabled = false; view.isAutomaticSpellingCorrectionEnabled = false
+        view.isAutomaticTextCompletionEnabled = false
+        view.inlinePredictionType = .no
+        if #available(macOS 15, *) { view.mathExpressionCompletionType = .no }
         view.isContinuousSpellCheckingEnabled = false; view.isGrammarCheckingEnabled = false
+        view.enabledTextCheckingTypes = 0
         view.usesFindBar = true; view.isIncrementalSearchingEnabled = true
         view.font = .monospacedSystemFont(ofSize: fontSize, weight: .regular)
         view.textContainerInset = NSSize(width: 14, height: 18)
@@ -27,7 +33,11 @@ import SwiftUI
         view.minSize = .zero; view.maxSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         view.autoresizingMask = [.width]; view.textContainer?.containerSize = NSSize(width: CGFloat.greatestFiniteMagnitude, height: CGFloat.greatestFiniteMagnitude)
         view.textContainer?.widthTracksTextView = false
+        // Install after sizing/font configuration so initial native layout is valid.
+        view.textContainer?.replaceLayoutManager(SourceLayoutManager())
+        view.layoutManager?.typesetter = SourceTypesetter()
         view.setAccessibilityLabel("LaTeX-forrás")
+        view.wantsLayer = true
         scroll.documentView = view
         scroll.verticalRulerView = LineNumberRuler(scrollView: scroll, source: view)
         scroll.hasVerticalRuler = true; scroll.rulersVisible = true
@@ -57,7 +67,8 @@ import SwiftUI
                 ? store.editorStates[store.selection ?? ""] ?? EditorViewState(selection: NSRange(location: 0, length: 0), scrollOrigin: .zero)
                 : EditorViewState(selection: view.selectedRange(), scrollOrigin: scroll.contentView.bounds.origin)
             coordinator.rendering = true
-            if view.string != store.text { view.string = store.text }
+            view.prepareSourceLayout(for: store.text)
+            if !view.hasLiteralText(store.text) { view.string = store.text }
             view.setSelectedRange(EditorViewState.safeSelection(state.selection, in: view.string))
             coordinator.document = store.selection; coordinator.project = store.root
             coordinator.renderedRevision = store.revision; coordinator.lineMap = SourceLineMap(view.string)
@@ -65,6 +76,7 @@ import SwiftUI
                 view.layoutManager?.ensureLayout(forBoundingRect: NSRect(origin: state.scrollOrigin, size: scroll.contentSize), in: container)
             }
             scroll.contentView.scroll(to: state.scrollOrigin); scroll.reflectScrolledClipView(scroll.contentView)
+            coordinator.restoreViewportAfterHostingLayout(view, origin: state.scrollOrigin)
             coordinator.rendering = false
             let expectedDocument = store.selection, expectedRevision = store.revision
             DispatchQueue.main.async { [weak view, weak coordinator] in
@@ -74,6 +86,7 @@ import SwiftUI
         }
         if let navigation = store.takeNavigation(for: store.selection) {
             if navigation.revision == nil || navigation.revision == store.revision {
+                coordinator.cancelViewportRestore()
                 let selection = navigation.range ?? NSRange(location: coordinator.lineMap.offset(line: navigation.line), length: 0)
                 view.setSelectedRange(EditorViewState.safeSelection(selection, in: view.string))
                 view.scrollRangeToVisible(view.selectedRange()); view.window?.makeFirstResponder(view)
@@ -82,7 +95,8 @@ import SwiftUI
         if coordinator.lastFocus != store.editorFocusVersion {
             coordinator.lastFocus = store.editorFocusVersion; view.window?.makeFirstResponder(view)
         }
-        view.isEditable = store.selection != nil
+        let editable = store.selection != nil
+        if view.isEditable != editable { view.isEditable = editable }
         if changed || view.editorTheme != theme || view.font?.pointSize != CGFloat(fontSize) { coordinator.applyColoring(view, theme: theme) }
     }
     @MainActor final class Coordinator: NSObject, NSTextViewDelegate {
@@ -102,6 +116,8 @@ import SwiftUI
         private var completionWork: DispatchWorkItem?
         private var observer: NSObjectProtocol?
         private var findObserver: NSObjectProtocol?
+        private var viewportRestoreSerial = 0
+        private var viewportRestorePending = false
         init(_ store: WorkspaceStore) { self.store = store; self.project = store.root }
         deinit { work?.cancel(); completionWork?.cancel(); if let observer { NotificationCenter.default.removeObserver(observer) }; if let findObserver { NotificationCenter.default.removeObserver(findObserver) } }
         func observe(scroll: NSScrollView, view: SourceTextView) {
@@ -114,12 +130,42 @@ import SwiftUI
                 guard let self, let view else { return }; self.schedule(view)
                 self.completion.dismiss()
                 self.capturePresentation(view)
+                view.setNeedsDisplay(view.visibleRect, avoidAdditionalLayout: true)
                 scroll.verticalRulerView?.needsDisplay = true
             }
         }
         func capturePresentation(_ view: SourceTextView) {
-            guard !rendering, let document, project == store.root else { return }
+            guard !rendering, !viewportRestorePending, let document, project == store.root else { return }
             store.editorStates[document] = EditorViewState(selection: view.selectedRange(), scrollOrigin: view.enclosingScrollView?.contentView.bounds.origin ?? .zero)
+        }
+        func cancelViewportRestore() {
+            viewportRestoreSerial += 1; viewportRestorePending = false
+        }
+        /// SwiftUI can give the representable its final size after updateNSView.
+        /// Restore again on the next main turn, before accepting presentation captures.
+        func restoreViewportAfterHostingLayout(_ view: SourceTextView, origin: NSPoint) {
+            cancelViewportRestore()
+            guard let scroll = view.enclosingScrollView else { return }
+            // A hosted representable is first updated before it joins its window.
+            // Standalone, already-sized test/editor views keep synchronous capture.
+            guard view.window != nil || scroll.contentSize.width <= 0 || scroll.contentSize.height <= 0 else { return }
+            viewportRestorePending = true
+            let serial = viewportRestoreSerial, expectedDocument = document, expectedProject = project, expectedRevision = renderedRevision
+            DispatchQueue.main.async { [weak self, weak view] in
+                guard let self, let view, self.viewportRestoreSerial == serial else { return }
+                self.viewportRestorePending = false
+                guard self.document == expectedDocument, self.project == expectedProject,
+                      self.store.selection == expectedDocument, self.store.root == expectedProject,
+                      self.store.revision == expectedRevision, !self.store.isComposing,
+                      let scroll = view.enclosingScrollView else { return }
+                self.rendering = true
+                if let manager = view.layoutManager, let container = view.textContainer {
+                    manager.ensureLayout(forBoundingRect: NSRect(origin: origin, size: scroll.contentSize), in: container)
+                }
+                scroll.contentView.scroll(to: origin); scroll.reflectScrolledClipView(scroll.contentView)
+                self.rendering = false
+                self.capturePresentation(view)
+            }
         }
         func schedule(_ view: SourceTextView, immediate: Bool = false) {
             work?.cancel()
@@ -134,8 +180,8 @@ import SwiftUI
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.08, execute: item)
         }
         func applyColoring(_ view: SourceTextView, theme: ResolvedTheme) {
-            guard !store.isComposing, !view.hasMarkedText(), let id = store.selection, view.string == store.text else { return }
-            let count = (view.string as NSString).length
+            guard !store.isComposing, !view.hasMarkedText(), let id = store.selection, view.hasLiteralText(store.text) else { return }
+            let count = view.textStorage?.length ?? 0
             var range = NSRange(location: 0, length: min(count, 32768))
             if let scroll = view.enclosingScrollView, let manager = view.layoutManager, let container = view.textContainer, count > 0 {
                 let visible = scroll.documentVisibleRect.offsetBy(dx: -view.textContainerOrigin.x, dy: -view.textContainerOrigin.y)
@@ -152,22 +198,24 @@ import SwiftUI
             let selected = view.selectedRange(); let origin = view.enclosingScrollView?.contentView.bounds.origin
             rendering = true
             if view.editorTheme != theme || view.font?.pointSize != CGFloat(fontSize) {
+                view.layoutManager?.removeTemporaryAttribute(.foregroundColor, forCharacterRange: NSRange(location: 0, length: count))
                 view.editorTheme = theme; view.backgroundColor = theme.ns("editor"); view.textColor = theme.ns("text")
+                view.enclosingScrollView?.backgroundColor = theme.ns("editor")
+                view.enclosingScrollView?.contentView.backgroundColor = theme.ns("editor")
                 view.insertionPointColor = theme.ns("text"); view.selectedTextAttributes = [.backgroundColor: theme.ns("selection"), .foregroundColor: theme.ns("text")]
                 view.font = .monospacedSystemFont(ofSize: fontSize, weight: .regular)
                 let paragraph = NSMutableParagraphStyle(); paragraph.lineHeightMultiple = 1.40; paragraph.defaultTabInterval = fontSize * 2.4
                 view.defaultParagraphStyle = paragraph
                 if count > 0 { view.textStorage?.addAttribute(.paragraphStyle, value: paragraph, range: NSRange(location: 0, length: count)) }
             }
-            view.textStorage?.beginEditing()
-            if range.length > 0 { view.textStorage?.addAttribute(.foregroundColor, value: theme.ns("text"), range: range) }
+            // Syntax colors affect drawing only; storage edits regenerate paragraph glyphs.
+            if range.length > 0 { view.layoutManager?.addTemporaryAttribute(.foregroundColor, value: theme.ns("text"), forCharacterRange: range) }
             for span in spans where span.start >= 0 && span.length > 0 && span.start <= count - span.length {
-                view.textStorage?.addAttribute(.foregroundColor, value: theme.syntaxColor(kind: span.kind), range: NSRange(location: span.start, length: span.length))
+                view.layoutManager?.addTemporaryAttribute(.foregroundColor, value: theme.syntaxColor(kind: span.kind), forCharacterRange: NSRange(location: span.start, length: span.length))
             }
-            view.textStorage?.endEditing()
             view.typingAttributes = [.font: NSFont.monospacedSystemFont(ofSize: fontSize, weight: .regular), .foregroundColor: theme.ns("text"), .paragraphStyle: view.defaultParagraphStyle ?? NSParagraphStyle.default]
-            view.setSelectedRange(selected)
-            if let origin { view.enclosingScrollView?.contentView.scroll(to: origin) }
+            if view.selectedRange() != selected { view.setSelectedRange(selected) }
+            if let origin, view.enclosingScrollView?.contentView.bounds.origin != origin { view.enclosingScrollView?.contentView.scroll(to: origin) }
             rendering = false
             view.setNeedsDisplay(view.visibleRect, avoidAdditionalLayout: true)
             view.enclosingScrollView?.verticalRulerView?.needsDisplay = true
@@ -198,9 +246,10 @@ import SwiftUI
             }
             catch { store.failure = error.localizedDescription; rendering = true; view.string = store.text; rendering = false }
             lineMap = SourceLineMap(view.string); document = store.selection; renderedRevision = store.revision
-            if let source = view as? SourceTextView { schedule(source) }
+            if let source = view as? SourceTextView { source.prepareSourceLayout(); schedule(source) }
         }
         func textView(_ textView: NSTextView, shouldChangeTextIn affectedCharRange: NSRange, replacementString: String?) -> Bool {
+            if !rendering { cancelViewportRestore() }
             if !rendering, !store.isComposing { pending = (affectedCharRange, replacementString ?? "") }
             return true
         }
@@ -225,15 +274,23 @@ import SwiftUI
                 lineMap = SourceLineMap(view.string)
             }
             document = store.selection; renderedRevision = store.revision
+            view.prepareSourceLayout()
             schedule(view); scheduleCompletion(view); reportCaret(view)
         }
         func textView(_ textView: NSTextView, doCommandBy commandSelector: Selector) -> Bool {
+            cancelViewportRestore()
             guard let source = textView as? SourceTextView else { return false }
             return completion.handle(commandSelector, view: source)
         }
         func textViewDidChangeSelection(_ notification: Notification) {
-            guard !rendering, let view = notification.object as? SourceTextView else { return }
+            // Native input can notify selection before its core edit is acknowledged.
+            // textDidChange reports the final caret and redraw after updating the index.
+            guard !rendering, pending == nil, let view = notification.object as? SourceTextView else { return }
             capturePresentation(view)
+            // AppKit can repeat the final notification after textDidChange already
+            // reported this caret. Native text/selection damage is still recorded
+            // by the view; only our extra whole-viewport highlight redraw is redundant.
+            guard store.editorSelection != view.selectedRange() || store.isComposing || view.hasMarkedText() else { return }
             scheduleCompletion(view)
             reportCaret(view); view.setNeedsDisplay(view.visibleRect, avoidAdditionalLayout: true)
             view.enclosingScrollView?.verticalRulerView?.needsDisplay = true

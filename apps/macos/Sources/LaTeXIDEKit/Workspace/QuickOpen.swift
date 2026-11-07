@@ -4,7 +4,7 @@ private struct IDECommand: Identifiable {
     let action: () -> Void
 }
 struct QuickOpen: View {
-    @ObservedObject var store: WorkspaceStore
+    let store: WorkspaceStore
     @Environment(\.ideTheme) private var theme
     @State private var query = ""
     @State private var index = 0
@@ -63,8 +63,8 @@ struct QuickOpen: View {
                                             Text((file as NSString).lastPathComponent).font(.system(size: 12))
                                             Text((file as NSString).deletingLastPathComponent).font(.system(size: 10)).foregroundStyle(theme.ui("secondary")).lineLimit(1).truncationMode(.middle)
                                             Spacer()
-                                            if let doc = store.retainedDocuments.first(where: { $0.id == file }) {
-                                                Text(doc.dirty ? "módosítva" : store.tabs.contains(where: { $0.id == file }) ? "nyitva" : "elrejtve").font(.system(size: 9)).foregroundStyle(theme.ui("secondary"))
+                                            if let doc = store.presentedDocuments.first(where: { $0.id == file }) {
+                                                Text(doc.dirty ? "módosítva" : store.presentedTabs.contains(where: { $0.id == file }) ? "nyitva" : "elrejtve").font(.system(size: 9)).foregroundStyle(theme.ui("secondary"))
                                             }
                                         }.padding(.horizontal, 12).frame(height: 36).foregroundStyle(theme.ui("text")).background(theme.ui(offset == index ? "selection" : "sidebar")).contentShape(Rectangle())
                                     }.buttonStyle(.plain).id(offset)

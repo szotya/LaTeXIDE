@@ -145,20 +145,34 @@ impl EditLog {
 }
 
 fn text_delta(w: &mut Writer, before: &str, after: &str) -> Result<()> {
-    let mut start = before
-        .bytes()
-        .zip(after.bytes())
-        .take_while(|(a, b)| a == b)
-        .count();
+    // Compare equal spans in blocks so a front edit does not inspect every
+    // unchanged byte individually. The scalar-boundary trims and wire format
+    // remain identical to the original bytewise encoder.
+    const BLOCK: usize = 4096;
+    let a = before.as_bytes();
+    let b = after.as_bytes();
+    let common = a.len().min(b.len());
+    let mut start = 0;
+    while common - start >= BLOCK && a[start..start + BLOCK] == b[start..start + BLOCK] {
+        start += BLOCK;
+    }
+    while start < common && a[start] == b[start] {
+        start += 1;
+    }
     while !before.is_char_boundary(start) || !after.is_char_boundary(start) {
         start -= 1;
     }
-    let mut suffix = before.as_bytes()[start..]
-        .iter()
-        .rev()
-        .zip(after.as_bytes()[start..].iter().rev())
-        .take_while(|(a, b)| a == b)
-        .count();
+    let limit = (a.len() - start).min(b.len() - start);
+    let mut suffix = 0;
+    while limit - suffix >= BLOCK
+        && a[a.len() - suffix - BLOCK..a.len() - suffix]
+            == b[b.len() - suffix - BLOCK..b.len() - suffix]
+    {
+        suffix += BLOCK;
+    }
+    while suffix < limit && a[a.len() - suffix - 1] == b[b.len() - suffix - 1] {
+        suffix += 1;
+    }
     while !before.is_char_boundary(before.len() - suffix)
         || !after.is_char_boundary(after.len() - suffix)
     {
@@ -558,6 +572,87 @@ fn publication_barrier(file: &File) -> Result<()> {
 #[cfg(all(unix, not(target_os = "macos")))]
 fn full_media_sync(file: &File) -> Result<()> {
     file.sync_all().map_err(io)
+}
+
+#[cfg(test)]
+mod text_delta_tests {
+    use super::*;
+
+    fn legacy_bytes(before: &str, after: &str) -> Vec<u8> {
+        let mut start = before
+            .bytes()
+            .zip(after.bytes())
+            .take_while(|(a, b)| a == b)
+            .count();
+        while !before.is_char_boundary(start) || !after.is_char_boundary(start) {
+            start -= 1;
+        }
+        let mut suffix = before.as_bytes()[start..]
+            .iter()
+            .rev()
+            .zip(after.as_bytes()[start..].iter().rev())
+            .take_while(|(a, b)| a == b)
+            .count();
+        while !before.is_char_boundary(before.len() - suffix)
+            || !after.is_char_boundary(after.len() - suffix)
+        {
+            suffix -= 1;
+        }
+        let mut writer = Writer(Vec::new());
+        writer.u64(start as u64);
+        writer.u64((before.len() - start - suffix) as u64);
+        writer.string(&after[start..after.len() - suffix]).unwrap();
+        writer.0
+    }
+
+    fn check(before: &str, after: &str) {
+        let mut writer = Writer(Vec::new());
+        text_delta(&mut writer, before, after).unwrap();
+        assert_eq!(
+            writer.0,
+            legacy_bytes(before, after),
+            "journal bytes changed"
+        );
+        let mut restored = before.to_owned();
+        let mut reader = Reader::new(&writer.0);
+        apply_text(&mut restored, &mut reader).unwrap();
+        reader.end().unwrap();
+        assert_eq!(restored, after);
+    }
+
+    #[test]
+    fn blocked_text_delta_preserves_legacy_bytes_and_utf8_round_trips() {
+        let small = ["", "a", "é", "ê", "🙂", "🙃", "e\u{301}", "a\nb", "🧑‍🔬"];
+        for before in small {
+            for after in small {
+                check(before, after);
+            }
+        }
+        for boundary in [4095, 4096, 4097, 8191, 8192, 8193] {
+            let prefix = "A".repeat(boundary);
+            let suffix = "Z".repeat(boundary);
+            for (before, after) in [("é", "ê"), ("🙂", "🙃"), ("e\u{301}", "é"), ("", "\n")]
+            {
+                check(
+                    &format!("{prefix}{before}{suffix}"),
+                    &format!("{prefix}{after}{suffix}"),
+                );
+            }
+        }
+        let before = "A".repeat(crate::MAX_FILE_BYTES);
+        check(&before, &before);
+        for offset in [
+            0,
+            4095,
+            4096,
+            crate::MAX_FILE_BYTES / 2,
+            crate::MAX_FILE_BYTES - 1,
+        ] {
+            let mut after = before.clone();
+            after.replace_range(offset..offset + 1, "B");
+            check(&before, &after);
+        }
+    }
 }
 
 #[cfg(all(test, target_os = "macos"))]

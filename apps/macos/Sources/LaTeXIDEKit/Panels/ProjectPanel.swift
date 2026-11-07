@@ -1,6 +1,6 @@
 import SwiftUI
 struct ProjectPanel: View {
-    @ObservedObject var store: WorkspaceStore
+    let store: WorkspaceStore
     @Environment(\.ideTheme) private var theme
     @State private var query = ""
     var body: some View {
@@ -55,7 +55,7 @@ struct ProjectPanel: View {
             Label("Közvetlen szerkesztés", systemImage: "pencil.line")
             Label("Külön mentés", systemImage: "square.and.arrow.down")
             Label("Közös visszavonás", systemImage: "arrow.uturn.backward")
-            if let document = store.retainedDocuments.first(where: { $0.id == store.selection }), document.origin == "agent" {
+            if let document = store.presentedDocuments.first(where: { $0.id == store.selection }), document.origin == "agent" {
                 Text("Az aktív fájlt legutóbb agent módosította.").font(.system(size: 11)).foregroundStyle(theme.ui("accent")).padding(.top, 4)
             }
         }.font(.system(size: 11)).foregroundStyle(theme.ui("text")).padding(15).frame(maxWidth: .infinity, alignment: .leading)
@@ -63,7 +63,7 @@ struct ProjectPanel: View {
 }
 private struct ProjectNodeRow: View {
     let node: ProjectNode
-    @ObservedObject var store: WorkspaceStore
+    let store: WorkspaceStore
     let level: Int
     @Environment(\.ideTheme) private var theme
     @State private var expanded = true
@@ -78,7 +78,7 @@ private struct ProjectNodeRow: View {
                     else { Color.clear.frame(width: 10); FileTypeIcon(path: node.id) }
                     Text(node.name).font(.system(size: 11.5)).lineLimit(1).truncationMode(.middle)
                     Spacer(minLength: 4)
-                    if store.retainedDocuments.contains(where: { $0.id == node.id && $0.dirty }) { Circle().fill(theme.ui("accent")).frame(width: 5, height: 5) }
+                    if store.presentedDocuments.contains(where: { $0.id == node.id && $0.dirty }) { Circle().fill(theme.ui("accent")).frame(width: 5, height: 5) }
                 }.foregroundStyle(theme.ui("text")).padding(.leading, CGFloat(8 + level * 14)).padding(.trailing, 10).frame(height: 26)
                     .background(theme.ui(store.selection == node.file && node.file != nil ? "selection" : hover ? "hover" : "sidebar")).contentShape(Rectangle())
             }.buttonStyle(.plain).onHover { hover = $0 }.help(node.id)

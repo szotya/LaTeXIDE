@@ -15,7 +15,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 }
 @main struct LaTeXIDEApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    @StateObject private var store = WorkspaceStore()
+    @State private var store = WorkspaceStore()
     @StateObject private var preferences = EditorPreferences()
     var body: some Scene {
         Window("LaTeX IDE", id: "workspace") {

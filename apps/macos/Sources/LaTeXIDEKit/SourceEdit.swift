@@ -9,13 +9,13 @@ struct SourceEdit: Encodable {
     let end: SourcePosition
     let text: String
     static func make(text: String, range: NSRange, replacement: String) throws -> SourceEdit {
-        let units = Array(text.utf16)
+        let source = text as NSString, count = source.length
         func scalarBoundary(_ offset: Int) -> Bool {
-            guard offset >= 0, offset <= units.count else { return false }
-            return offset == 0 || offset == units.count || !(0xD800...0xDBFF).contains(units[offset - 1]) || !(0xDC00...0xDFFF).contains(units[offset])
+            guard offset >= 0, offset <= count else { return false }
+            return offset == 0 || offset == count || !(0xD800...0xDBFF).contains(source.character(at: offset - 1)) || !(0xDC00...0xDFFF).contains(source.character(at: offset))
         }
-        guard range.location != NSNotFound, range.length <= units.count,
-              range.location <= units.count - range.length,
+        guard range.location != NSNotFound, range.location >= 0, range.length >= 0, range.length <= count,
+              range.location <= count - range.length,
               scalarBoundary(range.location), scalarBoundary(range.location + range.length),
               let swiftRange = Range(range, in: text) else {
             throw RuntimeFailure(message: "Érvénytelen UTF-16 tartomány.")
