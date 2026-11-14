@@ -161,3 +161,54 @@ fn check_recovery(id: &str) {
 #[test] fn recovery_02_valid_nextline_opener() { check_recovery("recovery_02_valid_nextline_opener"); }
 #[test] fn recovery_03_nested_quoted_literal() { check_recovery("recovery_03_nested_quoted_literal"); }
 #[test] fn recovery_04_comment_boundary() { check_recovery("recovery_04_comment_boundary"); }
+
+fn check_literal_comment(comment: &str) {
+    let source = format!("{comment}\n@book{{ok,title={{OK}}}}\n");
+    let parsed = parse_bibliography(&source);
+    assert_eq!(parsed.render(), source, "COMMENT_LITERAL_BYTES");
+    let report = parsed.report();
+    assert_eq!(report.entries.iter().map(|entry| entry.key.as_str()).collect::<Vec<_>>(), vec!["ok"], "COMMENT_NEXT_ENTRY");
+    assert!(report.diagnostics.is_empty(), "COMMENT_BALANCED_NO_DIAGNOSTIC: {:?}", report.diagnostics);
+    assert_eq!(report.entries[0].fields[0].raw_value, "{OK}");
+    let start = source.find("@book{ok").unwrap();
+    assert_eq!(report.entries[0].range.start, source[..start].encode_utf16().count() as u32);
+    assert_eq!(parsed.fragments()[0].kind, FragmentKind::Directive);
+    assert_eq!(parsed.fragments()[0].raw, comment, "COMMENT_LITERAL_BOUNDARY");
+    let mut cursor = 0;
+    for fragment in parsed.fragments() {
+        assert_eq!(fragment.bytes.start, cursor, "COMMENT_CONTIGUOUS_PARTITION");
+        assert_eq!(fragment.raw.as_bytes(), &source.as_bytes()[fragment.bytes.clone()]);
+        cursor = fragment.bytes.end;
+    }
+    assert_eq!(cursor, source.len(), "COMMENT_FULL_PARTITION");
+    assert_eq!(inspect_bibliography(&source), *report);
+}
+
+#[test]
+fn review_comment_quote_is_literal_and_next_entry_is_kept() {
+    check_literal_comment("@comment{😀 A \"literal quote}");
+    check_literal_comment("@CoMmEnT(😀 A \"literal quote)");
+}
+
+#[test]
+fn review_comment_percent_is_literal_and_next_entry_is_kept() {
+    check_literal_comment("@comment{50% complete}");
+    check_literal_comment("@comment(50% complete)");
+}
+
+#[test]
+fn review_comment_nested_delimiters_keep_fake_entries_literal() {
+    check_literal_comment("@comment{nested {text} @book{fake,title={Hidden}}}");
+    check_literal_comment("@comment(nested (text) and no entry)");
+}
+
+#[test]
+fn review_comment_unterminated_retains_bytes_and_diagnostic() {
+    let source = "@comment{unfinished \" %\n";
+    let parsed = parse_bibliography(source);
+    assert_eq!(parsed.render(), source);
+    assert!(parsed.report().entries.is_empty());
+    assert_eq!(parsed.report().diagnostics.len(), 1);
+    assert_eq!(parsed.report().diagnostics[0].code, "unterminated_directive");
+    assert_eq!(parsed.report().diagnostics[0].anchor.range.start, source.encode_utf16().count() as u32);
+}

@@ -4,16 +4,21 @@ use latexide_contracts::{DiagnosticSeverity, SourceAnchor, SourceDiagnostic, Utf
 use latexide_contracts::bibliography::{BibEntry, BibField, BibliographyReport};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
+/// Source-partition role; directive payloads are retained without evaluation.
 pub enum FragmentKind { Trivia, Entry, Directive, Malformed }
 
 /// A contiguous source partition. Entry raw bytes include their field trivia.
 #[derive(Debug, Clone)]
 pub struct Fragment<'a> {
     pub kind: FragmentKind,
+    /// Half-open UTF-8 byte offsets into the borrowed source, not UTF-16 units.
     pub bytes: Range<usize>,
+    /// The unchanged source slice for `bytes`, borrowed for the input lifetime.
     pub raw: &'a str,
 }
 
+/// Parsed report and contiguous fragments borrowing the supplied logical text.
+/// Report ranges use UTF-16 code units; fragment ranges use UTF-8 bytes.
 #[derive(Debug, Clone)]
 pub struct LosslessBibliography<'a> {
     source: &'a str,
@@ -122,6 +127,24 @@ fn scan(source: &str, start: usize, end: usize, outer_close: Option<u8>) -> (usi
     (end, false)
 }
 
+/// Comment payloads are literal; only their matching delimiters are balanced.
+fn scan_comment(source: &str, open: usize) -> (usize, bool) {
+    let opening = source.as_bytes()[open];
+    let closing = if opening == b'{' { b'}' } else { b')' };
+    let mut depth = 0usize;
+    let mut p = open + 1;
+    while p < source.len() {
+        let byte = source.as_bytes()[p];
+        if byte == opening { depth += 1; }
+        else if byte == closing {
+            if depth == 0 { return (p, true); }
+            depth -= 1;
+        }
+        p = next(source, p);
+    }
+    (source.len(), false)
+}
+
 impl<'a> Parser<'a> {
     fn fragment(&mut self, kind: FragmentKind, start: usize, end: usize) {
         if start < end { self.fragments.push(Fragment { kind, bytes: start..end, raw: &self.source[start..end] }); }
@@ -215,10 +238,15 @@ impl<'a> Parser<'a> {
                 continue;
             }
             let close = if self.source.as_bytes()[open] == b'{' { b'}' } else { b')' };
-            let (body_end, closed) = scan(self.source, open + 1, self.source.len(), Some(close));
+            let directive_kind = kind.to_ascii_lowercase();
+            let (body_end, closed) = if directive_kind == "comment" {
+                scan_comment(self.source, open)
+            } else {
+                scan(self.source, open + 1, self.source.len(), Some(close))
+            };
             let end = if closed { body_end + 1 } else { body_end };
             self.fragment(FragmentKind::Trivia, partition, start);
-            if matches!(kind.to_ascii_lowercase().as_str(), "comment" | "string" | "preamble") {
+            if matches!(directive_kind.as_str(), "comment" | "string" | "preamble") {
                 self.fragment(FragmentKind::Directive, start, end);
                 if !closed { self.diagnostic("unterminated_directive", "directive is missing its closing delimiter".into(), end, end, DiagnosticSeverity::Error); }
             } else {
@@ -233,6 +261,20 @@ impl<'a> Parser<'a> {
     }
 }
 
+/// Inspect supplied BibTeX text without changing or resolving its raw contents.
+///
+/// The returned fragments borrow `source`; `render()` reconstructs every input
+/// byte. Fragment offsets are UTF-8 bytes, whereas entry/diagnostic ranges are
+/// UTF-16 code units. Diagnostics use the standalone `bibliography.bib` identity,
+/// revision `None` and the exact input digest; host identity binding is separate.
+///
+/// Basic workflow:
+/// ```text
+/// let source = "@book{key,title={Title}}";
+/// let parsed = parse_bibliography(source);
+/// let entries = &parsed.report().entries;
+/// assert_eq!(parsed.render(), source);
+/// ```
 pub fn parse_bibliography(source: &str) -> LosslessBibliography<'_> {
     Parser {
         source,
