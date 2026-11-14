@@ -1,0 +1,195 @@
+{
+  "schema": "p12-malformed-next-entry-literal-oracle/v1",
+  "task_id": "P12-MALFORMED-NEXT-ENTRY-RECOVERY-20261114-6c0a91ef",
+  "scope_basis": "exact task expectation plus existing P12 malformed input preservation/diagnostic goal; not a full recovery grammar",
+  "expected_from_parser": false,
+  "fixtures": {
+    "recovery_01_malformed_next_entry": {
+      "source_file": "recovery_01_malformed_next_entry.bib",
+      "source_sha256": "8be949df2bf2ea6415bffcba3e0426f96949d4a325a361d5bd478fc14af39b19",
+      "source_utf16_length": 33,
+      "fragment_kinds": [
+        "malformed",
+        "trivia",
+        "entry",
+        "trivia"
+      ],
+      "report": {
+        "entries": [
+          {
+            "key": "ok",
+            "entry_type": "book",
+            "fields": [
+              {
+                "name": "title",
+                "raw_value": "{Recovered}"
+              }
+            ],
+            "range": {
+              "start": 5,
+              "length": 27
+            }
+          }
+        ],
+        "diagnostics": [
+          {
+            "anchor": {
+              "document_id": "bibliography.bib",
+              "revision": null,
+              "content_sha256": "8be949df2bf2ea6415bffcba3e0426f96949d4a325a361d5bd478fc14af39b19",
+              "line": 0,
+              "character": 4,
+              "range": {
+                "start": 4,
+                "length": 0
+              }
+            },
+            "severity": "error",
+            "code": "missing_entry_delimiter",
+            "message": "entry is missing its opening delimiter"
+          }
+        ],
+        "duplicate_keys": []
+      }
+    },
+    "recovery_02_valid_nextline_opener": {
+      "source_file": "recovery_02_valid_nextline_opener.bib",
+      "source_sha256": "2c2de9f64cb252a61d53a5517ed26d1847fb026ee9e2fd9de327866f929c4ca2",
+      "source_utf16_length": 39,
+      "fragment_kinds": [
+        "entry",
+        "trivia"
+      ],
+      "report": {
+        "entries": [
+          {
+            "key": "multiline",
+            "entry_type": "book",
+            "fields": [
+              {
+                "name": "title",
+                "raw_value": "{Across lines}"
+              }
+            ],
+            "range": {
+              "start": 0,
+              "length": 38
+            }
+          }
+        ],
+        "diagnostics": [],
+        "duplicate_keys": []
+      }
+    },
+    "recovery_03_nested_quoted_literal": {
+      "source_file": "recovery_03_nested_quoted_literal.bib",
+      "source_sha256": "6c9fb4ecfd77eb991150c4b2a1bfb1aa5f635fc88d82d2642d654a5faecf8277",
+      "source_utf16_length": 64,
+      "fragment_kinds": [
+        "malformed",
+        "trivia",
+        "entry",
+        "trivia"
+      ],
+      "report": {
+        "entries": [
+          {
+            "key": "nest",
+            "entry_type": "book",
+            "fields": [
+              {
+                "name": "title",
+                "raw_value": "{A {nested} @literal}"
+              },
+              {
+                "name": "note",
+                "raw_value": "\"Q \\\"quote\\\"\""
+              }
+            ],
+            "range": {
+              "start": 5,
+              "length": 58
+            }
+          }
+        ],
+        "diagnostics": [
+          {
+            "anchor": {
+              "document_id": "bibliography.bib",
+              "revision": null,
+              "content_sha256": "6c9fb4ecfd77eb991150c4b2a1bfb1aa5f635fc88d82d2642d654a5faecf8277",
+              "line": 0,
+              "character": 4,
+              "range": {
+                "start": 4,
+                "length": 0
+              }
+            },
+            "severity": "error",
+            "code": "missing_entry_delimiter",
+            "message": "entry is missing its opening delimiter"
+          }
+        ],
+        "duplicate_keys": []
+      }
+    },
+    "recovery_04_comment_boundary": {
+      "source_file": "recovery_04_comment_boundary.bib",
+      "source_sha256": "7d3b8c5037e5f8ebfd711fcabe38ac831c695c6c883b4ffea908cd3018fafad7",
+      "source_utf16_length": 82,
+      "fragment_kinds": [
+        "malformed",
+        "trivia",
+        "entry",
+        "trivia"
+      ],
+      "report": {
+        "entries": [
+          {
+            "key": "commented",
+            "entry_type": "book",
+            "fields": [
+              {
+                "name": "title",
+                "raw_value": "{Kept}"
+              }
+            ],
+            "range": {
+              "start": 52,
+              "length": 29
+            }
+          }
+        ],
+        "diagnostics": [
+          {
+            "anchor": {
+              "document_id": "bibliography.bib",
+              "revision": null,
+              "content_sha256": "7d3b8c5037e5f8ebfd711fcabe38ac831c695c6c883b4ffea908cd3018fafad7",
+              "line": 0,
+              "character": 21,
+              "range": {
+                "start": 21,
+                "length": 0
+              }
+            },
+            "severity": "error",
+            "code": "missing_entry_delimiter",
+            "message": "entry is missing its opening delimiter"
+          }
+        ],
+        "duplicate_keys": []
+      }
+    }
+  },
+  "baseline": {
+    "case": "recovery_01_malformed_next_entry",
+    "expected": "BASELINE_RED",
+    "marker": "NEXT_ENTRY_RECOVERED"
+  },
+  "guards": {
+    "guard_wrong_utf16_span": "WRONG_UTF16_SPAN",
+    "guard_lost_trivia": "LOST_TRIVIA"
+  },
+  "digest": "2811ab9ba7d7b4f7e0720333621302b03692303ad8937f76db06f0b3e7ce3306"
+}

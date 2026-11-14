@@ -249,9 +249,13 @@ def libtest_observation(raw, allow_empty=False):
             require(pending is None and not current and declared is None, "Unexpected running header in a test partition")
             declared = int(re.fullmatch(r"running (\d+) tests?", line).group(1))
         elif line.startswith("test "):
-            found = re.fullmatch(r"test ([A-Za-z_][A-Za-z_0-9:]*) \.\.\.(?: (.*))?", line)
+            found = re.fullmatch(r"test ([A-Za-z_][A-Za-z_0-9:]*)(?: - should panic)? \.\.\.(?: (.*))?", line)
             require(found is not None and pending is None, "Unknown or unfinished named libtest method")
             name, tail = found.groups()
+            # A display qualifier must not hide a reserved child ID from evidence guards.
+            require(not (line.startswith(f"test {name} - should panic ...")
+                         and name.split("::")[-1] in {method.split("::")[-1] for method in CHILDREN.values()}),
+                    "Private P01 crash child cannot use should-panic reporting")
             state = terminal((tail or "").strip())
             if state is None: pending = name
             else: current.append((name, state)); events.append((name, state))

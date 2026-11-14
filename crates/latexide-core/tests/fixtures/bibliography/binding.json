@@ -1,0 +1,628 @@
+{
+  "schema": "p12-canonical-bibliography-golden-bundle/v1",
+  "task_id": "P12-CANONICAL-BIBLIOGRAPHY-HOOK-FIXTURE-CANDIDATE-20261114-0a5e8c14",
+  "root": "crates/latexide-core/tests/fixtures/bibliography",
+  "producer_report_sha256": "3c0ec20f35749afde3233d5aa94e37c12c227c9effe3c1fb5bba7935f349e8c7",
+  "producer_oracle_sha256": "0748aabdc31e38130de33ae9eacdd5d542ff0bf27666aa8f18bffe1641a4b8a5",
+  "independent_expected_provider": "frozen producer literal JSON -> generated Rust DTO literals; no parser output",
+  "normal_cases": [
+    "golden_01_simple",
+    "golden_02_duplicate_keys",
+    "golden_03_nested_brace",
+    "golden_04_escaped_quote",
+    "golden_05_comment",
+    "golden_06_macro_concat",
+    "golden_07_missing_close",
+    "golden_08_partial_field",
+    "golden_09_astral_unicode",
+    "golden_10_logical_feff",
+    "golden_11_crlf",
+    "golden_12_empty"
+  ],
+  "fixture_provenance": [
+    {
+      "name": "golden_01_simple",
+      "relative": "crates/latexide-core/tests/fixtures/bibliography/golden_01_simple.bib",
+      "producer_source_sha256": "fb4770eec9aa5c4e2aa812a46b8bc1728a35c6431a5a353fe450da4cf44192f7",
+      "new_identity": {
+        "kind": "file",
+        "mode": 420,
+        "size": 31,
+        "sha256": "fb4770eec9aa5c4e2aa812a46b8bc1728a35c6431a5a353fe450da4cf44192f7"
+      },
+      "expected_report": {
+        "entries": [
+          {
+            "key": "alpha",
+            "entry_type": "book",
+            "fields": [
+              {
+                "name": "title",
+                "raw_value": "{Simple}"
+              }
+            ],
+            "range": {
+              "start": 0,
+              "length": 30
+            }
+          }
+        ],
+        "diagnostics": [],
+        "duplicate_keys": []
+      }
+    },
+    {
+      "name": "golden_02_duplicate_keys",
+      "relative": "crates/latexide-core/tests/fixtures/bibliography/golden_02_duplicate_keys.bib",
+      "producer_source_sha256": "c006936eed7c9b3ee4dfd2573b65c5650c28ec4daeeee680e37ee93300c0c7e9",
+      "new_identity": {
+        "kind": "file",
+        "mode": 420,
+        "size": 83,
+        "sha256": "c006936eed7c9b3ee4dfd2573b65c5650c28ec4daeeee680e37ee93300c0c7e9"
+      },
+      "expected_report": {
+        "entries": [
+          {
+            "key": "dup",
+            "entry_type": "book",
+            "fields": [
+              {
+                "name": "title",
+                "raw_value": "{{One} {Two}}"
+              }
+            ],
+            "range": {
+              "start": 21,
+              "length": 31
+            }
+          },
+          {
+            "key": "dup",
+            "entry_type": "article",
+            "fields": [
+              {
+                "name": "title",
+                "raw_value": "{Second}"
+              }
+            ],
+            "range": {
+              "start": 53,
+              "length": 29
+            }
+          }
+        ],
+        "diagnostics": [
+          {
+            "anchor": {
+              "document_id": "bibliography.bib",
+              "revision": null,
+              "content_sha256": "c006936eed7c9b3ee4dfd2573b65c5650c28ec4daeeee680e37ee93300c0c7e9",
+              "line": 2,
+              "character": 9,
+              "range": {
+                "start": 62,
+                "length": 3
+              }
+            },
+            "severity": "warning",
+            "code": "duplicate_key",
+            "message": "duplicate bibliography key: dup"
+          }
+        ],
+        "duplicate_keys": [
+          "dup"
+        ]
+      }
+    },
+    {
+      "name": "golden_03_nested_brace",
+      "relative": "crates/latexide-core/tests/fixtures/bibliography/golden_03_nested_brace.bib",
+      "producer_source_sha256": "fb50bf0f50e171829672dcab08180be5ad3e6ac03e6ecdda4d2faf7bf43c9f4a",
+      "new_identity": {
+        "kind": "file",
+        "mode": 420,
+        "size": 55,
+        "sha256": "fb50bf0f50e171829672dcab08180be5ad3e6ac03e6ecdda4d2faf7bf43c9f4a"
+      },
+      "expected_report": {
+        "entries": [
+          {
+            "key": "nested",
+            "entry_type": "book",
+            "fields": [
+              {
+                "name": "title",
+                "raw_value": "{A {deep {value}} tail}"
+              },
+              {
+                "name": "year",
+                "raw_value": "2026"
+              }
+            ],
+            "range": {
+              "start": 0,
+              "length": 55
+            }
+          }
+        ],
+        "diagnostics": [],
+        "duplicate_keys": []
+      }
+    },
+    {
+      "name": "golden_04_escaped_quote",
+      "relative": "crates/latexide-core/tests/fixtures/bibliography/golden_04_escaped_quote.bib",
+      "producer_source_sha256": "b1cc7330b7e9b3b952d068155d472c3657527960f0fc83f837df0f96bcc52487",
+      "new_identity": {
+        "kind": "file",
+        "mode": 420,
+        "size": 62,
+        "sha256": "b1cc7330b7e9b3b952d068155d472c3657527960f0fc83f837df0f96bcc52487"
+      },
+      "expected_report": {
+        "entries": [
+          {
+            "key": "quotes",
+            "entry_type": "article",
+            "fields": [
+              {
+                "name": "title",
+                "raw_value": "\"A \\\"quoted\\\" {part}\""
+              },
+              {
+                "name": "note",
+                "raw_value": "{C:\\data}"
+              }
+            ],
+            "range": {
+              "start": 0,
+              "length": 61
+            }
+          }
+        ],
+        "diagnostics": [],
+        "duplicate_keys": []
+      }
+    },
+    {
+      "name": "golden_05_comment",
+      "relative": "crates/latexide-core/tests/fixtures/bibliography/golden_05_comment.bib",
+      "producer_source_sha256": "bb291b795e2fed5ffe129603e95904083cf1b5034705014fd4d01f9e6dd0aa06",
+      "new_identity": {
+        "kind": "file",
+        "mode": 420,
+        "size": 174,
+        "sha256": "bb291b795e2fed5ffe129603e95904083cf1b5034705014fd4d01f9e6dd0aa06"
+      },
+      "expected_report": {
+        "entries": [
+          {
+            "key": "commented",
+            "entry_type": "book",
+            "fields": [
+              {
+                "name": "title",
+                "raw_value": "{Visible}"
+              },
+              {
+                "name": "year",
+                "raw_value": "2026"
+              }
+            ],
+            "range": {
+              "start": 70,
+              "length": 96
+            }
+          }
+        ],
+        "diagnostics": [],
+        "duplicate_keys": []
+      }
+    },
+    {
+      "name": "golden_06_macro_concat",
+      "relative": "crates/latexide-core/tests/fixtures/bibliography/golden_06_macro_concat.bib",
+      "producer_source_sha256": "0cbc789e5dbb45d8b31a5d4d179998f29dc1a2b0bd2adb7d6d7faeaadb410e9f",
+      "new_identity": {
+        "kind": "file",
+        "mode": 420,
+        "size": 79,
+        "sha256": "0cbc789e5dbb45d8b31a5d4d179998f29dc1a2b0bd2adb7d6d7faeaadb410e9f"
+      },
+      "expected_report": {
+        "entries": [
+          {
+            "key": "macro",
+            "entry_type": "book",
+            "fields": [
+              {
+                "name": "title",
+                "raw_value": "prefix # { suffix }"
+              },
+              {
+                "name": "month",
+                "raw_value": "jan"
+              }
+            ],
+            "range": {
+              "start": 24,
+              "length": 54
+            }
+          }
+        ],
+        "diagnostics": [],
+        "duplicate_keys": []
+      }
+    },
+    {
+      "name": "golden_07_missing_close",
+      "relative": "crates/latexide-core/tests/fixtures/bibliography/golden_07_missing_close.bib",
+      "producer_source_sha256": "a9d72e18cee7400b17c0f392208b1f4afc6bf376a4f8b5875669674e7253c393",
+      "new_identity": {
+        "kind": "file",
+        "mode": 420,
+        "size": 30,
+        "sha256": "a9d72e18cee7400b17c0f392208b1f4afc6bf376a4f8b5875669674e7253c393"
+      },
+      "expected_report": {
+        "entries": [
+          {
+            "key": "open",
+            "entry_type": "book",
+            "fields": [
+              {
+                "name": "title",
+                "raw_value": "{unfinished}"
+              }
+            ],
+            "range": {
+              "start": 0,
+              "length": 30
+            }
+          }
+        ],
+        "diagnostics": [
+          {
+            "anchor": {
+              "document_id": "bibliography.bib",
+              "revision": null,
+              "content_sha256": "a9d72e18cee7400b17c0f392208b1f4afc6bf376a4f8b5875669674e7253c393",
+              "line": 0,
+              "character": 30,
+              "range": {
+                "start": 30,
+                "length": 0
+              }
+            },
+            "severity": "error",
+            "code": "unterminated_entry",
+            "message": "entry is missing its closing delimiter"
+          }
+        ],
+        "duplicate_keys": []
+      }
+    },
+    {
+      "name": "golden_08_partial_field",
+      "relative": "crates/latexide-core/tests/fixtures/bibliography/golden_08_partial_field.bib",
+      "producer_source_sha256": "84de54f7ccd26a9c9df2e09469099909863a5af4ce95440c2d7536d458eac236",
+      "new_identity": {
+        "kind": "file",
+        "mode": 420,
+        "size": 24,
+        "sha256": "84de54f7ccd26a9c9df2e09469099909863a5af4ce95440c2d7536d458eac236"
+      },
+      "expected_report": {
+        "entries": [
+          {
+            "key": "draft",
+            "entry_type": "book",
+            "fields": [
+              {
+                "name": "title",
+                "raw_value": ""
+              }
+            ],
+            "range": {
+              "start": 0,
+              "length": 24
+            }
+          }
+        ],
+        "diagnostics": [
+          {
+            "anchor": {
+              "document_id": "bibliography.bib",
+              "revision": null,
+              "content_sha256": "84de54f7ccd26a9c9df2e09469099909863a5af4ce95440c2d7536d458eac236",
+              "line": 2,
+              "character": 0,
+              "range": {
+                "start": 23,
+                "length": 0
+              }
+            },
+            "severity": "error",
+            "code": "missing_field_value",
+            "message": "field is missing its value"
+          }
+        ],
+        "duplicate_keys": []
+      }
+    },
+    {
+      "name": "golden_09_astral_unicode",
+      "relative": "crates/latexide-core/tests/fixtures/bibliography/golden_09_astral_unicode.bib",
+      "producer_source_sha256": "f9eace842162501b2d312d94e6b3b10bf2854b9650a1ec78639059c6a1b2e08a",
+      "new_identity": {
+        "kind": "file",
+        "mode": 420,
+        "size": 41,
+        "sha256": "f9eace842162501b2d312d94e6b3b10bf2854b9650a1ec78639059c6a1b2e08a"
+      },
+      "expected_report": {
+        "entries": [
+          {
+            "key": "clé",
+            "entry_type": "book",
+            "fields": [
+              {
+                "name": "title",
+                "raw_value": "{量子 😀}"
+              }
+            ],
+            "range": {
+              "start": 5,
+              "length": 25
+            }
+          }
+        ],
+        "diagnostics": [],
+        "duplicate_keys": []
+      }
+    },
+    {
+      "name": "golden_10_logical_feff",
+      "relative": "crates/latexide-core/tests/fixtures/bibliography/golden_10_logical_feff.bib",
+      "producer_source_sha256": "697cc8164a3cc5ebf0ce5a1622a1051e39309c7286c37cfe424aba2d27395d1c",
+      "new_identity": {
+        "kind": "file",
+        "mode": 420,
+        "size": 32,
+        "sha256": "697cc8164a3cc5ebf0ce5a1622a1051e39309c7286c37cfe424aba2d27395d1c"
+      },
+      "expected_report": {
+        "entries": [
+          {
+            "key": "feff",
+            "entry_type": "book",
+            "fields": [
+              {
+                "name": "title",
+                "raw_value": "{﻿kept}"
+              }
+            ],
+            "range": {
+              "start": 1,
+              "length": 26
+            }
+          }
+        ],
+        "diagnostics": [],
+        "duplicate_keys": []
+      }
+    },
+    {
+      "name": "golden_11_crlf",
+      "relative": "crates/latexide-core/tests/fixtures/bibliography/golden_11_crlf.bib",
+      "producer_source_sha256": "2a8a40c5a9923b473ec18ea6c9ab1b43fe0183a0e56c6d67c55c92895b8c93e5",
+      "new_identity": {
+        "kind": "file",
+        "mode": 420,
+        "size": 37,
+        "sha256": "2a8a40c5a9923b473ec18ea6c9ab1b43fe0183a0e56c6d67c55c92895b8c93e5"
+      },
+      "expected_report": {
+        "entries": [
+          {
+            "key": "crlf",
+            "entry_type": "book",
+            "fields": [
+              {
+                "name": "title",
+                "raw_value": "{Windows}"
+              }
+            ],
+            "range": {
+              "start": 0,
+              "length": 35
+            }
+          }
+        ],
+        "diagnostics": [],
+        "duplicate_keys": []
+      }
+    },
+    {
+      "name": "golden_12_empty",
+      "relative": "crates/latexide-core/tests/fixtures/bibliography/golden_12_empty.bib",
+      "producer_source_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "new_identity": {
+        "kind": "file",
+        "mode": 420,
+        "size": 0,
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      "expected_report": {
+        "entries": [],
+        "diagnostics": [],
+        "duplicate_keys": []
+      }
+    }
+  ],
+  "source_pins": {
+    "ORIGINAL_ORACLE_SHA256": "0748aabdc31e38130de33ae9eacdd5d542ff0bf27666aa8f18bffe1641a4b8a5",
+    "GENERATED_EXPECTATIONS_SHA256": "93f21bacdf4c605c023bddfd26499a99a667a67333c478b08f7dbfffdfb2d49e",
+    "FINGERPRINT_SHA256": "1a176dfeb978bb9b31e69cb9a58615ca8913fd6a5fc34d7394af39926c59a631",
+    "PROVIDER_MOD_SHA256": "acdba8c336ed5539e28642c0de29f9a896be39efb50b5e0ae2e05dc62a6bb981",
+    "PARSER_SHA256": "1355b374e626df9d664b4d07641212308c5f48bebb18a3922f13ddcebc546b82",
+    "CONTRACT_SHA256": "6d6f1febadb2dc66ce9b6682019eaf923d152e7ba678822a45b4a76d2b04938e",
+    "CANONICAL_LIB_SHA256": "e10c2d93916afbce0da4b99abc450d07aa12745962533a1ade03f6126ff89edd",
+    "CORE_CARGO_SHA256": "a59e9a5abb03a4203b4696b37b7e0e1fff5a46626bc7a9bbb2ca90b40cb3ac47",
+    "ROOT_CARGO_SHA256": "bd05c6527cc067ac8e194ff4ca4d8c54ab653606c336912d97cfd9da712f063f",
+    "ROOT_LOCK_SHA256": "b0e291f20d0a828ff1fa8e6623bd6fd17b65e89f3af1c0ee12f551d166dcc2ec"
+  },
+  "files": {
+    "binding_hash.rs": {
+      "kind": "file",
+      "mode": 420,
+      "size": 2676,
+      "sha256": "1a176dfeb978bb9b31e69cb9a58615ca8913fd6a5fc34d7394af39926c59a631"
+    },
+    "binding_pins.rs": {
+      "kind": "file",
+      "mode": 420,
+      "size": 1056,
+      "sha256": "0fad94a2387c727b4709308380f9ab2706c96fd08d48e93008e5c586fe5af800"
+    },
+    "golden_01_simple.bib": {
+      "kind": "file",
+      "mode": 420,
+      "size": 31,
+      "sha256": "fb4770eec9aa5c4e2aa812a46b8bc1728a35c6431a5a353fe450da4cf44192f7"
+    },
+    "golden_02_duplicate_keys.bib": {
+      "kind": "file",
+      "mode": 420,
+      "size": 83,
+      "sha256": "c006936eed7c9b3ee4dfd2573b65c5650c28ec4daeeee680e37ee93300c0c7e9"
+    },
+    "golden_03_nested_brace.bib": {
+      "kind": "file",
+      "mode": 420,
+      "size": 55,
+      "sha256": "fb50bf0f50e171829672dcab08180be5ad3e6ac03e6ecdda4d2faf7bf43c9f4a"
+    },
+    "golden_04_escaped_quote.bib": {
+      "kind": "file",
+      "mode": 420,
+      "size": 62,
+      "sha256": "b1cc7330b7e9b3b952d068155d472c3657527960f0fc83f837df0f96bcc52487"
+    },
+    "golden_05_comment.bib": {
+      "kind": "file",
+      "mode": 420,
+      "size": 174,
+      "sha256": "bb291b795e2fed5ffe129603e95904083cf1b5034705014fd4d01f9e6dd0aa06"
+    },
+    "golden_06_macro_concat.bib": {
+      "kind": "file",
+      "mode": 420,
+      "size": 79,
+      "sha256": "0cbc789e5dbb45d8b31a5d4d179998f29dc1a2b0bd2adb7d6d7faeaadb410e9f"
+    },
+    "golden_07_missing_close.bib": {
+      "kind": "file",
+      "mode": 420,
+      "size": 30,
+      "sha256": "a9d72e18cee7400b17c0f392208b1f4afc6bf376a4f8b5875669674e7253c393"
+    },
+    "golden_08_partial_field.bib": {
+      "kind": "file",
+      "mode": 420,
+      "size": 24,
+      "sha256": "84de54f7ccd26a9c9df2e09469099909863a5af4ce95440c2d7536d458eac236"
+    },
+    "golden_09_astral_unicode.bib": {
+      "kind": "file",
+      "mode": 420,
+      "size": 41,
+      "sha256": "f9eace842162501b2d312d94e6b3b10bf2854b9650a1ec78639059c6a1b2e08a"
+    },
+    "golden_10_logical_feff.bib": {
+      "kind": "file",
+      "mode": 420,
+      "size": 32,
+      "sha256": "697cc8164a3cc5ebf0ce5a1622a1051e39309c7286c37cfe424aba2d27395d1c"
+    },
+    "golden_11_crlf.bib": {
+      "kind": "file",
+      "mode": 420,
+      "size": 37,
+      "sha256": "2a8a40c5a9923b473ec18ea6c9ab1b43fe0183a0e56c6d67c55c92895b8c93e5"
+    },
+    "golden_12_empty.bib": {
+      "kind": "file",
+      "mode": 420,
+      "size": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "golden_expected.rs": {
+      "kind": "file",
+      "mode": 420,
+      "size": 9535,
+      "sha256": "93f21bacdf4c605c023bddfd26499a99a667a67333c478b08f7dbfffdfb2d49e"
+    },
+    "goldens.json": {
+      "kind": "file",
+      "mode": 420,
+      "size": 11704,
+      "sha256": "0748aabdc31e38130de33ae9eacdd5d542ff0bf27666aa8f18bffe1641a4b8a5"
+    },
+    "recovery_01_malformed_next_entry.bib": {
+      "kind": "file",
+      "mode": 420,
+      "size": 33,
+      "sha256": "8be949df2bf2ea6415bffcba3e0426f96949d4a325a361d5bd478fc14af39b19"
+    },
+    "recovery_02_valid_nextline_opener.bib": {
+      "kind": "file",
+      "mode": 420,
+      "size": 39,
+      "sha256": "2c2de9f64cb252a61d53a5517ed26d1847fb026ee9e2fd9de327866f929c4ca2"
+    },
+    "recovery_03_nested_quoted_literal.bib": {
+      "kind": "file",
+      "mode": 420,
+      "size": 64,
+      "sha256": "6c9fb4ecfd77eb991150c4b2a1bfb1aa5f635fc88d82d2642d654a5faecf8277"
+    },
+    "recovery_04_comment_boundary.bib": {
+      "kind": "file",
+      "mode": 420,
+      "size": 82,
+      "sha256": "7d3b8c5037e5f8ebfd711fcabe38ac831c695c6c883b4ffea908cd3018fafad7"
+    },
+    "recovery_oracle.json": {
+      "kind": "file",
+      "mode": 420,
+      "size": 5494,
+      "sha256": "fb01ada3d0b51c4d0839b570b37df89a346ad4305650241e17587d194cd1207c"
+    },
+    "recovery_expected.rs": {
+      "kind": "file",
+      "mode": 420,
+      "size": 4237,
+      "sha256": "6af8856d278d039941a7002670efc6c45a8a450cd90d1e5b71f1e666af6b086c"
+    }
+  },
+  "path_policy": "repo-relative compile-time includes only; no runtime filesystem path or fallback; no standalone manifest",
+  "test_dependencies": "std and existing latexide-contracts only; Cargo manifests and lock unchanged",
+  "recovery_task_id": "P12-MALFORMED-NEXT-ENTRY-RECOVERY-20261114-6c0a91ef",
+  "recovery_oracle_sha256": "fb01ada3d0b51c4d0839b570b37df89a346ad4305650241e17587d194cd1207c",
+  "recovery_cases": [
+    "recovery_01_malformed_next_entry",
+    "recovery_02_valid_nextline_opener",
+    "recovery_03_nested_quoted_literal",
+    "recovery_04_comment_boundary"
+  ],
+  "authorized_recovery_fix": {
+    "task_id": "P12-MALFORMED-NEXT-ENTRY-RECOVERY-20261114-6c0a91ef",
+    "baseline_assertion": "NEXT_ENTRY_RECOVERED",
+    "parser_before_sha256": "3a4ca6b84b30301f5c704d55113148e4f5a3fa460b53f0d4d347237a13dcb6df",
+    "parser_after_sha256": "1355b374e626df9d664b4d07641212308c5f48bebb18a3922f13ddcebc546b82",
+    "behavioral_oracle_unchanged": true
+  },
+  "digest": "e82aa5c4dbb13856e9d80ff71759a278faef8b3ff319054c126c74e6c0ba352a"
+}

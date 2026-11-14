@@ -1,0 +1,2 @@
+# Golden digests bind exact UTF-8 bytes, including intentional CRLF and FEFF.
+*.bib -text

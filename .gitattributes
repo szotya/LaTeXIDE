@@ -11,6 +11,9 @@
 *.png binary
 *.pdf binary
 *.gpg binary
+/Cargo.toml text eol=lf
+/Cargo.lock text eol=lf
+/crates/latexide-core/Cargo.toml text eol=lf
 *.gz binary
 *.xdv binary
 # Historical manifests hash exact bytes; do not normalize captured evidence.
