@@ -3,6 +3,10 @@
 extern crate self as latexide_core;
 pub use latexide_contracts as contracts;
 
+pub mod services {
+    pub mod bibliography;
+}
+
 mod document;
 #[path = "services/recovery/mod.rs"]
 pub mod recovery;

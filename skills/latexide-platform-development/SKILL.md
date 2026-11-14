@@ -49,3 +49,10 @@ The user requested ongoing Markdown and skill documentation of Mac development f
 Before reporting a platform result, distinguish source, type-check, linked build, tests, launch and rendered UI evidence. Record missing checks as unrun. Follow the TeX Live evidence's actual scope: signature/hash equality is provenance and integrity, not a malware-free certificate. The current Tectonic assessment is not a production qualification.
 
 Use paths and commands for the target OS. The Mac bootstrap and `/private/tmp` convention are not Linux/Windows implementations. Inspect existing scripts before adapting them; preserve current user intent without adding publication, account creation or system-wide installation to an onboarding task.
+
+
+## Read-only bibliography library
+
+`crates/latexide-core/src/services/bibliography/` exposes the existing v1 BibliographyPort/DTO as a local library. Preserve the lossless byte partition, logical FEFF/CRLF, UTF16 ranges and exact case-sensitive duplicate reporting. Malformed headers recover at their line boundary; quoted/nested values and directive contents remain literal. This does not change completion/definition winner rules or resolve macros, crossrefs, xdata or schemas.
+
+Read `docs/development/results/P12.md` and `integration/requests/P12.json` before extending it. Diagnostics currently use bibliography.bib/revisionNone plus the supplied input digest; a future host integration must bind the authoritative document and revision. The historical binding.json and frozen receipts stay historical; current canonical library/Cargo/lock pins belong to a separately verified integration cohort. The two exact-marker should_panic guards retain their negative role and must reject precondition panics. A fresh-source review and a new-main integration are separate results; neither implies UI/Runtime/network import, native Windows/Linux, SDK38 strong closure or production acceptance. Keep LANG-11 partial and issue13 open until its full assertions are qualified.

@@ -1,0 +1,29 @@
+{
+  "schema": 1,
+  "package_id": "P12",
+  "contract_version": 1,
+  "requirement_ids": ["LANG-11"],
+  "source_paths": [
+    "crates/latexide-core/src/services/bibliography/mod.rs",
+    "crates/latexide-core/src/services/bibliography/parser.rs",
+    "crates/latexide-core/src/services/bibliography/fingerprint.rs",
+    "crates/latexide-core/tests/bibliography_contract.rs",
+    "docs/development/results/P12.md",
+    "integration/requests/P12.json"
+  ],
+  "hook_targets": [
+    "crates/latexide-core/src/lib.rs",
+    "docs/DEVELOPER_HANDOFF.md",
+    "docs/implementation-progress.md",
+    "skills/latexide-platform-development/SKILL.md"
+  ],
+  "test_commands": [
+    "cargo +1.99.1 test -p latexide-core --test bibliography_contract --locked --offline --jobs 1 -- --test-threads=1",
+    "cargo +1.99.1 test -p latexide-core --lib --locked --offline --jobs 1 -- --test-threads=1",
+    "cargo +1.99.1 test -p latexide-contracts --locked --offline --jobs 1 -- --test-threads=1",
+    "cargo +1.99.1 run -p latexide-contracts --bin latexide-integration --locked --offline --jobs 1 -- --root .",
+    "python3 scripts/validate_development_packages.py",
+    "python3 integration/registry/generate_contracts.py --check"
+  ],
+  "compatibility": "Partial LANG-11 read-only local library slice. The public services::bibliography module implements the existing v1 BibliographyPort/DTO over supplied logical UTF8 text; companion frozen fixtures live in crates/latexide-core/tests/fixtures/bibliography and are bound by compile-time includes and source hashes. Malformed headers recover at their line boundary without dropping the next entry. Trivia, CRLF, logical FEFF, nested/escaped values and UTF16 positions are preserved. Duplicate keys are exact/case-sensitive and do not change completion/definition winner rules. The diagnostics use bibliography.bib/revisionNone with the exact input digest; a future authoritative host must supply document/revision identity before Runtime/UI integration. Macro/crossref/xdata/schema expansion, bibliography UI, network imports and RES-03/RES-04 remain unrun/planned. The integration changes only library registration, current canonical lib/Cargo/lock pins and two exact-marker should_panic annotations; the historical producer bundle and guard bodies stay unchanged. No Cargo/dependency/lock, Runtime/MCP/Save/editor, v1 wire/quota, policy or required-gate change. Direct edits, explicit Save, undo after Save and one authoritative runtime are preserved. Mac-hosted Rust tests do not qualify native Mac workflows, Windows11/Linux desktop, SDK38 strong closure, AX/speech/security or production acceptance. Issue13 remains open. Test commands are descriptive data only."
+}
