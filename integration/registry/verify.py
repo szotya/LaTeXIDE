@@ -303,10 +303,23 @@ def build_steps(root, args, platform, machine):
     supported = platform == "darwin" and machine.lower() == "arm64"
     integrated = args.profile == "integrated"
     documentation = run_dir / "documentation.json"
+    # These new fixture methods require a POSIX descriptor backend. Windows
+    # still runs their three diagnostic peers and the fail-closed backend test.
+    rmeta_posix_skips = (["test_proc_macro_metadata_fixture.ProcMacroMetadataFixtureTests." + name for name in [
+        "test_c01_exact_owned_locator_and_positive_untouched",
+        "test_c03_invalid_basename_fail_closed",
+        "test_c04_missing_source_owner_or_scope_fail_closed",
+        "test_c05_size_and_hash_fail_closed",
+        "test_c06_symlink_and_hardlink_refusal",
+        "test_c07_wrong_scope_and_traversal_refusal",
+        "test_c08_preexisting_destination_refusal",
+        "test_c09_atomic_file_collision_refusal",
+        "test_c10_permission_owner_and_type_refusal",
+    ]] if platform == "win32" else [])
     steps = [
         {"name": "generated-contracts", "argv": [sys.executable, "integration/registry/generate_contracts.py", "--check"], "kind": "source"},
         {"name": "development-plans", "argv": [sys.executable, "scripts/validate_development_packages.py"], "kind": "source"},
-        suite("coordinator-contracts", "coordinator", "python-unit"),
+        suite("coordinator-contracts", "coordinator", "python-unit", allowed_skips=rmeta_posix_skips),
         {"name": "documentation", "kind": "documentation", "argv": probe("docs", "--result", documentation), "documentation_path": ref(documentation)},
     ]
     source_dependencies = [s["name"] for s in steps]
