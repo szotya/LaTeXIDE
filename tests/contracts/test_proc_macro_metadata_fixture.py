@@ -224,6 +224,8 @@ class ProcMacroMetadataFixtureTests(unittest.TestCase):
         self.assertEqual((self.owner / "bad" / POSITIVE_BASENAME).read_bytes(), b"KEEP_COLLISION")
 
     def test_c10_permission_owner_and_type_refusal(self):
+        previous_umask = os.umask(0o077)
+        self.addCleanup(os.umask, previous_umask)
         # A missing backend is an explicit platform skip, never a fixture PASS.
         with mock.patch.object(fixtures, "_FD_BACKEND", False):
             with self.assertRaisesRegex(fixtures.FixtureError, "POSIX descriptor backend unavailable"):
@@ -236,9 +238,11 @@ class ProcMacroMetadataFixtureTests(unittest.TestCase):
                 with self.assertRaisesRegex(RuntimeError, "diagnostic fixture setup reached"):
                     diagnostic.setUp()
         owner = self.new_owner(owner_mode=0o755)
+        owner.chmod(0o755)
         with self.assertRaises(fixtures.FixtureError):
             self.create(owner=owner)
         owner = self.new_owner(source_mode=0o644)
+        (owner / "malformed.bytes").chmod(0o644)
         with self.assertRaises(fixtures.FixtureError):
             self.create(owner=owner)
         owner = self.new_owner(payload=None)
