@@ -434,6 +434,10 @@
     },
     {
       "package_id": "P12",
+      "path": "crates/latexide-core/tests/bibliography_index_contract.rs"
+    },
+    {
+      "package_id": "P12",
       "path": "docs/development/results/P12.md"
     },
     {

@@ -591,6 +591,7 @@
     "owned_paths": [
       "crates/latexide-core/src/services/bibliography/",
       "crates/latexide-core/tests/bibliography_contract.rs",
+      "crates/latexide-core/tests/bibliography_index_contract.rs",
       "integration/requests/P12.json",
       "docs/development/results/P12.md"
     ],
