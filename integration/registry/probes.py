@@ -191,7 +191,10 @@ def main():
         elif args.command == "native-build": build_native(args)
         elif args.command == "native-controls":
             mac_required(); env = dict(os.environ)
-            for name in ["LATEXIDE_CODEX_HANDSHAKE", "LATEXIDE_RENDER_PREVIEWS"]: env.pop(name, None)
+            for name in ["LATEXIDE_CODEX_HANDSHAKE", "LATEXIDE_RENDER_PREVIEWS", "UI57_CASE"]: env.pop(name, None)
+            render_output = args.result.parent.resolve() / "ui57-titlebar-renders"
+            render_output.mkdir(mode=0o700)
+            env["UI57_RENDER_DIR"] = str(render_output)
             result = command_result(["swift", "test", *swift_options(), "--skip-build"], env=env)
             summary = parse_native_summary(result.stdout); write_json(args.result, summary)
             return 0 if result.returncode == 0 and summary["failures"] == 0 else 1

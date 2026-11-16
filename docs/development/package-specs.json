@@ -72,7 +72,9 @@
       "docs/development/PLATFORM_PARITY.md",
       "docs/IDE_PRODUCT_DIRECTION.md",
       "shared/ide-theme/",
-      "crates/latexide-build/src/process.rs"
+      "crates/latexide-build/src/process.rs",
+      "apps/macos/Sources/LaTeXIDEKit/Chrome/TitlebarToolbarHost.swift",
+      "apps/macos/Tests/LaTeXIDEKitTests/WindowToolbarLayoutTests.swift"
     ]
   },
   {

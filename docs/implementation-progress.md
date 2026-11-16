@@ -1189,3 +1189,15 @@ python3 -B scripts/validate_development_packages.py
 python3 -B integration/registry/generate_contracts.py --check
 python3 -B integration/registry/probes.py unittest --suite coordinator --result <own-T9-scratch>/coordinator.json
 ```
+
+## UI57 current-main publisher integration — 2026-11-16
+
+**UI57 current-main titlebar integration, 2026-11-16:** the seven-path R2 candidate moves the workspace controls into one native titlebar accessory and fixes Build/Stop intrinsic hit sizing. Fresh main82449 Rust FFI/MCP and Swift product/test builds PASS, directly linked to the new archive (not the donor9a1f library). Own UI21/21 PASS:13original+2review+6regression,18exact raw PNGs and12owned geometry/hit records;0case failure/error/skip/timeout. Two exact new integration paths and native render-output registration retain the four old skips and all strict CI guards. The Swift app product strict signature passes; the debug XCTest resource-envelope inspection failure is separately preserved, without resign/replay. [Result, actual commands and limits](development/results/UI57.md). Required PR/main CI and exact-head CodeRabbit are separate publication gates. Full#57/WRA-55 live AC3/AC5/display acceptance stays open; live user app launch0.
+
+Two compiler calls: fresh current-main Cargo FFI/MCP then Swift app/test jobs1. Actual UI21(13+2+6),18PNG/12geometry PASS, peakRSS264404992bytes; no selected skip/error/timeout. Strict native registration preserves the existing4skip gate; expected Python routing RED2 is separate from native results. Python full coordinator and current-head hosted publication gates remain independently recorded by the publisher. Historical R1/R2/pause/storage failures and receipts remain unchanged.
+
+**UI57 strict Python registration check, 2026-11-16:** actual coordinator221/221PASS,0failure/error/skip; the two new mocked routing/collision methods are GREEN after the preserved expected RED2. Package validator and generated-contract check PASS. Native15target+6regression results remain a separate actual current-main cohort; mocked Python output is not native acceptance. The fresh own render directory enables the9new render methods while the exact4legacy skips/count/refusal/quota gates remain unchanged.
+
+The final native registration also clears inherited UI57_CASE, so external case labels cannot redirect or collide with the run-owned geometry/action outputs. Its additional expected routing assertion RED1 preceded this isolated environment change; method count remains2 and no native/Rust/Swift source or binary changed.
+
+Final current-source Python coordinator221/221PASS after the case-marker isolation guard,0failure/error/skip; the first221GREEN and the additional expectedRED1 remain separate. The same2registration methods prove inherited render/case-marker isolation and collision refusal. No native/Rust/Swift binary was rebuilt or replayed.

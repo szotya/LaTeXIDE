@@ -38,6 +38,10 @@
     },
     {
       "package_id": "P00",
+      "path": "apps/macos/Sources/LaTeXIDEKit/Chrome/TitlebarToolbarHost.swift"
+    },
+    {
+      "package_id": "P00",
       "path": "apps/macos/Sources/LaTeXIDEKit/Editor/SourceTextView.swift"
     },
     {
@@ -55,6 +59,10 @@
     {
       "package_id": "P00",
       "path": "apps/macos/Sources/LaTeXIDEKit/WorkspaceView.swift"
+    },
+    {
+      "package_id": "P00",
+      "path": "apps/macos/Tests/LaTeXIDEKitTests/WindowToolbarLayoutTests.swift"
     },
     {
       "package_id": "P00",
