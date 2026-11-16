@@ -353,6 +353,93 @@ final class WindowToolbarLayoutTests: XCTestCase {
         fixture.assertHidden()
     }
 
+
+    @MainActor private final class DragActionWindow: NSWindow {
+        var zoomCalls = 0
+        var miniaturizeCalls = 0
+        var dragCalls = 0
+        var lastDragEvent: NSEvent?
+        override func performZoom(_ sender: Any?) { zoomCalls += 1 }
+        override func performMiniaturize(_ sender: Any?) { miniaturizeCalls += 1 }
+        override func performDrag(with event: NSEvent) {
+            dragCalls += 1
+            lastDragEvent = event
+        }
+    }
+
+    @MainActor private func ownedDragWindow(_ view: TitlebarDragView) -> DragActionWindow {
+        _ = NSApplication.shared
+        let window = DragActionWindow(contentRect: NSRect(x: -6000, y: -6000, width: 320, height: 100),
+                                      styleMask: [.titled, .closable, .resizable, .miniaturizable],
+                                      backing: .buffered, defer: false)
+        window.isReleasedWhenClosed = false
+        window.contentView = view
+        return window
+    }
+
+    @MainActor private func ownedMouseDown(clickCount: Int) throws -> NSEvent {
+        _ = NSApplication.shared
+        return try XCTUnwrap(NSEvent.mouseEvent(with: .leftMouseDown, location: .zero, modifierFlags: [],
+                                        timestamp: 0, windowNumber: 0, context: nil, eventNumber: 0,
+                                        clickCount: clickCount, pressure: 1))
+    }
+
+    @MainActor func testTitlebarDoubleClickRoutesConfiguredZoomAndMinimize() throws {
+        let view = TitlebarDragView()
+        let window = ownedDragWindow(view)
+        defer { window.close() }
+        // Spies never call Window Server drag/zoom/miniaturize implementations.
+        view.doubleClickPreference = { "Maximize" }
+        view.mouseDown(with: try ownedMouseDown(clickCount: 2))
+        XCTAssertEqual(window.zoomCalls, 1)
+        XCTAssertEqual(window.miniaturizeCalls, 0)
+        XCTAssertEqual(window.dragCalls, 0)
+        view.doubleClickPreference = { "Minimize" }
+        view.mouseDown(with: try ownedMouseDown(clickCount: 2))
+        XCTAssertEqual(window.zoomCalls, 1)
+        XCTAssertEqual(window.miniaturizeCalls, 1)
+        XCTAssertEqual(window.dragCalls, 0)
+        XCTAssertFalse(window.isVisible)
+        XCTAssertFalse(window.isKeyWindow)
+        XCTAssertFalse(window.isMainWindow)
+    }
+
+    @MainActor func testTitlebarOtherClicksAndUnknownPreferencesKeepDrag() throws {
+        let view = TitlebarDragView()
+        let window = ownedDragWindow(view)
+        defer { window.close() }
+        view.doubleClickPreference = { XCTFail("Only a double click reads the preference"); return nil }
+        for count in [1, 3] {
+            let event = try ownedMouseDown(clickCount: count)
+            let before = window.dragCalls
+            view.mouseDown(with: event)
+            XCTAssertEqual(window.dragCalls, before + 1)
+            XCTAssertTrue(window.lastDragEvent === event)
+        }
+        let preferences: [String?] = [nil, "", "None", "Fill", "unrecognized"]
+        for preference in preferences {
+            view.doubleClickPreference = { preference }
+            let event = try ownedMouseDown(clickCount: 2)
+            let before = window.dragCalls
+            view.mouseDown(with: event)
+            XCTAssertEqual(window.dragCalls, before + 1)
+            XCTAssertTrue(window.lastDragEvent === event)
+        }
+        XCTAssertEqual(window.zoomCalls, 0)
+        XCTAssertEqual(window.miniaturizeCalls, 0)
+        XCTAssertFalse(window.isVisible)
+        XCTAssertFalse(window.isKeyWindow)
+        XCTAssertFalse(window.isMainWindow)
+    }
+
+    @MainActor func testDetachedTitlebarDragDoesNotReadPreferenceOrAct() throws {
+        let view = TitlebarDragView()
+        view.doubleClickPreference = { XCTFail("A detached view must not read the preference"); return nil }
+        XCTAssertNil(view.window)
+        view.mouseDown(with: try ownedMouseDown(clickCount: 2))
+        XCTAssertNil(view.window)
+    }
+
     #endif
 
     @MainActor private func render(width: Int, height: Int, appearance: AppearanceMode) throws {

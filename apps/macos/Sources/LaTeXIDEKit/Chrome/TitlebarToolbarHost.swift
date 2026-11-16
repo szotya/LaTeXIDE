@@ -124,8 +124,21 @@ struct TitlebarDragRegion: NSViewRepresentable {
     func updateNSView(_ view: TitlebarDragView, context: Context) {}
 }
 final class TitlebarDragView: NSView {
+    var doubleClickPreference: () -> String? = {
+        UserDefaults.standard.string(forKey: "AppleActionOnDoubleClick")
+    }
     override var mouseDownCanMoveWindow: Bool { true }
-    override func mouseDown(with event: NSEvent) { window?.performDrag(with: event) }
+    override func mouseDown(with event: NSEvent) {
+        guard let window else { return }
+        if event.clickCount == 2 {
+            switch doubleClickPreference() {
+            case "Maximize": window.performZoom(nil); return
+            case "Minimize": window.performMiniaturize(nil); return
+            default: break
+            }
+        }
+        window.performDrag(with: event)
+    }
 }
 
 
