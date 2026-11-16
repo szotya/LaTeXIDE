@@ -23,7 +23,7 @@ class UI57NativeRegistrationTests(unittest.TestCase):
             result = root / "native-controls.json"
             foreign = root / "foreign-render-output"
             def native_command(argv, env):
-                owned = root / "ui57-titlebar-renders"
+                owned = root.resolve() / "ui57-titlebar-renders"
                 self.assertEqual(Path(env["UI57_RENDER_DIR"]), owned)
                 self.assertTrue(owned.is_dir())
                 if os.name == "posix":
