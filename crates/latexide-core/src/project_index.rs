@@ -1,4 +1,8 @@
 //! Cached project symbols; authoritative open buffers always shadow filesystem text.
+// Keep the canonical provider module and its frozen source pins unchanged.
+#[path = "services/bibliography/index_adapter.rs"]
+mod bibliography_index;
+
 use crate::{completion::{CompletionIndexStatus, CompletionKind}, document::Document, tex_scan::{self, Token, Tokens}};
 use std::{collections::{BTreeMap, BTreeSet}, fs, io::Read, path::{Path, PathBuf}, sync::Arc, time::{Duration, Instant, SystemTime}};
 
@@ -209,34 +213,15 @@ fn document_arguments(text: &str) -> Option<u8> {
     Some(count)
 }
 fn bib_symbols(path: &str, text: &str, limit: usize) -> (Vec<Symbol>, bool) {
-    let mut symbols = Vec::new(); let mut p = 0; let origin: Arc<str> = path.into(); let mut coordinates = Coordinates::default();
-    while p < text.len() {
-        if text.as_bytes()[p] != b'@' { p += text[p..].chars().next().unwrap().len_utf8(); continue; }
-        p += 1; let kind_start = p;
-        while text.as_bytes().get(p).is_some_and(u8::is_ascii_alphabetic) { p += 1; }
-        let kind = text[kind_start..p].to_ascii_lowercase(); p = tex_scan::skip_space(text, p);
-        let Some(open @ (b'{' | b'(')) = text.as_bytes().get(p).copied() else { continue; };
-        let close = if open == b'{' { b'}' } else { b')' }; p = tex_scan::skip_space(text, p + 1);
-        let key_start = p;
-        while p < text.len() && !matches!(text.as_bytes()[p], b',' | b'}' | b')' | b'\n') { p += text[p..].chars().next().unwrap().len_utf8(); }
-        let key = text[key_start..p].trim();
-        if !matches!(kind.as_str(), "comment" | "string" | "preamble" | "") && text.as_bytes().get(p) == Some(&b',') && tex_scan::valid_key(key) {
-            if symbols.len() == limit { return (symbols, true); }
-            let name_start = key_start + text[key_start..p].len() - text[key_start..p].trim_start().len();
-            let (start_utf16, length_utf16, line) = coordinates.range(text, name_start, name_start + key.len());
-            symbols.push(Symbol { name: key.into(), kind: CompletionKind::Citation, arguments: None, path: Arc::clone(&origin), line, description: format!("BibTeX · {kind}"), start_utf16, length_utf16 });
-        }
-        // Skip the entire entry, respecting nested braces, quotes and escaped delimiters.
-        p = key_start; let mut depth: usize = 0; let mut quoted = false;
-        while p < text.len() {
-            let ch = text.as_bytes()[p];
-            if ch == b'\\' { p += 1; if p < text.len() { p += text[p..].chars().next().unwrap().len_utf8(); } continue; }
-            if ch == b'"' && depth == 0 { quoted = !quoted; }
-            if ch == b'{' { depth += 1; }
-            else if ch == b'}' && depth > 0 { depth -= 1; }
-            else if ch == close && depth == 0 && !quoted { p += 1; break; }
-            p += text[p..].chars().next().unwrap().len_utf8();
-        }
-    }
-    (symbols, false)
+    let (entries, truncated) = bibliography_index::citations(text, limit);
+    let origin: Arc<str> = path.into();
+    let mut coordinates = Coordinates::default();
+    let symbols = entries.into_iter().map(|entry| {
+        let (start_utf16, length_utf16, line) = coordinates.range(text, entry.key_bytes.start, entry.key_bytes.end);
+        Symbol { name: entry.key, kind: CompletionKind::Citation, arguments: None, path: Arc::clone(&origin), line,
+            description: format!("BibTeX · {}", entry.entry_type), start_utf16, length_utf16 }
+    }).collect();
+    // Existing parse() keeps the last declaration per file; Workspace preserves
+    // active/open/lexical file precedence and exposes cross-file alternatives.
+    (symbols, truncated)
 }

@@ -1114,3 +1114,78 @@ Tényleges `python3 -B integration/registry/probes.py unittest --suite coordinat
 PR87 első head `69c737e`: [CI43712173537](https://github.com/szotya/LaTeXIDE/actions/runs/43712173537)7/7SUCCESS, CodeRabbit-checkSUCCESS mellett formális CHANGES_REQUESTED egy valós umask-fixture Minor miatt. Windows219=210PASS+9pontosanmegnevezett POSIX-skip; Mac/Linux219PASS. Mac Rust357 és native131PASS+4opt-inSKIP; Linux/Windows Rust177/148, seam3platformonként. Ez nem merge-approval és nem teljes platformacceptance.
 
 Umask077 alatt friss C10 RED1: a0755/0644 kért negatív módot a maszk0700/0600-ra szűkítette. A szűk tesztfix a két saját negatív fixture-t létrehozás után chmodolja; C10 saját077maszkot és addCleanup-visszaállítást kap. Külső077/022kontroll mindPASS, maszk nemszivárog. Új forrás/fixture/nonce20-as kohorsz:12+6PASS+2várt valódi guard,0váratlan error/failure/timeout/skip/unrun,531forrás változatlan; új teljes coordinator219/219PASS,22.556s. Helper, CI-plan/adapterszabályok és eredeti guardtörzsek változatlanok; minden korábbi receipt/RED/CI megőrzött. A reviewer-fix friss exact-headCI/review és actual-mainCI kaput kap.
+
+## P12 canonical project-index integration — 2026-11-15
+
+The three product paths are `crates/latexide-core/src/project_index.rs`,
+`crates/latexide-core/src/services/bibliography/index_adapter.rs` and
+`crates/latexide-core/tests/bibliography_index_contract.rs`. The adapter and
+project-index implementation were imported byte-for-byte from the frozen
+`p12-project-index-20261115-41838c96-68b4f209` candidate onto main
+`9a1f9327a6ebdf060d28e6da96e1e84d680202dc`. Four independent Workspace boundary tests were appended to the
+new test file. Canonical parser/fingerprint/provider, its26-method oracle and
+fixture pins, Cargo/lock, Workspace/lib/tex_scan/completion and all frontends
+remain unchanged. No new dependency, runtime, DTO, wire or C ABI is introduced.
+
+Canonical accepted entry fragments and report rows remain paired even when
+empty/invalid/overlong keys are rejected. The adapter locates only their header
+key spans, respecting percent trivia and parenthesized/mixed-case types. Existing
+monotonic UTF16 conversion binds the real path, line and current open revision.
+Standalone provider diagnostics keep their synthetic anchor and are not exposed
+as project diagnostics. Existing dirty-buffer precedence, revision caching,
+last declaration per file, active/open/lexical file precedence and cross-file
+definition alternatives remain. The256-byte key cap, per-file/aggregate/filecount/
+symbol/discovery limits and partial/skipped status are preserved.
+
+Actual own build command, with pinned paired compiler/sysroot and copied offline
+registry, fresh target and instrumented rustc/linker:
+
+```sh
+cargo test -p latexide-core --test bibliography_contract --test bibliography_index_contract --test project_completion_contract --test definition_contract --no-run --locked --offline --jobs 1 --message-format=json
+```
+
+The four discovered binaries were then run once per exact named method with
+`<test-binary> <method> --exact --nocapture --test-threads=1`, a10s timeout and
+256MiB child-RSS ceiling. This is a fresh publisher cohort, separate from the
+producer's69 results. Actual result:73 unique methods/73 invocations PASS =
+9original Workspace +4own review boundaries +26canonical +21completion +13definition;
+71normal plus2exact-marker should_panic guards,0unexpected FAIL/ERROR/TIMEOUT/
+ignored/UNRUN. The1382 filtered observations belong to the individual exact
+invocations and are not extra PASS. Peak child RSS:13467648bytes;
+slowest case:0.087710s. Build exit0 in28.549s. The initial
+publisher harness incorrectly expected a crate-directory CWD; actual wrapper
+argv and dep-info showed workspace-root CWD and the exact relative source. That
+pre-test metadata assertion was corrected, then only the previously unstarted
+cases ran on unchanged source/binaries. No rebuild or case replay was used.
+The producer's baseline assertion RED1 and reporting metadata ERROR1/correction1
+remain historical evidence; they are not publisher case failures or passes.
+
+Source/nonce/tool/CWD/env/argv, current dep-info, newly compiled core rlib,
+direct linker inputs, test binaries, discovered names, per-case fixture hashes,
+raw stdout/stderr and exits are sealed in the private executor's review1 receipt.
+Report SHA256:`dedeb94af916b1154abbc3d90fda1ee728d833970f71be34d9830f5e8d5f5aeb`.
+Receipt SHA256:`9118c760afbab7fc161d407987929b7d5683a3313eff724063f19a01a7b68693`.
+The intake verified531frozen source +223evidence files byte/mode/hash and the
+fresh main's531 Git blobs. `scripts/build_windows.ps1` has the repository-declared
+CRLF checkout versus LF Git blob; this observed transport exception is recorded
+separately and no source or attributes were normalized.
+
+The new test path alone is added to P12 ownership in package-specs and generated
+packages/plan/owners. `project_index.rs` stays an explicit P00 manifest hook.
+No strict verifier, skip, quota, refusal, required-check/app or review policy is
+weakened. WRA-97/#83 track this child; WRA-17/#13 remain open. The required hosted
+CI, exact-head CodeRabbit review, protected expected-head squash and actual-main
+CI are separate publication gates and their final readback is recorded in the
+publisher receipt. These library tests do not qualify native GUI, Windows/Linux
+desktop workflows, live MCP, research/network import, AX/security, SDK38 strong
+closure or production/release. App launch0; automatic Save0.
+
+**P12 publication continuation, 2026-11-16:** after the explicit user resume, the existing73-method Rust cohort and its actual source/binary bindings were verified without replay. Fresh Python coordinator219/219 PASS,0failure/error/skip, 27.281s; package validator and generated-contract check PASS. The shared two-slot/25GiB reserve lease was granted for the coordinator phase and released after its child was reaped. No Rust build budget reset, GUI/app launch or scheduled task. The current PR exact-head required CI, public CodeRabbit, protected merge and actual-main CI remain separate gates; final IDs/results belong to the publisher receipt. WRA-97/#83 are the scoped child; WRA-17/#13 remain open.
+
+Actual remaining-check commands:
+
+```sh
+python3 -B scripts/validate_development_packages.py
+python3 -B integration/registry/generate_contracts.py --check
+python3 -B integration/registry/probes.py unittest --suite coordinator --result <own-T9-scratch>/coordinator.json
+```
