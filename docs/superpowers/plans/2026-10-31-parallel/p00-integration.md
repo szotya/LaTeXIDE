@@ -81,6 +81,8 @@
 - `docs/IDE_PRODUCT_DIRECTION.md`
 - `shared/ide-theme/`
 - `crates/latexide-build/src/process.rs`
+- `apps/macos/Sources/LaTeXIDEKit/Chrome/TitlebarToolbarHost.swift`
+- `apps/macos/Tests/LaTeXIDEKitTests/WindowToolbarLayoutTests.swift`
 
 **Teszt:** `crates/latexide-contracts/tests/compatibility.rs`. **Eredménynapló:** `docs/development/results/P00.md`.
 

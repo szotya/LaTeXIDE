@@ -8,8 +8,6 @@ public struct WorkspaceView: View {
     private var theme: ResolvedTheme { preferences.theme(systemDark: systemScheme == .dark) }
     public var body: some View {
         VStack(spacing: 0) {
-            WorkspaceChrome(store: store, preferences: preferences)
-            theme.ui("border").frame(height: 1)
             if let warning = store.recoveryWarning {
                 Label(warning, systemImage: "exclamationmark.triangle.fill")
                     .font(.system(size: 11.5)).foregroundStyle(theme.ui("warning"))
@@ -54,7 +52,7 @@ public struct WorkspaceView: View {
             .onChange(of: store.root) { _, _ in assistant.disconnect() }
             .onChange(of: store.sessionPath) { _, _ in configureAssistant() }
             .preferredColorScheme(preferences.appearance.colorScheme)
-            .background(WindowChromeBridge(theme: theme, appearance: preferences.appearance))
+            .background(WindowChromeBridge(store: store, preferences: preferences, theme: theme, appearance: preferences.appearance))
             .overlay(alignment: .top) {
                 if let mode = store.quickOpen {
                     ZStack(alignment: .top) {
@@ -66,7 +64,7 @@ public struct WorkspaceView: View {
             .alert("A művelet nem sikerült", isPresented: Binding(get: { store.failure != nil }, set: { if !$0 { store.failure = nil } })) {
                 Button("Rendben") { store.failure = nil }
             } message: { Text(store.failure ?? "") }
-            .frame(minWidth: 1080, minHeight: 680)
+            .frame(minWidth: 1080, minHeight: 632)
     }
     private func configureAssistant() {
         assistant.configure(root: store.root, sessionPath: store.sessionPath, bridgeURL: Bundle.main.resourceURL?.appendingPathComponent("latexide-mcp"))

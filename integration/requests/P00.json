@@ -20,7 +20,10 @@
     "integration/registry/evidence.py",
     "integration/registry/readiness.py",
     "integration/registry/p00-acceptance.v1.json",
-    "docs/development/contracts/p00-closure.md"
+    "docs/development/contracts/p00-closure.md",
+    "tests/contracts/test_ui57_native_registration.py",
+    "apps/macos/Sources/LaTeXIDEKit/Chrome/TitlebarToolbarHost.swift",
+    "apps/macos/Tests/LaTeXIDEKitTests/WindowToolbarLayoutTests.swift"
   ],
   "hook_targets": [
     "Cargo.toml",
@@ -40,7 +43,8 @@
     "cargo +1.99.1 run -p latexide-contracts --bin latexide-integration --locked -- --root .",
     "python3 integration/registry/verify.py --profile shared --native-schema",
     "python3 integration/registry/verify.py --profile integrated",
-    "python3 integration/registry/verify.py --recheck-report .local/p00-verification/report.json"
+    "python3 integration/registry/verify.py --recheck-report .local/p00-verification/report.json",
+    "python3 -B -m unittest discover -s tests/contracts -p test_ui57_native_registration.py"
   ],
-  "compatibility": "Additive contract-v1 coordinator and verification tools. Legacy IPC v1, C ABI, agent direct edit/save/undo unchanged. Queue inspection is read-only; listed requirement IDs and provider dependencies remain unqualified until real acceptance."
+  "compatibility": "Additive contract-v1 coordinator and verification tools. Legacy IPC v1, C ABI, agent direct edit/save/undo unchanged. Queue inspection is read-only; listed requirement IDs and provider dependencies remain unqualified until real acceptance. UI57 native test registration binds its render output to a fresh0700 directory beside the actual native summary, overriding inherited UI57 output. The two legacy external opt-ins are still removed; the exact four existing allowed native skips and all count/refusal/quota gates are unchanged. Mocked registration contracts are not native acceptance. The titlebar host and tests are explicit P00 integration paths; issue57/WRA55 full live AC3/AC5/display acceptance remains open."
 }

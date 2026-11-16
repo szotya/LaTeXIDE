@@ -42,3 +42,20 @@ Windows source/portable checks do not compile WinUI. Follow `<repo>/docs/windows
 
 
 Project macro/ref/BibTeX completion: [project-completion.md](project-completion.md). The shared index is implemented; the new native popup/acceptance remains Mac-only. Port `refresh_project:true` acceptance validation, typed candidates/partial status, whitespace/list/scalar handling and no-op acceptance without history. Shared MSVC type-check does not establish native Windows/Linux behavior.
+
+## Native workspace titlebar controls
+
+The Mac WorkspaceChrome is hosted once per window by the private TitlebarToolbarAttachment/Controller and a native titlebar accessory. Keep standard traffic-light buttons and their measured geometry, a content area without a duplicate toolbar, and dragging only in explicit empty gaps. SwiftUI retains Store/preferences/assistant state while AppKit owns actual button bounds, enabled state and target/action. Initialize hosted labels before measurement and enable public intrinsicContentSize; an intrinsic-disabled hosting view can have zero Auto Layout fittingSize while drawing a wider label. Build/Stop keeps its label-derived width under minimum/nonfinite proposals. Preserve flexible project/search layout and main-document binding. Test actual owned native controls, hit regions and disabled delivery, dirty text/revision/history, unsent drafts and recovery state. Controlled hidden renders are not displayed traffic-light/drag/menu/focus/AX acceptance.
+
+Rebuild the actual current-main Rust FFI before linking the native product/tests; a donor UI binary or old static archive cannot qualify a newer main. Bind the archive, actual linker input, compiled source/test image and discovery. UI57 render methods retain their explicit UI57_RENDER_DIR guard; the strict native adapter supplies a fresh private directory beside its own summary, clears legacy external opt-ins, and keeps the existing exact four allowed skips. Compare the mocked expected output root after the same canonical resolution as the adapter: macOS /var aliases and Windows short runner names can differ lexically while naming the same owned directory. Do not add render skips or turn a missing/failed cohort into PASS. Source staging worktrees hold only the small reviewed delta; native target/cache/packaging work belongs in the task own T9 copy under the active capacity/reserve gate. Read `<repo>/docs/development/results/UI57.md` for separate producer/current-main results and remaining live AC3/AC5/display limits. Windows/Linux must implement and qualify their own native behavior; no full parent issue closure follows from these Mac controls.
+
+For a UI-only follow-up on unchanged Rust sources and base, an explicitly pinned
+existing current-main FFI archive can be reused after rehashing it and checking
+the actual new Swift linker input. Keep the earlier Rust build result historical;
+the new Swift image/discovery/case records qualify only the new native cohort.
+Explicit titlebar gap double clicks route Maximize/Minimize through the window's
+native actions; nil/None/Fill/unknown values retain the accepted existing fallback.
+Use owned hidden-window overrides and direct synthetic events to test routing,
+suppressing real Window Server actions in every spy. Check the detached view
+before reading preferences. Keep displayed behavior/full system action parity
+and other platform adapters as separate acceptance work.

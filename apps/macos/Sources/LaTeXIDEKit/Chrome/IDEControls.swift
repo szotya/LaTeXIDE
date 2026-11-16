@@ -34,18 +34,17 @@ struct FileTypeIcon: View {
     }
 }
 struct WindowChromeBridge: NSViewRepresentable {
+    let store: WorkspaceStore
+    let preferences: EditorPreferences
     let theme: ResolvedTheme
     let appearance: AppearanceMode
-    func makeNSView(context: Context) -> NSView { NSView() }
-    func updateNSView(_ view: NSView, context: Context) {
-        DispatchQueue.main.async { [weak view] in
-            guard let window = view?.window else { return }
-            window.titleVisibility = .hidden; window.titlebarAppearsTransparent = true
-            window.isMovableByWindowBackground = true
-            window.backgroundColor = theme.ns("chrome")
-            window.appearance = appearance == .system ? nil : NSAppearance(named: theme.dark ? .darkAqua : .aqua)
-        }
+    func makeNSView(context: Context) -> TitlebarToolbarAttachment {
+        TitlebarToolbarAttachment(store: store, preferences: preferences, theme: theme, appearance: appearance)
     }
+    func updateNSView(_ view: TitlebarToolbarAttachment, context: Context) {
+        view.update(store: store, preferences: preferences, theme: theme, appearance: appearance)
+    }
+    static func dismantleNSView(_ view: TitlebarToolbarAttachment, coordinator: ()) { view.detach() }
 }
 extension WorkspaceStore {
     public func undoCommand(in window: NSWindow? = nil) { routeHistoryCommand(redo: false, window: window) }

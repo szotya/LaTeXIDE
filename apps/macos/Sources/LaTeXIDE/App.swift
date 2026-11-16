@@ -25,7 +25,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
                 if let index = args.firstIndex(of: "--project"), index + 1 < args.count { store.open(URL(fileURLWithPath: args[index + 1])) }
             }
         }
-        .windowStyle(.hiddenTitleBar)
+        .windowStyle(.titleBar)
+        .windowToolbarStyle(.unifiedCompact)
         .defaultSize(width: 1440, height: 900)
         .commands {
             CommandGroup(replacing: .newItem) { Button("Projektmappa megnyitása…") { store.chooseProject() }.keyboardShortcut("o") }
