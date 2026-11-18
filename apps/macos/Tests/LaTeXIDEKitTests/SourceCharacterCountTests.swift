@@ -165,4 +165,64 @@ final class SourceCharacterCountTests: XCTestCase {
         XCTAssertEqual(fallback.outputHeight, 160); XCTAssertEqual(fallback.previewFraction, 0.25)
         XCTAssertTrue(fallback.completionEnabled); XCTAssertTrue(invalid.writtenKeys.isEmpty)
     }
+
+    @MainActor func testCachedCountReusesSourceAcrossCaretUpdates() {
+        let store = WorkspaceStore()
+        store.text = "e\u{301} 👩‍💻\n"; store.selection = "main.tex"
+        let bytes = Array(store.text.utf8)
+        var computed: [String] = []
+        let cache = SourceCharacterCountCache { computed.append($0); return SourceCharacterCount($0) }
+        let preferences = EditorPreferences(storage: MemoryPreferenceStorage())
+        // The view keeps this cache in State while constructing new projections.
+        for column in 1...3 {
+            store.caretColumn = column
+            store.editorSelection = NSRange(location: 0, length: 0)
+            let presentation = SourceCharacterCountPresentation(preferences: preferences, cache: cache)
+            assertCount(presentation.count(in: store.text), 4, 2)
+        }
+        XCTAssertEqual(computed, [store.text])
+        XCTAssertEqual(Array(store.text.utf8), bytes)
+        XCTAssertEqual(store.caretColumn, 3)
+    }
+
+    @MainActor func testCachedCountInvalidatesSameLengthSourceChange() {
+        var computed: [String] = []
+        let cache = SourceCharacterCountCache { computed.append($0); return SourceCharacterCount($0) }
+        let presentation = SourceCharacterCountPresentation(preferences: EditorPreferences(storage: MemoryPreferenceStorage()), cache: cache)
+        assertCount(presentation.count(in: "a "), 2, 1)
+        assertCount(presentation.count(in: "ab"), 2, 2)
+        assertCount(presentation.count(in: String(Array("ab"))), 2, 2)
+        XCTAssertEqual(computed, ["a ", "ab"])
+    }
+
+    @MainActor func testDisabledCacheRefreshesOnlyWhenEnabled() {
+        var computed: [String] = []
+        let cache = SourceCharacterCountCache { computed.append($0); return SourceCharacterCount($0) }
+        let preferences = EditorPreferences(storage: MemoryPreferenceStorage(["ide.showSourceCharacterCount": false]))
+        let presentation = SourceCharacterCountPresentation(preferences: preferences, cache: cache)
+        XCTAssertNil(presentation.count(in: "old")); XCTAssertTrue(computed.isEmpty)
+        preferences.showSourceCharacterCount = true
+        assertCount(presentation.count(in: "old"), 3, 3)
+        preferences.showSourceCharacterCount = false
+        XCTAssertNil(presentation.count(in: "\tX")); XCTAssertEqual(computed, ["old"])
+        preferences.showSourceCharacterCount = true
+        assertCount(presentation.count(in: "\tX"), 2, 1)
+        assertCount(presentation.count(in: "\tX"), 2, 1)
+        XCTAssertEqual(computed, ["old", "\tX"])
+    }
+
+    @MainActor func testCachedCountTracksGraphemeJoiningEdits() {
+        var computations = 0
+        let cache = SourceCharacterCountCache { computations += 1; return SourceCharacterCount($0) }
+        let presentation = SourceCharacterCountPresentation(preferences: EditorPreferences(storage: MemoryPreferenceStorage()), cache: cache)
+        var source = "e"
+        assertCount(presentation.count(in: source), 1, 1)
+        source += "\u{301}"
+        assertCount(presentation.count(in: source), 1, 1)
+        source += " 👩"
+        assertCount(presentation.count(in: source), 3, 2)
+        source += "‍💻"
+        assertCount(presentation.count(in: source), 3, 2)
+        XCTAssertEqual(computations, 4)
+    }
 }

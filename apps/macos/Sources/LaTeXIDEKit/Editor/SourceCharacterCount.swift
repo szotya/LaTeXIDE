@@ -16,12 +16,37 @@ struct SourceCharacterCount: Equatable {
     }
 }
 
+/// One view-owned entry; caret-only updates reuse the unchanged source count.
+@MainActor final class SourceCharacterCountCache {
+    private let compute: (String) -> SourceCharacterCount
+    private var source: String?
+    private var value: SourceCharacterCount?
+
+    init(compute: @escaping (String) -> SourceCharacterCount = SourceCharacterCount.init) {
+        self.compute = compute
+    }
+
+    func count(in source: String) -> SourceCharacterCount {
+        if self.source == source, let value { return value }
+        let value = compute(source)
+        self.source = source
+        self.value = value
+        return value
+    }
+}
+
 /// A headless projection that shares the workspace's live preference object.
 @MainActor struct SourceCharacterCountPresentation {
     let preferences: EditorPreferences
+    private let cache: SourceCharacterCountCache
+
+    init(preferences: EditorPreferences, cache: SourceCharacterCountCache? = nil) {
+        self.preferences = preferences
+        self.cache = cache ?? SourceCharacterCountCache()
+    }
 
     func count(in source: String) -> SourceCharacterCount? {
         guard preferences.showSourceCharacterCount else { return nil }
-        return SourceCharacterCount(source)
+        return cache.count(in: source)
     }
 }
