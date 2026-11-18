@@ -41,6 +41,7 @@
 - `crates/latexide-core/tests/bibliography_index_contract.rs`
 - `integration/requests/P12.json`
 - `docs/development/results/P12.md`
+- `crates/latexide-core/tests/bibliography_index_freshness_contract.rs`
 
 **Teszt:** `crates/latexide-core/tests/bibliography_contract.rs`. **Eredménynapló:** `docs/development/results/P12.md`.
 
