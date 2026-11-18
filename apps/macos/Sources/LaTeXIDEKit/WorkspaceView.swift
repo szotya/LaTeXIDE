@@ -44,7 +44,7 @@ public struct WorkspaceView: View {
                     }
                 }
             }
-            WorkspaceStatusBar(store: store)
+            WorkspaceStatusBar(store: store, preferences: preferences)
         }.background(theme.ui("editor")).environment(\.ideTheme, theme).tint(theme.ui("accent"))
             .onAppear { store.inspector = preferences.inspectorTab; configureAssistant() }
             .onDisappear { assistant.disconnect() }
