@@ -1,7 +1,7 @@
 //! Actual disk fixtures and public Workspace consumers; fixtures remain for readback.
 use latexide_core::{completion::CompletionSet, Position, TextEdit, Workspace};
 use std::{alloc::{GlobalAlloc, Layout, System}, fs::{self, File, FileTimes}, path::PathBuf,
-    sync::{Mutex, atomic::{AtomicUsize, Ordering}}, time::Duration};
+    sync::{Mutex, MutexGuard, atomic::{AtomicUsize, Ordering}}, time::Duration};
 
 // Observe parse-sized allocations without adding instrumentation to production.
 // A padded input makes the canonical parser's UTF-16 coordinate table observable;
@@ -13,6 +13,10 @@ static NEXT_PROJECT: AtomicUsize = AtomicUsize::new(0);
 // The allocation observer is process-wide; keep these cases isolated even
 // when the CI invokes this target with libtest's default parallelism.
 static CASE_SERIAL: Mutex<()> = Mutex::new(());
+fn case_lock(lock: &Mutex<()>) -> MutexGuard<'_, ()> {
+    lock.lock().unwrap_or_else(std::sync::PoisonError::into_inner)
+}
+fn serial_case() -> MutexGuard<'static, ()> { case_lock(&CASE_SERIAL) }
 fn observe(size: usize) {
     let threshold = THRESHOLD.load(Ordering::Relaxed);
     if threshold > 0 && size >= threshold { LARGE.fetch_add(1, Ordering::Relaxed); }
@@ -27,12 +31,22 @@ unsafe impl GlobalAlloc for ObserveAlloc {
 static ALLOCATOR: ObserveAlloc = ObserveAlloc;
 
 struct Project(PathBuf);
+fn project_path(sequence: usize) -> PathBuf {
+    std::env::temp_dir().join(format!("p12-freshness-{}-{sequence}", std::process::id()))
+}
 impl Project {
     fn new() -> Self {
-        let root = std::env::temp_dir().join(format!("p12-freshness-{}-{}", std::process::id(), NEXT_PROJECT.fetch_add(1, Ordering::Relaxed)));
-        fs::create_dir(&root).unwrap();
-        println!("OWN_FIXTURE={}", root.display());
-        Self(root)
+        loop {
+            let root = project_path(NEXT_PROJECT.fetch_add(1, Ordering::Relaxed));
+            match fs::create_dir(&root) {
+                Ok(()) => {
+                    println!("OWN_FIXTURE={}", root.display());
+                    return Self(root);
+                }
+                Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => continue,
+                Err(error) => panic!("Cannot create own fixture {}: {error}", root.display()),
+            }
+        }
     }
     fn write(&self, id: &str, text: &str) { fs::write(self.0.join(id), text).unwrap(); }
     fn rewrite_same_metadata(&self, text: &str) {
@@ -71,7 +85,7 @@ fn replace(ws: &mut Workspace, id: &str, text: &str) -> u64 {
 
 #[test]
 fn freshness_01_same_size_mtime_key_normal_refresh() {
-    let _serial = CASE_SERIAL.lock().unwrap();
+    let _serial = serial_case();
     let p = Project::new(); p.write("refs.bib", "@book{oldKey,title={A}}\n");
     let (mut ws, caret) = p.workspace("newKey");
     assert_eq!(labels(&complete(&mut ws, caret)), vec!["oldKey"]);
@@ -85,7 +99,7 @@ fn freshness_01_same_size_mtime_key_normal_refresh() {
 
 #[test]
 fn freshness_02_same_size_mtime_value_and_range() {
-    let _serial = CASE_SERIAL.lock().unwrap();
+    let _serial = serial_case();
     let p = Project::new(); p.write("refs.bib", "@book{same,title={AB}}\n");
     let (mut ws, caret) = p.workspace("same");
     assert!(complete(&mut ws, caret).items[0].detail.contains("refs.bib:1"));
@@ -99,7 +113,7 @@ fn freshness_02_same_size_mtime_value_and_range() {
 
 #[test]
 fn freshness_03_disk_delete_and_recreate() {
-    let _serial = CASE_SERIAL.lock().unwrap();
+    let _serial = serial_case();
     let p = Project::new(); p.write("refs.bib", "@book{oldKey,title={T}}\n");
     let (mut ws, caret) = p.workspace("newKey");
     assert_eq!(labels(&complete(&mut ws, caret)), vec!["oldKey"]);
@@ -112,7 +126,7 @@ fn freshness_03_disk_delete_and_recreate() {
 
 #[test]
 fn freshness_04_dirty_open_buffer_shadows_changed_disk() {
-    let _serial = CASE_SERIAL.lock().unwrap();
+    let _serial = serial_case();
     let p = Project::new(); p.write("refs.bib", "@book{diskA,title={T}}\n");
     let (mut ws, caret) = p.workspace("dirty"); ws.open_document("refs.bib").unwrap();
     assert_eq!(replace(&mut ws, "refs.bib", "@book{dirty,title={T}}\n"), 2);
@@ -125,8 +139,9 @@ fn freshness_04_dirty_open_buffer_shadows_changed_disk() {
 }
 
 #[test]
+// The fixed-clock core review control proves pre-expiry force independently of CI pauses.
 fn freshness_05_explicit_refresh_before_ttl_expiry() {
-    let _serial = CASE_SERIAL.lock().unwrap();
+    let _serial = serial_case();
     let p = Project::new(); p.write("refs.bib", "@book{oldKey,title={T}}\n");
     let (mut ws, caret) = p.workspace("newKey");
     assert_eq!(labels(&complete(&mut ws, caret)), vec!["oldKey"]);
@@ -135,15 +150,23 @@ fn freshness_05_explicit_refresh_before_ttl_expiry() {
     assert_eq!(ws.definition("main.tex", 1, 6).unwrap().target.unwrap().start_utf16, 6);
 }
 
-fn measured(ws: &mut Workspace, caret: u32, threshold: usize) -> (CompletionSet, usize) {
+struct AllocationWindow;
+impl Drop for AllocationWindow {
+    fn drop(&mut self) { THRESHOLD.store(0, Ordering::Relaxed); }
+}
+fn observe_window<T>(threshold: usize, operation: impl FnOnce() -> T) -> (T, usize) {
     LARGE.store(0, Ordering::Relaxed); THRESHOLD.store(threshold, Ordering::Relaxed);
-    let set = complete(ws, caret);
-    THRESHOLD.store(0, Ordering::Relaxed);
-    (set, LARGE.load(Ordering::Relaxed))
+    let window = AllocationWindow;
+    let value = operation();
+    drop(window);
+    (value, LARGE.load(Ordering::Relaxed))
+}
+fn measured(ws: &mut Workspace, caret: u32, threshold: usize) -> (CompletionSet, usize) {
+    observe_window(threshold, || complete(ws, caret))
 }
 #[test]
 fn freshness_06_unchanged_file_reuses_parsed_symbols() {
-    let _serial = CASE_SERIAL.lock().unwrap();
+    let _serial = serial_case();
     let p = Project::new();
     let old = format!("%{}\n@book{{oldKey,title={{T}}}}\n", "x".repeat(32768));
     let new = old.replace("oldKey", "newKey");
@@ -163,7 +186,7 @@ fn freshness_06_unchanged_file_reuses_parsed_symbols() {
 
 #[test]
 fn freshness_07_over_quota_file_remains_partial_after_change() {
-    let _serial = CASE_SERIAL.lock().unwrap();
+    let _serial = serial_case();
     let p = Project::new(); p.write("refs.bib", "@book{oldKey,title={T}}\n");
     let (mut ws, caret) = p.workspace("newKey"); complete(&mut ws, caret);
     p.write("oversized.bib", &"x".repeat(latexide_core::MAX_FILE_BYTES + 1));
@@ -175,7 +198,7 @@ fn freshness_07_over_quota_file_remains_partial_after_change() {
 
 #[test]
 fn freshness_08_save_then_undo_keeps_authoritative_dirty_revision() {
-    let _serial = CASE_SERIAL.lock().unwrap();
+    let _serial = serial_case();
     let p = Project::new(); p.write("refs.bib", "@book{oldKey,title={T}}\n");
     let (mut ws, caret) = p.workspace("oldKey"); ws.open_document("refs.bib").unwrap();
     assert_eq!(replace(&mut ws, "refs.bib", "@book{newKey,title={T}}\n"), 2);
@@ -185,4 +208,47 @@ fn freshness_08_save_then_undo_keeps_authoritative_dirty_revision() {
     ws.refresh_completion_index(); assert_eq!(labels(&complete(&mut ws, caret)), vec!["oldKey"]);
     let target = ws.definition("main.tex", 1, 6).unwrap().target.unwrap(); assert_eq!(target.revision, Some(3));
     assert_eq!(fs::read_to_string(p.0.join("refs.bib")).unwrap(), "@book{newKey,title={T}}\n");
+}
+
+#[test]
+fn fixture_09_retained_name_collision_preserves_evidence() {
+    let _serial = serial_case();
+    let retained = loop {
+        let root = project_path(NEXT_PROJECT.load(Ordering::Relaxed));
+        match fs::create_dir(&root) {
+            Ok(()) => break root,
+            Err(error) if error.kind() == std::io::ErrorKind::AlreadyExists => {
+                NEXT_PROJECT.fetch_add(1, Ordering::Relaxed);
+            }
+            Err(error) => panic!("Cannot create own retained fixture: {error}"),
+        }
+    };
+    let marker = retained.join("evidence.txt");
+    fs::write(&marker, b"RETAINED_OWN_EVIDENCE").unwrap();
+    let before = fs::metadata(&marker).unwrap().modified().unwrap();
+    let project = Project::new();
+    assert_ne!(project.0, retained);
+    assert_eq!(fs::read(&marker).unwrap().as_slice(), b"RETAINED_OWN_EVIDENCE");
+    assert_eq!(fs::metadata(marker).unwrap().modified().unwrap(), before);
+}
+
+#[test]
+fn fixture_10_caught_panic_restores_observer_and_recovers_lock() {
+    let _serial = serial_case();
+    let local = Mutex::new(());
+    let poisoned = std::panic::catch_unwind(|| -> () {
+        let _guard = case_lock(&local);
+        panic!("OWN_CASE_LOCK_POISON");
+    });
+    assert_eq!(poisoned.unwrap_err().downcast_ref::<&str>(), Some(&"OWN_CASE_LOCK_POISON"));
+    assert!(local.is_poisoned());
+    drop(case_lock(&local));
+    let failure = std::panic::catch_unwind(|| observe_window(1, || -> () {
+        panic!("OWN_ALLOCATION_WINDOW_PANIC");
+    }));
+    assert_eq!(failure.unwrap_err().downcast_ref::<&str>(), Some(&"OWN_ALLOCATION_WINDOW_PANIC"));
+    assert_eq!(THRESHOLD.load(Ordering::Relaxed), 0);
+    let (_, allocations) = observe_window(usize::MAX, || ());
+    assert_eq!(allocations, 0);
+    assert_eq!(THRESHOLD.load(Ordering::Relaxed), 0);
 }

@@ -1311,3 +1311,29 @@ and full product/SDK/release acceptance remain unrun.
 The fresh Python coordinator passed 221/221, 0 failures/errors/skips, exit 0 in
 26.275 s, under its own gate lease; it did not launch a compiler. Scratch after
 this phase was 837455913 bytes. Required remote CI remains a separate result.
+
+## PR126 freshness review fixes — 2026-11-18
+
+Review5958935630 requested six changes on the first9e3bb06f head, despite its
+7/7 hosted Actions PASS. Verified the root causes, preserved its two source
+files/raw review and fixed only project_index.rs plus the freshness test file.
+Digest/budget reuse, unified decoded-size admission and hashing every actual
+disk read address the three cache paths. Private fixed clock/read controls cover
+metadata-only reuse, the metadata/read writer transition, warm budget misses and
+pre-expiry explicit force. Fixtures retry retained names without reuse/deletion,
+recover a poisoned serialization guard and reset observation with Drop.
+
+Fresh final local cohort87/87PASS=81retained+4core+2fixture;85normal+2original
+exact guards,78execution processes, six discoveries. Two caught helper panics
+are separate controls. The10 freshness/fixture cases ran together under default
+libtest parallelism;11 other library units were not selected. All selected
+failure/error/timeout/ignored/unrun/replay0; max4.547762s/11452416bytes.
+Fresh normal core +5 linked integration images +1 actual core-unit image;
+build29.615s, compiler allowance2/2consumed. Source/images stable throughout.
+Case report SHA256:`8d7e300cf2c06e5783d32e04fc5c7405279f4799957043a3ea5b80e308e9b4fd`. Build report:`95a8c102caea78eb814ad12a41d44daf5ae1306a917144b8c0ea92262c45add9`.
+Pre-fix runtime of the new regressions remains UNRUN; code-flow confirmation is
+not labeled runtime RED. Scratch976594311bytes<3GiB; all own children reaped and
+shared leases released. Old cohorts, errors and UI57 authority stay untouched.
+No new public API, decoder/helper/Cargo/policy/gate change, GUI, peer/model or
+live app operation. New exact-head hosted CI/formal review and actual-main gates
+remain separate; details in the [P12 result](development/results/P12.md#pr126-freshness-review-fixes--2026-11-18).
