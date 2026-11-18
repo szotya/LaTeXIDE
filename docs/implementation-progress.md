@@ -1337,3 +1337,27 @@ shared leases released. Old cohorts, errors and UI57 authority stay untouched.
 No new public API, decoder/helper/Cargo/policy/gate change, GUI, peer/model or
 live app operation. New exact-head hosted CI/formal review and actual-main gates
 remain separate; details in the [P12 result](development/results/P12.md#pr126-freshness-review-fixes--2026-11-18).
+
+
+## UI56 source-character-count integration — 2026-11-18
+
+The status bar displays the active complete `store.text` as two extended-grapheme counts: total and excluding Unicode whitespace. Raw LaTeX commands/comments count; no PDF/body extraction (#69) is performed. The appearance toggle defaults on when `ide.showSourceCharacterCount` is absent. `WorkspaceView` passes its existing preferences instance into `WorkspaceStatusBar`; the observed instance and presentation retain identity. The compatible `UserDefaults` adapter preserves the public constructor and every existing key/default/clamp; selected tests inject memory storage.
+
+Only the reviewed six UI56 product/test paths changed: `AppearancePicker.swift`, `ThemeCatalog.swift`, `Chrome/WorkspaceStatusBar.swift`, `Editor/SourceCharacterCount.swift`, the preferences argument in `WorkspaceView.swift`, and `SourceCharacterCountTests.swift`. Base main `789fd01aa931177ebe9c77a60a278d628c84b155` contains PR126; its538 canonical files were copied afresh, then these six deltas applied (540 resulting source files). UI57/current P12 changes remain. No dependency, C ABI, registry, required-gate or refusal-policy change. Publisher child WRA-164 is scoped; #56/WRA-54 remains open.
+
+The reviewed packet's producer20 PASS and independent review28/28 (same20 +8) are historical separate runs, not48 distinct tests. This publisher made one fresh offline/locked/jobs1 FFI build from current Rust sources, including the header binding; the old archive was not reused. One fresh SwiftPM build compiles all32 normal Kit sources, the actual App source, local theme/CLatexCore/Security dependencies and a private test carrier with the original20 plus the reviewer's8. The shipped `apps/macos/Package.swift` and public test body are unchanged by the carrier. The carrier only redirects paths and selects tests; its source,32objects, image and actual App/test link commands are hash-bound.
+
+Actual commands use `CI_UI56_ROOT` for the newly assigned own T9 root, installed pinned tools, private scratch/cache/config/security/TMPDIR, no downloads and jobs1. Full argv/env/source/image/case records remain in the own publisher receipt:
+
+```sh
+cargo build --manifest-path "$CI_UI56_ROOT/source/Cargo.toml" -p latexide-ffi --locked --offline --jobs 1 --target-dir "$CI_UI56_ROOT/source/target"
+swift build --package-path "$CI_UI56_ROOT" --scratch-path "$CI_UI56_ROOT/swift-build" --cache-path "$CI_UI56_ROOT/swift-cache" --config-path "$CI_UI56_ROOT/swift-config" --security-path "$CI_UI56_ROOT/swift-security" --manifest-cache local --build-system native --jobs 1 --disable-automatic-resolution --disable-prefetching --disable-keychain --disable-netrc --build-tests --disable-swift-testing -v
+swift test <same private path/options> --disable-swift-testing list --skip-build
+xctest -XCTest LaTeXIDEKitTests.<class>/<method> <fresh-own-test-bundle>
+```
+
+FFI build20.359s/RSS284524544bytes PASS; `liblatexide_ffi.a` SHA256 `54334f542ecddaae2e9feb72ed684ccbdb4bdf1668d3fcdf92c6b9ca2131b711`. Swift build26.115s/RSS701988864bytes PASS. The SwiftPM default sandbox was retained; no `--disable-sandbox`, OS policy or permissions configuration change. One discovery found exactly28 unique methods; each ran once in its own known child, with a10s deadline and measured RSS ceiling256MiB. Actual28/28 PASS,0unexpectedFAIL/ERROR/timeout/skip/selectedUNRUN/retry; maximum0.212s and28901376bytes RSS. Test-image SHA256 `37d3ecff9ee641935b69fd3b422170323fdf702d34dff160b42812d9fcaa2e6a`. The App executable was built, never launched. Own footprint approximately1.20GB, below3GiB, shared admission max2heavy/25GiB reserve; all own leases released after wait/reap. Threshold observation is not OS containment or hostile same-UID immutability.
+
+The I08 review fixture's seeded NSRange(2,1) splits an astral scalar. Count/nonmutation assertions remain actual PASS; valid editor selection/range validation is not qualified. The large1,245,184-byte fixture is a pure Swift String, not a new Runtime file allowance. Store initialization registers its existing passive timer, but no RunLoop is pumped. This cohort does not open Runtime6, instantiate views/windows, run NSApp, access real UserDefaults, perform live typing/file switching/keyboard undo/restart, AX/VoiceOver, compiler/model calls, or Windows/Linux native execution. These and full parent/release acceptance remain UNRUN/open. Fresh exact-head CI/app/formal review/conversation resolution, protected squash and actual-main push CI remain separate publication gates.
+
+Post-integration checks: `python3 scripts/validate_development_packages.py` PASS; `python3 integration/registry/generate_contracts.py --check` PASS; `python3 integration/registry/probes.py unittest --suite coordinator --result <own-result>`221/221PASS,0failure/error/skip, 24.355s; maintained-document probe PASS. These are local structural/Python results, not hosted required-check or parent acceptance.

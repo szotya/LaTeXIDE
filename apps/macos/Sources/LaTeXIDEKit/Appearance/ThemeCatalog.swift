@@ -52,8 +52,23 @@ public enum AppearanceMode: String, CaseIterable, Identifiable {
     func isDark(systemDark: Bool) -> Bool { self == .system ? systemDark : self == .dark }
     var colorScheme: ColorScheme? { switch self { case .system: nil; case .light: .light; case .dark: .dark } }
 }
+protocol EditorPreferenceStorage {
+    func object(forKey key: String) -> Any?
+    func string(forKey key: String) -> String?
+    func double(forKey key: String) -> Double
+    func bool(forKey key: String) -> Bool
+    func set(_ value: Any?, forKey key: String)
+}
+private struct UserDefaultsPreferenceStorage: EditorPreferenceStorage {
+    let defaults: UserDefaults
+    func object(forKey key: String) -> Any? { defaults.object(forKey: key) }
+    func string(forKey key: String) -> String? { defaults.string(forKey: key) }
+    func double(forKey key: String) -> Double { defaults.double(forKey: key) }
+    func bool(forKey key: String) -> Bool { defaults.bool(forKey: key) }
+    func set(_ value: Any?, forKey key: String) { defaults.set(value, forKey: key) }
+}
 @MainActor public final class EditorPreferences: ObservableObject {
-    private let defaults: UserDefaults
+    private let defaults: any EditorPreferenceStorage
     @Published public var appearance: AppearanceMode { didSet { defaults.set(appearance.rawValue, forKey: "ide.appearance") } }
     @Published public var paletteID: String { didSet { defaults.set(paletteID, forKey: "ide.palette") } }
     @Published var fontSize: Double { didSet { defaults.set(fontSize, forKey: "ide.fontSize") } }
@@ -62,7 +77,11 @@ public enum AppearanceMode: String, CaseIterable, Identifiable {
     @Published var outputHeight: Double { didSet { defaults.set(outputHeight, forKey: "ide.outputHeight") } }
     @Published var previewFraction: Double { didSet { defaults.set(previewFraction, forKey: "ide.previewFraction") } }
     @Published var inspectorTab: InspectorTab { didSet { defaults.set(inspectorTab.rawValue, forKey: "ide.inspectorTab") } }
-    public init(defaults: UserDefaults = .standard) {
+    @Published var showSourceCharacterCount: Bool { didSet { defaults.set(showSourceCharacterCount, forKey: "ide.showSourceCharacterCount") } }
+    public convenience init(defaults: UserDefaults = .standard) {
+        self.init(storage: UserDefaultsPreferenceStorage(defaults: defaults))
+    }
+    init(storage defaults: any EditorPreferenceStorage) {
         self.defaults = defaults
         appearance = AppearanceMode(rawValue: defaults.string(forKey: "ide.appearance") ?? "system") ?? .system
         paletteID = defaults.string(forKey: "ide.palette") ?? "graphite"
@@ -78,6 +97,7 @@ public enum AppearanceMode: String, CaseIterable, Identifiable {
         outputHeight = number("ide.outputHeight", fallback: 160, range: 95...600)
         previewFraction = number("ide.previewFraction", fallback: 0.42, range: 0.25...0.70)
         inspectorTab = InspectorTab(rawValue: defaults.string(forKey: "ide.inspectorTab") ?? "pdf") ?? .pdf
+        showSourceCharacterCount = defaults.object(forKey: "ide.showSourceCharacterCount") == nil ? true : defaults.bool(forKey: "ide.showSourceCharacterCount")
     }
     func theme(systemDark: Bool) -> ResolvedTheme { ThemeCatalog.shared.palette(paletteID).resolve(dark: appearance.isDark(systemDark: systemDark)) }
 }
