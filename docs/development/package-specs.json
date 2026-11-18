@@ -595,7 +595,8 @@
       "crates/latexide-core/tests/bibliography_contract.rs",
       "crates/latexide-core/tests/bibliography_index_contract.rs",
       "integration/requests/P12.json",
-      "docs/development/results/P12.md"
+      "docs/development/results/P12.md",
+      "crates/latexide-core/tests/bibliography_index_freshness_contract.rs"
     ],
     "test_command": "cargo +1.99.1 test -p latexide-core --test bibliography_contract --locked"
   },

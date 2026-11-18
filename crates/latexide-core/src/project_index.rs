@@ -2,6 +2,10 @@
 // Keep the canonical provider module and its frozen source pins unchanged.
 #[path = "services/bibliography/index_adapter.rs"]
 mod bibliography_index;
+// Borrow the bounded text: this SHA-256 uses fixed-size blocks/tail rather than
+// constructing a second source-sized padded buffer. The shared helper is unchanged.
+#[path = "services/recovery/sha256.rs"]
+mod source_fingerprint;
 
 use crate::{completion::{CompletionIndexStatus, CompletionKind}, document::Document, tex_scan::{self, Token, Tokens}};
 use std::{collections::{BTreeMap, BTreeSet}, fs, io::Read, path::{Path, PathBuf}, sync::Arc, time::{Duration, Instant, SystemTime}};
@@ -13,7 +17,7 @@ const VISITED: usize = 10_000;
 #[derive(Clone)]
 pub(crate) struct Symbol { pub name: String, pub kind: CompletionKind, pub arguments: Option<u8>, pub path: Arc<str>, pub line: u32, pub description: String, pub start_utf16: u32, pub length_utf16: u32 }
 #[derive(PartialEq)]
-enum Fingerprint { Open(u64), Disk(u64, Option<SystemTime>) }
+enum Fingerprint { Open(u64), Disk(u64, Option<SystemTime>, String) }
 struct Entry { fingerprint: Fingerprint, symbols: Vec<Symbol>, bytes: usize, budget: usize, truncated: bool }
 #[derive(Default)]
 pub(crate) struct ProjectIndex {
@@ -41,18 +45,29 @@ impl ProjectIndex {
             let opened = documents.get(&path);
             let info = if let Some(document) = opened { Some((Fingerprint::Open(document.revision), document.text.len())) }
                 else if !disk_refresh {
-                    self.entries.get(&path).map(|entry| match &entry.fingerprint { Fingerprint::Disk(len, time) => (Fingerprint::Disk(*len, *time), entry.bytes), Fingerprint::Open(_) => (Fingerprint::Disk(0, None), entry.bytes) })
+                    self.entries.get(&path).map(|entry| match &entry.fingerprint { Fingerprint::Disk(len, time, digest) => (Fingerprint::Disk(*len, *time, digest.clone()), entry.bytes), Fingerprint::Open(_) => (Fingerprint::Disk(0, None, String::new()), entry.bytes) })
                 } else {
-                    confined_path(root, &path).and_then(|p| fs::metadata(p).ok()).map(|meta| (Fingerprint::Disk(meta.len(), meta.modified().ok()), meta.len() as usize))
+                    confined_path(root, &path).and_then(|p| fs::metadata(p).ok()).map(|meta| (Fingerprint::Disk(meta.len(), meta.modified().ok(), String::new()), meta.len() as usize))
                 };
-            let Some((fingerprint, size)) = info else { self.status.skipped_files += 1; self.status.truncated = true; self.entries.remove(&path); continue; };
+            let Some((mut fingerprint, size)) = info else { self.status.skipped_files += 1; self.status.truncated = true; self.entries.remove(&path); continue; };
             if size > crate::MAX_FILE_BYTES || bytes + size > BYTES { self.status.truncated = true; self.status.skipped_files += 1; continue; }
+            let mut disk = None;
+            if opened.is_none() && disk_refresh {
+                let Some(text) = read_source(root, &path) else { self.status.skipped_files += 1; self.status.truncated = true; self.entries.remove(&path); continue; };
+                if let Fingerprint::Disk(len, time, _) = fingerprint {
+                    fingerprint = Fingerprint::Disk(len, time, source_fingerprint::hex(text.as_bytes()));
+                }
+                // Keep this very text for a cache miss; do not reread or clone it.
+                disk = Some(text);
+            }
             let budget = SYMBOLS - symbols;
-            let cached = self.entries.get(&path).is_some_and(|entry| entry.fingerprint == fingerprint && entry.budget == budget && !(self.force && opened.is_none()));
+            let cached = self.entries.get(&path).is_some_and(|entry| entry.fingerprint == fingerprint && entry.budget == budget);
             if !cached {
-                let disk;
                 let text = if let Some(document) = opened { document.text.as_str() }
-                    else { match read_source(root, &path) { Some(text) => { disk = text; disk.as_str() }, None => { self.status.skipped_files += 1; self.status.truncated = true; self.entries.remove(&path); continue; } } };
+                    else {
+                        if disk.is_none() { disk = read_source(root, &path); }
+                        match disk.as_deref() { Some(text) => text, None => { self.status.skipped_files += 1; self.status.truncated = true; self.entries.remove(&path); continue; } }
+                    };
                 if bytes + text.len() > BYTES { self.status.truncated = true; self.status.skipped_files += 1; continue; }
                 let (parsed, truncated) = parse(&path, text, budget);
                 self.entries.insert(path.clone(), Entry { fingerprint, symbols: parsed, bytes: text.len(), budget, truncated });

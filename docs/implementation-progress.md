@@ -1268,3 +1268,46 @@ PR checks, formal review/conversations, protected expected-head squash and actua
 main push CI are separate publication gates recorded in the publisher receipt.
 The local Python 221 cohort from the preceding correction was not replayed;
 the new exact-head hosted planning/runtime checks must qualify the published tree.
+
+## P12 project-index disk freshness integration — 2026-11-18
+
+Current-main base `ac4199ed73ee081baa604b7f14b3ab2091aeb47d`; serial candidate
+`p12-index-freshness-20261116-c0d5a0ad-9c31f7a2`. Verified 534 producer source and
+699 evidence files, and independently 537 main Git blobs. Imported only the
+project_index freshness hunk and new 8-method test; retained prior UI57 work.
+Detailed behavior, commands and bindings are in the [P12 result](development/results/P12.md#p12-project-index-disk-freshness--2026-11-18).
+
+The cache now fingerprints bounded decoded disk text after TTL/explicit refresh
+using the unchanged fixed-block SHA256 helper; a parse miss consumes that same
+text. Same-length/same-mtime edits invalidate symbols/ranges; unchanged content
+reuses parsed symbols. The 1 s warm window, three decoder allocations, dirty/open
+revision precedence, source/symbol quotas, Save/undo and canonical pins remain.
+No dependency, Runtime/MCP/v1/C ABI/native source or policy gate changed.
+
+The producer's shared-process negative control was1PASS/7AlreadyExists fixture
+failures. Added a process-local fixture sequence and internal allocation-observer
+mutex, retaining all 8 assertions. Own fresh offline/locked/jobs1 build PASS in
+26.657 s: one new normal core rlib and five linked test images. Actual discovery 81;
+own 81/81 PASS (79 normal + 2 exact-marker should_panic), once in 74 execution processes,
+including all 8 freshness methods together under default libtest parallelism.
+No failure/case error/timeout/ignored/unrun/replay; max 4.470807 s / 11632640 bytes,
+each process checked against 10 s / 256 MiB. Group RSS is reported as a group.
+One own reader ERROR on an interleaved timing diagnostic was retained; 57 existing
+raw processes were checked without replay, then only 17 unstarted processes ran.
+Preparation errors are retained separately. Case-report SHA256:
+`526c4f2af9421e7b1822af634483b2aa1892a70b9fa0dd5b244bc6ea6e640fc6`.
+
+All heavy work used the shared two-slot/25GiB-reserve gate and own T9 roots;
+each lease released after own child wait/reap. Scratch 814273189 bytes < 3 GiB,
+compiler allowance 1/2 used; old UI57 budgets/artifacts unchanged. Added only the
+new exact P12 source owner and generated views, preserving all old requirements
+and tests. Package/generated checks PASS. Current-head required CI and formal
+review/conversations, protected expected-head squash and actual-main CI remain
+distinct publication gates, recorded in the executor receipt. Parent #13/WRA-17
+stays open; no issue/Linear mutation, peer/model task, app/GUI/NSApp/AX/TCC/global
+input, renderer or live user-document operation occurred. Native Windows/Linux
+and full product/SDK/release acceptance remain unrun.
+
+The fresh Python coordinator passed 221/221, 0 failures/errors/skips, exit 0 in
+26.275 s, under its own gate lease; it did not launch a compiler. Scratch after
+this phase was 837455913 bytes. Required remote CI remains a separate result.
