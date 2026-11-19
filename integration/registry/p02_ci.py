@@ -50,6 +50,22 @@ def _mode(path):
     return stat.S_IMODE(Path(path).stat().st_mode)
 
 
+def _stable_file_stats(path, before, opened, after, windows):
+    fields = ("st_dev", "st_ino", "st_size", "st_mode", "st_uid", "st_nlink", "st_mtime_ns")
+    require(all(getattr(before, key) == getattr(after, key) for key in fields),
+            "file path changed while reading")
+    require(all(getattr(before, key) == getattr(opened, key) for key in fields if key != "st_mode"),
+            "file descriptor identity changed while reading")
+    descriptor_mode = before.st_mode
+    if windows and path.suffix.lower() in (".exe", ".bat", ".cmd", ".com"):
+        # CPython adds filename-derived execute bits to Windows path stat;
+        # fstat's handle view has no filename. Keep path-before/after modes
+        # exact and compare every real object/size/link/time field above.
+        # https://github.com/python/cpython/blob/v3.13.17/Modules/posixmodule.c#L1843
+        descriptor_mode &= ~0o111
+    require(opened.st_mode == descriptor_mode, "file descriptor mode changed while reading")
+
+
 def binding(path):
     path = Path(path); before = path.lstat()
     require(stat.S_ISREG(before.st_mode) and not path.is_symlink(), "regular file required")
@@ -57,9 +73,7 @@ def binding(path):
         digest = hashlib.file_digest(stream, "sha256").hexdigest()
         opened = os.fstat(stream.fileno())
     after = path.lstat()
-    fields = ("st_dev", "st_ino", "st_size", "st_mode", "st_uid", "st_nlink", "st_mtime_ns")
-    require(all(getattr(before, k) == getattr(opened, k) == getattr(after, k) for k in fields),
-            "file changed while reading")
+    _stable_file_stats(path, before, opened, after, os.name == "nt")
     return {"path": str(path.resolve()), "sha256": digest, "bytes": after.st_size,
             "mode": _mode(path), "device": after.st_dev, "inode": after.st_ino,
             "uid": after.st_uid, "kind": "file"}

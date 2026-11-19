@@ -1,5 +1,6 @@
 """Inert Python evidence models. These tests never compile or execute Rust."""
 from copy import deepcopy
+from contextlib import nullcontext
 import importlib.util
 import json
 import os
@@ -139,6 +140,27 @@ class Model:
 
 
 class P02Fixtures(unittest.TestCase):
+    def test_windows_filename_execute_view_preserves_every_object_guard(self):
+        a = module("p02_ci")
+        facts = dict(st_dev=7, st_ino=41, st_size=11, st_mode=0o100777, st_uid=3, st_nlink=1, st_mtime_ns=97)
+        before = SimpleNamespace(**facts); opened = SimpleNamespace(**{**facts, "st_mode": 0o100666})
+        a._stable_file_stats(Path("inert.EXE"), before, opened, before, True)
+        for key in ("st_dev", "st_ino", "st_size", "st_uid", "st_nlink", "st_mtime_ns"):
+            wrong = SimpleNamespace(**{**vars(opened), key: getattr(opened, key) + 1})
+            with self.subTest(field=key), self.assertRaises(ValueError):
+                a._stable_file_stats(Path("inert.exe"), before, wrong, before, True)
+        changed = SimpleNamespace(**{**facts, "st_mode": 0o100555})
+        with self.assertRaises(ValueError): a._stable_file_stats(Path("inert.exe"), before, opened, changed, True)
+        with self.assertRaises(ValueError): a._stable_file_stats(Path("inert.py"), before, opened, before, True)
+        with self.assertRaises(ValueError): a._stable_file_stats(Path("inert.exe"), before, opened, before, False)
+
+    def test_real_executable_suffix_binding_uses_path_mode_and_exact_bytes(self):
+        m = Model(self); path = m.root / "inert-nonexecuted.EXE"
+        path.write_bytes(b"INERT NONEXECUTED EXECUTABLE-SUFFIX FIXTURE"); path.chmod(0o700)
+        value = m.a.binding(path)
+        self.assertEqual(value["sha256"], m.a.binding(path)["sha256"])
+        self.assertEqual(value["mode"], m.a._mode(path))
+
     def test_catalog_is_complete_and_absence_is_not_partial_success(self):
         m = Model(self)
         self.assertEqual(len(m.a.catalog(m.root)), 16)
@@ -315,7 +337,16 @@ class P02VerifierHooks(unittest.TestCase):
             with self.subTest(platform=platform):
                 args = SimpleNamespace(profile="shared", native_schema=False, cargo_executable=None, offline=True,
                     run_dir=ROOT / ".local/inert-p02-plan")
-                steps = v.build_steps(ROOT, args, platform, machine)
+                # This is an inert cross-platform plan, not native Mac execution.
+                # Model the tracked POSIX source mode only at the stat boundary;
+                # production P01's strict mode/hash checks remain unchanged.
+                original_mode = v.p01_ci._mode
+                def virtual_mac_source_mode(path):
+                    actual = original_mode(path)
+                    return 0o644 if Path(path).suffix == ".rs" and actual == 0o666 else actual
+                boundary = patch.object(v.p01_ci, "_mode", virtual_mac_source_mode) if os.name == "nt" and platform == "darwin" else nullcontext()
+                with boundary:
+                    steps = v.build_steps(ROOT, args, platform, machine)
                 rust = next(step for step in steps if step["name"] == "rust-workspace")
                 self.assertIn("--message-format=json", rust["argv"]); self.assertIn("--show-output", rust["argv"])
                 self.assertIn("p02_cohort_proof", rust["required_artifact_kinds"])
