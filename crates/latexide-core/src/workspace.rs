@@ -21,6 +21,13 @@ mod analysis_vfs;
 pub(crate) const HISTORY_BYTES: usize = 16 * 1024 * 1024;
 pub(crate) const HISTORY_ENTRIES: usize = 256;
 
+fn validate_document_name(id: &str) -> Result<()> {
+    if !crate::contracts::integration::is_relative_path(id, false) {
+        return Err(CoreError::new("invalid_path", format!("Unsupported document name: {id:?}")));
+    }
+    Ok(())
+}
+
 #[derive(Clone, PartialEq)]
 pub(crate) struct HistoryEntry {
     pub document_id: String,
@@ -331,6 +338,7 @@ impl Workspace {
                 "Csak a projektgyökéren belüli relatív útvonal használható.",
             ));
         }
+        validate_document_name(relative)?;
         let canonical = self.root.join(relative_path).canonicalize()?;
         if !canonical.starts_with(&self.root) {
             return Err(CoreError::new(
@@ -355,6 +363,7 @@ impl Workspace {
             .to_str()
             .ok_or_else(|| CoreError::new("invalid_path", "A fájlnév nem UTF-8."))?
             .replace('\\', "/");
+        validate_document_name(&id)?;
         if let Some(document) = self.documents.get_mut(&id) {
             // Explicit reopen may adopt a replaced file's identity, but only
             // when its exact physical bytes still equal the saved baseline.
@@ -576,8 +585,12 @@ impl Workspace {
             if document.bytes_for(&text).len() > crate::MAX_FILE_BYTES {
                 return Err(CoreError::new("file_too_large", "History result exceeds the existing encoding limit"));
             }
-            let origin = format!("{}:{}", if undo {"undo"} else {"redo"}, entry.origin);
-            if origin.len() > 16384 { return Err(CoreError::new("history_invalid", "History origin exceeds existing bound")); }
+            // The original history origin stays intact, including legacy entries.
+            // Only the derived presentation label is bounded at a UTF8 boundary.
+            let prefix = if undo { "undo:" } else { "redo:" };
+            let mut end = entry.origin.len().min(16384 - prefix.len());
+            while !entry.origin.is_char_boundary(end) { end -= 1; }
+            let origin = format!("{prefix}{}", &entry.origin[..end]);
             prepared.push((entry.document_id.clone(), text, revision, origin));
         }
         for (id, text, revision, origin) in prepared {

@@ -172,9 +172,10 @@ def revalidate_report(root, report, current_source, expected_steps, artifact_roo
                             step["argv"], run_id, source, root / "target", row["p01_build_tool"])
                         summary = p01_ci.combine_summary(summary, qualification)
                 if step.get("p02_cohort"):
-                    p02_ci.validate(root, output(step["p02_cohort"]["proof"]), row, step["argv"],
+                    qualification = p02_ci.validate(root, output(step["p02_cohort"]["proof"]), row, step["argv"],
                         run_id, source, root / "target", row["rust_build_tool"],
                         p01_proof=output(step["p01_cohort"]["proof"]) if step.get("p01_cohort") else None)
+                    p02_ci.registered_proof(qualification, row, output(step["p02_cohort"]["proof"]), output)
                 if not p01_ci.same(row.get("test_summary"), summary):
                     raise ValueError("Stored test outcome differs")
                 if summary is not None:
@@ -221,9 +222,10 @@ def revalidate_report(root, report, current_source, expected_steps, artifact_roo
         for step, row in zip(expected_steps, records):
             if step.get("p02_cohort"):
                 try:
-                    p02_ci.validate(root, output(step["p02_cohort"]["proof"]), row, step["argv"],
+                    qualification = p02_ci.validate(root, output(step["p02_cohort"]["proof"]), row, step["argv"],
                         row["verification_run_id"], source, root / "target", row["rust_build_tool"],
                         p01_proof=output(step["p01_cohort"]["proof"]) if step.get("p01_cohort") else None)
+                    p02_ci.registered_proof(qualification, row, output(step["p02_cohort"]["proof"]), output)
                 except (OSError, ValueError, KeyError, TypeError) as error:
                     return result("stale_artifact", str(error))
         identities["selection"] = "current"

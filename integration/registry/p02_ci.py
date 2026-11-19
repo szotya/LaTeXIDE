@@ -14,7 +14,7 @@ import sys
 from collections import Counter
 
 ENV = ("P02_RUNTIME_FIXTURES", "P02_WORKSPACE_FIXTURES", "P02_RUN_NONCE")
-SOURCE_PINS = {'crates/latexide-core/src/lib.rs': {'sha256': '50c143c8189d4f0252f19cd3008e734e95f543e4bc5f8fa4de496aa1e38dbe27', 'bytes': 1519, 'mode': 420}, 'crates/latexide-core/src/services/recovery/runtime_binding.rs': {'sha256': '7df61324995d08e70c398bbb733033668c2fef3310f8f21660f26fa08b1aa01f', 'bytes': 35641, 'mode': 420}, 'crates/latexide-core/src/services/transactions/mod.rs': {'sha256': '77d0da0bf47f261d4c7e23eafb90c0a6ebf16d0c7790c79623177ecdedfe69e6', 'bytes': 8411, 'mode': 420}, 'crates/latexide-core/src/services/transactions/sha256.rs': {'sha256': '21392948e08b68e4bbb3d08cc1b940c46f1e90ce3794f05eec1bd6b20dd2f2c0', 'bytes': 3200, 'mode': 420}, 'crates/latexide-core/src/services/transactions/workspace_bridge.rs': {'sha256': '5afb2bc0d3ef00a9bed362f7418116752880b4b2647db8b87fbc76d12e9d8176', 'bytes': 3596, 'mode': 420}, 'crates/latexide-core/src/services/vfs/filesystem.rs': {'sha256': '2fb35346e3598fddb382e5f64c2130a6cc2d1b091ff12c2ebc6d3bbf16e85d4e', 'bytes': 18579, 'mode': 420}, 'crates/latexide-core/src/services/vfs/invalidation.rs': {'sha256': '00071fedf07f07d74ae248049c684f68648f87ba6545128159ad690315209b1c', 'bytes': 3863, 'mode': 420}, 'crates/latexide-core/src/services/vfs/mod.rs': {'sha256': '1e5bdb67c5e073a2f9f604d57b0baa2d5a4fc2e092544024f31389613d130b2d', 'bytes': 15375, 'mode': 420}, 'crates/latexide-core/src/workspace.rs': {'sha256': '3eebb433e86b92176ad0790adba0489d8df5a41f618622e8738a81ac5be4e7c7', 'bytes': 31462, 'mode': 420}, 'crates/latexide-core/src/workspace_analysis_capture.rs': {'sha256': '2788910f4e41c47d6ac77e69d54f2e4c99e2bb0de3e90abfee7476330cc75ab5', 'bytes': 8284, 'mode': 420}, 'crates/latexide-core/src/workspace_capture.rs': {'sha256': 'e646de9c0ed9edc44fb1c822c868a9c7e4e92ad35e14979a7f3d6795d5cb0632', 'bytes': 6713, 'mode': 420}, 'crates/latexide-core/tests/transaction_contract.rs': {'sha256': '2ce636a1c2aa958207b1299652f67eea4901a8315e142f48d20faf241539e4a1', 'bytes': 30743, 'mode': 420}, 'crates/latexide-core/tests/transaction_workspace_contract.rs': {'sha256': '01d300e037c3a7acd38ff4dffdbee73622e9c4a2a1d299cc8a951f8ed985a965', 'bytes': 12502, 'mode': 420}, 'crates/latexide-ffi/src/runtime.rs': {'sha256': 'd51c0e268a9cd04074150aa76faefa6003eb83b4b26cc223f6563b9b2e87dae2', 'bytes': 16173, 'mode': 420}, 'crates/latexide-ffi/src/runtime_transactions.rs': {'sha256': 'd1aa9abb8439326b03e2dbd3eb95fba31952eabca5f884dc832e3641a733c277', 'bytes': 10711, 'mode': 420}, 'crates/latexide-ffi/src/runtime_transactions_tests.rs': {'sha256': '3aa0c96ac0635d78ccd251951811c2a26fc66228f435e8ab269f7aaf94199af1', 'bytes': 38157, 'mode': 420}}
+SOURCE_PINS = {'crates/latexide-core/src/lib.rs': {'sha256': '50c143c8189d4f0252f19cd3008e734e95f543e4bc5f8fa4de496aa1e38dbe27', 'bytes': 1519, 'mode': 420}, 'crates/latexide-core/src/services/recovery/runtime_binding.rs': {'sha256': '7df61324995d08e70c398bbb733033668c2fef3310f8f21660f26fa08b1aa01f', 'bytes': 35641, 'mode': 420}, 'crates/latexide-core/src/services/transactions/mod.rs': {'sha256': '77d0da0bf47f261d4c7e23eafb90c0a6ebf16d0c7790c79623177ecdedfe69e6', 'bytes': 8411, 'mode': 420}, 'crates/latexide-core/src/services/transactions/sha256.rs': {'sha256': '21392948e08b68e4bbb3d08cc1b940c46f1e90ce3794f05eec1bd6b20dd2f2c0', 'bytes': 3200, 'mode': 420}, 'crates/latexide-core/src/services/transactions/workspace_bridge.rs': {'sha256': '5afb2bc0d3ef00a9bed362f7418116752880b4b2647db8b87fbc76d12e9d8176', 'bytes': 3596, 'mode': 420}, 'crates/latexide-core/src/services/vfs/filesystem.rs': {'sha256': '882dfa223342bdb2483e9f92d864e40fe40e62e96f1f9320c7a8c1f0e2cbf394', 'bytes': 20059, 'mode': 420}, 'crates/latexide-core/src/services/vfs/invalidation.rs': {'sha256': '00071fedf07f07d74ae248049c684f68648f87ba6545128159ad690315209b1c', 'bytes': 3863, 'mode': 420}, 'crates/latexide-core/src/services/vfs/mod.rs': {'sha256': '1e5bdb67c5e073a2f9f604d57b0baa2d5a4fc2e092544024f31389613d130b2d', 'bytes': 15375, 'mode': 420}, 'crates/latexide-core/src/workspace.rs': {'sha256': 'ea60b3ee9fae416967d111d46fe49e17a6b33c4b3bfb24172968f2034df6553e', 'bytes': 32003, 'mode': 420}, 'crates/latexide-core/src/workspace_analysis_capture.rs': {'sha256': 'd9a8e89230e459d1d656a2d20bc86ddb28405ce7237cb98ab80c3542621b7d29', 'bytes': 8928, 'mode': 420}, 'crates/latexide-core/src/workspace_capture.rs': {'sha256': 'e646de9c0ed9edc44fb1c822c868a9c7e4e92ad35e14979a7f3d6795d5cb0632', 'bytes': 6713, 'mode': 420}, 'crates/latexide-core/tests/transaction_contract.rs': {'sha256': '2ce636a1c2aa958207b1299652f67eea4901a8315e142f48d20faf241539e4a1', 'bytes': 30743, 'mode': 420}, 'crates/latexide-core/tests/transaction_workspace_contract.rs': {'sha256': 'b47680b137e9a4e986a0ab682ae9ac404a83d36d2f69a1a2bf50d086388fa210', 'bytes': 14883, 'mode': 420}, 'crates/latexide-ffi/src/runtime.rs': {'sha256': 'd51c0e268a9cd04074150aa76faefa6003eb83b4b26cc223f6563b9b2e87dae2', 'bytes': 16173, 'mode': 420}, 'crates/latexide-ffi/src/runtime_transactions.rs': {'sha256': '3e0ac395a8ec762d642d6f439f1ed5a1674a5f35a62ce2394af9217ccd9fed7d', 'bytes': 10228, 'mode': 420}, 'crates/latexide-ffi/src/runtime_transactions_tests.rs': {'sha256': '68f46d6a27e8603d80c5cade5c5200b1f0bb251589cc519eb3e79f25beea46fc', 'bytes': 37207, 'mode': 420}}
 NEW_PATHS = (
     "crates/latexide-core/src/services/transactions/mod.rs",
     "crates/latexide-core/src/services/transactions/sha256.rs",
@@ -193,19 +193,18 @@ def role(root, image):
     return matches[0]
 
 
-def selected(root, ids):
+def selected(root, image, ids):
     if catalog(root) is None:
         return False
-    present = [name for name in ids if name.startswith(FFI)]
-    if present:
-        require(len(present) == len(set(present)) and set(present) == set(methods(root)["ffi"]), "partial/unknown FFI selection")
-        return True
-    wanted = methods(root)
-    for key in ("canonical", "workspace"):
-        if set(ids) & set(wanted[key]):
-            require(len(ids) == len(set(ids)) and set(ids) == set(wanted[key]), "partial/foreign core selection")
-            return True
-    return False
+    # Unqualified libtest names can occur in unrelated integration images.
+    # Select the source-bound image first, then require its complete method set.
+    if not any(Path(image["src_path"]).resolve() == (Path(root) / name).resolve() for name in ROLES.values()):
+        return False
+    key = role(root, image)
+    actual = [name for name in ids if name.startswith(FFI)] if key == "ffi" else ids
+    require(len(actual) == len(set(actual)) and set(actual) == set(methods(root)[key]),
+            "partial/foreign P02 image selection")
+    return True
 
 
 def normal_parent(scratch, nonce, context, discovery):
@@ -262,6 +261,7 @@ def _libtest(raw):
 
 
 def discovery_ids(record, binary, ignored=False):
+    require(type(record) is dict and type(record.get("log")) is dict, "discovery record/log shape")
     command = [binary["path"], *(["--ignored"] if ignored else []), "--list", "--format", "terse"]
     require(same(record.get("command"), command) and record.get("status") == "passed"
             and type(record.get("exit_code")) is int and record["exit_code"] == 0 and record.get("timed_out") is False,
@@ -281,13 +281,14 @@ def _fixture_labels(root, name):
 
 def image_observation(root, image, discovery, raw, environment, expected_pid=None):
     key = role(root, image); wanted = methods(root)[key]
+    require(type(discovery) is dict and set(discovery) == {"all", "ignored"}, "discovery roles")
     ids = discovery_ids(discovery["all"], image["binary"])
     ignored = discovery_ids(discovery["ignored"], image["binary"], True)
     actual = [n for n in ids if n.startswith(FFI)] if key == "ffi" else ids
     require(len(actual) == len(set(actual)) and set(actual) == set(wanted) and not (set(wanted) & set(ignored)),
             "zero/missing/unknown/ignored discovered methods")
     result = _libtest(raw)
-    events = [(n, state) for n, state in result["events"] if n in wanted or n.startswith(FFI)]
+    events = [(n, state) for n, state in result["events"] if n.startswith(FFI)] if key == "ffi" else result["events"]
     require(len(events) == len(wanted) and {n for n, _ in events} == set(wanted)
             and all(state == "ok" for _, state in events), "missing/duplicate/failed P02 named result")
     require(len(result["partitions"]) == 1 and result["partitions"][0]["ignored"] == result["partitions"][0]["failed"] == 0,
@@ -506,6 +507,7 @@ def cargo_proof(root, namespace, record, command, run_id, source, target, proof_
         for index, (image, pair) in enumerate(zip(images, discovery)):
             require(type(pair) is dict and set(pair) == {"all", "ignored"}, "discovery roles")
             for key, row in pair.items():
+                require(type(row) is dict and type(row.get("log")) is dict, "discovery record/log shape")
                 name = "p02-discovery-" + str(index) + "-" + key
                 expected = {"phase": name, "verification_run_id": run_id, "source_sha256": source,
                     "binary": image["binary"], "cargo_log": context["log"], "nonce": namespace["spec"]["nonce"]}
@@ -535,3 +537,11 @@ def validate(root, proof_path, record, command, run_id, source, target, tool, p0
     cargo_proof(root, proof["namespace"], record, command, run_id, source, target, proof_path, tool, p01_proof=p01_proof)
     require(same(before, binding(proof_path)), "proof changed during readback")
     return {"images": 3, "P02_named_results": 107, "proof_sha256": before["sha256"]}
+
+
+def registered_proof(qualification, record, proof_path, output):
+    """Bind the last nested readback to the exact already-registered proof bytes."""
+    artifacts = [row for row in record.get("artifacts", [])
+        if row.get("kind") == "p02_cohort_proof" and output(row["path"]).resolve() == Path(proof_path).resolve()]
+    require(len(artifacts) == 1 and qualification["proof_sha256"] == artifacts[0]["sha256"],
+            "P02 proof differs from registered artifact")

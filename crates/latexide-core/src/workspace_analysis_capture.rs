@@ -77,7 +77,13 @@ fn field(out: &mut Vec<u8>, bytes: &[u8]) {
 }
 impl Workspace {
     /// Exact selected logical input set; editor buffer slots are never allocated.
-    /// The unchanged P04 producer reads all regular files before projection:
+    /// Bounded, sequential per-file analysis input, not a point-in-time disk view.
+    /// `complete` means enumeration and each individual read completed; external
+    /// writes between files may yield a mixed-time set. Its ID/revalidation bind
+    /// the observed bytes only. Read-only analysis must tolerate that contract;
+    /// edits use retained-document `transaction_snapshot` under the owner borrow.
+    /// This API is not compiler-input, edit, Save or cross-file consistency authority.
+    /// The P04 producer reads all regular files before projection:
     /// unsupported binary/nontext assets therefore refuse the WHOLE capture.
     pub fn analysis_snapshot(&mut self) -> Result<WorkspaceSnapshot> {
         self.analysis_snapshot_with_limits(&defaults())
@@ -139,6 +145,8 @@ impl Workspace {
         Ok(snapshot)
     }
     pub fn revalidate_analysis_snapshot(&mut self, expected: &WorkspaceSnapshot) -> Result<()> {
+        // A matching second sequential observation is a freshness check, not
+        // proof that every disk file existed in this state at one instant.
         if self.analysis_snapshot()?!=*expected {
             return Err(CoreError::new("stale_analysis_snapshot","Complete analysis input no longer matches this Workspace"));
         }

@@ -109,6 +109,26 @@ fn single_document_required() -> CoreError {
     CoreError::new("transaction_single_document_required", "Commit requires edits for exactly one document")
 }
 
+fn convert_document_edits<'a>(
+    text: &str,
+    edits: impl Iterator<Item = &'a RevisionedEdit> + Clone,
+) -> Result<Vec<TextEdit>> {
+    let mut endpoints = BTreeSet::new();
+    for edit in edits.clone() {
+        endpoints.insert(edit.start_utf16);
+        endpoints.insert(edit.start_utf16.checked_add(edit.length_utf16).ok_or_else(invalid_position)?);
+    }
+    let positions = position_map(text, &endpoints)?;
+    edits.map(|edit| {
+        let end = edit.start_utf16.checked_add(edit.length_utf16).ok_or_else(invalid_position)?;
+        Ok(TextEdit {
+            start: *positions.get(&edit.start_utf16).ok_or_else(invalid_position)?,
+            end: *positions.get(&end).ok_or_else(invalid_position)?,
+            text: edit.replacement.clone(),
+        })
+    }).collect()
+}
+
 fn single_document_batch(bound: &RuntimeBoundTransaction) -> Result<(String, u64, Vec<TextEdit>)> {
     let edits = &bound.plan().edits;
     let first = edits.first().ok_or_else(single_document_required)?;
@@ -121,21 +141,7 @@ fn single_document_batch(bound: &RuntimeBoundTransaction) -> Result<(String, u64
         .ok_or_else(invalid_position)?;
     let revision = file.revision.ok_or_else(invalid_position)?;
     let text = file.text().map_err(|_| invalid_position())?;
-    let mut endpoints = BTreeSet::new();
-    for edit in edits {
-        endpoints.insert(edit.start_utf16);
-        endpoints.insert(edit.start_utf16.checked_add(edit.length_utf16).ok_or_else(invalid_position)?);
-    }
-    let positions = position_map(text, &endpoints)?;
-    let mut batch = Vec::with_capacity(edits.len());
-    for edit in edits {
-        let end = edit.start_utf16.checked_add(edit.length_utf16).ok_or_else(invalid_position)?;
-        batch.push(TextEdit {
-            start: *positions.get(&edit.start_utf16).ok_or_else(invalid_position)?,
-            end: *positions.get(&end).ok_or_else(invalid_position)?,
-            text: edit.replacement.clone(),
-        });
-    }
+    let batch = convert_document_edits(text, edits.iter())?;
     Ok((first.document_id.clone(), revision, batch))
 }
 
@@ -150,18 +156,7 @@ fn multi_document_batches(bound: &RuntimeBoundTransaction) -> Result<Vec<(String
         let file = bound.snapshot().files.iter().find(|file| file.path == id).ok_or_else(invalid_position)?;
         let revision = file.revision.ok_or_else(invalid_position)?;
         let text = file.text().map_err(|_| invalid_position())?;
-        let mut endpoints = BTreeSet::new();
-        for edit in &edits {
-            endpoints.insert(edit.start_utf16);
-            endpoints.insert(edit.start_utf16.checked_add(edit.length_utf16).ok_or_else(invalid_position)?);
-        }
-        let positions = position_map(text, &endpoints)?;
-        let mut converted = Vec::with_capacity(edits.len());
-        for edit in edits {
-            let end = edit.start_utf16.checked_add(edit.length_utf16).ok_or_else(invalid_position)?;
-            converted.push(TextEdit {start: *positions.get(&edit.start_utf16).ok_or_else(invalid_position)?,
-                end: *positions.get(&end).ok_or_else(invalid_position)?, text: edit.replacement.clone()});
-        }
+        let converted = convert_document_edits(text, edits.into_iter())?;
         batches.push((id.to_owned(), revision, converted));
     }
     Ok(batches)

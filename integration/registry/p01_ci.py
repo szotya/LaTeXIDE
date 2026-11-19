@@ -425,7 +425,7 @@ def normal_observation(images, discoveries, records, scratch, nonce, context, p1
             require("f05_namespace" not in record, "Unbound F05 normal namespace")
         p02 = None
         p02_root = Path(context["source_root"] if context.get("suite") == "p01-build-only-cohorts" else context["cwd"])
-        if _p02_module().selected(p02_root, discovered):
+        if _p02_module().selected(p02_root, image, discovered):
             require(type(record.get("child_pid")) is int and record["child_pid"] > 0, "P02 normal child identity")
             observation = _p02_module().image_observation(Path(context["cwd"]), image, discovery,
                 text(record["log"]["path"]), record["p02_namespace"]["environment"], record["child_pid"])
@@ -774,7 +774,7 @@ def qualify(root, record, expected_argv, run_id, source_sha256, target, proof_pa
                     context, argv, bound_image["binary"], nonce)
                 invocation_env.update(f05_namespace["environment"])
         p02_namespace = None
-        if name.startswith("normal-") and _p02_module().selected(root, ids):
+        if name.startswith("normal-") and _p02_module().selected(root, bound_image, ids):
             pair = discovery[int(name.removeprefix("normal-"))]
             parent = _p02_module().normal_parent(scratch, nonce, context, pair)
             p02_namespace = _p02_module().create(root, scratch / (name + "-p02"), name,
@@ -1311,7 +1311,7 @@ def main():
 
 
 F05_PATHS = ('crates/latexide-core/src/workspace.rs', 'crates/latexide-core/src/services/recovery/runtime_binding.rs', 'crates/latexide-core/src/services/recovery/ffi_runtime_tests.rs', 'crates/latexide-core/src/services/recovery/runtime_delta.rs', 'crates/latexide-core/src/services/recovery/review_followup_tests.rs', 'crates/latexide-ffi/src/runtime.rs', 'crates/latexide-core/src/services/recovery/pr68_runtime_tests.rs')
-F05_SOURCE_PINS = {'crates/latexide-core/src/workspace.rs': {'sha256': '3eebb433e86b92176ad0790adba0489d8df5a41f618622e8738a81ac5be4e7c7', 'bytes': 31462, 'mode': 420}, 'crates/latexide-core/src/services/recovery/runtime_binding.rs': {'sha256': '7df61324995d08e70c398bbb733033668c2fef3310f8f21660f26fa08b1aa01f', 'bytes': 35641, 'mode': 420}, 'crates/latexide-core/src/services/recovery/ffi_runtime_tests.rs': {'sha256': '9a199bb837ecb7dc158268f119f2c896c5192e9d1c75d72e34d68afbc5528a63', 'bytes': 4267, 'mode': 420}, 'crates/latexide-core/src/services/recovery/runtime_delta.rs': {'sha256': 'f69383c812bde8f4c475d7476edbf0bf65133d7cdd8488fc1d1c6d98508fbbd2', 'bytes': 24112, 'mode': 420}, 'crates/latexide-core/src/services/recovery/review_followup_tests.rs': {'sha256': 'da03dfc7fc3ee756822fba929cef3da68f6f90c7e8138b9f48e3e6f5e0423f9b', 'bytes': 22944, 'mode': 420}, 'crates/latexide-ffi/src/runtime.rs': {'sha256': 'd51c0e268a9cd04074150aa76faefa6003eb83b4b26cc223f6563b9b2e87dae2', 'bytes': 16173, 'mode': 420}, 'crates/latexide-core/src/services/recovery/pr68_runtime_tests.rs': {'sha256': 'bdce3dfa5fa70cdc87fea1f7a3feab4fe1490c7f04daa11f9e2193774f1c4b9c', 'bytes': 40761, 'mode': 420}}
+F05_SOURCE_PINS = {'crates/latexide-core/src/workspace.rs': {'sha256': 'ea60b3ee9fae416967d111d46fe49e17a6b33c4b3bfb24172968f2034df6553e', 'bytes': 32003, 'mode': 420}, 'crates/latexide-core/src/services/recovery/runtime_binding.rs': {'sha256': '7df61324995d08e70c398bbb733033668c2fef3310f8f21660f26fa08b1aa01f', 'bytes': 35641, 'mode': 420}, 'crates/latexide-core/src/services/recovery/ffi_runtime_tests.rs': {'sha256': '9a199bb837ecb7dc158268f119f2c896c5192e9d1c75d72e34d68afbc5528a63', 'bytes': 4267, 'mode': 420}, 'crates/latexide-core/src/services/recovery/runtime_delta.rs': {'sha256': 'f69383c812bde8f4c475d7476edbf0bf65133d7cdd8488fc1d1c6d98508fbbd2', 'bytes': 24112, 'mode': 420}, 'crates/latexide-core/src/services/recovery/review_followup_tests.rs': {'sha256': 'da03dfc7fc3ee756822fba929cef3da68f6f90c7e8138b9f48e3e6f5e0423f9b', 'bytes': 22944, 'mode': 420}, 'crates/latexide-ffi/src/runtime.rs': {'sha256': 'd51c0e268a9cd04074150aa76faefa6003eb83b4b26cc223f6563b9b2e87dae2', 'bytes': 16173, 'mode': 420}, 'crates/latexide-core/src/services/recovery/pr68_runtime_tests.rs': {'sha256': 'bdce3dfa5fa70cdc87fea1f7a3feab4fe1490c7f04daa11f9e2193774f1c4b9c', 'bytes': 40761, 'mode': 420}}
 
 
 F05_ENV = ("P00_PR68_TASK_ROOT", "P00_PR68_ROOT", "P00_PR68_NONCE")

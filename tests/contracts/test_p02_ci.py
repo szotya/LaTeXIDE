@@ -253,8 +253,36 @@ class P02Fixtures(unittest.TestCase):
         m = Model(self); namespace = m.seal()
         case = Path(m.observations[1]["fixture_roots"][0]); (case / "main.tex").write_bytes(b"changed")
         with self.assertRaisesRegex(ValueError, "inventory"): m.reobserve(namespace)
+        # A fresh positive control makes the manifest mutation independent.
+        m = Model(self); namespace = m.seal(); self.assertEqual(m.reobserve(namespace), namespace)
         Path(namespace["inventory"]["path"]).write_text("{}")
         with self.assertRaises(ValueError): m.reobserve(namespace)
+
+    def test_balanced_extra_named_result_refuses_in_each_standalone_image(self):
+        m = Model(self); namespace = m.namespace(); m.outputs(namespace)
+        for image in m.images:
+            key = m.a.role(m.root, image)
+            if key == "ffi": continue
+            count = len(m.a.methods(m.root)[key])
+            raw = m.raws[key].replace(f"running {count} tests", f"running {count + 1} tests")
+            raw = raw.replace(f"{count} passed;", f"{count + 1} passed;")
+            raw = raw.replace("test result:", "test foreign_success ... ok\ntest result:")
+            with self.subTest(image=key), self.assertRaisesRegex(ValueError, "named result"):
+                m.a.image_observation(m.root, image, m.discoveries[key], raw, namespace["environment"])
+
+    def test_selection_uses_image_source_before_unqualified_method_names(self):
+        m = Model(self); wanted = m.a.methods(m.root)
+        foreign = deepcopy(m.images[0]); foreign["src_path"] = str(m.root / "tests/unrelated_contract.rs")
+        self.assertFalse(m.a.selected(m.root, foreign, [wanted["canonical"][0]]))
+        self.assertFalse(m.a.selected(m.root, foreign, wanted["canonical"]))
+        for image in m.images:
+            key = m.a.role(m.root, image)
+            self.assertTrue(m.a.selected(m.root, image, wanted[key]))
+            with self.subTest(image=key), self.assertRaisesRegex(ValueError, "partial/foreign"):
+                m.a.selected(m.root, image, wanted[key][1:])
+            with self.subTest(image=key), self.assertRaisesRegex(ValueError, "partial/foreign"):
+                extra = m.a.FFI + "foreign" if key == "ffi" else "foreign"
+                m.a.selected(m.root, image, [*wanted[key], extra])
 
     def test_replaced_directory_marker_modes_and_hardlinks_refuse(self):
         m = Model(self); namespace = m.seal(); marker = m.directory / "NAMESPACE.json"
@@ -348,6 +376,10 @@ class P02VerifierHooks(unittest.TestCase):
                 with boundary:
                     steps = v.build_steps(ROOT, args, platform, machine)
                 rust = next(step for step in steps if step["name"] == "rust-workspace")
+                clean = next(step for step in steps if step["name"] == "runtime-clean")
+                self.assertLess(steps.index(clean), steps.index(rust))
+                self.assertIn("runtime-clean", rust["depends_on"])
+                self.assertEqual(clean["argv"].count("-p"), 6)
                 self.assertIn("--message-format=json", rust["argv"]); self.assertIn("--show-output", rust["argv"])
                 self.assertIn("p02_cohort_proof", rust["required_artifact_kinds"])
                 self.assertIn("p01_rust_build_log" if "p01_cohort" in rust else "p02_rust_build_log", rust["required_artifact_kinds"])
@@ -360,7 +392,7 @@ class P02VerifierHooks(unittest.TestCase):
         for name in [*adapter.SOURCE_PINS, "integration/registry/p02_ci.py", "tests/contracts/test_p02_ci.py"]:
             with self.subTest(path=name): self.assertTrue(gate.requires_runtime([name]))
 
-    def run_model(self, relative_headers=False):
+    def run_model(self, relative_headers=False, reformat_at_final=False):
         v = module("verify"); m = Model(self, v)
         m.relative_headers = relative_headers
         proof = m.logs / "p02-fixture-cohorts.json"
@@ -368,7 +400,12 @@ class P02VerifierHooks(unittest.TestCase):
             "p02_cohort": {"proof": str(proof.relative_to(m.root))},
             "artifact_paths": [{"path": str(proof.relative_to(m.root)), "kind": "p02_cohort_proof"}],
             "required_artifact_kinds": ["p02_cohort_proof"]}
-        with patch.object(v, "execute_step", m.execute):
+        original_validate = v.p02_ci.validate
+        def late_reformat(*args, **kwargs):
+            path = Path(args[1]); path.write_text(json.dumps(m.a.read(path), indent=2))
+            return original_validate(*args, **kwargs)
+        final = patch.object(v.p02_ci, "validate", side_effect=late_reformat) if reformat_at_final else nullcontext()
+        with patch.object(v, "execute_step", m.execute), final:
             report = v.run_checks(m.root, list(m.a.SOURCE_PINS), [step], m.logs, 10)
         report["selection"] = {"platform": sys.platform, "machine": __import__("platform").machine()}
         return v, m, step, report
@@ -415,6 +452,54 @@ class P02VerifierHooks(unittest.TestCase):
             path.write_text(json.dumps(value))
             with self.subTest(field=change), self.assertRaisesRegex(ValueError, "discovery run/source/image/parent"):
                 m.a.validate(m.root, path, row, step["argv"], row["verification_run_id"], row["source_sha256"], m.target, row["rust_build_tool"])
+
+    def test_warm_cargo_artifact_is_still_refused_after_shared_clean_is_planned(self):
+        v, m, step, report = self.run_model(); self.assertEqual(report["status"], "passed", report["checks"])
+        context = m.a.read(m.root / step["p02_cohort"]["proof"])["context"]
+        log = Path(context["log"]["path"])
+        raw = log.read_text(); self.assertIn('"fresh": false', raw)
+        log.write_text(raw.replace('"fresh": false', '"fresh": true'))
+        with self.assertRaisesRegex(ValueError, "fresh current product image"):
+            m.a.cargo_images(m.root, context, m.target)
+
+    def test_malformed_retained_discovery_rows_are_rejections_not_attribute_errors(self):
+        v, m, step, report = self.run_model(); self.assertEqual(report["status"], "passed", report["checks"])
+        row = report["checks"][0]; path = m.root / step["p02_cohort"]["proof"]; original = m.a.read(path)
+        current = v.source_identity(m.root, list(m.a.SOURCE_PINS))
+        for field in ("all", "ignored"):
+            for malformed in (None, [], "foreign"):
+                value = deepcopy(original); value["discovery"][0][field] = malformed
+                path.write_text(json.dumps(value))
+                with self.subTest(field=field, shape=type(malformed).__name__):
+                    with self.assertRaisesRegex(ValueError, "discovery record/log shape"):
+                        m.a.validate(m.root, path, row, step["argv"], row["verification_run_id"], row["source_sha256"], m.target, row["rust_build_tool"])
+                    # Rebind only the outer artifact, forcing nested shape validation.
+                    changed = deepcopy(report); check = changed["checks"][0]
+                    check["artifacts"][0]["sha256"] = m.a.binding(path)["sha256"]
+                    check["artifact_sha256"] = check["artifacts"][0]["sha256"]
+                    result = v.evidence.revalidate_report(m.root, changed, current, [step])
+                    self.assertEqual(result["status"], "invalid_test_summary", result)
+
+    def test_run_checks_rejects_proof_reformat_after_artifact_capture(self):
+        v, m, step, report = self.run_model(reformat_at_final=True)
+        self.assertEqual(report["status"], "failed", report["checks"])
+        self.assertEqual(report["checks"][0]["status"], "stale_artifact")
+        self.assertIn("registered artifact", report["checks"][0]["reason"])
+
+    def test_final_read_only_proof_digest_matches_registered_artifact(self):
+        v, m, step, report = self.run_model(); self.assertEqual(report["status"], "passed", report["checks"])
+        current = v.source_identity(m.root, list(m.a.SOURCE_PINS))
+        adapter = v.evidence.p02_ci; original_validate = adapter.validate; calls = []
+        def late_reformat(*args, **kwargs):
+            calls.append(True)
+            if len(calls) == 2:
+                path = Path(args[1]); path.write_text(json.dumps(m.a.read(path), indent=2))
+            return original_validate(*args, **kwargs)
+        with patch.object(adapter, "validate", side_effect=late_reformat):
+            result = v.evidence.revalidate_report(m.root, report, current, [step])
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(result["status"], "stale_artifact", result)
+        self.assertIn("registered artifact", result["reason"])
 
 
 if __name__ == "__main__":

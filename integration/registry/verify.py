@@ -262,9 +262,10 @@ def run_checks(root, source_paths, steps, log_dir, timeout, artifact_roots=()):
     for step, record in zip(steps, records):
         if step.get("p02_cohort") and record.get("status") == "passed":
             try:
-                p02_ci.validate(root, root / step["p02_cohort"]["proof"], record, step["argv"],
+                qualification = p02_ci.validate(root, root / step["p02_cohort"]["proof"], record, step["argv"],
                     record["verification_run_id"], before["sha256"], root / "target", record["rust_build_tool"],
                     p01_proof=root / step["p01_cohort"]["proof"] if step.get("p01_cohort") else None)
+                p02_ci.registered_proof(qualification, record, root / step["p02_cohort"]["proof"], lambda path: root / path)
             except (OSError, ValueError, KeyError, TypeError) as error:
                 record["status"] = "stale_artifact"; record["reason"] = str(error)
     failed = any(r["required"] and (r["status"] != "passed" or r.get("artifact_status") == "stale_artifact") for r in records)
@@ -326,6 +327,8 @@ def build_steps(root, args, platform, machine):
     offline = ["--offline"] if args.offline else []; target = ["--target-dir", str(root / "target")]
     supported = platform == "darwin" and machine.lower() == "arm64"
     integrated = args.profile == "integrated"
+    p02_selected = args.profile in {"shared", "integrated"} and p02_ci.catalog(root) is not None
+    clean_selected = (integrated and supported) or p02_selected
     documentation = run_dir / "documentation.json"
     # These new fixture methods require a POSIX descriptor backend. Windows
     # still runs their three diagnostic peers and the fail-closed backend test.
@@ -347,7 +350,7 @@ def build_steps(root, args, platform, machine):
         {"name": "documentation", "kind": "documentation", "argv": probe("docs", "--result", documentation), "documentation_path": ref(documentation)},
     ]
     source_dependencies = [s["name"] for s in steps]
-    if integrated and supported:
+    if clean_selected:
         packages = ["latexide-contracts", "latexide-core", "latexide-protocol", "latexide-build", "latexide-ffi", "latexide-mcp"]
         steps.append({"name": "runtime-clean", "kind": "build-cache", "argv": cargo + ["clean", *target, *[a for p in packages for a in ["-p", p]]],
                       "env": {"CARGO_BUILD_TARGET": None}, "depends_on": source_dependencies})
@@ -355,7 +358,7 @@ def build_steps(root, args, platform, machine):
     if args.profile != "structure":
         steps += [
             {"name": rust, "kind": "rust-unit", "summary_format": "rust", "env": {"CARGO_BUILD_TARGET": None},
-             "depends_on": source_dependencies + (["runtime-clean"] if integrated and supported else []),
+             "depends_on": source_dependencies + (["runtime-clean"] if clean_selected else []),
              "argv": cargo + ["test"] + (["-p", "latexide-contracts"] if args.profile == "contracts" else ["--workspace"]) + ["--locked"] + target + offline + (["--", "--include-ignored", "--test-threads=1"] if supported and args.profile in {"shared", "integrated"} else [])},
             {"name": "isolated-module-seam", "kind": "rust-unit", "summary_format": "rust", "depends_on": [rust], "env": {"CARGO_BUILD_TARGET": None},
              "argv": cargo + ["test", "--manifest-path", "tests/contracts/seam/Cargo.toml", "--locked"] + target + offline},
@@ -383,7 +386,7 @@ def build_steps(root, args, platform, machine):
                       "argv": [sys.executable, "integration/registry/p18_ci.py", "--rust-log", str(rust_log), "--result", str(p18_result)],
                       "summary_path": ref(p18_result), "summary_suite": "p18-pdfs", "artifact_index": ref(p18_result),
                       "required_artifact_kinds": ["p18_pdf_checker", "p18_compiler_pdf", "p18_pdf_render", "p18_pdf_validation"]})
-    if args.profile in {"shared", "integrated"} and p02_ci.catalog(root) is not None:
+    if p02_selected:
         rust_step = next(step for step in steps if step["name"] == rust)
         if "--message-format=json" not in rust_step["argv"]:
             at = rust_step["argv"].index("--") if "--" in rust_step["argv"] else len(rust_step["argv"])

@@ -1,6 +1,9 @@
 //! First synchronous filesystem producer for controlled local project roots.
 //! Raw fingerprints remain separate from canonical logical UTF-8. This is not
 //! an OS watcher, handle-rooted hostile-race confinement, or a save authority.
+//! A complete receipt means bounded enumeration and individually checked reads.
+//! Reads are sequential per-file observations, not one atomic workspace state;
+//! an earlier file may change after its read without changing the root identity.
 
 use super::{DiskObservation, EntryAccess, Observation, ObservationProducer, OverlayObservation};
 use latexide_contracts::{SnapshotLimits, common::MAX_FILE_BYTES, vfs::VfsError};
@@ -55,6 +58,7 @@ pub struct CaptureFailure {
 #[derive(Debug, Clone, PartialEq)]
 pub struct CaptureReceipt {
     pub attempt: u64,
+    /// All entries were observed within budget; this is not cross-file atomicity.
     pub complete: bool,
     pub entries_seen: usize,
     pub files_read: usize,
@@ -188,6 +192,29 @@ mod platform {
     // Named installed SDK sys/fcntl.h: O_NONBLOCK, O_NOFOLLOW, O_NOFOLLOW_ANY.
     // Unsupported OS flag behavior fails capture; there is no weaker retry.
     const OPEN_FLAGS: i32 = 0x00000004 | 0x20000000;
+
+    fn read_raw(reader: impl Read, raw: &mut Vec<u8>, cap: usize, remaining: usize) -> std::io::Result<usize> {
+        // One probe byte detects growth without reading a whole per-file cap
+        // when the aggregate budget is almost exhausted.
+        reader.take(cap.min(remaining) as u64 + 1).read_to_end(raw)
+    }
+
+    #[test]
+    fn raw_reader_stops_at_remaining_budget_plus_one_probe_byte() {
+        use std::io::Cursor;
+        for (available, cap, remaining, expected) in [
+            (8192, MAX_FILE_BYTES, 4096, 4097), // file grew after metadata admission
+            (4096, MAX_FILE_BYTES, 4096, 4096), // exact aggregate fit
+            (8192, 2, 4096, 3),                 // per-file cap still applies
+            (8192, MAX_FILE_BYTES, 0, 1),      // only the overflow probe remains
+        ] {
+            let mut reader = Cursor::new(vec![b'x'; available]);
+            let mut raw = Vec::new();
+            assert_eq!(read_raw(&mut reader, &mut raw, cap, remaining).unwrap(), expected);
+            assert_eq!(raw.len(), expected);
+            assert_eq!(reader.position(), expected as u64);
+        }
+    }
 
     #[derive(Debug, PartialEq, Eq)]
     struct Stamp {
@@ -426,7 +453,7 @@ mod platform {
                 return Err(failure(VfsError::OutsideRoot, "file-path", Some(rel)));
             }
             let mut raw = Vec::with_capacity(before.len() as usize);
-            let read = (&mut file).take(cap as u64 + 1).read_to_end(&mut raw);
+            let read = read_raw(&mut file, &mut raw, cap, total_cap - self.receipt.raw_bytes_read);
             self.receipt.raw_bytes_read = self
                 .receipt
                 .raw_bytes_read

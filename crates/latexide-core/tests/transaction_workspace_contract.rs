@@ -1,5 +1,7 @@
 //! Actual public Workspace + canonical TransactionService bridge controls.
 //! Fixture files are private to this cohort. No provider implementation is imported here.
+//! Workspace entry: `python3 integration/registry/verify.py --profile shared`.
+//! See CONTRIBUTING.md for mandatory caller-owned P02 fixture/nonce provisioning.
 use latexide_core::{LineEnding, Position, TextEdit, Workspace};
 use latexide_core::contracts::{RevisionedEdit, SnapshotLimits};
 use latexide_core::contracts::transactions::TransactionError;
@@ -73,6 +75,14 @@ fn w01_fresh_plan_from_actual_workspace() {
     let mut workspace = open(&root);
     let document = workspace.open_document("main.tex").unwrap();
     let owner = workspace.transaction_snapshot().unwrap();
+    for unsupported in ["draft?.tex", "trailing.", "bad:name.tex"] {
+        #[cfg(target_os = "macos")]
+        fs::write(root.join(unsupported), b"retained unsupported file").unwrap();
+        let error = workspace.open_document(unsupported).unwrap_err();
+        assert_eq!(error.code, "invalid_path");
+        assert!(error.message.contains(unsupported));
+        assert_eq!(workspace.transaction_snapshot().unwrap(), owner);
+    }
     let edits = vec![edit("main.tex", document.revision, 0, 1, "A")];
     let port = service();
     let prepared = port.prepare_workspace_transaction(&workspace, edits.clone()).unwrap();
@@ -240,5 +250,35 @@ fn w08_save_then_undo_invalidates_and_refreshes_plan() {
         vec![edit("main.tex", undone.revision, 0, 1, "A")]).unwrap();
     port.revalidate_workspace_transaction(&workspace, &fresh).unwrap();
     assert_eq!(fresh.snapshot().files[0].utf8, b"abc");
+    assert_eq!(fs::read(root.join("main.tex")).unwrap(), b"saved");
+
+    // Accepted maximum origins, including a scalar cut by the label budget,
+    // must remain undoable. Legacy single-document history is covered too.
+    for grouped in [true, false] {
+        let mut origins = vec!["a".repeat(16384), "é".repeat(8192)];
+        if !grouped { origins.push("legacy".repeat(3000)); }
+        for origin in origins {
+            let before = workspace.snapshot("main.tex").unwrap();
+            let edits = vec![TextEdit {start: Position {line: 0, character: 0},
+                end: Position {line: 0, character: 0}, text: "x".into()}];
+            if grouped {
+                workspace.apply_edit_group(vec![("main.tex".into(), before.revision, edits)], &origin).unwrap();
+            } else {
+                workspace.apply_edits("main.tex", before.revision, edits, &origin).unwrap();
+            }
+            assert_eq!(workspace.snapshot("main.tex").unwrap().last_origin, origin);
+            let undo = workspace.undo().unwrap();
+            assert_eq!(undo.text, before.text);
+            assert!(undo.last_origin.starts_with("undo:") && undo.last_origin.len() <= 16384);
+            assert!(origin.starts_with(&undo.last_origin[5..]));
+            let redo = workspace.redo().unwrap();
+            assert_eq!(redo.text, format!("x{}", before.text));
+            assert!(redo.last_origin.starts_with("redo:") && redo.last_origin.len() <= 16384);
+            assert!(origin.starts_with(&redo.last_origin[5..]));
+            // A second cycle still derives from the unchanged original origin.
+            assert_eq!(workspace.undo().unwrap().last_origin, undo.last_origin);
+            assert_eq!(workspace.redo().unwrap().last_origin, redo.last_origin);
+        }
+    }
     assert_eq!(fs::read(root.join("main.tex")).unwrap(), b"saved");
 }
