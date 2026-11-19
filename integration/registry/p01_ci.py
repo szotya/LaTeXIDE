@@ -51,6 +51,17 @@ P18_ENV = ("LATEXIDE_P18_PHASE2_ROOT", "LATEXIDE_P18_PHASE3_ROOT",
            "LATEXIDE_P18_TEX_PREFIX", "LATEXIDE_P18_TEX_RUN")
 
 
+_p02_adapter = None
+
+
+def _p02_module():
+    global _p02_adapter
+    if _p02_adapter is None:
+        spec = importlib.util.spec_from_file_location("latexide_p02_ci", Path(__file__).with_name("p02_ci.py"))
+        _p02_adapter = importlib.util.module_from_spec(spec); spec.loader.exec_module(_p02_adapter)
+    return _p02_adapter
+
+
 def require(ok, message):
     if not ok:
         raise ValueError(message)
@@ -412,6 +423,17 @@ def normal_observation(images, discoveries, records, scratch, nonce, context, p1
                 context, normal_command(image, discovered), image["binary"], nonce)
         else:
             require("f05_namespace" not in record, "Unbound F05 normal namespace")
+        p02 = None
+        p02_root = Path(context["source_root"] if context.get("suite") == "p01-build-only-cohorts" else context["cwd"])
+        if _p02_module().selected(p02_root, discovered):
+            require(type(record.get("child_pid")) is int and record["child_pid"] > 0, "P02 normal child identity")
+            observation = _p02_module().image_observation(Path(context["cwd"]), image, discovery,
+                text(record["log"]["path"]), record["p02_namespace"]["environment"], record["child_pid"])
+            p02 = _p02_module().observe(Path(context["cwd"]), record.get("p02_namespace"),
+                Path(scratch) / (name + "-p02"), name, context, normal_command(image, discovered),
+                _p02_module().normal_parent(scratch, nonce, context, discovery), [observation], image["binary"])
+        else:
+            require("p02_namespace" not in record, "Unbound P02 normal namespace")
         wanted = sorted(set(discovered) - set(EXCLUDED))
         observed = libtest_observation(command_record(record, normal_command(image, discovered), scratch), allow_empty=True)
         require(len(observed["partitions"]) == 1, "Normal image has multiple or reused partitions")
@@ -429,6 +451,8 @@ def normal_observation(images, discoveries, records, scratch, nonce, context, p1
             observations[-1]["p18_namespace"] = namespace
         if f05 is not None:
             observations[-1]["f05_namespace"] = f05
+        if p02 is not None:
+            observations[-1]["p02_namespace"] = p02
     require(identities and len({(row["binary_path"], row["method_id"]) for row in identities}) == len(identities),
             "Zero or duplicate compound normal identity")
     return identities, observations
@@ -606,6 +630,16 @@ def _normal_final(proof):
             f05_observe(Path(proof["context"]["cwd"]), row["f05_namespace"],
                 text(row["log"]["path"]), Path(proof["scratch"]) / (phase + "-f05"),
                 phase, proof["context"], normal_command(image, discovered), image["binary"], proof["driver_nonce"])
+        if row.get("p02_namespace") is not None:
+            image = proof["images"][index]; pair = proof["discovery"][index]
+            phase = "normal-" + str(index); context = proof["context"]
+            discovered = parse_discovery(text(pair["all"]["log"]["path"]))
+            record = proof["normal"][index]
+            observation = _p02_module().image_observation(Path(context["cwd"]), image, pair,
+                text(row["log"]["path"]), row["p02_namespace"]["environment"], record["child_pid"])
+            _p02_module().observe(Path(context["cwd"]), row["p02_namespace"], Path(proof["scratch"]) / (phase + "-p02"),
+                phase, context, normal_command(image, discovered),
+                _p02_module().normal_parent(proof["scratch"], proof["driver_nonce"], context, pair), [observation], image["binary"])
         namespace = row.get("p18_namespace")
         if namespace:
             require(same(namespace["outputs"], _p18_outputs(namespace["environment"],
@@ -718,7 +752,7 @@ def qualify(root, record, expected_argv, run_id, source_sha256, target, proof_pa
         f.write(nonce)
     (scratch / "COHORT").chmod(0o600)
     clean = dict(env)
-    for name in (*OWN_ENV, *F05_ENV):
+    for name in (*OWN_ENV, *F05_ENV, *_p02_module().ENV):
         clean.pop(name, None)
     for name in ("durable", "runtime", "tmp"):
         (scratch / name).mkdir(mode=0o700)
@@ -739,6 +773,13 @@ def qualify(root, record, expected_argv, run_id, source_sha256, target, proof_pa
                 f05_namespace = f05_create(root, scratch / (name + "-f05"), name,
                     context, argv, bound_image["binary"], nonce)
                 invocation_env.update(f05_namespace["environment"])
+        p02_namespace = None
+        if name.startswith("normal-") and _p02_module().selected(root, ids):
+            pair = discovery[int(name.removeprefix("normal-"))]
+            parent = _p02_module().normal_parent(scratch, nonce, context, pair)
+            p02_namespace = _p02_module().create(root, scratch / (name + "-p02"), name,
+                context, argv, parent, bound_image["binary"])
+            invocation_env.update(p02_namespace["environment"])
         result = execute(name, argv, root, scratch / (name + ".log"), timeout, env=invocation_env)
         result["requested_timeout"] = timeout
         result["argc"] = len(argv)
@@ -760,6 +801,15 @@ def qualify(root, record, expected_argv, run_id, source_sha256, target, proof_pa
             except (OSError, ValueError) as error:
                 result["f05_namespace_error"] = str(error)
             result["f05_namespace"] = f05_namespace
+        if p02_namespace is not None:
+            try:
+                observation = _p02_module().image_observation(root, bound_image, pair,
+                    text(result["log"]["path"]), p02_namespace["environment"], result.get("child_pid"))
+                p02_namespace = _p02_module().observe(root, p02_namespace, scratch / (name + "-p02"),
+                    name, context, argv, parent, [observation], bound_image["binary"], capture=True)
+            except (OSError, ValueError) as error:
+                result["p02_namespace_error"] = str(error)
+            result["p02_namespace"] = p02_namespace
         with (scratch / (name + ".json")).open("x", encoding="utf-8") as f:
             json.dump(result, f, sort_keys=True, indent=2)
         return result
@@ -1261,7 +1311,7 @@ def main():
 
 
 F05_PATHS = ('crates/latexide-core/src/workspace.rs', 'crates/latexide-core/src/services/recovery/runtime_binding.rs', 'crates/latexide-core/src/services/recovery/ffi_runtime_tests.rs', 'crates/latexide-core/src/services/recovery/runtime_delta.rs', 'crates/latexide-core/src/services/recovery/review_followup_tests.rs', 'crates/latexide-ffi/src/runtime.rs', 'crates/latexide-core/src/services/recovery/pr68_runtime_tests.rs')
-F05_SOURCE_PINS = {'crates/latexide-core/src/workspace.rs': {'sha256': 'bc6cb0290da12ab928ec7d60d5286ce6dd567bac9e3ed0ed9bf3909749edc9b3', 'bytes': 24405, 'mode': 420}, 'crates/latexide-core/src/services/recovery/runtime_binding.rs': {'sha256': 'fa643dfeca66ac497a70a689d4625bb12719f34c870cbb0ffef2fa208849af8d', 'bytes': 34569, 'mode': 420}, 'crates/latexide-core/src/services/recovery/ffi_runtime_tests.rs': {'sha256': '9a199bb837ecb7dc158268f119f2c896c5192e9d1c75d72e34d68afbc5528a63', 'bytes': 4267, 'mode': 420}, 'crates/latexide-core/src/services/recovery/runtime_delta.rs': {'sha256': 'f69383c812bde8f4c475d7476edbf0bf65133d7cdd8488fc1d1c6d98508fbbd2', 'bytes': 24112, 'mode': 420}, 'crates/latexide-core/src/services/recovery/review_followup_tests.rs': {'sha256': 'da03dfc7fc3ee756822fba929cef3da68f6f90c7e8138b9f48e3e6f5e0423f9b', 'bytes': 22944, 'mode': 420}, 'crates/latexide-ffi/src/runtime.rs': {'sha256': '6c38a16699621780856dc9862a75278c1df944456d99fce293185cc4e2c9d810', 'bytes': 16107, 'mode': 420}, 'crates/latexide-core/src/services/recovery/pr68_runtime_tests.rs': {'sha256': 'bdce3dfa5fa70cdc87fea1f7a3feab4fe1490c7f04daa11f9e2193774f1c4b9c', 'bytes': 40761, 'mode': 420}}
+F05_SOURCE_PINS = {'crates/latexide-core/src/workspace.rs': {'sha256': '3eebb433e86b92176ad0790adba0489d8df5a41f618622e8738a81ac5be4e7c7', 'bytes': 31462, 'mode': 420}, 'crates/latexide-core/src/services/recovery/runtime_binding.rs': {'sha256': '7df61324995d08e70c398bbb733033668c2fef3310f8f21660f26fa08b1aa01f', 'bytes': 35641, 'mode': 420}, 'crates/latexide-core/src/services/recovery/ffi_runtime_tests.rs': {'sha256': '9a199bb837ecb7dc158268f119f2c896c5192e9d1c75d72e34d68afbc5528a63', 'bytes': 4267, 'mode': 420}, 'crates/latexide-core/src/services/recovery/runtime_delta.rs': {'sha256': 'f69383c812bde8f4c475d7476edbf0bf65133d7cdd8488fc1d1c6d98508fbbd2', 'bytes': 24112, 'mode': 420}, 'crates/latexide-core/src/services/recovery/review_followup_tests.rs': {'sha256': 'da03dfc7fc3ee756822fba929cef3da68f6f90c7e8138b9f48e3e6f5e0423f9b', 'bytes': 22944, 'mode': 420}, 'crates/latexide-ffi/src/runtime.rs': {'sha256': 'd51c0e268a9cd04074150aa76faefa6003eb83b4b26cc223f6563b9b2e87dae2', 'bytes': 16173, 'mode': 420}, 'crates/latexide-core/src/services/recovery/pr68_runtime_tests.rs': {'sha256': 'bdce3dfa5fa70cdc87fea1f7a3feab4fe1490c7f04daa11f9e2193774f1c4b9c', 'bytes': 40761, 'mode': 420}}
 
 
 F05_ENV = ("P00_PR68_TASK_ROOT", "P00_PR68_ROOT", "P00_PR68_NONCE")

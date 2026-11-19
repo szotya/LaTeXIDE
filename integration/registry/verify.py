@@ -33,6 +33,7 @@ _readiness.loader.exec_module(readiness)
 _p01 = importlib.util.spec_from_file_location("latexide_p01_ci", Path(__file__).with_name("p01_ci.py"))
 p01_ci = importlib.util.module_from_spec(_p01)
 _p01.loader.exec_module(p01_ci)
+p02_ci = p01_ci._p02_module()
 
 
 def digest(path):
@@ -42,11 +43,12 @@ def digest(path):
 def execute_step(name, argv, cwd, log, timeout, env=None):
     if not argv or not math.isfinite(timeout) or timeout <= 0: raise ValueError("Explicit argv and finite positive timeout required")
     log = Path(log); log.parent.mkdir(parents=True, exist_ok=True)
-    started = time.monotonic(); timed_out = False; reason = None; code = None
+    started = time.monotonic(); timed_out = False; reason = None; code = None; child_pid = None
     with log.open("wb") as output:
         try:
             child = subprocess.Popen(argv, cwd=cwd, stdout=output, stderr=subprocess.STDOUT, env=env,
                                      start_new_session=os.name != "nt")
+            child_pid = child.pid
             try:
                 code = child.wait(timeout=timeout)
             except subprocess.TimeoutExpired:
@@ -64,7 +66,7 @@ def execute_step(name, argv, cwd, log, timeout, env=None):
     status = "timed_out" if timed_out else "unrun" if reason else "passed" if code == 0 else "failed"
     return {"name": name, "command": list(argv), "status": status, "exit_code": code,
             "timed_out": timed_out, "duration_ms": round((time.monotonic() - started) * 1000),
-            "reason": reason, "artifact_sha256": None,
+            "reason": reason, "child_pid": child_pid, "artifact_sha256": None,
             "log": {"kind": "command_log", "path": str(log), "sha256": digest(log)}}
 
 
@@ -154,6 +156,7 @@ def run_checks(root, source_paths, steps, log_dir, timeout, artifact_roots=()):
             p01_tool = None
             p01_tool_error = None
             f05_namespace = None
+            p02_namespace = None
             if step.get("p01_cohort") or step.get("summary_format") == "rust":
                 executable = shutil.which(step["argv"][0], path=env.get("PATH"))
                 try:
@@ -165,6 +168,10 @@ def run_checks(root, source_paths, steps, log_dir, timeout, artifact_roots=()):
                             Path(log_dir) / ("f05-cargo-" + run_id), "cargo",
                             {"verification_run_id": run_id, "source_sha256": before["sha256"], "tool": p01_tool},
                             step["argv"])
+                    if step.get("p02_cohort"):
+                        p02_namespace = p02_ci.create(root, Path(log_dir) / ("p02-cargo-" + run_id), "cargo",
+                            {"verification_run_id": run_id, "source_sha256": before["sha256"], "tool": p01_tool},
+                            step["argv"], {"kind": "workspace-cargo", "cwd": str(root.resolve()), "command": step["argv"]})
                 except (OSError, ValueError) as error:
                     p01_tool_error = str(error)
             if p01_tool_error:
@@ -174,6 +181,10 @@ def run_checks(root, source_paths, steps, log_dir, timeout, artifact_roots=()):
             else:
                 if f05_namespace is not None:
                     env.update(f05_namespace["environment"])
+                for name in p02_ci.ENV:
+                    env.pop(name, None)
+                if p02_namespace is not None:
+                    env.update(p02_namespace["environment"])
                 p01_p18_environment = {key: env[key] for key in p01_ci.P18_ENV if key in env}
                 record = execute_step(step["name"], step["argv"], root, Path(log_dir) / f"{sequence:02}-{step['name']}.log", timeout, env=env)
                 if step.get("summary_format") == "rust":
@@ -192,6 +203,11 @@ def run_checks(root, source_paths, steps, log_dir, timeout, artifact_roots=()):
                         p01_ci.qualify(root, record, step["argv"], run_id, before["sha256"],
                                        root / "target", root / spec["proof"], env, execute_step, p01_tool)
                         record["p01_build_tool"] = p01_tool
+                    if step.get("p02_cohort"):
+                        record["p02_namespace"] = p02_ci.cargo_proof(root, p02_namespace, record, step["argv"],
+                            run_id, before["sha256"], root / "target", root / step["p02_cohort"]["proof"], p01_tool,
+                            execute=execute_step, env=env,
+                            p01_proof=root / step["p01_cohort"]["proof"] if step.get("p01_cohort") else None)
                     artifacts = capture_artifacts(root, step, run_id, allowed_roots)
                     if artifacts:
                         record["artifacts"] = artifacts; record["artifact_status"] = "current"
@@ -243,6 +259,14 @@ def run_checks(root, source_paths, steps, log_dir, timeout, artifact_roots=()):
             except (OSError, ValueError, KeyError, TypeError) as error:
                 record["status"] = "stale_artifact"
                 record["reason"] = str(error)
+    for step, record in zip(steps, records):
+        if step.get("p02_cohort") and record.get("status") == "passed":
+            try:
+                p02_ci.validate(root, root / step["p02_cohort"]["proof"], record, step["argv"],
+                    record["verification_run_id"], before["sha256"], root / "target", record["rust_build_tool"],
+                    p01_proof=root / step["p01_cohort"]["proof"] if step.get("p01_cohort") else None)
+            except (OSError, ValueError, KeyError, TypeError) as error:
+                record["status"] = "stale_artifact"; record["reason"] = str(error)
     failed = any(r["required"] and (r["status"] != "passed" or r.get("artifact_status") == "stale_artifact") for r in records)
     status = "source_changed" if before["sha256"] != after_sha else "failed" if failed else "passed"
     for record in records: record["report_status"] = status
@@ -359,6 +383,26 @@ def build_steps(root, args, platform, machine):
                       "argv": [sys.executable, "integration/registry/p18_ci.py", "--rust-log", str(rust_log), "--result", str(p18_result)],
                       "summary_path": ref(p18_result), "summary_suite": "p18-pdfs", "artifact_index": ref(p18_result),
                       "required_artifact_kinds": ["p18_pdf_checker", "p18_compiler_pdf", "p18_pdf_render", "p18_pdf_validation"]})
+    if args.profile in {"shared", "integrated"} and p02_ci.catalog(root) is not None:
+        rust_step = next(step for step in steps if step["name"] == rust)
+        if "--message-format=json" not in rust_step["argv"]:
+            at = rust_step["argv"].index("--") if "--" in rust_step["argv"] else len(rust_step["argv"])
+            rust_step["argv"].insert(at, "--message-format=json")
+        if "--" not in rust_step["argv"]:
+            rust_step["argv"].append("--")
+        if "--show-output" not in rust_step["argv"]:
+            rust_step["argv"].append("--show-output")
+        proof = run_dir / "p02-fixture-cohorts.json"
+        rust_log = run_dir / f"{next(i for i, step in enumerate(steps, 1) if step['name'] == rust):02}-{rust}.log"
+        rust_step["p02_cohort"] = {"proof": ref(proof)}
+        artifacts = rust_step.setdefault("artifact_paths", [])
+        artifacts.append({"path": ref(proof), "kind": "p02_cohort_proof"})
+        rust_step.setdefault("required_artifact_kinds", []).append("p02_cohort_proof")
+        # P01 already registers this same Cargo log on Mac; share that exact
+        # artifact instead of duplicating one path under two kind names.
+        if not any(item["path"] == ref(rust_log) for item in artifacts):
+            artifacts.append({"path": ref(rust_log), "kind": "p02_rust_build_log"})
+            rust_step["required_artifact_kinds"].append("p02_rust_build_log")
     if integrated and supported:
         runtime_index = run_dir / "runtime-artifacts.json"; native_index = run_dir / "native-artifacts.json"
         runtime_args = (["--cargo-executable", args.cargo_executable] if args.cargo_executable else []) + offline

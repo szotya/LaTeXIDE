@@ -4,6 +4,9 @@ use latexide_protocol::{READ_CHUNK_BYTES, Reply, Request};
 use serde_json::{Value, json};
 use std::{collections::BTreeMap, path::PathBuf, time::Duration};
 
+#[path = "runtime_transactions.rs"]
+pub(crate) mod transactions;
+
 struct CompilerSettings {
     path: PathBuf,
     cache: PathBuf,

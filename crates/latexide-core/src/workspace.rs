@@ -4,7 +4,7 @@ use crate::{
 };
 use serde::Serialize;
 use std::{
-    collections::{BTreeMap, VecDeque},
+    collections::{BTreeMap, BTreeSet, VecDeque},
     fs::{self, OpenOptions},
     io::Write,
     path::{Component, Path, PathBuf},
@@ -12,6 +12,12 @@ use std::{
 };
 
 static TEMP_ID: AtomicU64 = AtomicU64::new(1);
+#[path = "workspace_capture.rs"]
+mod capture;
+#[path = "workspace_analysis_capture.rs"]
+mod analysis;
+#[path = "services/vfs/mod.rs"]
+mod analysis_vfs;
 pub(crate) const HISTORY_BYTES: usize = 16 * 1024 * 1024;
 pub(crate) const HISTORY_ENTRIES: usize = 256;
 
@@ -46,6 +52,8 @@ pub struct Workspace {
     completion_index: crate::project_index::ProjectIndex,
     recovery: Option<crate::runtime_recovery::RuntimeRecovery>,
     recovery_error: Option<String>,
+    capture: capture::CaptureState,
+    analysis: analysis::AnalysisState,
 }
 
 impl Workspace {
@@ -57,6 +65,8 @@ impl Workspace {
                 "A projektgyökér nem mappa.",
             ));
         }
+        let capture = capture::CaptureState::new(&root)?;
+        let analysis = analysis::AnalysisState::new(&root)?;
         Ok(Self {
             root,
             documents: BTreeMap::new(),
@@ -66,6 +76,8 @@ impl Workspace {
             completion_index: Default::default(),
             recovery: None,
             recovery_error: None,
+            capture,
+            analysis,
         })
     }
     /// Open with durable recovery in a caller-selected private storage root.
@@ -172,6 +184,9 @@ impl Workspace {
         Ok(())
     }
     fn durable_change<T>(&mut self, action: impl FnOnce(&mut Self) -> Result<T>) -> Result<T> {
+        self.observe_capture_change(|workspace| workspace.durable_change_inner(action))
+    }
+    fn durable_change_inner<T>(&mut self, action: impl FnOnce(&mut Self) -> Result<T>) -> Result<T> {
         if self.recovery.is_none() {
             return action(self);
         }
@@ -394,6 +409,87 @@ impl Workspace {
     ) -> Result<DocumentInfo> {
         self.durable_change(|w| w.apply_edits_memory(id, expected_revision, edits, origin))
     }
+    /// One memory/history transaction over the existing retained Documents.
+    /// Every target, revision, range and candidate is checked before any assignment.
+    /// Save remains explicit; existing durable/uncertain recovery semantics remain.
+    pub fn apply_edit_group(
+        &mut self,
+        batches: Vec<(String, u64, Vec<TextEdit>)>,
+        origin: &str,
+    ) -> Result<Vec<DocumentInfo>> {
+        self.durable_change(|workspace| workspace.apply_edit_group_memory(batches, origin))
+    }
+    fn apply_edit_group_memory(
+        &mut self,
+        batches: Vec<(String, u64, Vec<TextEdit>)>,
+        origin: &str,
+    ) -> Result<Vec<DocumentInfo>> {
+        if batches.is_empty() || batches.len() > MAX_OPEN_DOCUMENTS || origin.len() > 16384 {
+            return Err(CoreError::new("invalid_edit_group", "Invalid group size or origin"));
+        }
+        let mut seen = BTreeSet::new();
+        let mut prepared = Vec::with_capacity(batches.len());
+        let mut edit_count = 0usize;
+        let mut group_bytes = 0usize;
+        for (id, revision, edits) in batches {
+            if !seen.insert(id.clone()) {
+                return Err(CoreError::new("invalid_edit_group", "Duplicate group document"));
+            }
+            edit_count = edit_count.checked_add(edits.len()).ok_or_else(|| CoreError::new("too_many_edits", "Edit count overflow"))?;
+            if edit_count > 1000 { return Err(CoreError::new("too_many_edits", "At most 1000 edits per group")); }
+            let document = self.documents.get(&id).ok_or_else(|| CoreError::new("document_not_open", "Group document is not open"))?;
+            if document.revision != revision {
+                return Err(CoreError::new("revision_conflict", "Group document revision changed"));
+            }
+            let (text, patches) = document.prepare_edits(edits)?;
+            let next_revision = if patches.is_empty() { revision } else {
+                revision.checked_add(1).ok_or_else(|| CoreError::new("revision_conflict", "Revision exhausted"))?
+            };
+            for patch in &patches {
+                group_bytes = group_bytes.checked_add(patch.before.len() + patch.after.len())
+                    .ok_or_else(|| CoreError::new("history_limit", "Group history overflow"))?;
+            }
+            prepared.push((id, next_revision, text, patches));
+        }
+        if group_bytes > HISTORY_BYTES {
+            return Err(CoreError::new("history_limit", "Group exceeds the existing history budget"));
+        }
+        if prepared.iter().all(|(_, _, _, patches)| patches.is_empty()) {
+            return Ok(prepared.iter().map(|(id, _, _, _)| self.documents[id].info()).collect());
+        }
+        let transaction_id = self.next_transaction;
+        let next_transaction = transaction_id.checked_add(1)
+            .ok_or_else(|| CoreError::new("history_limit", "Transaction sequence exhausted"))?;
+        let mut infos = Vec::with_capacity(prepared.len());
+        let mut entries = Vec::with_capacity(prepared.len());
+        // All fallible validation is complete. No per-document apply call or rollback.
+        self.next_transaction = next_transaction;
+        for (id, revision, text, patches) in prepared {
+            let document = self.documents.get_mut(&id).expect("group target prevalidated under exclusive borrow");
+            if !patches.is_empty() {
+                document.text = text;
+                document.revision = revision;
+                document.last_origin = origin.into();
+                document.transaction_id = transaction_id;
+                entries.push(HistoryEntry {document_id: id.clone(), patches, origin: origin.into(), transaction_id});
+            }
+            infos.push(document.info());
+        }
+        self.redo.clear();
+        self.undo.extend(entries);
+        self.trim_undo_groups();
+        Ok(infos)
+    }
+    fn trim_undo_groups(&mut self) {
+        let mut bytes: usize = self.undo.iter().map(HistoryEntry::bytes).sum();
+        while bytes > HISTORY_BYTES || self.undo.len() > HISTORY_ENTRIES {
+            let first = self.undo.front().expect("history over budget is nonempty").transaction_id;
+            if self.undo.back().is_some_and(|entry| entry.transaction_id == first) { break; }
+            while self.undo.front().is_some_and(|entry| entry.transaction_id == first) {
+                bytes -= self.undo.pop_front().expect("group row exists").bytes();
+            }
+        }
+    }
     fn apply_edits_memory(
         &mut self,
         id: &str,
@@ -429,10 +525,7 @@ impl Workspace {
             origin: origin.into(),
             transaction_id,
         });
-        let mut bytes: usize = self.undo.iter().map(HistoryEntry::bytes).sum();
-        while self.undo.len() > 1 && (bytes > HISTORY_BYTES || self.undo.len() > HISTORY_ENTRIES) {
-            bytes -= self.undo.pop_front().expect("nonempty").bytes();
-        }
+        self.trim_undo_groups();
         Ok(snapshot)
     }
 
@@ -440,53 +533,74 @@ impl Workspace {
         self.durable_change(|w| w.undo_memory())
     }
     fn undo_memory(&mut self) -> Result<DocumentSnapshot> {
-        let entry = self
-            .undo
-            .pop_back()
-            .ok_or_else(|| CoreError::new("nothing_to_undo", "Nincs visszavonható módosítás."))?;
-        let document = self
-            .documents
-            .get_mut(&entry.document_id)
-            .expect("history document stays open");
-        for patch in entry.patches.iter().rev() {
-            document
-                .text
-                .replace_range(patch.start..patch.start + patch.after.len(), &patch.before);
-        }
-        document.revision += 1;
-        document.last_origin = format!("undo:{}", entry.origin);
-        document.transaction_id = entry.transaction_id;
-        let snapshot = document.snapshot();
-        self.redo.push(entry);
-        Ok(snapshot)
+        self.replay_history_group(true)
     }
 
     pub fn redo(&mut self) -> Result<DocumentSnapshot> {
         self.durable_change(|w| w.redo_memory())
     }
     fn redo_memory(&mut self) -> Result<DocumentSnapshot> {
-        let entry = self
-            .redo
-            .pop()
-            .ok_or_else(|| CoreError::new("nothing_to_redo", "Nincs megismételhető módosítás."))?;
-        let document = self
-            .documents
-            .get_mut(&entry.document_id)
-            .expect("history document stays open");
-        for patch in &entry.patches {
-            document
-                .text
-                .replace_range(patch.start..patch.start + patch.before.len(), &patch.after);
+        self.replay_history_group(false)
+    }
+    fn replay_history_group(&mut self, undo: bool) -> Result<DocumentSnapshot> {
+        let last = if undo { self.undo.back() } else { self.redo.last() };
+        let transaction_id = last.map(|entry| entry.transaction_id).ok_or_else(|| {
+            if undo { CoreError::new("nothing_to_undo", "Nincs visszavonható módosítás.") }
+            else { CoreError::new("nothing_to_redo", "Nincs megismételhető módosítás.") }
+        })?;
+        let mut group: Vec<_> = if undo {
+            self.undo.iter().rev().take_while(|entry| entry.transaction_id == transaction_id).cloned().collect()
+        } else {
+            self.redo.iter().rev().take_while(|entry| entry.transaction_id == transaction_id).cloned().collect()
+        };
+        group.reverse();
+        let anchor = group.last().expect("nonempty history group").document_id.clone();
+        let mut seen = BTreeSet::new();
+        let mut prepared = Vec::with_capacity(group.len());
+        for entry in &group {
+            if !seen.insert(entry.document_id.clone()) { return Err(CoreError::new("history_invalid", "Repeated document in group")); }
+            let document = self.documents.get(&entry.document_id)
+                .ok_or_else(|| CoreError::new("history_invalid", "History document is not open"))?;
+            let revision = document.revision.checked_add(1)
+                .ok_or_else(|| CoreError::new("revision_conflict", "Revision exhausted"))?;
+            let mut text = document.text.clone();
+            let patches: Vec<_> = if undo { entry.patches.iter().rev().collect() } else { entry.patches.iter().collect() };
+            for patch in patches {
+                let (from, to) = if undo { (&patch.after, &patch.before) } else { (&patch.before, &patch.after) };
+                let end = patch.start.checked_add(from.len()).ok_or_else(|| CoreError::new("history_invalid", "Patch overflow"))?;
+                if text.get(patch.start..end) != Some(from.as_str()) {
+                    return Err(CoreError::new("history_invalid", "History text/scalar binding differs"));
+                }
+                text.replace_range(patch.start..end, to);
+            }
+            if document.bytes_for(&text).len() > crate::MAX_FILE_BYTES {
+                return Err(CoreError::new("file_too_large", "History result exceeds the existing encoding limit"));
+            }
+            let origin = format!("{}:{}", if undo {"undo"} else {"redo"}, entry.origin);
+            if origin.len() > 16384 { return Err(CoreError::new("history_invalid", "History origin exceeds existing bound")); }
+            prepared.push((entry.document_id.clone(), text, revision, origin));
         }
-        document.revision += 1;
-        document.last_origin = format!("redo:{}", entry.origin);
-        document.transaction_id = entry.transaction_id;
-        let snapshot = document.snapshot();
-        self.undo.push_back(entry);
-        Ok(snapshot)
+        for (id, text, revision, origin) in prepared {
+            let document = self.documents.get_mut(&id).expect("history target prevalidated");
+            document.text = text; document.revision = revision;
+            document.last_origin = origin; document.transaction_id = transaction_id;
+        }
+        if undo {
+            for _ in 0..group.len() { self.undo.pop_back(); }
+            self.redo.extend(group);
+        } else {
+            self.redo.truncate(self.redo.len() - group.len());
+            self.undo.extend(group);
+        }
+        // Legacy v1 callers still receive one anchor snapshot; all group members
+        // have changed together and remain observable through existing WorkspaceInfo.
+        Ok(self.documents[&anchor].snapshot())
     }
 
     pub fn save_document(&mut self, id: &str, expected_revision: u64) -> Result<DocumentSnapshot> {
+        self.observe_capture_change(|workspace| workspace.save_document_inner(id, expected_revision))
+    }
+    fn save_document_inner(&mut self, id: &str, expected_revision: u64) -> Result<DocumentSnapshot> {
         if self.recovery.is_none() {
             return self.save_document_memory(id, expected_revision);
         }

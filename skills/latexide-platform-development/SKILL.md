@@ -21,6 +21,7 @@ Read `docs/DEVELOPER_HANDOFF.md` for current implementation state, actual comman
 | Own macro/ref/cite definition lookup and native Cmd/Ctrl-click | [references/definition-navigation.md](references/definition-navigation.md) |
 | Capability audits, source/test evidence and IDE parity backlogs | [references/audit.md](references/audit.md) |
 | Durable recovery, explicit Save/undo and qualified parent-owned crash cohorts | [references/recovery.md](references/recovery.md) |
+| Canonical transaction planning, actual Workspace capture and trusted multi-document memory commit | [references/parallel-development.md#p02-workspace-and-runtime-memory-transactions](references/parallel-development.md#p02-workspace-and-runtime-memory-transactions) |
 | Parallel development packages, exclusive paths, contract gate and GitHub onboarding | [references/parallel-development.md](references/parallel-development.md) |
 | Compiler acquisition, package roots and offline proof | `<repo>/tools/texlive/README.md` and `<repo>/docs/compiler-assessment.md` |
 
