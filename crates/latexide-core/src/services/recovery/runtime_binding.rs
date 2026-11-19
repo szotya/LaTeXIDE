@@ -96,6 +96,24 @@ impl State {
         {
             return Err(bad("pending Save target"));
         }
+        // Existing LXSTATE1/LXEDIT01 rows retain their encoding. Adjacent rows
+        // with one transaction ID form a group; old unique-ID rows are singletons.
+        // Reject fragmented groups, duplicate targets and groups split over stacks.
+        let mut groups = std::collections::BTreeSet::new();
+        for history in [self.undo.iter().collect::<Vec<_>>(), self.redo.iter().collect::<Vec<_>>()] {
+            let mut current = None;
+            let mut documents = std::collections::BTreeSet::new();
+            let mut origin = "";
+            for entry in history {
+                if current != Some(entry.transaction_id) {
+                    if !groups.insert(entry.transaction_id) { return Err(bad("fragmented history group")); }
+                    current = Some(entry.transaction_id); documents.clear(); origin = &entry.origin;
+                }
+                if entry.origin != origin || !documents.insert(&entry.document_id) {
+                    return Err(bad("history group target/origin binding"));
+                }
+            }
+        }
         let mut bytes = 0usize;
         for (id, d) in &self.documents {
             if !latexide_contracts::is_relative_path(id, false)

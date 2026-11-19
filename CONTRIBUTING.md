@@ -17,10 +17,12 @@ Olvasd az [AGENTS.md](AGENTS.md), a [handoff](docs/DEVELOPER_HANDOFF.md), a [pro
 ```sh
 python3 scripts/validate_development_packages.py
 python3 -m unittest discover -s tests -p 'test_*.py'
-cargo +1.99.1 test --workspace --locked
+python3 integration/registry/verify.py --profile shared
 ```
 
-A jelenlegi Mac offline környezetben Cargo helyett `bash scripts/cargo-local.sh test --workspace --locked --offline`. Natív Mac/IPC/MCP részletes parancsok a handoffban. A távoli CI csak az általa ténylegesen futtatott köröket bizonyítja. Windows WinUI build és teljes compiler/PDF/agent workflow külön minősítés.
+A teljes workspace tesztjeinek támogatott belépése a `shared` verifier (Windowson `python` a `python3` helyett). Ez friss, kizárólagos fixture-gyökeret és forráshoz/futtatáshoz kötött nonce-ot ad a kötelező `P02_RUNTIME_FIXTURES`, `P02_WORKSPACE_FIXTURES`, `P02_RUN_NONCE` változókhoz, majd ellenőrzi a tesztprogramokat és a bizonyítékokat. Minden ilyen build előtt takarítja a saját target workspace-csomagjait; a gyorsítótárból kapott P02 tesztprogram nem válik friss bizonyítékká.
+
+A korábbi platformútmutatók közvetlen `cargo test --workspace --locked` parancsa és a Mac `scripts/cargo-local.sh` wrapper önmagában nem állítja elő ezeket a változókat: hiányuk szándékos teszthiba. A teljes workspace-hez a verifier fenti belépését használd; a nyers tesztprogram célzott fejlesztői futtatásához a hívó biztosít mindhárom friss, saját gyökérhez kötött értéket, ami önmagában nem CI-minősítés. Offline környezetben a verifier `--offline` kapcsolója és a már ellenőrzött helyi Rust-környezet használható; toolchain-telepítés külön feladat. Natív Mac/IPC/MCP részletes parancsok a handoffban. A távoli CI csak az általa ténylegesen futtatott köröket bizonyítja. Windows WinUI build és teljes compiler/PDF/agent workflow külön minősítés.
 
 Új generált tervekhez a `docs/development/package-specs.json` a szerkesztendő forrás, majd `python3 scripts/build_development_packages.py` és a validator. A dátumozott audit régi bizonyítékait ne írd át aktuális tesztként.
 

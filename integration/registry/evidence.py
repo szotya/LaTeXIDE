@@ -8,6 +8,7 @@ import importlib.util
 _p01 = importlib.util.spec_from_file_location("latexide_p01_evidence", Path(__file__).with_name("p01_ci.py"))
 p01_ci = importlib.util.module_from_spec(_p01)
 _p01.loader.exec_module(p01_ci)
+p02_ci = p01_ci._p02_module()
 
 
 def read_json(path, limit=8 * 1024 * 1024):
@@ -170,6 +171,11 @@ def revalidate_report(root, report, current_source, expected_steps, artifact_roo
                         qualification = p01_ci.validate(root, output(step["p01_cohort"]["proof"]), row,
                             step["argv"], run_id, source, root / "target", row["p01_build_tool"])
                         summary = p01_ci.combine_summary(summary, qualification)
+                if step.get("p02_cohort"):
+                    qualification = p02_ci.validate(root, output(step["p02_cohort"]["proof"]), row, step["argv"],
+                        run_id, source, root / "target", row["rust_build_tool"],
+                        p01_proof=output(step["p01_cohort"]["proof"]) if step.get("p01_cohort") else None)
+                    p02_ci.registered_proof(qualification, row, output(step["p02_cohort"]["proof"]), output)
                 if not p01_ci.same(row.get("test_summary"), summary):
                     raise ValueError("Stored test outcome differs")
                 if summary is not None:
@@ -211,6 +217,15 @@ def revalidate_report(root, report, current_source, expected_steps, artifact_roo
                     summary = p01_ci.combine_summary(rust_summary(output(row["log"]["path"]), row["name"]), qualification)
                     if not p01_ci.same(summary, row.get("test_summary")):
                         raise ValueError("P01 final parent summary changed")
+                except (OSError, ValueError, KeyError, TypeError) as error:
+                    return result("stale_artifact", str(error))
+        for step, row in zip(expected_steps, records):
+            if step.get("p02_cohort"):
+                try:
+                    qualification = p02_ci.validate(root, output(step["p02_cohort"]["proof"]), row, step["argv"],
+                        row["verification_run_id"], source, root / "target", row["rust_build_tool"],
+                        p01_proof=output(step["p01_cohort"]["proof"]) if step.get("p01_cohort") else None)
+                    p02_ci.registered_proof(qualification, row, output(step["p02_cohort"]["proof"]), output)
                 except (OSError, ValueError, KeyError, TypeError) as error:
                     return result("stale_artifact", str(error))
         identities["selection"] = "current"

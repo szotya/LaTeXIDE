@@ -5,6 +5,7 @@ pub use latexide_contracts as contracts;
 
 pub mod services {
     pub mod bibliography;
+    pub mod transactions;
 }
 
 mod document;

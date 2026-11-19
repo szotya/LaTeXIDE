@@ -1,5 +1,6 @@
-//! Bounded reconciliation of explicit, complete observations. No filesystem walk,
-//! watcher, document mutation, serialization, or save authority lives here.
+//! Bounded reconciliation of explicit, complete observations. The filesystem
+//! sibling adds controlled bounded capture; no watcher, document mutation or save
+//! authority lives here.
 //!
 //! The host supplies an ObservationProducer, never one decoded from a client.
 //! SHA-256 is computed from its canonical logical UTF-8 bytes on every call.
@@ -9,6 +10,9 @@
 //! response. Consumers needing those must obtain the atomic Manifest sidecar.
 
 mod digest;
+pub mod filesystem;
+mod invalidation;
+pub use invalidation::{Invalidation, InvalidationBatch, MAX_PENDING_INVALIDATIONS};
 
 use latexide_contracts::{
     SnapshotLimits,
@@ -97,101 +101,160 @@ pub struct Manifest {
 pub struct VfsService<P> {
     producer: P,
     limits: SnapshotLimits,
-    state: Mutex<Manifest>,
+    state: Mutex<ServiceState>,
+}
+struct ServiceState {
+    manifest: Manifest,
+    invalidations: invalidation::InvalidationQueue,
 }
 impl<P: ObservationProducer> VfsService<P> {
-    /// Starts an empty, session-local manifest. This is a derived read model,
-    /// not another editable document store. There is no unauthenticated restore.
+    /// Starts an empty, session-local derived manifest and bounded event queue.
+    /// Event hints are not filesystem observations or another editable store.
     pub fn new(producer: P, limits: SnapshotLimits) -> Self {
+        let capacity = limits.max_files.min(MAX_PENDING_INVALIDATIONS);
         Self {
             producer,
             limits,
-            state: Mutex::new(Manifest {
-                snapshot: VfsSnapshot {
-                    epoch: 0,
-                    entries: vec![],
+            state: Mutex::new(ServiceState {
+                manifest: Manifest {
+                    snapshot: VfsSnapshot {
+                        epoch: 0,
+                        entries: vec![],
+                    },
+                    disk: vec![],
+                    overlays: vec![],
                 },
-                disk: vec![],
-                overlays: vec![],
+                invalidations: invalidation::InvalidationQueue::new(capacity),
             }),
         }
     }
     pub fn manifest(&self) -> Result<Manifest, VfsError> {
         self.state
             .lock()
-            .map(|state| state.clone())
+            .map(|state| state.manifest.clone())
             .map_err(|_| VfsError::IdentityConflict)
+    }
+    /// Record a trusted host hint. Duplicate paths retain first-arrival order;
+    /// overflow, incomplete capture or invalid paths request a full reconcile.
+    /// No event changes the published manifest or its epoch.
+    pub fn invalidate(&self, event: Invalidation<'_>) -> Result<(), VfsError> {
+        self.state
+            .lock()
+            .map_err(|_| VfsError::IdentityConflict)?
+            .invalidations
+            .record(event)
+    }
+    /// This is a non-destructive read; only a complete accepted reconcile acks it.
+    pub fn pending_invalidations(&self) -> Result<InvalidationBatch, VfsError> {
+        self.state
+            .lock()
+            .map_err(|_| VfsError::IdentityConflict)?
+            .invalidations
+            .batch()
+    }
+    /// Apply a fresh full observation only if no later event invalidated this batch.
+    /// Paths are scheduling hints: they never authorize a partial observation.
+    pub fn reconcile_invalidated(
+        &self,
+        previous: &VfsSnapshot,
+        batch: &InvalidationBatch,
+        disk: Vec<VfsEntry>,
+        overlays: Vec<DirtyOverlay>,
+    ) -> Result<VfsSnapshot, VfsError> {
+        let mut state = self.state.lock().map_err(|_| VfsError::IdentityConflict)?;
+        if !state.invalidations.matches(batch) {
+            state.invalidations.require_full();
+            return Err(VfsError::IdentityConflict);
+        }
+        self.reconcile_locked(&mut state, previous, disk, overlays)
+    }
+    fn reconcile_locked(
+        &self,
+        service: &mut ServiceState,
+        previous: &VfsSnapshot,
+        mut disk: Vec<VfsEntry>,
+        mut overlays: Vec<DirtyOverlay>,
+    ) -> Result<VfsSnapshot, VfsError> {
+        let result = (|| {
+            let state = &mut service.manifest;
+            if previous != &state.snapshot {
+                return Err(VfsError::IdentityConflict);
+            }
+            count(disk.len(), self.limits.max_files)?;
+            count(
+                overlays.len(),
+                self.limits.max_files.min(latexide_core::MAX_OPEN_DOCUMENTS),
+            )?;
+            for entry in &disk {
+                path(&entry.path)?;
+                if !is_sha256(&entry.content_sha256) {
+                    return Err(VfsError::IdentityConflict);
+                }
+                if entry.size > self.limits.max_file_bytes.min(MAX_FILE_BYTES) as u64 {
+                    return Err(VfsError::Quota);
+                }
+            }
+            for overlay in &overlays {
+                path(&overlay.path)?;
+                if overlay.revision == 0 || !is_sha256(&overlay.content_sha256) {
+                    return Err(VfsError::IdentityConflict);
+                }
+            }
+            // The supplied DTOs bind the call to a fresh producer observation. A
+            // plausible digest alone never authenticates bytes or file identity.
+            let observed = self.producer.observe(&self.limits)?;
+            let mut next = prepare(observed, &state, &self.limits)?;
+            disk.sort_by(|a, b| a.path.cmp(&b.path));
+            overlays.sort_by(|a, b| a.path.cmp(&b.path));
+            let expected_disk: Vec<_> = next
+                .disk
+                .iter()
+                .map(|file| VfsEntry {
+                    path: file.path.clone(),
+                    content_sha256: file.content_sha256.clone(),
+                    size: file.size,
+                })
+                .collect();
+            let expected_overlays: Vec<_> = next
+                .overlays
+                .iter()
+                .map(|file| DirtyOverlay {
+                    path: file.path.clone(),
+                    revision: file.revision,
+                    content_sha256: file.content_sha256.clone(),
+                })
+                .collect();
+            if disk != expected_disk || overlays != expected_overlays {
+                return Err(VfsError::IdentityConflict);
+            }
+            let changed = next.disk != state.disk
+                || next.overlays != state.overlays
+                || next.snapshot.entries != state.snapshot.entries;
+            next.snapshot.epoch = if changed {
+                state.snapshot.epoch.checked_add(1).ok_or(VfsError::Quota)?
+            } else {
+                state.snapshot.epoch
+            };
+            let result = next.snapshot.clone();
+            service.invalidations.acknowledge_complete()?;
+            *state = next; // The only publication point; every error leaves state intact.
+            Ok(result)
+        })();
+        if result.is_err() {
+            service.invalidations.require_full();
+        }
+        result
     }
 }
 impl<P: ObservationProducer> VfsPort for VfsService<P> {
     fn reconcile(
         &self,
         previous: &VfsSnapshot,
-        mut disk: Vec<VfsEntry>,
-        mut overlays: Vec<DirtyOverlay>,
+        disk: Vec<VfsEntry>,
+        overlays: Vec<DirtyOverlay>,
     ) -> Result<VfsSnapshot, VfsError> {
         let mut state = self.state.lock().map_err(|_| VfsError::IdentityConflict)?;
-        if previous != &state.snapshot {
-            return Err(VfsError::IdentityConflict);
-        }
-        count(disk.len(), self.limits.max_files)?;
-        count(
-            overlays.len(),
-            self.limits.max_files.min(latexide_core::MAX_OPEN_DOCUMENTS),
-        )?;
-        for entry in &disk {
-            path(&entry.path)?;
-            if !is_sha256(&entry.content_sha256) {
-                return Err(VfsError::IdentityConflict);
-            }
-            if entry.size > self.limits.max_file_bytes.min(MAX_FILE_BYTES) as u64 {
-                return Err(VfsError::Quota);
-            }
-        }
-        for overlay in &overlays {
-            path(&overlay.path)?;
-            if overlay.revision == 0 || !is_sha256(&overlay.content_sha256) {
-                return Err(VfsError::IdentityConflict);
-            }
-        }
-        // The supplied DTOs bind the call to a fresh producer observation. A
-        // plausible digest alone never authenticates bytes or file identity.
-        let observed = self.producer.observe(&self.limits)?;
-        let mut next = prepare(observed, &state, &self.limits)?;
-        disk.sort_by(|a, b| a.path.cmp(&b.path));
-        overlays.sort_by(|a, b| a.path.cmp(&b.path));
-        let expected_disk: Vec<_> = next
-            .disk
-            .iter()
-            .map(|file| VfsEntry {
-                path: file.path.clone(),
-                content_sha256: file.content_sha256.clone(),
-                size: file.size,
-            })
-            .collect();
-        let expected_overlays: Vec<_> = next
-            .overlays
-            .iter()
-            .map(|file| DirtyOverlay {
-                path: file.path.clone(),
-                revision: file.revision,
-                content_sha256: file.content_sha256.clone(),
-            })
-            .collect();
-        if disk != expected_disk || overlays != expected_overlays {
-            return Err(VfsError::IdentityConflict);
-        }
-        let changed = next.disk != state.disk
-            || next.overlays != state.overlays
-            || next.snapshot.entries != state.snapshot.entries;
-        next.snapshot.epoch = if changed {
-            state.snapshot.epoch.checked_add(1).ok_or(VfsError::Quota)?
-        } else {
-            state.snapshot.epoch
-        };
-        let result = next.snapshot.clone();
-        *state = next; // The only publication point; every error leaves state intact.
-        Ok(result)
+        self.reconcile_locked(&mut state, previous, disk, overlays)
     }
 }
 

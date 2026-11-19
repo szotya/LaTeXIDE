@@ -21,6 +21,7 @@ Read `docs/DEVELOPER_HANDOFF.md` for current implementation state, actual comman
 | Own macro/ref/cite definition lookup and native Cmd/Ctrl-click | [references/definition-navigation.md](references/definition-navigation.md) |
 | Capability audits, source/test evidence and IDE parity backlogs | [references/audit.md](references/audit.md) |
 | Durable recovery, explicit Save/undo and qualified parent-owned crash cohorts | [references/recovery.md](references/recovery.md) |
+| Canonical transaction planning, actual Workspace capture and trusted multi-document memory commit | [references/parallel-development.md#p02-workspace-and-runtime-memory-transactions](references/parallel-development.md#p02-workspace-and-runtime-memory-transactions) |
 | Parallel development packages, exclusive paths, contract gate and GitHub onboarding | [references/parallel-development.md](references/parallel-development.md) |
 | Compiler acquisition, package roots and offline proof | `<repo>/tools/texlive/README.md` and `<repo>/docs/compiler-assessment.md` |
 
@@ -35,6 +36,7 @@ Shared Rust/runtime/session/IPC/C ABI/MCP, root workspace/locks, shared themes/w
 ## Preserve the cross-platform contract
 
 - One authoritative Rust workspace runtime. Native controls and MCP clients share it.
+- Whole-workspace tests enter through `python3 integration/registry/verify.py --profile shared` (`python` on Windows), with required P02 fixture/nonce provisioning; see `CONTRIBUTING.md`. Bare Cargo wrappers do not provision these values. Keep fresh-build and nested-proof guards on repeated shared runs.
 - Zero-based line/UTF-16-column edits, expected revisions, and atomic in-memory validation. Preserve Unicode, BOM/CRLF and external-change checks.
 - Native marked text uses `begin_composition` / `end_composition`; end consumes the transaction even when validation rejects it, so restore acknowledged text and show the error.
 - Agent edits apply directly, without per-edit approval. Save is explicit and does not erase shared undo/redo. Arbitrary external filesystem writes have a separate conflict boundary.
