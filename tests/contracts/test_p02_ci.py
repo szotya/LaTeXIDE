@@ -42,6 +42,7 @@ class Model:
         base = Path(os.environ.get("P02_CI_TEST_FIXTURE", ROOT / ".local/p02-ci-python-fixtures"))
         base.mkdir(mode=0o700, parents=True, exist_ok=True)
         self.root = Path(tempfile.mkdtemp(prefix="inert-evidence-", dir=base)).resolve()
+        test.addCleanup(self.cleanup_tree, self.root)
         for name in self.a.SOURCE_PINS:
             target = self.root / name; target.parent.mkdir(parents=True, exist_ok=True)
             target.write_bytes((ROOT / name).read_bytes()); target.chmod(0o644)
@@ -69,6 +70,17 @@ class Model:
                 pair[selection] = self.record("discovery", [str(binary), *(["--ignored"] if selection == "ignored" else []),
                     "--list", "--format", "terse"], path)
             self.discoveries[key] = pair
+
+    @staticmethod
+    def cleanup_tree(root):
+        def retry_readonly(function, path, error):
+            if not isinstance(error[1], PermissionError):
+                raise error[1]
+            # Windows cannot unlink a read-only marker. Only this model's
+            # newly created disposable tree is eligible for this retry.
+            Path(path).chmod(0o700 if Path(path).is_dir() else 0o600)
+            function(path)
+        shutil.rmtree(root, onerror=retry_readonly)
 
     def record(self, name, command, path):
         return {"name": name, "command": command, "status": "passed", "exit_code": 0, "timed_out": False,
@@ -257,6 +269,36 @@ class P02Fixtures(unittest.TestCase):
         m = Model(self); namespace = m.seal(); self.assertEqual(m.reobserve(namespace), namespace)
         Path(namespace["inventory"]["path"]).write_text("{}")
         with self.assertRaises(ValueError): m.reobserve(namespace)
+
+    def test_inventory_reformat_during_nested_readback_refuses(self):
+        m = Model(self); namespace = m.seal()
+        self.assertEqual(m.reobserve(namespace), namespace)
+        manifest = Path(namespace["inventory"]["path"]); original_read = m.a.read
+        def reformat_after_read(path, *args, **kwargs):
+            data = original_read(path, *args, **kwargs)
+            if Path(path) == manifest:
+                manifest.write_text(json.dumps(data, indent=2))
+            return data
+        with patch.object(m.a, "read", side_effect=reformat_after_read):
+            with self.assertRaisesRegex(ValueError, "inventory changed during readback"):
+                m.reobserve(namespace)
+
+    def test_model_cleanup_handles_readonly_files_and_partial_setup(self):
+        owner = unittest.TestCase(); m = Model(owner); root = m.root
+        marker = root / "readonly-marker"; marker.write_bytes(b"inert"); marker.chmod(0o444)
+        self.assertTrue(owner.doCleanups())
+        self.assertFalse(root.exists())
+        owner = unittest.TestCase(); created = []; original_mkdtemp = tempfile.mkdtemp
+        def own_directory(*args, **kwargs):
+            value = original_mkdtemp(*args, **kwargs); created.append(Path(value)); return value
+        with patch.object(tempfile, "mkdtemp", side_effect=own_directory):
+            with patch.object(Path, "write_bytes", side_effect=OSError("inert setup refusal")):
+                with self.assertRaisesRegex(OSError, "inert setup refusal"):
+                    Model(owner)
+        self.assertEqual(len(created), 1)
+        self.assertTrue(created[0].exists())
+        self.assertTrue(owner.doCleanups())
+        self.assertFalse(created[0].exists())
 
     def test_balanced_extra_named_result_refuses_in_each_standalone_image(self):
         m = Model(self); namespace = m.namespace(); m.outputs(namespace)

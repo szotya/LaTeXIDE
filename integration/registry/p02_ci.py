@@ -391,6 +391,7 @@ def observe(root, namespace, directory, phase, context, command, parent, observa
     reference = binding(path)
     require(_mode(path) == (0o666 if os.name == "nt" else 0o600) and path.lstat().st_nlink == 1, "inventory file mode/type")
     require((capture or same(namespace["inventory"], reference)) and same(read(path), inventory), "stale fixture inventory")
+    require(same(reference, binding(path)), "inventory changed during readback")
     return {**namespace, "inventory": reference}
 
 

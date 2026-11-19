@@ -70,7 +70,7 @@ Journal checksum is computed lowercase SHA-256 over exact logical UTF-8 bytes. I
 
 Limits remain 1 MiB per logical file and 10 retained recovery documents. This in-memory replay additionally caps 1024 journal entries, 1024 disk identities, 16 MiB cumulative checkpoint/journal text (including superseded entries), and 4096 bytes per path. These are not new editor or transport quotas. Only documents already in the checkpoint can be updated; no create/delete/save event or undo restoration exists in this DTO.
 
-With an already installed pinned toolchain, run from the repository root:
+With an already installed pinned toolchain, run from the repository root. Before the whole-workspace command below, the caller must provision fresh own `P02_RUNTIME_FIXTURES`, `P02_WORKSPACE_FIXTURES` and `P02_RUN_NONCE` as described in `CONTRIBUTING.md`; its shared verifier entry provisions them automatically:
 
 ```sh
 cargo +1.99.1 test -p latexide-core --test recovery_contract --locked --offline -- --test-threads=1
@@ -91,7 +91,7 @@ Incomplete, failed, stale, mismatched or over-limit observations do not publish 
 
 Preserve 1 MiB per logical file and at most 10 dirty overlays, with SnapshotLimits separately covering disk, overlay and visible totals. Metadata paths/identity labels are bounded at 4096/256 UTF-8 bytes. Canonical logical text preserves U+FEFF and LF; invalid UTF-8/NUL/CR is rejected. Empty logical text is valid. SHA-helper binary vectors establish hashing only, not support for arbitrary binary project assets or PDF validity. P09 parser preallocation/total-memory, valid-empty-stream handling and binary-input/provenance gaps require separate qualified producer/parser work; this VFS source merge neither fixes nor waives them.
 
-With the pinned toolchain already installed, from the repository root:
+With the pinned toolchain already installed, from the repository root. The whole-workspace command additionally requires fresh own `P02_RUNTIME_FIXTURES`, `P02_WORKSPACE_FIXTURES` and `P02_RUN_NONCE`; use the shared verifier in `CONTRIBUTING.md` for automatic provisioning:
 
 ```sh
 cargo +1.99.1 test -p latexide-core --test vfs_contract --locked --offline -- --test-threads=1
@@ -128,7 +128,7 @@ P00 must separately integrate real P01 checkpoint/recovery and P03 framed-runtim
 
 `Current` means the supplied input map, generation/snapshot/epoch, compiler and PDF bytes match this limited parser policy. Host capture and completion provenance must be independently trusted, never copied from an incoming request. Missing inputs fail, changed identity/input/compiler becomes stale, reused snapshot IDs with changed content/epoch fail, and non-final/cancelled/timed-out/failed completions cannot accept. Rejection does not save, replace or remove the previous artifact; actual artifact storage/selection and OS process control are separate integrations. Preserve direct edits, explicit Save and undo after Save.
 
-On an already provisioned macOS arm64 host, use the pinned offline toolchain, a private cache/target/temp and serial execution:
+On an already provisioned macOS arm64 host, use the pinned offline toolchain, a private cache/target/temp and serial execution. The whole-workspace command also requires fresh caller-owned `P02_RUNTIME_FIXTURES`, `P02_WORKSPACE_FIXTURES` and `P02_RUN_NONCE`; the shared verifier entry in `CONTRIBUTING.md` provisions them automatically:
 
 ```sh
 cargo +1.99.1 test -p latexide-build --test pipeline_contract --locked --offline --jobs 1 -- --test-threads=1
@@ -169,5 +169,7 @@ The original m03 persistent recovery oracle remains a required Mac test. Shared 
 Windows path-stat execute bits for standard executable suffixes are a CPython filename presentation, not an ACL or descriptor permission observation. Preserve exact path-before/after mode and all descriptor device/inode/size/owner/link/time comparisons when relating those views. Test the representation and changed-object refusal explicitly; do not suppress all Windows stat differences. A virtual Mac planning fixture may model tracked POSIX source mode only at its inert stat boundary, never in production P01 validation. When an accepted core-lib export changes, update the single exact canonical-hook pin in the bibliography binding metadata; keep its original oracle/provider/Cargo pins and all assertion/count guards. Fresh target CI must qualify the actual platform after a local model passes.
 
 Use `python3 integration/registry/verify.py --profile shared` (`python` on Windows) for whole-workspace tests; `CONTRIBUTING.md` explains mandatory P02 provisioning for older raw Cargo/platform-guide commands. Repeated shared/integrated cohorts must clean the workspace packages before Cargo, preserving fresh-image refusal. Select P02 roles from the actual bound image source before comparing complete method sets: unqualified names are reused by unrelated integration tests. Standalone transcripts must have no extra named outcome even when totals balance. Reject non-object discovery rows before field access. At the final nested readback, compare the proof digest to its exact registered artifact, including semantic-preserving JSON rewrites; nested consistency alone cannot establish those registered bytes.
+
+After parsing a nested inventory, compare its binding again with the pre-read reference before accepting the content. The outer proof does not by itself pin bytes changed during that inner read. Inert Python model trees register teardown immediately after exclusive creation, including setup/assertion failures and Windows read-only markers. Cleanup applies only to that new disposable model tree; retain historical actual-source/binary/raw evidence and earlier failed cohorts.
 
 Workspace open and transaction planning share the existing portable document-name contract; reject unsupported requested/canonical IDs with the offending name, preserving traversal/outside-root checks. Bound derived undo/redo labels at UTF8 boundaries without changing original history origins. Assert runtime_busy while the real owner guard is still held; use a finite outer process watchdog for blocking regressions, and keep elapsed diagnostics separate from scheduler-sensitive thresholds. Sequential filesystem analysis is a set of individually checked per-file observations: complete enumeration and later revalidation do not establish a single atomic disk state or compiler/edit/Save authority. Retained-document transactions use their separate owner-held snapshot. Apply both per-file and remaining aggregate byte caps to actual reads, permitting only one overflow probe byte.
