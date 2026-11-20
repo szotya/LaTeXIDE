@@ -113,11 +113,12 @@ private struct BodyLexer {
         return String(decoding: bytes[start..<position], as: UTF8.self)
     }
     /// Balanced opaque arguments; comments and escaped delimiters cannot close them.
-    mutating func opaque(_ open: UInt8 = 123, _ close: UInt8 = 125) -> [UInt8]? {
+    mutating func opaque(_ open: UInt8 = 123, _ close: UInt8 = 125, depth parentDepth: Int) -> [UInt8]? {
         trivia()
         guard current == open else { mark(.unbalanced, .unsupported); return nil }
         position += 1; let start = position
         var depth = 1, braces = 0
+        guard parentDepth + depth <= LatexBodyCharacterCount.maximumNesting else { limit(); return nil }
         while let byte = current {
             if byte == 92 { position += 1; scalar(); continue }
             if byte == 37 { comment(); continue }
@@ -132,16 +133,16 @@ private struct BodyLexer {
                 if byte == open { depth += 1 }
                 else if byte == close { depth -= 1 }
             }
-            if depth + braces > LatexBodyCharacterCount.maximumNesting { limit(); return nil }
+            if parentDepth + depth + braces > LatexBodyCharacterCount.maximumNesting { limit(); return nil }
             if depth == 0 { let end = position; position += 1; return Array(bytes[start..<end]) }
             position += 1
         }
         mark(.unbalanced, .unsupported); return nil
     }
-    mutating func optionalArguments() {
+    mutating func optionalArguments(depth: Int) {
         trivia(); var count = 0
         while current == 91 {
-            _ = opaque(91, 93); count += 1
+            _ = opaque(91, 93, depth: depth); count += 1
             if count > 2 { mark(.bareSyntax, .unsupported); return }
             trivia()
         }
@@ -166,7 +167,7 @@ private struct BodyLexer {
                 position += 1
                 let display = current == 36
                 if display { position += 1 }
-                math(dollarWidth: display ? 2 : 1, closingSymbol: nil)
+                math(dollarWidth: display ? 2 : 1, closingSymbol: nil, depth: depth)
             case 126: position += 1 // TeX nonbreaking space.
             case 35, 38, 94, 95: mark(.bareSyntax, .unsupported); position += 1
             case 0...8, 14...31: mark(.bareSyntax, .unsupported); position += 1
@@ -181,9 +182,13 @@ private struct BodyLexer {
             position += 1
             switch byte {
             case 37, 38, 35, 36, 95, 123, 125: output.append(byte)
-            case 92: optionalArguments() // Explicit line break, not a literal backslash.
-            case 40: math(dollarWidth: 0, closingSymbol: 41)
-            case 91: math(dollarWidth: 0, closingSymbol: 93)
+            case 92: // Explicit line break, not a literal backslash.
+                trivia()
+                if current == 42 { position += 1 }
+                trivia()
+                if current == 91 { _ = opaque(91, 93, depth: depth) }
+            case 40: math(dollarWidth: 0, closingSymbol: 41, depth: depth)
+            case 91: math(dollarWidth: 0, closingSymbol: 93, depth: depth)
             case 41, 93: mark(.unbalanced, .unsupported)
             case 32, 9, 10, 13, 44, 59, 58, 33: break
             default:
@@ -193,27 +198,35 @@ private struct BodyLexer {
             return
         }
         let name = word()
-        if Self.dynamic.contains(name) { mark(.dynamicTeX, .unsupported); skipArguments(); return }
+        if Self.dynamic.contains(name) { mark(.dynamicTeX, .unsupported); skipArguments(depth: depth); return }
         if Self.formats.contains(name) { argument(depth: depth); return }
         if Self.sections.contains(name) {
             if current == 42 { position += 1 }
-            optionalArguments(); argument(depth: depth); return
+            optionalArguments(depth: depth); argument(depth: depth); return
         }
         if Self.keys.contains(name) {
             if current == 42 { position += 1 }
-            optionalArguments(); _ = opaque(); return
+            optionalArguments(depth: depth); _ = opaque(depth: depth); return
         }
-        if Self.metadata.contains(name) { optionalArguments(); _ = opaque(); return }
+        if Self.metadata.contains(name) { optionalArguments(depth: depth); _ = opaque(depth: depth); return }
         if Self.definitions.contains(name) {
             if current == 42 { position += 1 }
-            _ = opaque(); optionalArguments(); _ = opaque(); return
+            _ = opaque(depth: depth); optionalArguments(depth: depth); _ = opaque(depth: depth); return
         }
-        if ["setlength", "addtolength", "setcounter", "addtocounter"].contains(name) { _ = opaque(); _ = opaque(); return }
-        if name == "newlength" { _ = opaque(); return }
+        if ["setlength", "addtolength", "setcounter", "addtocounter"].contains(name) { _ = opaque(depth: depth); _ = opaque(depth: depth); return }
+        if name == "newlength" { _ = opaque(depth: depth); return }
+        if name == "linebreak" {
+            trivia()
+            if current == 91 {
+                guard let strength = opaque(91, 93, depth: depth) else { return }
+                if strength.count != 1 || !(48...52).contains(strength[0]) { mark(.bareSyntax, .unsupported) }
+            }
+            return
+        }
         if Self.spacing.contains(name) || Self.switches.contains(name) { return }
         if let symbol = ["textbackslash": UInt8(92), "textasciitilde": 126, "textasciicircum": 94][name] { output.append(symbol); return }
         if name == "begin" || name == "end" {
-            guard let raw = opaque() else { return }
+            guard let raw = opaque(depth: depth) else { return }
             let environment = String(decoding: raw, as: UTF8.self)
             if environment == "document" {
                 if name == "begin", !documentSeen { documentSeen = true; documentOpen = true }
@@ -222,15 +235,15 @@ private struct BodyLexer {
             } else if name == "begin" {
                 let math = Self.mathEnvironments.contains(environment)
                 if !math { mark(.unknownEnvironment, .partial) }
-                environmentBody(environment, math: math)
+                environmentBody(environment, math: math, depth: depth)
             } else { mark(.unbalanced, .unsupported) }
             return
         }
-        mark(.unknownCommand, .partial); skipArguments()
+        mark(.unknownCommand, .partial); skipArguments(depth: depth)
     }
-    mutating func skipArguments() {
-        optionalArguments(); trivia()
-        while current == 123 { _ = opaque(); trivia() }
+    mutating func skipArguments(depth: Int) {
+        optionalArguments(depth: depth); trivia()
+        while current == 123 { _ = opaque(depth: depth); trivia() }
     }
     mutating func mathWord(_ name: String) {
         if Self.dynamic.contains(name) || Self.definitions.contains(name) { mark(.dynamicTeX, .unsupported) }
@@ -238,7 +251,7 @@ private struct BodyLexer {
             mark(.unknownCommand, .partial)
         }
     }
-    mutating func math(dollarWidth: Int, closingSymbol: UInt8?) {
+    mutating func math(dollarWidth: Int, closingSymbol: UInt8?, depth: Int) {
         var braces = 0
         while let byte = current {
             if byte == 37 { comment(); continue }
@@ -267,13 +280,14 @@ private struct BodyLexer {
             }
             if byte == 123 { braces += 1 }
             if byte == 125 { braces -= 1; if braces < 0 { mark(.unbalanced, .unsupported) } }
-            if braces > LatexBodyCharacterCount.maximumNesting { limit(); return }
+            if depth + braces > LatexBodyCharacterCount.maximumNesting { limit(); return }
             position += 1
         }
         mark(.unbalanced, .unsupported)
     }
-    mutating func environmentBody(_ name: String, math: Bool) {
+    mutating func environmentBody(_ name: String, math: Bool, depth: Int) {
         var stack = [name], braces = 0
+        guard depth + stack.count <= LatexBodyCharacterCount.maximumNesting else { limit(); return }
         while let byte = current {
             if byte == 37 { comment(); continue }
             if byte == 92 {
@@ -282,7 +296,9 @@ private struct BodyLexer {
                 if Self.letter(next) {
                     let command = word()
                     if command == "begin" || command == "end" {
-                        guard let raw = opaque() else { return }
+                        // An end command identifies the level being closed.
+                        let contextDepth = depth + braces + stack.count - (command == "end" ? 1 : 0)
+                        guard let raw = opaque(depth: contextDepth) else { return }
                         let environment = String(decoding: raw, as: UTF8.self)
                         if command == "begin" {
                             stack.append(environment)
@@ -292,7 +308,7 @@ private struct BodyLexer {
                             stack.removeLast()
                             if stack.isEmpty { if braces != 0 { mark(.unbalanced, .unsupported) }; return }
                         }
-                        if stack.count > LatexBodyCharacterCount.maximumNesting { limit(); return }
+                        if depth + stack.count + braces > LatexBodyCharacterCount.maximumNesting { limit(); return }
                     } else if math { mathWord(command) }
                 } else {
                     if math, let symbol = current, ![9, 10, 13, 32, 33, 35, 36, 37, 38, 44, 47, 58, 59, 92, 95, 123, 124, 125].contains(symbol) { mark(.unknownCommand, .partial) }
@@ -302,7 +318,7 @@ private struct BodyLexer {
             }
             if byte == 123 { braces += 1 }
             if byte == 125 { braces -= 1; if braces < 0 { mark(.unbalanced, .unsupported) } }
-            if braces > LatexBodyCharacterCount.maximumNesting { limit(); return }
+            if depth + stack.count + braces > LatexBodyCharacterCount.maximumNesting { limit(); return }
             position += 1
         }
         mark(.unbalanced, .unsupported)

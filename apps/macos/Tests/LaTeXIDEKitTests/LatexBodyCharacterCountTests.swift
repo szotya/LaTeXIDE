@@ -85,13 +85,55 @@ enum LatexBodyCountControls {
         try count(String(repeating: "{", count: 65) + "x" + String(repeating: "}", count: 65), nil, .unsupported)
         try count(String(repeating: "x", count: 1_048_577), nil, .unsupported)
     }
+    static func testOpaqueArgumentsRespectCombinedNestingLimit() throws {
+        func grouped(_ levels: Int, _ body: String) -> String {
+            String(repeating: "{", count: levels) + body + String(repeating: "}", count: levels)
+        }
+        try count(grouped(63, #"\cite{k}"#), 0, .complete)
+        try count(grouped(64, #"\cite{k}"#), nil, .unsupported)
+        try count(grouped(62, #"\cite{{k}}"#), 0, .complete)
+        try count(grouped(63, #"\cite{{k}}"#), nil, .unsupported)
+        try count(grouped(62, #"\cite[{note}]{k}"#), 0, .complete)
+        try count(grouped(63, #"\cite[{note}]{k}"#), nil, .unsupported)
+    }
+    static func testMathAndEnvironmentsShareOuterNestingBudget() throws {
+        func grouped(_ levels: Int, _ body: String) -> String {
+            String(repeating: "{", count: levels) + body + String(repeating: "}", count: levels)
+        }
+        try count(grouped(63, "$ {x} $"), 0, .complete)
+        try count(grouped(64, "$ {x} $"), nil, .unsupported)
+        try count(grouped(62, #"\begin{equation}{x}\end{equation}"#), 0, .complete)
+        try count(grouped(63, #"\begin{equation}{x}\end{equation}"#), nil, .unsupported)
+        try count(grouped(63, #"\begin{equation}x\end{equation}"#), 0, .complete)
+        let open = #"\begin{equation}"#, close = #"\end{equation}"#
+        try count(String(repeating: open, count: 64) + "x" + String(repeating: close, count: 64), 0, .complete)
+        try count(String(repeating: open, count: 65) + "x" + String(repeating: close, count: 65), nil, .unsupported)
+    }
+    static func testStarredAndLengthLineBreaksDoNotCountSyntax() throws {
+        for source in [#"a\\b"#, #"a\\*b"#, #"a\\[2pt]b"#, #"a\\*[2pt]b"#, #"a\\ * [2pt]b"#] {
+            try count(source, 2, .complete)
+        }
+        try count(#"a\\[2pt][x]b"#, 5, .complete)
+        try count(#"a\\*[2pt"#, nil, .unsupported)
+    }
+    static func testLinebreakStrengthArgumentsDoNotCountSyntax() throws {
+        try count(#"a\linebreak b"#, 2, .complete)
+        for strength in 0...4 { try count("a\\linebreak[\(strength)]b", 2, .complete) }
+        for source in [#"a\linebreak[5]b"#, #"a\linebreak[-1]b"#, #"a\linebreak[x]b"#, #"a\linebreak[44]b"#, #"a\linebreak[4"#] {
+            try count(source, nil, .unsupported)
+        }
+    }
     static let methods: [(String, () throws -> Void)] = [
         ("testPlainAndCacheKey", testPlainAndCacheKey), ("testUnicodeGraphemes", testUnicodeGraphemes),
         ("testAllWhitespace", testAllWhitespace), ("testNestedTextCommands", testNestedTextCommands),
         ("testSectionArguments", testSectionArguments), ("testCommentsAndEscapedPercent", testCommentsAndEscapedPercent),
         ("testOpaqueMath", testOpaqueMath), ("testCiteLabelRefKeys", testCiteLabelRefKeys),
         ("testDeclarationsAndDocument", testDeclarationsAndDocument), ("testLiteralEscapes", testLiteralEscapes),
-        ("testUnknownAndDynamicFailClosed", testUnknownAndDynamicFailClosed), ("testUnbalancedAndBounds", testUnbalancedAndBounds)
+        ("testUnknownAndDynamicFailClosed", testUnknownAndDynamicFailClosed), ("testUnbalancedAndBounds", testUnbalancedAndBounds),
+        ("testOpaqueArgumentsRespectCombinedNestingLimit", testOpaqueArgumentsRespectCombinedNestingLimit),
+        ("testMathAndEnvironmentsShareOuterNestingBudget", testMathAndEnvironmentsShareOuterNestingBudget),
+        ("testStarredAndLengthLineBreaksDoNotCountSyntax", testStarredAndLengthLineBreaksDoNotCountSyntax),
+        ("testLinebreakStrengthArgumentsDoNotCountSyntax", testLinebreakStrengthArgumentsDoNotCountSyntax)
     ]
 }
 
@@ -109,5 +151,9 @@ final class LatexBodyCharacterCountTests: XCTestCase {
     func testLiteralEscapes() throws { try LatexBodyCountControls.testLiteralEscapes() }
     func testUnknownAndDynamicFailClosed() throws { try LatexBodyCountControls.testUnknownAndDynamicFailClosed() }
     func testUnbalancedAndBounds() throws { try LatexBodyCountControls.testUnbalancedAndBounds() }
+    func testOpaqueArgumentsRespectCombinedNestingLimit() throws { try LatexBodyCountControls.testOpaqueArgumentsRespectCombinedNestingLimit() }
+    func testMathAndEnvironmentsShareOuterNestingBudget() throws { try LatexBodyCountControls.testMathAndEnvironmentsShareOuterNestingBudget() }
+    func testStarredAndLengthLineBreaksDoNotCountSyntax() throws { try LatexBodyCountControls.testStarredAndLengthLineBreaksDoNotCountSyntax() }
+    func testLinebreakStrengthArgumentsDoNotCountSyntax() throws { try LatexBodyCountControls.testLinebreakStrengthArgumentsDoNotCountSyntax() }
 }
 #endif
