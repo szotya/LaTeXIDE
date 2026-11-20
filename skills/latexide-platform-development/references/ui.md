@@ -59,3 +59,16 @@ Use owned hidden-window overrides and direct synthetic events to test routing,
 suppressing real Window Server actions in every spy. Check the detached view
 before reading preferences. Keep displayed behavior/full system action parity
 and other platform adapters as separate acceptance work.
+
+
+## Lexical body character count
+
+UI69 keeps the default UI56 complete raw-source counter and its view-owned cache/presentation unchanged. The opt-in `ide.characterCountMode` body mode uses a separate one-entry source-byte/revision/mode cache. Count supported lexical text as extended grapheme clusters without Unicode whitespace; omit supported syntax/comments/math/keys, and expose no precise number for partial/unsupported input. Preserve the1MiB/64-level/command bounds, explicit failure status, source bytes and shared history. This is not macro expansion, PDF text extraction or full TeX semantics. Windows/Linux must implement and qualify their own native presentation and preference behavior.
+
+For SwiftPM source evidence, bind the actual quoted `swiftc @sources` reference to its exact bounded regular/nofollow response file, then source keys/maps/objects and the final current-FFI linker/image. Never reconstruct unquoted frontend paths or populate actual arguments from the expected list. Clang may record its target as one `--target=` token; require one exact target and reject missing/duplicate/conflicting values. Keep original driver exit/wait, original wrapper FAIL, metadata-harness failures and a separate corrected postqualification result distinct. A UI-only source cohort does not grant another compiler run or GUI/signing/release acceptance. See the [UI69 publication record](https://github.com/szotya/LaTeXIDE/blob/main/docs/implementation-progress.md#ui69-lexical-body-count-source-publication--2026-11-20).
+
+
+Body-parser nesting budgets include enclosing text groups plus opaque optional/required arguments and nested math/environment state; check each opening, not only later interior bytes. Keep the64-level success boundary and refuse level65 without a precise count. Line-break modifiers and one optional length are syntax, and linebreak strengths0–4 are syntax; unsupported strength forms withhold the count. Qualify boundary regressions through the public count result/status. After a parser review fix, label an earlier product image historical and bind fresh exact-commit hosted normalFFI/native-image/discovery/results; do not reset an exhausted local compiler allowance or claim unexecuted regressions as runtime PASS.
+
+
+Treat an optional line-break length as a validated literal dimension, not as an opaque identifier/key. Scan comments and commands before accepting numeric/unit syntax: unknown controls remain partial, dynamic/definition controls are unsupported, and neither exposes a precise count. Retain a supported plain numeric length such as2pt, signed/decimal/trivia forms and the shared nesting bound; richer expressions may be explicitly unsupported. Never expand macros for this count. Qualify both plain and starred controls and preserve the earlier CI/image cohorts when the parser changes.
