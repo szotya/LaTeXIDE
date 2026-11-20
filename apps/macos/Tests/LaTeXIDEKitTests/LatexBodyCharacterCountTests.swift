@@ -123,6 +123,23 @@ enum LatexBodyCountControls {
             try count(source, nil, .unsupported)
         }
     }
+    static func testLineBreakLengthExpressionsFailClosed() throws {
+        for control in [#"\\"#, #"\\*"#] {
+            try count("a" + control + #"[\input{other}]b"#, nil, .unsupported)
+            try count("a" + control + #"[\mystery]b"#, nil, .partial)
+            try count("a" + control + #"[2pt+\input{other}]b"#, nil, .unsupported)
+            try count("a" + control + #"[2pt]b"#, 2, .complete)
+        }
+        try count(#"a\\*[2pt% \input{ignored}"# + "\n]b", 2, .complete)
+    }
+    static func testLineBreakLiteralLengthSubset() throws {
+        for length in ["-0.5em", "+2pt", ".5ex", "2 pt", "2,5cm", " 2pt "] {
+            try count(#"a\\*["# + length + "]b", 2, .complete)
+        }
+        for length in ["", "nonsense", "2p", "2pt plus1pt", "2pt junk"] {
+            try count(#"a\\*["# + length + "]b", nil, .unsupported)
+        }
+    }
     static let methods: [(String, () throws -> Void)] = [
         ("testPlainAndCacheKey", testPlainAndCacheKey), ("testUnicodeGraphemes", testUnicodeGraphemes),
         ("testAllWhitespace", testAllWhitespace), ("testNestedTextCommands", testNestedTextCommands),
@@ -133,7 +150,9 @@ enum LatexBodyCountControls {
         ("testOpaqueArgumentsRespectCombinedNestingLimit", testOpaqueArgumentsRespectCombinedNestingLimit),
         ("testMathAndEnvironmentsShareOuterNestingBudget", testMathAndEnvironmentsShareOuterNestingBudget),
         ("testStarredAndLengthLineBreaksDoNotCountSyntax", testStarredAndLengthLineBreaksDoNotCountSyntax),
-        ("testLinebreakStrengthArgumentsDoNotCountSyntax", testLinebreakStrengthArgumentsDoNotCountSyntax)
+        ("testLinebreakStrengthArgumentsDoNotCountSyntax", testLinebreakStrengthArgumentsDoNotCountSyntax),
+        ("testLineBreakLengthExpressionsFailClosed", testLineBreakLengthExpressionsFailClosed),
+        ("testLineBreakLiteralLengthSubset", testLineBreakLiteralLengthSubset)
     ]
 }
 
@@ -155,5 +174,7 @@ final class LatexBodyCharacterCountTests: XCTestCase {
     func testMathAndEnvironmentsShareOuterNestingBudget() throws { try LatexBodyCountControls.testMathAndEnvironmentsShareOuterNestingBudget() }
     func testStarredAndLengthLineBreaksDoNotCountSyntax() throws { try LatexBodyCountControls.testStarredAndLengthLineBreaksDoNotCountSyntax() }
     func testLinebreakStrengthArgumentsDoNotCountSyntax() throws { try LatexBodyCountControls.testLinebreakStrengthArgumentsDoNotCountSyntax() }
+    func testLineBreakLengthExpressionsFailClosed() throws { try LatexBodyCountControls.testLineBreakLengthExpressionsFailClosed() }
+    func testLineBreakLiteralLengthSubset() throws { try LatexBodyCountControls.testLineBreakLiteralLengthSubset() }
 }
 #endif

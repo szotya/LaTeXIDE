@@ -70,6 +70,7 @@ private struct BodyLexer {
     static let keys: Set<String> = ["label", "cite", "citep", "citet", "parencite", "textcite", "autocite", "footcite", "ref", "eqref", "pageref", "autoref", "cref", "Cref", "nameref"]
     static let metadata: Set<String> = ["documentclass", "usepackage", "title", "author", "date", "bibliography", "bibliographystyle"]
     static let definitions: Set<String> = ["newcommand", "renewcommand", "providecommand", "DeclareRobustCommand"]
+    static let lengthUnits: Set<String> = ["pt", "pc", "in", "bp", "cm", "mm", "dd", "cc", "sp", "em", "ex"]
     static let spacing: Set<String> = ["par", "newline", "linebreak", "quad", "qquad", "enspace", "thinspace", "hfill", "vfill", "noindent"]
     static let switches: Set<String> = ["bfseries", "itshape", "normalfont", "rmfamily", "sffamily", "ttfamily"]
     static let dynamic: Set<String> = ["input", "include", "includeonly", "catcode", "csname", "endcsname", "expandafter", "edef", "xdef", "gdef", "def", "let", "futurelet", "scantokens", "write", "read", "if", "ifnum", "ifx", "ifdefined", "else", "fi", "verb", "verbatim", "makeatletter", "makeatother"]
@@ -147,6 +148,43 @@ private struct BodyLexer {
             trivia()
         }
     }
+    /// Only literal dimensions are supported; length expressions never expand macros.
+    mutating func lineBreakLength(depth: Int) {
+        guard let raw = opaque(91, 93, depth: depth) else { return }
+        var scan = BodyLexer(bytes: raw)
+        var literal: [UInt8] = []
+        var hasCommand = false
+        while let byte = scan.current {
+            if byte == 37 {
+                scan.comment()
+                if scan.current == 13 { scan.position += 1; if scan.current == 10 { scan.position += 1 } }
+                else if scan.current == 10 { scan.position += 1 }
+            } else if byte == 92 {
+                hasCommand = true; scan.position += 1
+                let name = scan.word()
+                if scan.status == .unsupported { mark(.commandLimit, .unsupported) }
+                else if Self.dynamic.contains(name) || Self.definitions.contains(name) { mark(.dynamicTeX, .unsupported) }
+                else { mark(.unknownCommand, .partial) }
+                if name.isEmpty { scan.scalar() }
+            } else { literal.append(byte); scan.position += 1 }
+        }
+        if hasCommand { return }
+        var cursor = 0, digits = 0
+        func spaces() { while cursor < literal.count && Self.space(literal[cursor]) { cursor += 1 } }
+        spaces()
+        if cursor < literal.count, literal[cursor] == 43 || literal[cursor] == 45 { cursor += 1; spaces() }
+        while cursor < literal.count && (48...57).contains(literal[cursor]) { cursor += 1; digits += 1 }
+        if cursor < literal.count, literal[cursor] == 46 || literal[cursor] == 44 {
+            cursor += 1
+            while cursor < literal.count && (48...57).contains(literal[cursor]) { cursor += 1; digits += 1 }
+        }
+        guard digits > 0 else { mark(.bareSyntax, .unsupported); return }
+        spaces(); let start = cursor
+        while cursor < literal.count && Self.letter(literal[cursor]) { cursor += 1 }
+        let unit = String(decoding: literal[start..<cursor], as: UTF8.self)
+        spaces()
+        if cursor != literal.count || !Self.lengthUnits.contains(unit) { mark(.bareSyntax, .unsupported) }
+    }
     mutating func argument(depth: Int) {
         trivia()
         guard current == 123 else { mark(.unbalanced, .unsupported); return }
@@ -186,7 +224,7 @@ private struct BodyLexer {
                 trivia()
                 if current == 42 { position += 1 }
                 trivia()
-                if current == 91 { _ = opaque(91, 93, depth: depth) }
+                if current == 91 { lineBreakLength(depth: depth) }
             case 40: math(dollarWidth: 0, closingSymbol: 41, depth: depth)
             case 91: math(dollarWidth: 0, closingSymbol: 93, depth: depth)
             case 41, 93: mark(.unbalanced, .unsupported)
