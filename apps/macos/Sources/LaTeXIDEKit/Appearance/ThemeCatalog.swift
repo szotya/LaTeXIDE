@@ -78,6 +78,7 @@ private struct UserDefaultsPreferenceStorage: EditorPreferenceStorage {
     @Published var previewFraction: Double { didSet { defaults.set(previewFraction, forKey: "ide.previewFraction") } }
     @Published var inspectorTab: InspectorTab { didSet { defaults.set(inspectorTab.rawValue, forKey: "ide.inspectorTab") } }
     @Published var showSourceCharacterCount: Bool { didSet { defaults.set(showSourceCharacterCount, forKey: "ide.showSourceCharacterCount") } }
+    @Published var characterCountMode: EditorCharacterCountMode { didSet { defaults.set(characterCountMode.rawValue, forKey: EditorCharacterCountMode.preferenceKey) } }
     public convenience init(defaults: UserDefaults = .standard) {
         self.init(storage: UserDefaultsPreferenceStorage(defaults: defaults))
     }
@@ -98,6 +99,7 @@ private struct UserDefaultsPreferenceStorage: EditorPreferenceStorage {
         previewFraction = number("ide.previewFraction", fallback: 0.42, range: 0.25...0.70)
         inspectorTab = InspectorTab(rawValue: defaults.string(forKey: "ide.inspectorTab") ?? "pdf") ?? .pdf
         showSourceCharacterCount = defaults.object(forKey: "ide.showSourceCharacterCount") == nil ? true : defaults.bool(forKey: "ide.showSourceCharacterCount")
+        characterCountMode = .restored(defaults.string(forKey: EditorCharacterCountMode.preferenceKey))
     }
     func theme(systemDark: Bool) -> ResolvedTheme { ThemeCatalog.shared.palette(paletteID).resolve(dark: appearance.isDark(systemDark: systemDark)) }
 }

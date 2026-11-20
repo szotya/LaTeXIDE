@@ -6,6 +6,7 @@ import SwiftUI
     @State private var goToLine = false
     @State private var lineInput = ""
     @State private var sourceCounts = SourceCharacterCountCache()
+    @State private var bodyCounts = CharacterCountResultCache<LatexBodyCharacterCount>()
     var body: some View {
         HStack(spacing: 14) {
             Button { store.sidebar = .agent } label: { HStack(spacing: 5) { Image(systemName: "point.3.connected.trianglepath.dotted"); Circle().fill(theme.ui(store.sessionPath.isEmpty ? "secondary" : "success")).frame(width: 4, height: 4); Text("MCP") } }.buttonStyle(.plain).help("Helyi agentkapcsolat")
@@ -25,11 +26,19 @@ import SwiftUI
             Spacer(minLength: 8)
             if let selected = store.presentedDocuments.first(where: { $0.id == store.selection }), selected.origin == "agent" { Label("Agent", systemImage: "sparkle").foregroundStyle(theme.ui("accent")) }
             if store.selection != nil {
-                if let count = SourceCharacterCountPresentation(preferences: preferences, cache: sourceCounts).count(in: store.text) {
-                    Text("Karakter: \(count.includingWhitespace) · whitespace nélkül: \(count.excludingWhitespace)")
-                        .monospacedDigit().lineLimit(1)
-                        .help("Az aktív teljes forrás karakterei; a második szám szóköz, tab és sortörés nélkül. A LaTeX-parancsok és megjegyzések is beleszámítanak.")
-                        .accessibilityIdentifier("source-character-count")
+                if preferences.characterCountMode == .source {
+                    if let count = SourceCharacterCountPresentation(preferences: preferences, cache: sourceCounts).count(in: store.text) {
+                        Text("Karakter: \(count.includingWhitespace) · whitespace nélkül: \(count.excludingWhitespace)")
+                            .monospacedDigit().lineLimit(1)
+                            .help("Az aktív teljes forrás karakterei; a második szám szóköz, tab és sortörés nélkül. A LaTeX-parancsok és megjegyzések is beleszámítanak.")
+                            .accessibilityIdentifier("source-character-count")
+                    }
+                } else if preferences.showSourceCharacterCount {
+                    let count = bodyCounts.value(in: store.text, revision: store.revision, mode: .latexBody) {
+                        LatexBodyCharacterCount(store.text)
+                    }
+                    Text(count.displayText).monospacedDigit().lineLimit(1)
+                        .help(count.explanation).accessibilityIdentifier("latex-body-character-count")
                 }
                 Button { lineInput = String(store.caretLine); goToLine = true } label: { Text("Sor \(store.caretLine), oszlop \(store.caretColumn)").monospacedDigit() }.buttonStyle(.plain)
                     .popover(isPresented: $goToLine) {

@@ -44,6 +44,10 @@ struct AppearancePicker: View {
             HStack(spacing: 8) { Circle().fill(theme.ui("command")).frame(width: 5, height: 5); Text("LaTeX-szintaxiskiemelés"); Spacer(); Image(systemName: "checkmark").foregroundStyle(theme.ui("success")) }.font(.system(size: 11)).foregroundStyle(theme.ui("secondary"))
             Toggle("LaTeX-parancskiegészítés", isOn: $preferences.completionEnabled).font(.system(size: 11)).toggleStyle(.switch).controlSize(.small)
             Toggle("Forráskarakterek száma", isOn: $preferences.showSourceCharacterCount).font(.system(size: 11)).toggleStyle(.switch).controlSize(.small)
+            Picker("Karakterszám módja", selection: $preferences.characterCountMode) {
+                Text("Teljes forrás").tag(EditorCharacterCountMode.source)
+                Text("Szövegtörzs (lexikális)").tag(EditorCharacterCountMode.latexBody)
+            }.font(.system(size: 11)).pickerStyle(.menu)
         }.foregroundStyle(theme.ui("text")).padding(20).frame(width: 350).background(theme.ui("sidebar"))
     }
 }
