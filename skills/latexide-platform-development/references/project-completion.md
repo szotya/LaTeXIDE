@@ -65,8 +65,8 @@ stay separate from historical producer/reviewer cohorts. See the implementation
 ledger for commands, results and remaining hosted/platform/release gates.
 
 The production P04 filesystem analysis producer currently supports macOS only.
-Positive Runtime bibliography-apply controls therefore select the eight Mac
-methods; non-Mac CI selects explicit whole-refusal controls on the real owner
+Positive Runtime bibliography-apply controls select Mac methods (the eight
+original methods plus four review regressions); non-Mac CI selects explicit whole-refusal controls on the real owner
 and production capture path. Require the exact unsupported-analysis error and
 unchanged clean/dirty buffers, revision/history and physical BOM/CRLF bytes.
 Keep those negative controls distinct from positive feature/native-platform
@@ -90,3 +90,15 @@ Do not add a weaker post-failure reader or a successful filtered/model snapshot
 for diagnostics. Distinguish ordinary tracked HEAD inventory (nonempty required)
 from a staged deletion-only ACMR delta (no surviving content to scan), retaining
 real-root and Git-error guards for both.
+
+Keep the complete source-bound discovery partition: the current FFI image also
+contains earlier recovery and P02 methods. A focused twelve-method bibliography
+round must not classify its unselected methods as PASS, sum per-case filtered
+counts, or replay completed discovery to repair an own counter. Admit dep-info
+from actual compiler out-dir/crate-name/extra-filename fields, not a top-level
+Cargo convenience artifact or another root. Before a strict catalog, materialize
+source modes from the committed Git mode; do not relax a pin for a private
+umask. Bind documentation-only result commits separately from the compiled
+source, then require fresh hosted CI/review for the actual published HEAD.
+See the implementation ledger for the current twelve-control evidence and
+preserved metadata errors; this remains scoped same-host Runtime evidence.
