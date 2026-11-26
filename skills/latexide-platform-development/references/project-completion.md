@@ -35,3 +35,31 @@ Exact macro/ref/cite navigation reuses this same index and precedence. See [defi
 Use real filesystem/workspace tests plus actual IPC and native controls. Keep malformed near-limit latency regression, ordinary cold/warm corpus timing, dirty cross-file undo, unchanged-mtime forced refresh, list/scalar/empty contexts, limits and nonmutation coverage. Core-only dev `opt-level=2` was chosen after measured cold cost; it retains symbols/assertions but can affect stepping. Do not call these pure-core timings release/end-to-end/RAM proof.
 
 Windows/Linux must implement native popup/selection/fresh acceptance/field-local undo/status with their APIs. MSVC Rust check is not native execution. See `windows.md`/`linux.md`; preserve their unrun boundaries. Update the central handoff/ledger and this reference when changing a reusable parser/cache/wire/port contract; keep detailed chronological evidence in Markdown rather than here.
+
+## Internal Runtime bibliography rename apply
+
+Canonical bibliography workspace/completion/key-rename adapters feed an immutable,
+source-bound preview into existing Workspace transactions. Internal Runtime code
+uses the genuine Weak/try_lock owner, never copied display rows or a substitute
+host. Consume the single-use apply token on every attempt. Keep final context,
+analysis, retained revision/generation/ABA, canonical preview and scalar-safe
+UTF16/expected-text checks under one owner guard before one atomic memory/history
+group. Every target must already be open. Preserve duplicate/collision, stale,
+missing/closed/foreign/busy, owner-gone and quota refusals. Disk observation is
+sequential; hostile-race isolation and atomic multi-file Save are not established.
+Public C ABI/Session/UI routing and explicit Save remain separate.
+
+Controls belong to the cfg(test)=true FFI image; building normal Core/FFI does
+not execute them. Bind normal Core extern paths, source/dep-info and actual image
+before discovery/selection. A test-only default helper may create a fresh random
+nonce under the caller's temp_dir without explicit P12_ROOT/P12_NONCE. Keep
+exclusive fixture creation, raw BOM/CRLF checks and nonce/path/output bindings.
+
+A locked dependency may issue a known negative feature probe. Classify only its
+exact source/build-script/actual Cargo caller/argv/CWD/input/wait-reap binding;
+real compilation/linking and all unknown children remain required zero-exit.
+Read paths from actual artifact records, never another directory's derived hash.
+Preserve qualifier ERROR/STOP and later correction as distinct evidence; do not
+replay completed tests to repair a reader. The eight first main-default controls
+stay separate from historical producer/reviewer cohorts. See the implementation
+ledger for commands, results and remaining hosted/platform/release gates.

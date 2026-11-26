@@ -1485,3 +1485,67 @@ The follow-up review correctly found that an opaque optional line-break length h
 Two new public-API methods cover both plain/starred controls with input/mystery expressions, command-free literal lengths, comments hiding a dynamic-looking string, supported signed/decimal/unit/trivia forms and rejected empty/malformed/glue expressions. The original 16 methods remain, 18 XCTest wrappers total. Local Swift/Rust/test execution is still 0; new runtime validation belongs to the next exact-HEAD hosted integrated normal-FFI/native build/discovery/unfiltered-controls cohort. The historical2266 image and the successful301aace image are not reused as qualification of the changed bytes.
 
 The prior301aace run44725878587 completed all7 required workflow jobs successfully. Its Mac integrated source digest is `0320026d93eb282ef51712353ccea5662111963a26df415a7aa62b9259b76a41`:255 Python PASS; Rust summary493 PASS (including its separately bound parent/cohort semantics); native193 cases,189 PASS,4 exact existing skips,0failure/error. These are distinct suite/cohort counts, not additional product requirements or a sum with the next run. The required aggregate used GitHub Actions15368. CodeRabbit had one remaining actionable length finding despite its successful check; that formal review blocked merge and is addressed here. No bypass, workflow/required-gate/P01/P18 policy change or replay of the superseded old HEAD was used. The original initial Missing/stale P18 invocation proof failure is preserved and its cause remains unproven; it did not reproduce in the next necessary source CI. GUI/AX/TCC, live restart/signing, Windows/Linux native and full#69/release acceptance remain open.
+
+## P12 Runtime bibliography rename-apply integration — 2026-11-25
+
+The reviewed slice composes onto main df8331d7b8526f52f6615af23a2973b4676414d7
+without a wholesale private-tree import. Main555 and proposed564 source custody
+were verified. The exact14-path delta contains9new Rust modules and5modifications.
+Three SOURCE_PINS literals track existing runtime.rs/transactions/mod.rs hook
+bytes; all other registry AST remains unchanged. Eight producer test bodies are
+byte-identical; their separate test-only helper retains explicit producer context
+or generates a fresh random nonce under temp_dir for ordinary libtest.
+
+Core adapters preserve canonical bibliography parsing, exact source/old-text and
+scalar-safe UTF16 anchors, complete target validation and existing Workspace/edit
+bounds. The internal Runtime apply token retains a Weak owner, immutable preview
+and retained capture. Every attempt consumes it, including foreign/busy/gone
+refusals. Final source/context/revision/generation/ABA checks and one shared
+in-memory history group share the actual owner guard; actual Runtime Undo/Redo
+is exercised. Dirty Unicode/BOM/CRLF, same-metadata disk changes, stale/context,
+duplicate/collision/closed/missing targets, contention, teardown and quota
+refusals are covered. Explicit Save, public C ABI/Session/UI transport, Runtime-close,
+Save/VFS and additional cross-file diagnostics are separate.
+
+Actual local command, once:
+
+cargo build --package latexide-ffi --lib --tests --offline --locked --jobs=1 --message-format=json --verbose
+
+Cargo exit0,18.022046584s, wait/reaped. Fresh normal cfg(test)=false Core/FFI
+and a separate cfg(test)=true FFI image were built. Normal/test FFI link the same
+new normal Core rlib; actual compiler argv/CWD/source manifest, dep-info and
+binary mode/size/hash bindings were retained. Normal Core SHA256
+fde5337414670497bd26ddd3bd2bc8062989b0f9d1694cd232dc0011547798ad;
+normal FFI archive d8021087cb5952c7ac91113eca449968efe006e081680d07c5cf2ab433207060;
+executed test image bbc347b288d2d909494007ebd50ed77c9ca2dbcdb6b674e3fc5baa09219cd34c.
+The normal archive itself was not executed. Build1/1consumed; no new local
+Cargo/compiler/link/version invocation followed.
+
+The original own qualifier incorrectly required every dependency probe exit0.
+Its ERROR/STOP remains. A first metadata correction also stopped on an own wrong
+assumption that probe OUT_DIR identifies the executable build-script directory.
+The specifically authorized data correction reads exact recorded source paths and
+Cargo artifact src_path/filenames. Only the pinned proc-macro2 1.0.107
+proc_macro_span feature probe exit1 is classified separately. All other48
+recorded compiler/linker wrappers exited0 and all49 were reaped. No generic
+ignore, skip-list, policy, required-gate or authentication relaxation is included.
+Own metadata errors and prior receipt-path/copy-mode corrections stay separate
+from product outcomes.
+
+One --list --format=terse discovery on the unchanged image found118methods.
+Each of the eight exact runtime::bibliography::rename_preview::rename_apply::tests
+ra01 through ra08 methods ran once with --exact --show-output --test-threads=1,
+max10s/process, P12_ROOT/P12_NONCE absent and a fresh own T9 TMPDIR.
+Result8/8PASS,0FAIL/ERROR/ignored/selected-UNRUN/retry;110unique other methods
+unselected,117siblings filtered per exact process. Seventeen fresh physical
+fixture contexts retain independent nonce/path/raw-output bindings. Maximum
+observed process duration0.105359s. Exact leases were released after own
+processes were waited/reaped; gate configuration unchanged.
+
+This is the publisher's first main-default-fixture cohort, separate from historical
+producer8 and independent reviewer12. Same Mac/toolchain and retained test
+authorship limit independence; SDK38/OS containment is unqualified.
+No full local workspace, TeX, Swift, GUI/AX/TCC/VoiceOver, live app, native
+Windows/Linux, security or release execution occurred. Exact-HEAD hosted CI,
+formal review/all conversations, protected expected-HEAD squash and actual-main
+push CI remain separate gates. Full#13 stays open.

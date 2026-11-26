@@ -41,8 +41,21 @@ def main():
     mode.add_argument("--staged", action="store_true")
     mode.add_argument("--tracked", action="store_true")
     args = parser.parse_args()
-    command = ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR", "-z"] if args.staged else ["git", "ls-files", "-z"]
-    names = subprocess.check_output(command, cwd=ROOT).decode().split("\0")
+    command = ["git", "diff", "--cached", "--name-only", "--diff-filter=ACMR", "-z"] if args.staged else ["git", "ls-tree", "-r", "--name-only", "-z", "HEAD"]
+    try:
+        top = subprocess.check_output(["git", "rev-parse", "--show-toplevel"], cwd=ROOT,
+                                      stderr=subprocess.DEVNULL, text=True).strip()
+        if not top or Path(top).resolve() != ROOT.resolve():
+            raise ValueError("candidate_git_root_mismatch")
+        names = list(filter(None, subprocess.check_output(command, cwd=ROOT).decode().split(chr(0))))
+        if not names:
+            raise ValueError("empty_git_candidate")
+    except (OSError, ValueError, subprocess.SubprocessError) as error:
+        reason = str(error) if str(error) in {"candidate_git_root_mismatch", "empty_git_candidate"} else "git_candidate_unavailable"
+        print(json.dumps({"result": "FAIL", "files": 0, "bytes": 0,
+                          "findings": [{"path": ".", "reason": reason}],
+                          "scope": "bounded credential/path/executable patterns; not a complete security scan"}))
+        return True
     failures = []
     total_bytes = 0
     for name in filter(None, names):
