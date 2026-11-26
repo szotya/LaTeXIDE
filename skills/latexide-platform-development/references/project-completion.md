@@ -102,3 +102,31 @@ umask. Bind documentation-only result commits separately from the compiled
 source, then require fresh hosted CI/review for the actual published HEAD.
 See the implementation ledger for the current twelve-control evidence and
 preserved metadata errors; this remains scoped same-host Runtime evidence.
+
+For a multi-edit Document, resolve all original UTF16 line/column requests in a
+forward pass and preserve per-input start/end/replacement error precedence.
+Retain missing-line versus invalid-column/surrogate diagnostics, overlap and
+encoded-size checks. Keep long-prefix same-line Runtime coverage and compare
+batched coordinates with the unchanged individual resolver. A successful Cargo
+partition is separate from the subsequent bounded normal-image qualification;
+record its exact failure and dependentUNRUN rather than extending timeouts.
+
+For an error assertion whose success type intentionally lacks Debug, extract
+err().expect instead of adding an unrelated production Debug implementation.
+Preserve a failed carrier compilation and the consumed attempt; qualify the
+corrected carrier/source separately before using its execution as evidence.
+
+Document::load binds a real file identity. A differential unit fixture must
+create its exclusive owned file before loading its bytes. Retain fixture/raw
+identity and label cfg(test) evidence separately from normal external Runtime
+consumption. After a carrier-only fix, recompile that carrier; preserve the
+previous normal component's exact source/image identity rather than relabelling
+it as a fresh whole-candidate build. Full exact-HEAD hosted CI remains required.
+
+A local carrier-only fixture correction can preserve the earlier normal product
+component when its complete production source body/config and image binding are
+byte-identical. Keep those local source cohorts explicit; do not rename old
+normal Runtime executions as a fresh whole-candidate run. Require a fresh full
+hosted gate on the final public HEAD, and keep every failed carrier and consumed
+compile attempt. Publish only the reviewed final versionable tree over the
+current public parent, leaving private failed intermediate history private.

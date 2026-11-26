@@ -340,7 +340,7 @@ fn ra10_unconfirmed_analysis_preserves_dirty_unicode_bom_crlf() {
 #[test]
 fn ra11_many_tail_citations_keep_scalar_positions_and_one_group() {
     let mut main = "x".repeat(900 * 1024);
-    main.push_str("😀\n"); main.push_str(&"\\cite{old}\n".repeat(999));
+    main.push('😀'); main.push_str(&"\\cite{old} ".repeat(999));
     let f = Fixture::new("ra11-tail", &[("main.tex", &main), ("refs.bib", BIB)], false);
     let owner = f.owner(true); let service = RuntimeCiteCompletion::new(&owner); let disk = f.disk();
     let preview = service.preview_bib_rename("old", "renamed").unwrap();
