@@ -130,3 +130,17 @@ normal Runtime executions as a fresh whole-candidate run. Require a fresh full
 hosted gate on the final public HEAD, and keep every failed carrier and consumed
 compile attempt. Publish only the reviewed final versionable tree over the
 current public parent, leaving private failed intermediate history private.
+
+Validate a normal child command/status/finite-time/log binding before its
+namespace readers. Reject previously recorded capture-error fields and retain
+the original phase/exit/timeout/capture cause; a missing derived namespace must
+not mask that first failure. This strengthens failure handling without raising
+timeouts, dropping nonce/source/image guards or accepting partial evidence.
+Keep synthetic validator regression results separate from actual Runtime runs.
+
+The fixed maintained Python entry runs on the actual own candidate HEAD. Bind
+its complete source-derived selected method inventory; repair a result-reader
+count from retained raw/source evidence without replaying already completed
+tests. A positive Python validator cohort does not repair or replace a failed
+actual Runtime/full-CI result. Keep original child status/capture errors and
+require a new exact-HEAD hosted gate before publication acceptance or merge.

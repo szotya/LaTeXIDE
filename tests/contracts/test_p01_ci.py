@@ -1042,6 +1042,30 @@ class CombinedIntegrationTests(unittest.TestCase):
 
 
 class F05RegistrationTests(unittest.TestCase):
+    def test_normal_process_failure_precedes_namespace_revalidation(self):
+        # Synthetic records only: no Rust image or real process is executed.
+        for status, exit_code, timed_out in [("timed_out", -9, True), ("failed", 1, False)]:
+            with self.subTest(status=status):
+                model=F05Model(self);proof=model.capture()
+                record=proof["normal"][-1];self.assertEqual(record["name"],"normal-1")
+                record.update(status=status,exit_code=exit_code,timed_out=timed_out)
+                record["f05_namespace"].pop("inventory")
+                with patch.object(model.a,"f05_observe",side_effect=ValueError("Missing/unknown F05 namespace proof")) as observe:
+                    with self.assertRaisesRegex(ValueError,r"normal-1.*status=.*"+status+r".*exit_code="+str(exit_code)+r".*timed_out="+str(timed_out)):
+                        model.a.normal_observation(proof["images"],proof["discovery"],proof["normal"],
+                            Path(proof["scratch"]),proof["driver_nonce"],proof["context"],proof.get("p18"))
+                    observe.assert_not_called()
+
+    def test_normal_capture_failure_keeps_original_cause(self):
+        model=F05Model(self);proof=model.capture();record=proof["normal"][-1]
+        record["f05_namespace"].pop("inventory")
+        record["f05_namespace_error"]="F05 inventory manifest quota"
+        with patch.object(model.a,"f05_observe",side_effect=ValueError("Missing/unknown F05 namespace proof")) as observe:
+            with self.assertRaisesRegex(ValueError,r"normal-1.*f05_namespace_error.*F05 inventory manifest quota"):
+                model.a.normal_observation(proof["images"],proof["discovery"],proof["normal"],
+                    Path(proof["scratch"]),proof["driver_nonce"],proof["context"],proof.get("p18"))
+            observe.assert_not_called()
+
     def fixture(self):
         a=module('p01_ci')
         root=Path(tempfile.mkdtemp(prefix='f05-binding-',dir=fixture_parent()))

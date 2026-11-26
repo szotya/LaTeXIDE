@@ -407,6 +407,12 @@ def normal_observation(images, discoveries, records, scratch, nonce, context, p1
         phase_binding(record, name, image, context, scratch, nonce)
         require(same(record.get("owned_environment"), owned_environment(scratch, nonce)), "Normal nonce/environment changed")
         discovered = parse_discovery(text(discovery["all"]["log"]["path"]))
+        # Keep the original child/capture failure. A secondary namespace reader
+        # must not hide a timeout/nonzero exit or an earlier capture error.
+        raw = command_record(record, normal_command(image, discovered), scratch)
+        for error_field in ("p18_namespace_error", "f05_namespace_error", "p02_namespace_error"):
+            require(error_field not in record,
+                    f"P01 {name} {error_field}: {record.get(error_field)!r}")
         namespace = None
         if p18 is not None:
             namespace = _p18_namespace(scratch, name, image, context, nonce,
@@ -435,7 +441,7 @@ def normal_observation(images, discoveries, records, scratch, nonce, context, p1
         else:
             require("p02_namespace" not in record, "Unbound P02 normal namespace")
         wanted = sorted(set(discovered) - set(EXCLUDED))
-        observed = libtest_observation(command_record(record, normal_command(image, discovered), scratch), allow_empty=True)
+        observed = libtest_observation(raw, allow_empty=True)
         require(len(observed["partitions"]) == 1, "Normal image has multiple or reused partitions")
         partition = observed["partitions"][0]
         require(partition["status"] == "ok" and partition["failed"] == partition["ignored"] == 0
@@ -462,7 +468,10 @@ def command_record(record, expected, scratch, timeout=10):
     require(same(record.get("command"), expected), "P01 command/argc mismatch")
     require(record.get("status") == "passed" and type(record.get("exit_code")) is int
             and record["exit_code"] == 0 and record.get("timed_out") is False,
-            "P01 discovery/parent process did not pass")
+            "P01 discovery/parent process did not pass: "
+            f"{record.get('name')} status={record.get('status')!r} "
+            f"exit_code={record.get('exit_code')!r} timed_out={record.get('timed_out')!r} "
+            f"duration_ms={record.get('duration_ms')!r}")
     uint(record.get("duration_ms"), "P01 wait bound/type", timeout * 1000)
     require(type(record.get("argc")) is int and record["argc"] == len(expected), "P01 argc binding")
     require(type(record.get("requested_timeout")) is int and record["requested_timeout"] == timeout,
