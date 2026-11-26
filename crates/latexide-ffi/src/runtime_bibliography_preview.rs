@@ -40,6 +40,9 @@ fn unavailable() -> RuntimeBibRenameError {
     RuntimeBibRenameError::Runtime(CoreError::new("runtime_unavailable", "Bibliography preview Runtime is gone or poisoned"))
 }
 impl RuntimeCiteCompletion {
+    /// Requires the production capture's complete text-only project root.
+    /// Binary/non-text assets refuse the whole preview with a text-only diagnostic;
+    /// unsupported hosts retain their existing analysis refusal.
     pub(crate) fn preview_bib_rename(&self, old_key: &str, new_key: &str) -> Result<RuntimeBibRenamePlan> {
         self.preview_bib_rename_with_limits(old_key, new_key, KeyRenameLimits::default())
     }
@@ -47,7 +50,8 @@ impl RuntimeCiteCompletion {
     pub(crate) fn preview_bib_rename_with_limits(&self, old_key: &str, new_key: &str,
         limits: KeyRenameLimits) -> Result<RuntimeBibRenamePlan>
     {
-        let runtime_capture = self.gate.capture().map_err(RuntimeBibRenameError::Runtime)?;
+        let runtime_capture = self.gate.capture()
+            .map_err(|error| RuntimeBibRenameError::Runtime(self.capture_error(error)))?;
         let (context, bibliography, edits) = {
             let owner = self.owner.upgrade().ok_or_else(unavailable)?;
             let mut runtime = try_runtime(&owner).map_err(RuntimeBibRenameError::Runtime)?;

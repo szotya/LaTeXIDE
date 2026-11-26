@@ -44,11 +44,11 @@ class SourceCopyGitContextTests(unittest.TestCase):
             raise AssertionError("Unexpected read-only Git command: " + repr(argv))
         return output
 
-    def check(self, output):
+    def check(self, output, mode="--tracked"):
         stream = io.StringIO()
         with mock.patch.object(self.checker, "ROOT", self.root), \
              mock.patch.object(self.checker.subprocess, "check_output", side_effect=output), \
-             mock.patch("sys.argv", ["content-check", "--tracked"]), \
+             mock.patch("sys.argv", ["content-check", mode]), \
              contextlib.redirect_stdout(stream):
             code = self.checker.main()
         return code, json.loads(stream.getvalue())
@@ -74,6 +74,19 @@ class SourceCopyGitContextTests(unittest.TestCase):
         code, data = self.check(self.git_output(self.root, names=b""))
         self.assertNotEqual(code, 0)
         self.assertEqual(data["result"], "FAIL")
+
+    def test_staged_deletions_have_no_remaining_content_to_scan(self):
+        def output(argv, **kwargs):
+            self.assertEqual(Path(kwargs["cwd"]).resolve(), self.root)
+            if argv[1:] == ["rev-parse", "--show-toplevel"]:
+                return str(self.root) + "\n"
+            if argv[1:] == ["diff", "--cached", "--name-only", "--diff-filter=ACMR", "-z"]:
+                return b""  # A deletion-only index has no surviving ACMR blobs.
+            raise AssertionError("Unexpected read-only Git command: " + repr(argv))
+        code, data = self.check(output, "--staged")
+        self.assertEqual(code, 0)
+        self.assertEqual(data["result"], "PASS")
+        self.assertEqual((data["files"], data["bytes"], data["findings"]), (0, 0, []))
 
     def test_nonempty_owned_blob_keeps_content_guards(self):
         for content, expected in [(b"plain source\n", "PASS"),

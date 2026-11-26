@@ -65,6 +65,11 @@ fn try_runtime(owner: &Arc<Mutex<Runtime>>) -> Result<MutexGuard<'_, Runtime>> {
 fn consumed() -> CoreError { CoreError::new("runtime_cite_plan_consumed", "Runtime citation token was already consumed") }
 
 impl RuntimeCiteCompletion {
+    // This annotates a failed capture without reading an unvalidated fallback
+    // filesystem view or introducing another owner observation.
+    fn capture_error(&self, error: CoreError) -> CoreError {
+        LocalBibliographyProvider.capture_diagnostic(error)
+    }
     pub(crate) fn new(owner: &Arc<Mutex<Runtime>>) -> Self {
         Self { owner: Arc::downgrade(owner), gate: RuntimeAnalysisGate::new(owner) }
     }
@@ -72,7 +77,7 @@ impl RuntimeCiteCompletion {
     pub(crate) fn prepare(&self, document_id: &str, revision: u64, caret_utf16: u32, candidate: &str)
         -> Result<RuntimeCiteToken>
     {
-        let capture = self.gate.capture()?;
+        let capture = self.gate.capture().map_err(|error| self.capture_error(error))?;
         let (context, plan) = {
             let owner = self.owner.upgrade().ok_or_else(unavailable)?;
             let mut runtime = try_runtime(&owner)?;

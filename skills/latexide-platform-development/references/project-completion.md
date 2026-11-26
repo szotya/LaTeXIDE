@@ -73,3 +73,20 @@ Keep those negative controls distinct from positive feature/native-platform
 acceptance. Do not add a fake successful producer, ignored tests or a relaxed
 required gate to make an unsupported host appear qualified. Bind every changed
 public HEAD to its own hosted execution; a prior Mac PASS is historical there.
+
+For citation apply, revalidate the original complete capture once and select the
+winner from that same immutable bound canonical projection under the owner's
+exclusive borrow. Preserve source/revision/digest/old-token checks; redundant
+fresh projections do not add filesystem race isolation. Resolve sorted rename
+UTF16 endpoints in one forward cursor per file and reuse validated Positions in
+batch construction. Preflight the projected text with the retained physical
+BOM/line-ending metadata and the normal shared Document encoder before issuing
+a rename token; keep the apply-time size check.
+
+Current P04 capture requires a text-only root, including unrelated assets. Keep
+binary/non-text capture failure whole; explain this requirement and the original
+producer refusal. The current error API does not expose an exact offending path.
+Do not add a weaker post-failure reader or a successful filtered/model snapshot
+for diagnostics. Distinguish ordinary tracked HEAD inventory (nonempty required)
+from a staged deletion-only ACMR delta (no surviving content to scan), retaining
+real-root and Git-error guards for both.

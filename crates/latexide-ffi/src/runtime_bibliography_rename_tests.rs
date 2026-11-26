@@ -335,3 +335,110 @@ fn ra10_unconfirmed_analysis_preserves_dirty_unicode_bom_crlf() {
     unchanged(&f, &owner, &before, &disk);
     f.record("unsupported_production_analysis=whole_refusal;dirty_UTF16_revision_history_and_physical_BOM_CRLF_unchanged=true;no_apply_token=true".into());
 }
+
+#[cfg(target_os = "macos")]
+#[test]
+fn ra11_many_tail_citations_keep_scalar_positions_and_one_group() {
+    let mut main = "x".repeat(900 * 1024);
+    main.push_str("😀\n"); main.push_str(&"\\cite{old}\n".repeat(999));
+    let f = Fixture::new("ra11-tail", &[("main.tex", &main), ("refs.bib", BIB)], false);
+    let owner = f.owner(true); let service = RuntimeCiteCompletion::new(&owner); let disk = f.disk();
+    let preview = service.preview_bib_rename("old", "renamed").unwrap();
+    assert_eq!(preview.edits().len(), 1000);
+    let mut token = service.prepare_bib_rename_apply(preview).unwrap();
+    assert_eq!(service.apply_bib_rename(&mut token, "agent").unwrap().len(), 2);
+    {
+        let runtime = owner.lock().unwrap();
+        let a = runtime.workspace.snapshot("main.tex").unwrap();
+        let b = runtime.workspace.snapshot("refs.bib").unwrap();
+        assert_eq!(a.text, main.replace("old", "renamed"));
+        assert_eq!(b.text, BIB.replace("old", "renamed"));
+        assert_eq!((a.revision, b.revision), (2, 2));
+        assert!(a.transaction_id > 0); assert_eq!(a.transaction_id, b.transaction_id);
+    }
+    assert_eq!(f.disk(), disk);
+    assert!(owner.lock().unwrap().dispatch(Request::Undo, "user").ok);
+    assert_eq!(owner.lock().unwrap().workspace.snapshot("main.tex").unwrap().text, main);
+    assert_eq!(f.disk(), disk);
+    assert_eq!(Arc::strong_count(&owner), 1);
+    f.record("actual_normal_Core=1000_edits;900KiB_prefix_and_astral_scalar;one_atomic_group_and_shared_Undo;disk_unchanged;no_timing_acceptance_claim".into());
+}
+#[cfg(target_os = "macos")]
+#[test]
+fn ra12_citation_apply_checks_original_capture_and_canonical_winner() {
+    let source = "\\cite{o}\n";
+    let f = Fixture::new("ra12-success", &[("main.tex", source), ("refs.bib", BIB)], false);
+    let owner = f.owner(true); let service = RuntimeCiteCompletion::new(&owner); let disk = f.disk();
+    let mut token = service.prepare("main.tex", 1, 7, "old").unwrap();
+    assert_eq!(token.description().unwrap().bibliography.anchor.document_id, "refs.bib");
+    assert_eq!(service.apply(&mut token).unwrap().document.revision, 2);
+    assert!(token.is_consumed());
+    assert_eq!(owner.lock().unwrap().workspace.snapshot("main.tex").unwrap().text, "\\cite{old}\n");
+    assert_eq!(f.disk(), disk);
+    f.record("ordinary_citation_completion=success;actual_normal_Core;disk_unchanged".into());
+
+    let f = Fixture::new("ra12-winner", &[("main.tex", source), ("refs.bib", BIB)], false);
+    let owner = f.owner(true); let service = RuntimeCiteCompletion::new(&owner);
+    let mut token = service.prepare("main.tex", 1, 7, "old").unwrap();
+    let path = f.root.join("project/a.bib"); fs::write(&path, BIB).unwrap();
+    owner.lock().unwrap().workspace.open_document("a.bib").unwrap();
+    let before = state(&owner); let disk = f.disk();
+    let error = service.apply(&mut token).unwrap_err();
+    assert_eq!(error.code, "stale_analysis_snapshot"); assert!(token.is_consumed());
+    unchanged(&f, &owner, &before, &disk); assert_eq!(fs::read(&path).unwrap(), BIB.as_bytes());
+    let fresh = service.prepare("main.tex", 1, 7, "old").unwrap();
+    assert_eq!(fresh.description().unwrap().bibliography.anchor.document_id, "a.bib");
+    f.record("observed_source_and_canonical_winner_change=refused;token_consumed;fresh_winner=a.bib;no_edit".into());
+}
+#[cfg(target_os = "macos")]
+#[test]
+fn ra13_binary_asset_refusal_explains_text_only_capture() {
+    let f = Fixture::standard("ra13-binary"); let owner = f.owner(true);
+    let asset = f.root.join("project/figure.png"); let bytes = [0x89, b'P', b'N', b'G', 0, 0xff];
+    fs::write(&asset, bytes).unwrap();
+    let service = RuntimeCiteCompletion::new(&owner); let before = state(&owner); let disk = f.disk();
+    match error(service.preview_bib_rename("old", "renamed")) {
+        RuntimeBibRenameError::Runtime(e) => {
+            assert_eq!(e.code, "analysis_incomplete");
+            assert!(e.message.contains("text-only project root") && e.message.contains("binary/non-text assets"));
+        }
+        other => panic!("whole binary-asset refusal required, got {other:?}"),
+    }
+    let e = match service.prepare("main.tex", 1, 9, "old") {
+        Err(e) => e, Ok(_) => panic!("binary asset cannot produce a completion token"),
+    };
+    assert_eq!(e.code, "analysis_incomplete"); assert!(e.message.contains("binary/non-text assets"));
+    unchanged(&f, &owner, &before, &disk); assert_eq!(fs::read(asset).unwrap(), bytes);
+    f.record("PNG=whole_refusal;preview_and_completion_diagnostic_explains_unsupported_asset_class;no_fake_successful_capture;memory_history_disk_unchanged".into());
+}
+#[cfg(target_os = "macos")]
+#[test]
+fn ra14_bom_encoded_limit_is_preflighted_before_token() {
+    for fits in [false, true] {
+        let logical_bytes = latexide_core::MAX_FILE_BYTES - 3 - usize::from(fits);
+        let mut source = "\\cite{old}".to_string();
+        source.push_str(&" ".repeat(logical_bytes - source.len()));
+        let f = Fixture::new(if fits { "ra14-fits" } else { "ra14-over" },
+            &[("main.tex", &source), ("refs.bib", BIB)], true);
+        let owner = f.owner(true); let service = RuntimeCiteCompletion::new(&owner); let disk = f.disk();
+        assert_eq!(fs::metadata(f.root.join("project/main.tex")).unwrap().len() as usize,
+            latexide_core::MAX_FILE_BYTES - usize::from(fits));
+        let preview = service.preview_bib_rename("old", "next").unwrap();
+        if fits {
+            let mut token = service.prepare_bib_rename_apply(preview).unwrap();
+            assert_eq!(service.apply_bib_rename(&mut token, "agent").unwrap().len(), 2);
+            let current = owner.lock().unwrap().workspace.snapshot("main.tex").unwrap();
+            assert!(current.bom && current.dirty); assert_eq!(current.revision, 2);
+            assert_eq!(current.text, source.replacen("old", "next", 1));
+            assert_eq!(current.text.len() + 3, latexide_core::MAX_FILE_BYTES);
+        } else {
+            code(service.prepare_bib_rename_apply(preview), "file_too_large");
+            let runtime = owner.lock().unwrap();
+            let current = runtime.workspace.snapshot("main.tex").unwrap();
+            assert_eq!(current.text, source); assert_eq!(current.revision, 1); assert!(!current.dirty);
+            assert!(!runtime.workspace.can_undo() && !runtime.workspace.can_redo());
+        }
+        assert_eq!(f.disk(), disk); assert_eq!(Arc::strong_count(&owner), 1);
+        f.record(format!("normal_encoder_BOM_boundary;fits={fits};preflight_and_apply_limits_agree;disk_unchanged"));
+    }
+}

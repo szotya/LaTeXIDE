@@ -48,7 +48,7 @@ def main():
         if not top or Path(top).resolve() != ROOT.resolve():
             raise ValueError("candidate_git_root_mismatch")
         names = list(filter(None, subprocess.check_output(command, cwd=ROOT).decode().split(chr(0))))
-        if not names:
+        if not names and args.tracked:
             raise ValueError("empty_git_candidate")
     except (OSError, ValueError, subprocess.SubprocessError) as error:
         reason = str(error) if str(error) in {"candidate_git_root_mismatch", "empty_git_candidate"} else "git_candidate_unavailable"

@@ -64,6 +64,8 @@ fn static_argument(source: &str, caret: usize) -> bool {
 impl LocalBibliographyProvider {
     /// A requested label must be an actual captured canonical key. The source
     /// must already be open. Planning never edits; explicit apply revalidates it.
+    /// The production capture requires a text-only project root; unrelated
+    /// binary/non-text assets refuse the whole operation with a diagnostic.
     pub fn plan_citation_completion(&self, workspace: &mut Workspace, document_id: &str,
         expected_revision: u64, caret_utf16: u32, candidate: &str) -> Result<CiteCompletion>
     {
@@ -134,7 +136,6 @@ impl CiteCompletionPlan {
         if &live.text[first..last] != self.edit.expected_old_token.as_str() {
             return Err(CoreError::new("stale_cite_token", "Expected citation token changed"));
         }
-        self.validate(workspace)?;
         let context = completion::context(&live.text, end)?;
         let Mode::Key { kind: CompletionKind::Citation, closing: false, used } = &context.mode else {
             return Err(CoreError::new("stale_cite_source", "Citation context changed"));
@@ -146,14 +147,15 @@ impl CiteCompletionPlan {
         {
             return Err(CoreError::new("stale_cite_source", "Citation token context changed"));
         }
-        // Reparse actual canonical provider input, rather than accepting client
-        // metadata or a cached label as evidence that the selected key still exists.
-        let fresh = LocalBibliographyProvider.inspect_workspace(workspace)?;
-        let target = fresh.completion_target(workspace, &self.edit.source.document_id, &self.edit.insertion)?;
+        // One final full observation revalidates the original capture and its
+        // immutable canonical projection. Winner selection then uses that same
+        // bound projection and current open-document priority under this borrow.
+        self.validate_source(workspace)?;
+        let target = self.capture.completion_target(workspace,
+            &self.edit.source.document_id, &self.edit.insertion)?;
         if target.as_ref() != Some(&self.edit.bibliography) {
             return Err(CoreError::new("stale_cite_target", "Canonical citation target changed"));
         }
-        self.validate(workspace)?;
         let revision = self.edit.source.revision.ok_or_else(||
             CoreError::new("document_not_open", "Citation source requires an open owner revision"))?;
         let character_end = self.edit.source.character.checked_add(range.length)
@@ -166,7 +168,7 @@ impl CiteCompletionPlan {
         Ok(CiteCompletionApplied { document, selection_after: self.edit.selection_after.clone() })
     }
 
-    fn validate(&self, workspace: &mut Workspace) -> Result<()> {
+    fn validate_source(&self, workspace: &Workspace) -> Result<()> {
         let live = workspace.snapshot(&self.edit.source.document_id)?;
         if Some(live.revision) != self.edit.source.revision {
             return Err(CoreError::new("revision_conflict", "Citation source revision changed"));
@@ -185,6 +187,11 @@ impl CiteCompletionPlan {
         if &live.text[first..last] != self.edit.expected_old_token.as_str() {
             return Err(CoreError::new("stale_cite_token", "Expected citation token changed"));
         }
+        Ok(())
+    }
+
+    fn validate(&self, workspace: &mut Workspace) -> Result<()> {
+        self.validate_source(workspace)?;
         self.capture.revalidate(workspace)
     }
 

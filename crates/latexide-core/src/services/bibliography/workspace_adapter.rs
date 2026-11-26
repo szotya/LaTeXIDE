@@ -39,6 +39,14 @@ pub struct WorkspaceBibliography {
     targets: Vec<BibliographyTarget>,
 }
 
+// Human-readable context for a failed whole capture. This does not inspect
+// another filesystem view or reinterpret a refused observation as successful.
+fn capture_error(mut error: CoreError) -> CoreError {
+    if error.code != "analysis_incomplete" { return error; }
+    error.message = format!("Bibliography requires a complete text-only project root. Unsupported binary/non-text assets (for example PNG/PDF figures) refuse the whole capture. Underlying producer refusal: {}", error.message);
+    error
+}
+
 #[derive(Default)]
 struct Coordinates { byte: usize, utf16: u32, line: u32, character: u32 }
 impl Coordinates {
@@ -53,6 +61,14 @@ impl Coordinates {
 }
 
 impl LocalBibliographyProvider {
+    /// Read-only explanation of the text-only producer requirement on failure.
+    /// It preserves the error code and creates no observation or edit authority.
+    pub fn capture_diagnostic(&self, error: CoreError) -> CoreError {
+        capture_error(error)
+    }
+    /// Requires a complete text-only project root from the production capture.
+    /// Binary/non-text assets refuse the whole operation; no filtered success is
+    /// synthesized. Capture errors retain their code and explain this cause.
     pub fn inspect_workspace(&self, workspace: &mut Workspace) -> Result<WorkspaceBibliography> {
         self.inspect_workspace_with_limits(workspace, &SnapshotLimits {
             max_files: FILES, max_file_bytes: MAX_FILE_BYTES, max_total_bytes: BYTES,
@@ -62,6 +78,7 @@ impl LocalBibliographyProvider {
     /// Callers may lower the existing index admission ceilings, never raise them.
     /// P00 capture supplies exact disk/dirty logical UTF8 and refuses incomplete
     /// observation before this adapter can expose any successful partial result.
+    /// This includes unrelated binary assets anywhere in the project root.
     pub fn inspect_workspace_with_limits(&self, workspace: &mut Workspace, requested: &SnapshotLimits)
         -> Result<WorkspaceBibliography>
     {
@@ -71,7 +88,8 @@ impl LocalBibliographyProvider {
         if limits.max_files == 0 || limits.max_file_bytes == 0 || limits.max_total_bytes == 0 {
             return Err(CoreError::new("analysis_quota", "Bibliography analysis requires a nonzero bounded capture"));
         }
-        let snapshot = workspace.analysis_snapshot_with_limits(&limits)?;
+        let snapshot = workspace.analysis_snapshot_with_limits(&limits)
+            .map_err(capture_error)?;
         let mut targets = Vec::new();
         for file in &snapshot.files {
             if !Path::new(&file.path).extension().is_some_and(|e|e.eq_ignore_ascii_case("bib")) { continue; }

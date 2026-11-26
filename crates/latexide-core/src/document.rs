@@ -22,6 +22,27 @@ pub enum LineEnding {
     Crlf,
 }
 
+// Shared normal encoder for retained documents and read-only rename preflight.
+pub(crate) fn encoded_bytes(text: &str, line_ending: LineEnding, bom: bool) -> Vec<u8> {
+        let body = match line_ending {
+            LineEnding::Lf => text.to_owned(),
+            LineEnding::Crlf => text.replace('\n', "\r\n"),
+        };
+        let mut bytes = Vec::with_capacity(body.len() + if bom { 3 } else { 0 });
+        if bom {
+            bytes.extend_from_slice(&[0xef, 0xbb, 0xbf]);
+        }
+        bytes.extend_from_slice(body.as_bytes());
+        bytes
+    }
+
+pub(crate) fn validate_encoded_size(text: &str, line_ending: LineEnding, bom: bool) -> Result<()> {
+    if encoded_bytes(text, line_ending, bom).len() > MAX_FILE_BYTES {
+        return Err(CoreError::new("file_too_large", "A kódolt fájl meghaladná az 1 MiB határt."));
+    }
+    Ok(())
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DocumentInfo {
     pub id: String,
@@ -136,16 +157,7 @@ impl Document {
     }
 
     pub fn bytes_for(&self, text: &str) -> Vec<u8> {
-        let body = match self.line_ending {
-            LineEnding::Lf => text.to_owned(),
-            LineEnding::Crlf => text.replace('\n', "\r\n"),
-        };
-        let mut bytes = Vec::with_capacity(body.len() + if self.bom { 3 } else { 0 });
-        if self.bom {
-            bytes.extend_from_slice(&[0xef, 0xbb, 0xbf]);
-        }
-        bytes.extend_from_slice(body.as_bytes());
-        bytes
+        encoded_bytes(text, self.line_ending, self.bom)
     }
 
     pub fn byte_offset(&self, position: Position) -> Result<usize> {
@@ -234,12 +246,7 @@ impl Document {
                 });
             }
         }
-        if self.bytes_for(&result).len() > MAX_FILE_BYTES {
-            return Err(CoreError::new(
-                "file_too_large",
-                "A kódolt fájl meghaladná az 1 MiB határt.",
-            ));
-        }
+        validate_encoded_size(&result, self.line_ending, self.bom)?;
         Ok((result, patches))
     }
 }

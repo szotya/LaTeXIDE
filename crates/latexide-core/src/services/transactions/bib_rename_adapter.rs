@@ -40,33 +40,51 @@ fn transaction_error(error: WorkspaceTransactionError) -> CoreError {
     }
 }
 
-/// Resolve flat logical UTF16 only at complete scalar boundaries.
-fn endpoint(text: &str, target: u32) -> Result<(usize,Position)> {
-    let(mut units,mut line,mut column)=(0u32,0u32,0u32);
-    for(byte,ch) in text.char_indices() {
-        if units==target { return Ok((byte,Position{line,character:column})); }
-        if units>target { return Err(invalid()); }
-        units=units.checked_add(ch.len_utf16() as u32).ok_or_else(invalid)?;
-        if ch=='\n' {
-            line=line.checked_add(1).ok_or_else(invalid)?;column=0;
-        } else { column=column.checked_add(ch.len_utf16() as u32).ok_or_else(invalid)?; }
-    }
-    if units==target { Ok((text.len(),Position{line,character:column})) } else { Err(invalid()) }
+/// A monotone scalar-safe cursor resolves all sorted endpoints once per file.
+struct Endpoints<'a> {
+    characters: std::str::CharIndices<'a>,
+    byte: usize,
+    units: u32,
+    line: u32,
+    column: u32,
 }
-fn check_anchor(file: &SnapshotFile, source: &SourceAnchor, expected: &str) -> Result<(Position,Position)> {
+impl<'a> Endpoints<'a> {
+    fn new(text: &'a str) -> Self {
+        Self { characters: text.char_indices(), byte: 0, units: 0, line: 0, column: 0 }
+    }
+    fn at(&mut self, target: u32) -> Result<(usize, Position)> {
+        if target < self.units { return Err(invalid()); }
+        while self.units < target {
+            let (byte, ch) = self.characters.next().ok_or_else(invalid)?;
+            self.units = self.units.checked_add(ch.len_utf16() as u32).ok_or_else(invalid)?;
+            self.byte = byte + ch.len_utf8();
+            if ch == '\n' {
+                self.line = self.line.checked_add(1).ok_or_else(invalid)?; self.column = 0;
+            } else {
+                self.column = self.column.checked_add(ch.len_utf16() as u32).ok_or_else(invalid)?;
+            }
+        }
+        if self.units != target { return Err(invalid()); }
+        Ok((self.byte, Position { line: self.line, character: self.column }))
+    }
+}
+#[derive(Clone, Copy)]
+struct ResolvedAnchor { first: usize, last: usize, start: Position, finish: Position }
+fn check_anchor(file: &SnapshotFile, text: &str, source: &SourceAnchor, expected: &str,
+    cursor: &mut Endpoints<'_>) -> Result<ResolvedAnchor>
+{
     if source.revision.is_none() { return Err(unsupported()); }
     if expected.is_empty() || file.path!=source.document_id || file.revision!=source.revision
         || file.content_sha256!=source.content_sha256
         || u32::try_from(expected.encode_utf16().count()).map_err(|_|invalid())?!=source.range.length
     { return Err(invalid()); }
-    let text=file.text().map_err(|_|invalid())?;
     let end=source.range.start.checked_add(source.range.length).ok_or_else(invalid)?;
-    let(first,start)=endpoint(text,source.range.start)?;
-    let(last,finish)=endpoint(text,end)?;
-    if start.line!=source.line || start.character!=source.character || &text[first..last]!=expected {
+    let(first,start)=cursor.at(source.range.start)?;
+    let(last,finish)=cursor.at(end)?;
+    if start.line!=source.line || start.character!=source.character || text.get(first..last)!=Some(expected) {
         return Err(invalid());
     }
-    Ok((start,finish))
+    Ok(ResolvedAnchor { first, last, start, finish })
 }
 
 /// Read-only validation of a review description against the actual owner.
@@ -75,7 +93,8 @@ fn check_anchor(file: &SnapshotFile, source: &SourceAnchor, expected: &str) -> R
 pub fn validate_rename_anchor(workspace: &Workspace, source: &SourceAnchor, expected: &str) -> Result<()> {
     let capture=workspace.transaction_snapshot()?;
     let file=capture.files.iter().find(|f|f.path==source.document_id).ok_or_else(unsupported)?;
-    check_anchor(file,source,expected).map(|_|())
+    let text=file.text().map_err(|_|invalid())?;
+    check_anchor(file,text,source,expected,&mut Endpoints::new(text)).map(|_|())
 }
 
 fn checked_edits(preview: &BibKeyRenamePreview<'_>) -> Result<Vec<RevisionedEdit>> {
@@ -93,31 +112,65 @@ fn checked_edits(preview: &BibKeyRenamePreview<'_>) -> Result<Vec<RevisionedEdit
             replacement:edit.insertion.clone() })
     }).collect()
 }
-fn validate_pair(transaction: &WorkspaceTransaction, preview: &BibKeyRenamePreview<'_>) -> Result<()> {
+fn validate_pair(transaction: &WorkspaceTransaction, preview: &BibKeyRenamePreview<'_>)
+    -> Result<Vec<ResolvedAnchor>>
+{
     let expected=checked_edits(preview)?;
     if expected.len()!=transaction.plan().edits.len() { return Err(invalid()); }
-    for((site,wanted),actual) in preview.edits().iter().zip(expected.iter()).zip(transaction.plan().edits.iter()) {
-        if actual.document_id!=wanted.document_id || actual.expected_revision!=wanted.expected_revision
-            || actual.start_utf16!=wanted.start_utf16 || actual.length_utf16!=wanted.length_utf16
-            || actual.replacement!=wanted.replacement { return Err(invalid()); }
-        let file=transaction.snapshot().files.iter().find(|f|f.path==site.source.document_id).ok_or_else(unsupported)?;
-        check_anchor(file,&site.source,&site.expected_old_text)?;
+    let mut by_file:BTreeMap<&str,Vec<usize>>=BTreeMap::new();
+    for (index, actual) in transaction.plan().edits.iter().enumerate() {
+        by_file.entry(&actual.document_id).or_default().push(index);
     }
-    Ok(())
-}
-fn batches(transaction: &WorkspaceTransaction) -> Result<Vec<(String,u64,Vec<TextEdit>)>> {
-    let mut grouped:BTreeMap<String,(u64,Vec<TextEdit>)>=BTreeMap::new();
-    for edit in &transaction.plan().edits {
-        let file=transaction.snapshot().files.iter().find(|f|f.path==edit.document_id).ok_or_else(unsupported)?;
+    let mut resolved=vec![None;expected.len()];
+    for (id, mut indices) in by_file {
+        let file=transaction.snapshot().files.iter().find(|f|f.path==id).ok_or_else(unsupported)?;
         let text=file.text().map_err(|_|invalid())?;
-        let end=edit.start_utf16.checked_add(edit.length_utf16).ok_or_else(invalid)?;
-        let(_,start)=endpoint(text,edit.start_utf16)?;let(_,finish)=endpoint(text,end)?;
+        indices.sort_unstable_by_key(|index|transaction.plan().edits[*index].start_utf16);
+        let mut cursor=Endpoints::new(text);
+        for index in indices {
+            let site=&preview.edits()[index];let wanted=&expected[index];let actual=&transaction.plan().edits[index];
+            if actual.document_id!=wanted.document_id || actual.expected_revision!=wanted.expected_revision
+                || actual.start_utf16!=wanted.start_utf16 || actual.length_utf16!=wanted.length_utf16
+                || actual.replacement!=wanted.replacement { return Err(invalid()); }
+            resolved[index]=Some(check_anchor(file,text,&site.source,&site.expected_old_text,&mut cursor)?);
+        }
+    }
+    resolved.into_iter().map(|row|row.ok_or_else(invalid)).collect()
+}
+fn batches(transaction: &WorkspaceTransaction, positions: &[ResolvedAnchor]) -> Result<Vec<(String,u64,Vec<TextEdit>)>> {
+    if positions.len()!=transaction.plan().edits.len() { return Err(invalid()); }
+    let mut grouped:BTreeMap<String,(u64,Vec<TextEdit>)>=BTreeMap::new();
+    for (edit, position) in transaction.plan().edits.iter().zip(positions) {
+        let file=transaction.snapshot().files.iter().find(|f|f.path==edit.document_id).ok_or_else(unsupported)?;
         let revision=file.revision.ok_or_else(unsupported)?;
+        if revision!=edit.expected_revision { return Err(invalid()); }
         let entry=grouped.entry(edit.document_id.clone()).or_insert_with(||(revision,Vec::new()));
         if entry.0!=revision { return Err(invalid()); }
-        entry.1.push(TextEdit{start,end:finish,text:edit.replacement.clone()});
+        entry.1.push(TextEdit{start:position.start,end:position.finish,text:edit.replacement.clone()});
     }
     Ok(grouped.into_iter().map(|(id,(revision,edits))|(id,revision,edits)).collect())
+}
+fn preflight_encoding(workspace: &Workspace, transaction: &WorkspaceTransaction, positions: &[ResolvedAnchor]) -> Result<()> {
+    if positions.len()!=transaction.plan().edits.len() { return Err(invalid()); }
+    let mut grouped:BTreeMap<&str,Vec<usize>>=BTreeMap::new();
+    for (index, edit) in transaction.plan().edits.iter().enumerate() {
+        grouped.entry(&edit.document_id).or_default().push(index);
+    }
+    for (id, mut indices) in grouped {
+        let file=transaction.snapshot().files.iter().find(|f|f.path==id).ok_or_else(unsupported)?;
+        let live=workspace.snapshot(id)?;
+        if Some(live.revision)!=file.revision || live.text.as_bytes()!=file.utf8.as_slice() { return Err(invalid()); }
+        indices.sort_unstable_by_key(|index|std::cmp::Reverse(transaction.plan().edits[*index].start_utf16));
+        let mut projected=live.text;
+        for index in indices {
+            let edit=&transaction.plan().edits[index];let position=&positions[index];
+            projected.replace_range(position.first..position.last,&edit.replacement);
+        }
+        // Use the retained document's normal BOM/CRLF encoder, not a logical
+        // UTF8-size estimate. The actual apply path repeats the same guard.
+        crate::document::validate_encoded_size(&projected,live.line_ending,live.bom)?;
+    }
+    Ok(())
 }
 
 /// Private immutable preview/plan pairing; never retains a Workspace borrow.
@@ -139,8 +192,8 @@ impl PreparedBibRename<'_> {
         self.consumed=true;
         service().revalidate_workspace_transaction(workspace,&self.transaction).map_err(transaction_error)?;
         self.preview.revalidate(workspace).map_err(preview_error)?;
-        validate_pair(&self.transaction,&self.preview)?;
-        let batches=batches(&self.transaction)?;
+        let positions=validate_pair(&self.transaction,&self.preview)?;
+        let batches=batches(&self.transaction,&positions)?;
         workspace.apply_edit_group(batches,origin)
     }
 }
@@ -149,7 +202,8 @@ pub fn prepare_bib_rename<'a>(workspace: &mut Workspace, preview: BibKeyRenamePr
     preview.revalidate(workspace).map_err(preview_error)?;
     let edits=checked_edits(&preview)?;
     let transaction=service().prepare_workspace_transaction(workspace,edits).map_err(transaction_error)?;
-    validate_pair(&transaction,&preview)?;
+    let positions=validate_pair(&transaction,&preview)?;
+    preflight_encoding(workspace,&transaction,&positions)?;
     preview.revalidate(workspace).map_err(preview_error)?;
     Ok(PreparedBibRename{preview,transaction,consumed:false})
 }
