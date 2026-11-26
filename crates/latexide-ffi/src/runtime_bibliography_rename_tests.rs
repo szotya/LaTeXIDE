@@ -1,8 +1,12 @@
 //! Eight fresh actual Runtime controls, with independent physical file checks.
-use super::{RuntimeBibRenameApply, RuntimeBibRenameError};
+use super::RuntimeBibRenameError;
+#[cfg(target_os = "macos")]
+use super::RuntimeBibRenameApply;
 use crate::runtime::{Runtime, bibliography::RuntimeCiteCompletion};
-use latexide_core::{Workspace, Position, TextEdit, LineEnding,
-    services::bibliography::key_rename::{KeyRenameError, RenameSiteKind}};
+use latexide_core::{Workspace, Position, TextEdit, LineEnding};
+#[cfg(target_os = "macos")]
+use latexide_core::services::bibliography::key_rename::{KeyRenameError, RenameSiteKind};
+#[cfg(target_os = "macos")]
 use latexide_protocol::Request;
 use std::{fs, path::PathBuf, sync::{Arc, Mutex}};
 
@@ -75,12 +79,14 @@ fn unchanged(f: &Fixture, owner: &Arc<Mutex<Runtime>>, before: &str,
 fn error<T>(result: Result<T, RuntimeBibRenameError>) -> RuntimeBibRenameError {
     match result { Err(error) => error, Ok(_) => panic!("typed whole refusal required") }
 }
+#[cfg(target_os = "macos")]
 fn code<T>(result: Result<T, RuntimeBibRenameError>, expected: &str) {
     match error(result) {
         RuntimeBibRenameError::Runtime(e) => assert_eq!(e.code, expected),
         other => panic!("expected Runtime/Core refusal, got {other:?}"),
     }
 }
+#[cfg(target_os = "macos")]
 fn prepare(service: &RuntimeCiteCompletion) -> RuntimeBibRenameApply {
     service.prepare_bib_rename_apply(service.preview_bib_rename("old", "renamed").unwrap()).unwrap()
 }
@@ -89,6 +95,7 @@ fn edit(owner: &Arc<Mutex<Runtime>>, id: &str, line: u32, start: u32, end: u32, 
     r.workspace.apply_edits(id, revision, vec![TextEdit { start: Position { line, character: start },
         end: Position { line, character: end }, text: text.into() }], "fixture").unwrap();
 }
+#[cfg(target_os = "macos")]
 fn docs(owner: &Arc<Mutex<Runtime>>, renamed: bool, revision: u64, origin: &str) {
     let r = owner.lock().unwrap(); let all = r.workspace.snapshots(); assert_eq!(all.len(), 3);
     let group = all[0].transaction_id; assert!(group > 0);
@@ -101,6 +108,7 @@ fn docs(owner: &Arc<Mutex<Runtime>>, renamed: bool, revision: u64, origin: &str)
     }
 }
 
+#[cfg(target_os = "macos")]
 #[test]
 fn ra01_multifile_atomic_single_use() {
     let f = Fixture::standard("ra01"); let owner = f.owner(true);
@@ -117,6 +125,7 @@ fn ra01_multifile_atomic_single_use() {
     unchanged(&f, &owner, &after, &disk);
     f.record(format!("atomic_targets=3;one_group=true;copied_display_not_authority={display:?}\nafter={after}"));
 }
+#[cfg(target_os = "macos")]
 #[test]
 fn ra02_dirty_unicode_bom_crlf() {
     let main = "\u{feff}😀\n\\cite{réx𝒜}\n";
@@ -146,6 +155,7 @@ fn ra02_dirty_unicode_bom_crlf() {
     assert_eq!(f.disk(), disk); assert_eq!(Arc::strong_count(&owner), 1);
     f.record(format!("dirty_overlay_real=true;UTF16_10_5=true;physical_BOM_CRLF_unchanged=true\nafter={}", state(&owner)));
 }
+#[cfg(target_os = "macos")]
 #[test]
 fn ra03_runtime_shared_undo_redo_disk_unchanged() {
     let f = Fixture::standard("ra03"); let owner = f.owner(true);
@@ -161,6 +171,7 @@ fn ra03_runtime_shared_undo_redo_disk_unchanged() {
     assert_eq!(f.disk(), disk); assert_eq!(Arc::strong_count(&owner), 1);
     f.record(format!("actual_Runtime_dispatch_Undo_Redo=true;one_group_for_all3=true\nafter={}", state(&owner)));
 }
+#[cfg(target_os = "macos")]
 #[test]
 fn ra04_foreign_owner_consumes_without_edit() {
     let f = Fixture::standard("ra04"); let owner = f.owner(true); let foreign = f.owner(true);
@@ -175,6 +186,7 @@ fn ra04_foreign_owner_consumes_without_edit() {
     unchanged(&f, &owner, &a, &disk); unchanged(&f, &foreign, &b, &disk);
     f.record(format!("identical_files_and_revisions_foreign_allocation_refused=true\nowner={a}\nforeign={b}"));
 }
+#[cfg(target_os = "macos")]
 #[test]
 fn ra05_stale_aba_disk_generation_refuse() {
     for variant in ["edit", "aba", "disk", "generation", "context"] {
@@ -209,6 +221,7 @@ fn ra05_stale_aba_disk_generation_refuse() {
         f.record(format!("variant={variant};exact_refusal={expected};no_partial_edit=true\nbefore={before}"));
     }
 }
+#[cfg(target_os = "macos")]
 #[test]
 fn ra06_collision_duplicate_bad_target_whole_refusal() {
     for (label, bib, duplicate) in [("duplicate", "@book{old,title={A}}\n@book{old,title={B}}\n", true),
@@ -241,6 +254,7 @@ fn ra06_collision_duplicate_bad_target_whole_refusal() {
         f.record(format!("variant={variant};whole_refusal={expected};unchanged_other_targets=true\nbefore={before}"));
     }
 }
+#[cfg(target_os = "macos")]
 #[test]
 fn ra07_contention_try_lock_spends_token() {
     let f = Fixture::standard("ra07"); let owner = f.owner(true); let service = RuntimeCiteCompletion::new(&owner);
@@ -254,6 +268,7 @@ fn ra07_contention_try_lock_spends_token() {
     unchanged(&f, &owner, &before, &disk);
     f.record(format!("both_calls_refused_while_actual_owner_still_locked=true;outer_watchdog_only=true\nbefore={before}"));
 }
+#[cfg(target_os = "macos")]
 #[test]
 fn ra08_teardown_and_atomic_edit_quota() {
     let f = Fixture::standard("ra08-teardown"); let owner = f.owner(true); let weak = Arc::downgrade(&owner);
@@ -268,4 +283,55 @@ fn ra08_teardown_and_atomic_edit_quota() {
     code(service.prepare_bib_rename_apply(preview), "bib_rename_quota");
     unchanged(&f, &owner, &before, &disk); assert!(!owner.lock().unwrap().workspace.can_undo());
     f.record("actual_Core_1000_edit_budget=refusal;1002_sites;all_buffers_and_history_unchanged=true".into());
+}
+
+// The production P04 filesystem producer is intentionally macOS-only. Other
+// hosts must prove the whole refusal, never substitute a successful analysis
+// model or present these as positive bibliography-apply acceptance.
+#[cfg(not(target_os = "macos"))]
+fn unsupported_preview(service: &RuntimeCiteCompletion) {
+    match error(service.preview_bib_rename("old", "renamed")) {
+        RuntimeBibRenameError::Runtime(e) => {
+            assert_eq!(e.code, "analysis_outside_root");
+            assert_eq!(e.message, "Complete P04 analysis observation refused: OutsideRoot");
+        }
+        other => panic!("expected unsupported production analysis refusal, got {other:?}"),
+    }
+}
+#[cfg(not(target_os = "macos"))]
+#[test]
+fn ra09_unconfirmed_analysis_refuses_clean_workspace() {
+    for all in [false, true] {
+        let f = Fixture::standard(if all { "ra09-all" } else { "ra09-partial" });
+        assert!(f.root.join("project").is_dir());
+        let owner = f.owner(all); let service = RuntimeCiteCompletion::new(&owner);
+        assert_eq!(owner.lock().unwrap().workspace.snapshots().len(), if all { 3 } else { 2 });
+        let before = state(&owner); let disk = f.disk();
+        unsupported_preview(&service);
+        unchanged(&f, &owner, &before, &disk);
+        let runtime = owner.lock().unwrap();
+        assert!(!runtime.workspace.can_undo() && !runtime.workspace.can_redo());
+        drop(runtime);
+        f.record("unsupported_production_analysis=whole_refusal;open_and_closed_targets_unchanged=true;no_apply_token=true".into());
+    }
+}
+#[cfg(not(target_os = "macos"))]
+#[test]
+fn ra10_unconfirmed_analysis_preserves_dirty_unicode_bom_crlf() {
+    let main = "\u{feff}😀\n\\cite{old}\n";
+    let bib = "\u{feff}😀\n@book{alt,title={U}}\n";
+    let f = Fixture::new("ra10-dirty", &[("main.tex", main), ("refs.bib", bib)], true);
+    let owner = f.owner(true); edit(&owner, "refs.bib", 1, 6, 9, "old");
+    {
+        let runtime = owner.lock().unwrap();
+        let dirty = runtime.workspace.snapshot("refs.bib").unwrap();
+        assert!(dirty.dirty && dirty.bom);
+        assert_eq!(dirty.line_ending, LineEnding::Crlf);
+        assert_eq!(dirty.revision, 2);
+        assert!(runtime.workspace.can_undo() && !runtime.workspace.can_redo());
+    }
+    let service = RuntimeCiteCompletion::new(&owner); let before = state(&owner); let disk = f.disk();
+    unsupported_preview(&service);
+    unchanged(&f, &owner, &before, &disk);
+    f.record("unsupported_production_analysis=whole_refusal;dirty_UTF16_revision_history_and_physical_BOM_CRLF_unchanged=true;no_apply_token=true".into());
 }

@@ -63,3 +63,13 @@ Preserve qualifier ERROR/STOP and later correction as distinct evidence; do not
 replay completed tests to repair a reader. The eight first main-default controls
 stay separate from historical producer/reviewer cohorts. See the implementation
 ledger for commands, results and remaining hosted/platform/release gates.
+
+The production P04 filesystem analysis producer currently supports macOS only.
+Positive Runtime bibliography-apply controls therefore select the eight Mac
+methods; non-Mac CI selects explicit whole-refusal controls on the real owner
+and production capture path. Require the exact unsupported-analysis error and
+unchanged clean/dirty buffers, revision/history and physical BOM/CRLF bytes.
+Keep those negative controls distinct from positive feature/native-platform
+acceptance. Do not add a fake successful producer, ignored tests or a relaxed
+required gate to make an unsupported host appear qualified. Bind every changed
+public HEAD to its own hosted execution; a prior Mac PASS is historical there.
