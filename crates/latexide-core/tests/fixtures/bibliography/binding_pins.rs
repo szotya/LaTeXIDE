@@ -6,5 +6,5 @@ pub const PARSER_SHA256: &str = "0dfdcd19ef9e9f711026b38b402905f6eee8f43be6ade11
 pub const CONTRACT_SHA256: &str = "6d6f1febadb2dc66ce9b6682019eaf923d152e7ba678822a45b4a76d2b04938e";
 pub const CANONICAL_LIB_SHA256: &str = "50c143c8189d4f0252f19cd3008e734e95f543e4bc5f8fa4de496aa1e38dbe27";
 pub const CORE_CARGO_SHA256: &str = "a59e9a5abb03a4203b4696b37b7e0e1fff5a46626bc7a9bbb2ca90b40cb3ac47";
-pub const ROOT_CARGO_SHA256: &str = "bd05c6527cc067ac8e194ff4ca4d8c54ab653606c336912d97cfd9da712f063f";
+pub const ROOT_CARGO_SHA256: &str = "0a47f3af2f90c21b9111b65ffa097772d15bcfb12cd29d454c06e4c501cb5cac";
 pub const ROOT_LOCK_SHA256: &str = "b0e291f20d0a828ff1fa8e6623bd6fd17b65e89f3af1c0ee12f551d166dcc2ec";

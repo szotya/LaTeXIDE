@@ -159,3 +159,15 @@ derived filename or weaken source/image/exit guards. Locate dep-info using
 the actual compiler --out-dir, --crate-name and optional extra-filename flag.
 Keep pre-test metadata ERROR and consumed builds; continue still-first cases
 only on unchanged admitted images, with all original bounds and own lease.
+
+For intentional versionable build-profile changes, keep the complete Cargo
+source pin. Bind compatibility to the prior caller-pinned manifest and the
+explicitly identified frozen published payload/immutable commit/blob plus
+actual CI caller. Verify the allowed semantic delta and all other pin
+literals; do not set expected from runtime output or remove the guard.
+
+Qualify an intentional whole-Cargo pin compatibility change with the actual
+canonical test target and normal libraries. Preserve the original guard FAIL
+and any pre-compiler harness failure; count every Cargo attempt. Re-run only
+the affected binding locally, keep the other pins byte-identical, and require
+a new complete exact-HEAD hosted gate before merge.
