@@ -144,3 +144,18 @@ count from retained raw/source evidence without replaying already completed
 tests. A positive Python validator cohort does not repair or replace a failed
 actual Runtime/full-CI result. Keep original child status/capture errors and
 require a new exact-HEAD hosted gate before publication acceptance or merge.
+
+Normal synchronous Runtime validation also executes the existing contracts
+dependency. If optimizing that dev package, bind actual Cargo profile flags
+for normal Core/contracts and test images; preserve debug symbols/assertions,
+overflow checks and all per-case/normal-image bounds. This is not release or
+GUI latency acceptance. Keep pre-change timeout/failure and source/image
+identity separate, and require current-HEAD hosted platform validation.
+
+For normal Cargo pipelining, a dependency's --extern may name rmeta rather
+than rlib. Bind both exact files to the same fresh compiler-artifact record
+and verify the downstream normal-library/testimage links; do not demand a
+derived filename or weaken source/image/exit guards. Locate dep-info using
+the actual compiler --out-dir, --crate-name and optional extra-filename flag.
+Keep pre-test metadata ERROR and consumed builds; continue still-first cases
+only on unchanged admitted images, with all original bounds and own lease.

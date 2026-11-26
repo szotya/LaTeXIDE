@@ -18,7 +18,11 @@ interprocess = { version = "=2.4.7" }
 lto = "thin"
 strip = "debuginfo"
 
-# Native editor queries run synchronously; keep the shared parser responsive in local builds.
-# Debug symbols/assertions remain enabled; other workspace crates retain their normal profile.
+# Native editor queries and their contract validation run synchronously.
+# Debug symbols/assertions/overflow checks remain enabled; other crates keep their normal profile.
 [profile.dev.package.latexide-core]
+opt-level = 2
+
+# UTF-16 batch validation is on the same normal synchronous Runtime path.
+[profile.dev.package.latexide-contracts]
 opt-level = 2
