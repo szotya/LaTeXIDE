@@ -72,3 +72,6 @@ Body-parser nesting budgets include enclosing text groups plus opaque optional/r
 
 
 Treat an optional line-break length as a validated literal dimension, not as an opaque identifier/key. Scan comments and commands before accepting numeric/unit syntax: unknown controls remain partial, dynamic/definition controls are unsupported, and neither exposes a precise count. Retain a supported plain numeric length such as2pt, signed/decimal/trivia forms and the shared nesting bound; richer expressions may be explicitly unsupported. Never expand macros for this count. Qualify both plain and starred controls and preserve the earlier CI/image cohorts when the parser changes.
+
+
+The maintained Store workflow tests live in `apps/macos/Tests/LaTeXIDEKitTests/StoreBodyCharacterCountWorkflowTests.swift` with `StoreWorkflowSupport.swift`. Keep actual Runtime edit → explicit Save → shared Undo, raw UI56/body-count separation, literal C03 oracles and own Session metadata authority/cleanup. A preference/raw projection test does not prove rendered body visibility. Bind targeted execution and full-target compile/link to their separate images; an unexecuted full-target image is not a passing full suite. Native Windows/Linux, GUI and accessibility need their own evidence.
