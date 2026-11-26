@@ -115,6 +115,10 @@ final class StoreBodyCharacterCountWorkflowTests: XCTestCase {
             try storeWorkflowRequire(restored.characterCountMode == .latexBody && !restored.showSourceCharacterCount,
                         "Memory preference recreation lost mode/visibility")
             counts.preferences.showSourceCharacterCount = true
+            let visibleBodyModeRaw = counts.raw(store)
+            try storeWorkflowRequire(visibleBodyModeRaw?.includingWhitespace == 8 &&
+                        visibleBodyModeRaw?.excludingWhitespace == 7,
+                        "Raw projection incorrectly followed body mode")
             counts.preferences.characterCountMode = .source
             let raw = counts.raw(store)
             try storeWorkflowRequire(raw?.includingWhitespace == 8 && raw?.excludingWhitespace == 7, "Production raw show failed")

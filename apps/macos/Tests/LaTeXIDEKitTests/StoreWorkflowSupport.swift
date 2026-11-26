@@ -7,6 +7,14 @@ struct StoreWorkflowError: Error, CustomStringConvertible {
     let description: String
 }
 
+struct StoreWorkflowDiagnosticError: Error, CustomStringConvertible {
+    let primary: Error
+    let diagnostic: Error
+    var description: String {
+        "\(String(describing: primary)); diagnostic persistence also failed: \(String(describing: diagnostic))"
+    }
+}
+
 func storeWorkflowRequire(_ condition: @autoclosure () throws -> Bool, _ message: String) throws {
     guard try condition() else { throw StoreWorkflowError(description: message) }
 }
@@ -246,13 +254,21 @@ enum StoreWorkflowSessionAuthority {
         let binding: StoreWorkflowSessionBinding
         do {
             binding = try validate(raw, &observation)
-        } catch {
-            observation["authority_error"] = String(describing: error)
-            try trace.recordSessionObservation(observation) // private diagnostic BEFORE rethrow
-            throw error
+        } catch let validationError {
+            observation["authority_error"] = String(describing: validationError)
+            do {
+                try trace.recordSessionObservation(observation)
+            } catch let diagnosticError {
+                throw StoreWorkflowDiagnosticError(primary: validationError, diagnostic: diagnosticError)
+            }
+            throw validationError
         }
         observation["authority_validated"] = true
-        try trace.recordSessionObservation(observation) // private diagnostic BEFORE legacy/fix guard
+        // Cleanup must retain validated ownership even if the diagnostic write fails.
+        trace.descriptor = binding.descriptor
+        trace.endpoint = binding.endpoint
+        trace.sessionCleanupIdentity = binding.cleanupIdentity
+        try trace.recordSessionObservation(observation)
         return binding
     }
 }
@@ -334,9 +350,6 @@ extension StoreBodyCharacterCountWorkflowTests {
                 try storeWorkflowRequire(store.selection == "main.tex" && store.revision == 1 && !store.dirty,
                                          "Initial genuine Runtime state mismatch")
                 let binding = try StoreWorkflowSessionAuthority.admit(store.sessionPath, trace: trace)
-                trace.descriptor = binding.descriptor
-                trace.endpoint = binding.endpoint
-                trace.sessionCleanupIdentity = binding.cleanupIdentity
                 try storeWorkflowRequire(binding.normalizedParentMatches &&
                     binding.legacyPIDMatches && binding.legacyExtensionMatches,
                     "Foreign or malformed own Session path")
@@ -382,7 +395,14 @@ extension StoreBodyCharacterCountWorkflowTests {
         }
 
         trace.error = failure.map { String(describing: $0) }
-        try trace.save()
+        do {
+            try trace.save()
+        } catch let diagnosticError {
+            if let failure {
+                throw StoreWorkflowDiagnosticError(primary: failure, diagnostic: diagnosticError)
+            }
+            throw diagnosticError
+        }
         if !fixture.retain && failure == nil {
             try FileManager.default.removeItem(at: directory)
         }
