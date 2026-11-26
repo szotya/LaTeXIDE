@@ -22,6 +22,27 @@ pub enum LineEnding {
     Crlf,
 }
 
+// Shared normal encoder for retained documents and read-only rename preflight.
+pub(crate) fn encoded_bytes(text: &str, line_ending: LineEnding, bom: bool) -> Vec<u8> {
+        let body = match line_ending {
+            LineEnding::Lf => text.to_owned(),
+            LineEnding::Crlf => text.replace('\n', "\r\n"),
+        };
+        let mut bytes = Vec::with_capacity(body.len() + if bom { 3 } else { 0 });
+        if bom {
+            bytes.extend_from_slice(&[0xef, 0xbb, 0xbf]);
+        }
+        bytes.extend_from_slice(body.as_bytes());
+        bytes
+    }
+
+pub(crate) fn validate_encoded_size(text: &str, line_ending: LineEnding, bom: bool) -> Result<()> {
+    if encoded_bytes(text, line_ending, bom).len() > MAX_FILE_BYTES {
+        return Err(CoreError::new("file_too_large", "A kódolt fájl meghaladná az 1 MiB határt."));
+    }
+    Ok(())
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DocumentInfo {
     pub id: String,
@@ -62,6 +83,17 @@ pub(crate) struct Patch {
     pub start: usize,
     pub before: String,
     pub after: String,
+}
+
+#[derive(Clone, Copy)]
+enum OffsetFailure { MissingLine, InvalidColumn }
+impl OffsetFailure {
+    fn error(self) -> CoreError {
+        match self {
+            Self::MissingLine => CoreError::new("invalid_position", "A megadott sor nem létezik."),
+            Self::InvalidColumn => CoreError::new("invalid_position", "Érvénytelen UTF-16 oszlop vagy félbevágott surrogate pár."),
+        }
+    }
 }
 
 impl Document {
@@ -136,16 +168,7 @@ impl Document {
     }
 
     pub fn bytes_for(&self, text: &str) -> Vec<u8> {
-        let body = match self.line_ending {
-            LineEnding::Lf => text.to_owned(),
-            LineEnding::Crlf => text.replace('\n', "\r\n"),
-        };
-        let mut bytes = Vec::with_capacity(body.len() + if self.bom { 3 } else { 0 });
-        if self.bom {
-            bytes.extend_from_slice(&[0xef, 0xbb, 0xbf]);
-        }
-        bytes.extend_from_slice(body.as_bytes());
-        bytes
+        encoded_bytes(text, self.line_ending, self.bom)
     }
 
     pub fn byte_offset(&self, position: Position) -> Result<usize> {
@@ -178,6 +201,33 @@ impl Document {
         ))
     }
 
+    // Resolve the original coordinates once. Store failures by input position
+    // so preparation preserves its start/end/replacement error precedence.
+    fn edit_offsets(&self, edits: &[TextEdit]) -> Vec<std::result::Result<usize, OffsetFailure>> {
+        let mut points: Vec<_> = edits.iter().flat_map(|edit| [edit.start, edit.end]).enumerate().collect();
+        points.sort_unstable_by_key(|(_, position)| (position.line, position.character));
+        let mut offsets = vec![Err(OffsetFailure::MissingLine); points.len()];
+        let mut next = points.into_iter().peekable();
+        let mut base = 0;
+        for (number, line) in self.text.split('\n').enumerate() {
+            if next.peek().is_none() { break; }
+            let mut characters = line.char_indices();
+            let (mut column, mut byte) = (0, 0);
+            while next.peek().is_some_and(|(_, position)| position.line as usize == number) {
+                let (index, position) = next.next().unwrap();
+                while column < position.character {
+                    let Some((offset, character)) = characters.next() else { break; };
+                    column += character.len_utf16() as u32;
+                    byte = offset + character.len_utf8();
+                }
+                offsets[index] = if column == position.character { Ok(base + byte) }
+                    else { Err(OffsetFailure::InvalidColumn) };
+            }
+            base += line.len() + 1;
+        }
+        offsets
+    }
+
     pub fn prepare_edits(&self, edits: Vec<TextEdit>) -> Result<(String, Vec<Patch>)> {
         if edits.len() > 1000 {
             return Err(CoreError::new(
@@ -185,10 +235,11 @@ impl Document {
                 "Legfeljebb 1000 csere küldhető egy műveletben.",
             ));
         }
+        let offsets = self.edit_offsets(&edits);
         let mut ranges = Vec::with_capacity(edits.len());
-        for edit in edits {
-            let start = self.byte_offset(edit.start)?;
-            let end = self.byte_offset(edit.end)?;
+        for (index, edit) in edits.into_iter().enumerate() {
+            let start = offsets[2 * index].map_err(OffsetFailure::error)?;
+            let end = offsets[2 * index + 1].map_err(OffsetFailure::error)?;
             let replacement = edit.text.replace("\r\n", "\n");
             if start > end || replacement.contains(['\r', '\0']) {
                 return Err(CoreError::new(
@@ -234,12 +285,7 @@ impl Document {
                 });
             }
         }
-        if self.bytes_for(&result).len() > MAX_FILE_BYTES {
-            return Err(CoreError::new(
-                "file_too_large",
-                "A kódolt fájl meghaladná az 1 MiB határt.",
-            ));
-        }
+        validate_encoded_size(&result, self.line_ending, self.bom)?;
         Ok((result, patches))
     }
 }
@@ -255,5 +301,52 @@ pub(crate) fn file_identity(path: &std::path::Path) -> std::io::Result<Option<(u
     {
         let _ = path;
         Ok(None)
+    }
+}
+
+#[cfg(test)]
+mod edit_position_tests {
+    use super::*;
+    #[test]
+    fn batch_positions_match_individual_offsets_and_error_order() {
+        use std::io::Write;
+        let stamp = std::time::SystemTime::now().duration_since(std::time::UNIX_EPOCH).unwrap().as_nanos();
+        let root = std::env::temp_dir().join(format!("latexide-document-positions-{}-{stamp:x}", std::process::id()));
+        let mut builder = std::fs::DirBuilder::new();
+        #[cfg(unix)] { use std::os::unix::fs::DirBuilderExt; builder.mode(0o700); }
+        builder.create(&root).expect("fresh exclusive Document fixture");
+        let mut file_index = 0;
+        let mut load = |source: &str| {
+            let path = root.join(format!("case-{file_index}.tex")); file_index += 1;
+            let mut options = std::fs::OpenOptions::new(); options.write(true).create_new(true);
+            #[cfg(unix)] { use std::os::unix::fs::OpenOptionsExt; options.mode(0o600); }
+            let mut file = options.open(&path).unwrap(); file.write_all(source.as_bytes()).unwrap(); drop(file);
+            Document::load(format!("case-{file_index}.tex"), path, source.as_bytes().to_vec()).unwrap()
+        };
+        for source in ["", "a\n", "😀ab\ncd𝒜\n", "\n\n", "\u{feff}x😀\né𝒜"] {
+            let document = load(source);
+            let mut points: Vec<_> = (0..6).flat_map(|line| (0..11).map(move |character| Position { line, character })).collect();
+            points.extend([Position { line: 0, character: u32::MAX }, Position { line: u32::MAX, character: 0 }]);
+            points.reverse();
+            let edits: Vec<_> = points.iter().map(|&position| TextEdit { start: position, end: position, text: "x".into() }).collect();
+            let offsets = document.edit_offsets(&edits);
+            for (index, position) in points.into_iter().enumerate() {
+                let expected = document.byte_offset(position).map_err(|error| (error.code, error.message));
+                for slot in [2 * index, 2 * index + 1] {
+                    assert_eq!(offsets[slot].map_err(OffsetFailure::error).map_err(|error| (error.code, error.message)), expected);
+                }
+            }
+        }
+        let document = load("😀ab\ncd𝒜\n");
+        let edit = |line, start, end, text: &str| TextEdit { start: Position { line, character: start }, end: Position { line, character: end }, text: text.into() };
+        assert_eq!(document.prepare_edits(vec![edit(1, 0, 1, "é"), edit(0, 2, 3, "x")]).unwrap().0, "😀xb\néd𝒜\n");
+        for first in [edit(0, 3, 2, "x"), edit(0, 0, 0, "\r")] {
+            let error = document.prepare_edits(vec![first, edit(999, 0, 0, "x")]).err().expect("invalid edit must be refused");
+            assert_eq!(error.code, "invalid_edit"); assert_eq!(error.message, "Érvénytelen tartomány vagy szöveg.");
+        }
+        let error = document.prepare_edits(vec![edit(0, 1, 2, "x"), edit(999, 0, 0, "x")]).err().expect("invalid edit must be refused");
+        assert_eq!(error.code, "invalid_position");
+        assert_eq!(error.message, "Érvénytelen UTF-16 oszlop vagy félbevágott surrogate pár.");
+        println!("DOCUMENT_POSITION_FIXTURE={}", root.display());
     }
 }

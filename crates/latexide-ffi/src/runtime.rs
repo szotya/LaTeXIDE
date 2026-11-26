@@ -7,6 +7,11 @@ use std::{collections::BTreeMap, path::PathBuf, time::Duration};
 #[path = "runtime_transactions.rs"]
 pub(crate) mod transactions;
 
+#[path = "runtime_analysis_capture.rs"]
+pub(crate) mod analysis_capture;
+#[path = "runtime_bibliography.rs"]
+pub(crate) mod bibliography;
+
 struct CompilerSettings {
     path: PathBuf,
     cache: PathBuf,

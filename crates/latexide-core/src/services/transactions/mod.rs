@@ -14,6 +14,7 @@ use std::collections::BTreeMap;
 // Byte-identical reuse of the frozen dependency-free P01 helper; no P01 source is modified.
 mod sha256;
 mod workspace_bridge;
+pub mod bib_rename_adapter;
 pub use workspace_bridge::{WorkspaceTransaction, WorkspaceTransactionError};
 
 /// Owns only host-chosen budgets. No documents, transaction counter, history, I/O or mutable state.

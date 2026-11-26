@@ -407,6 +407,12 @@ def normal_observation(images, discoveries, records, scratch, nonce, context, p1
         phase_binding(record, name, image, context, scratch, nonce)
         require(same(record.get("owned_environment"), owned_environment(scratch, nonce)), "Normal nonce/environment changed")
         discovered = parse_discovery(text(discovery["all"]["log"]["path"]))
+        # Keep the original child/capture failure. A secondary namespace reader
+        # must not hide a timeout/nonzero exit or an earlier capture error.
+        raw = command_record(record, normal_command(image, discovered), scratch)
+        for error_field in ("p18_namespace_error", "f05_namespace_error", "p02_namespace_error"):
+            require(error_field not in record,
+                    f"P01 {name} {error_field}: {record.get(error_field)!r}")
         namespace = None
         if p18 is not None:
             namespace = _p18_namespace(scratch, name, image, context, nonce,
@@ -435,7 +441,7 @@ def normal_observation(images, discoveries, records, scratch, nonce, context, p1
         else:
             require("p02_namespace" not in record, "Unbound P02 normal namespace")
         wanted = sorted(set(discovered) - set(EXCLUDED))
-        observed = libtest_observation(command_record(record, normal_command(image, discovered), scratch), allow_empty=True)
+        observed = libtest_observation(raw, allow_empty=True)
         require(len(observed["partitions"]) == 1, "Normal image has multiple or reused partitions")
         partition = observed["partitions"][0]
         require(partition["status"] == "ok" and partition["failed"] == partition["ignored"] == 0
@@ -462,7 +468,10 @@ def command_record(record, expected, scratch, timeout=10):
     require(same(record.get("command"), expected), "P01 command/argc mismatch")
     require(record.get("status") == "passed" and type(record.get("exit_code")) is int
             and record["exit_code"] == 0 and record.get("timed_out") is False,
-            "P01 discovery/parent process did not pass")
+            "P01 discovery/parent process did not pass: "
+            f"{record.get('name')} status={record.get('status')!r} "
+            f"exit_code={record.get('exit_code')!r} timed_out={record.get('timed_out')!r} "
+            f"duration_ms={record.get('duration_ms')!r}")
     uint(record.get("duration_ms"), "P01 wait bound/type", timeout * 1000)
     require(type(record.get("argc")) is int and record["argc"] == len(expected), "P01 argc binding")
     require(type(record.get("requested_timeout")) is int and record["requested_timeout"] == timeout,
@@ -1311,7 +1320,7 @@ def main():
 
 
 F05_PATHS = ('crates/latexide-core/src/workspace.rs', 'crates/latexide-core/src/services/recovery/runtime_binding.rs', 'crates/latexide-core/src/services/recovery/ffi_runtime_tests.rs', 'crates/latexide-core/src/services/recovery/runtime_delta.rs', 'crates/latexide-core/src/services/recovery/review_followup_tests.rs', 'crates/latexide-ffi/src/runtime.rs', 'crates/latexide-core/src/services/recovery/pr68_runtime_tests.rs')
-F05_SOURCE_PINS = {'crates/latexide-core/src/workspace.rs': {'sha256': 'ea60b3ee9fae416967d111d46fe49e17a6b33c4b3bfb24172968f2034df6553e', 'bytes': 32003, 'mode': 420}, 'crates/latexide-core/src/services/recovery/runtime_binding.rs': {'sha256': '7df61324995d08e70c398bbb733033668c2fef3310f8f21660f26fa08b1aa01f', 'bytes': 35641, 'mode': 420}, 'crates/latexide-core/src/services/recovery/ffi_runtime_tests.rs': {'sha256': '9a199bb837ecb7dc158268f119f2c896c5192e9d1c75d72e34d68afbc5528a63', 'bytes': 4267, 'mode': 420}, 'crates/latexide-core/src/services/recovery/runtime_delta.rs': {'sha256': 'f69383c812bde8f4c475d7476edbf0bf65133d7cdd8488fc1d1c6d98508fbbd2', 'bytes': 24112, 'mode': 420}, 'crates/latexide-core/src/services/recovery/review_followup_tests.rs': {'sha256': 'da03dfc7fc3ee756822fba929cef3da68f6f90c7e8138b9f48e3e6f5e0423f9b', 'bytes': 22944, 'mode': 420}, 'crates/latexide-ffi/src/runtime.rs': {'sha256': 'd51c0e268a9cd04074150aa76faefa6003eb83b4b26cc223f6563b9b2e87dae2', 'bytes': 16173, 'mode': 420}, 'crates/latexide-core/src/services/recovery/pr68_runtime_tests.rs': {'sha256': 'bdce3dfa5fa70cdc87fea1f7a3feab4fe1490c7f04daa11f9e2193774f1c4b9c', 'bytes': 40761, 'mode': 420}}
+F05_SOURCE_PINS = {'crates/latexide-core/src/workspace.rs': {'sha256': 'ea60b3ee9fae416967d111d46fe49e17a6b33c4b3bfb24172968f2034df6553e', 'bytes': 32003, 'mode': 420}, 'crates/latexide-core/src/services/recovery/runtime_binding.rs': {'sha256': '7df61324995d08e70c398bbb733033668c2fef3310f8f21660f26fa08b1aa01f', 'bytes': 35641, 'mode': 420}, 'crates/latexide-core/src/services/recovery/ffi_runtime_tests.rs': {'sha256': '9a199bb837ecb7dc158268f119f2c896c5192e9d1c75d72e34d68afbc5528a63', 'bytes': 4267, 'mode': 420}, 'crates/latexide-core/src/services/recovery/runtime_delta.rs': {'sha256': 'f69383c812bde8f4c475d7476edbf0bf65133d7cdd8488fc1d1c6d98508fbbd2', 'bytes': 24112, 'mode': 420}, 'crates/latexide-core/src/services/recovery/review_followup_tests.rs': {'sha256': 'da03dfc7fc3ee756822fba929cef3da68f6f90c7e8138b9f48e3e6f5e0423f9b', 'bytes': 22944, 'mode': 420}, 'crates/latexide-ffi/src/runtime.rs': {'sha256': '546f6e2985b4988e0c488badf878cff62a1b1e3d4d833e96d681379fce849616', 'bytes': 16312, 'mode': 420}, 'crates/latexide-core/src/services/recovery/pr68_runtime_tests.rs': {'sha256': 'bdce3dfa5fa70cdc87fea1f7a3feab4fe1490c7f04daa11f9e2193774f1c4b9c', 'bytes': 40761, 'mode': 420}}
 
 
 F05_ENV = ("P00_PR68_TASK_ROOT", "P00_PR68_ROOT", "P00_PR68_NONCE")

@@ -481,7 +481,11 @@ def write_report(path, data):
 
 
 def repository_identity(root):
+    root = Path(root).resolve()
     try:
+        top = subprocess.check_output(["git", "rev-parse", "--show-toplevel"], cwd=root, stderr=subprocess.DEVNULL, text=True, timeout=5).strip()
+        if not top or Path(top).resolve() != root:
+            return {"head": None, "dirty": None}
         head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=root, stderr=subprocess.DEVNULL, text=True, timeout=5).strip()
         dirty = bool(subprocess.check_output(["git", "status", "--porcelain", "-z"], cwd=root, stderr=subprocess.DEVNULL, timeout=5))
         return {"head": head, "dirty": dirty}

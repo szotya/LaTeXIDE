@@ -1,4 +1,6 @@
-//! Read-only local first slice. No Runtime hook, file write, macro expansion or import.
+//! Local inspection and explicit host-bound cite completion. The parser is read-only;
+//! completion_adapter can edit an existing Workspace. No Runtime hook, implicit
+//! Save, macro expansion or network import is introduced.
 //!
 //! `source` is supplied text: a U+FEFF is content, not a physical encoding BOM.
 //! CRLF and all trivia remain literal. Integration must supply authoritative
@@ -6,6 +8,9 @@
 //! `bibliography.bib`/revisionNone and a real digest of exactly this input.
 mod fingerprint;
 mod parser;
+pub mod workspace_adapter;
+pub mod completion_adapter;
+pub mod key_rename;
 
 use latexide_contracts::bibliography::{BibliographyPort, BibliographyReport};
 pub use parser::{Fragment, FragmentKind, LosslessBibliography, parse_bibliography};
